@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
-@import "@heroui/styles";
 
 :root {
   /* iOS Light Theme Variables */
@@ -219,15 +218,4 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* ─── HeroUI theme customization ─────────────────────────── */
-:root {
-  --heroui-primary: var(--color-edu-primary);
-  --heroui-primary-foreground: #ffffff;
-  --heroui-secondary: var(--color-edu-accent);
-  --heroui-secondary-foreground: #ffffff;
-  --heroui-success: var(--color-edu-primary);
-  --heroui-warning: var(--color-edu-urgent);
-  --heroui-font-sans: var(--font-body);
 }
