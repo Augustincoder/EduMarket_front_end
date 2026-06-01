@@ -1,0 +1,113 @@
+// src/screens/ChatScreen.jsx
+import { useEffect, useRef, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FilterChip as Chip } from '../components/ui/Chip';
+import { Circle } from 'lucide-react';
+import { Header } from '../components/layout/Header';
+import { PageLayout } from '../components/layout/PageLayout';
+import { MessageBubble } from '../components/chat/MessageBubble';
+import { ChatInput } from '../components/chat/ChatInput';
+import { Button } from '../components/ui/Button';
+import { ChatBubbleSkeleton } from '../components/ui/SkeletonCard';
+import { useChatStore } from '../store/chatStore';
+import { useAuthStore } from '../store/authStore';
+import { useTask, useTaskTransition } from '../hooks/useTasks';
+import { useQuery } from '@tanstack/react-query';
+import { messagesApi } from '../services/api';
+
+export default function ChatScreen() {
+  const { id }    = useParams();
+  const { user, token }  = useAuthStore();
+  const bottomRef = useRef(null);
+
+  const { socket, connected, messages, connect, joinRoom, leaveRoom, sendMessage, emitTyping, setMessages } = useChatStore();
+  const { data: task } = useTask(id);
+  const transitions = useTaskTransition(id);
+  const taskId = id;
+
+  const { data: history, isLoading } = useQuery({
+    queryKey: ['messages', taskId],
+    queryFn:  () => messagesApi.getByTask(taskId).then((r) => r.data.data),
+    enabled: !!taskId,
+  });
+
+  useEffect(() => {
+    if (history) setMessages(taskId, history);
+  }, [history]);
+
+  useEffect(() => {
+    if (token) connect(token);
+    joinRoom(taskId);
+    return () => leaveRoom(taskId);
+  }, [token, taskId]);
+
+  const roomMessages = messages[taskId] || [];
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [roomMessages.length]);
+
+  const handleSend = useCallback((content, fileId) => {
+    sendMessage(taskId, content, fileId);
+  }, [taskId, sendMessage]);
+
+  const isInReview = task?.status === 'IN_REVIEW';
+  const isClient   = user?.id === task?.clientId;
+
+  return (
+    <div className="flex flex-col h-dvh bg-edu-bg max-w-[430px] mx-auto">
+      {/* Header */}
+      <Header
+        title={task?.freelancer?.fullname || task?.client?.fullname || 'Chat'}
+        subtitle={task?.title}
+        showBack
+        className="!border-b-0"
+        right={
+          <div className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
+            connected ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
+          )}>
+            <div className={cn(
+              "w-1.5 h-1.5 rounded-full transition-colors",
+              connected ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
+            )} />
+            {connected ? 'ONLAYN' : 'OFLAYN'}
+          </div>
+        }
+      />
+      
+      {/* Divider */}
+      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-edu-border/50 to-transparent" />
+
+      {/* IN_REVIEW sticky banner */}
+      {isInReview && isClient && (
+        <div className="bg-edu-surface/90 backdrop-blur-xl border-b border-edu-border/50 px-4 py-3 shadow-sm z-10 relative">
+          <p className="text-sm font-bold text-edu-text mb-3 flex items-center gap-2">
+            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500/20 text-yellow-600 text-[10px]">
+              ⚡
+            </span>
+            Ish topshirildi, tekshiring
+          </p>
+          <div className="flex gap-2">
+            <Button size="sm" variant="primary" fullWidth isLoading={transitions.accept.isPending}
+              onClick={() => transitions.accept.mutate()}>✅ Qabul</Button>
+            <Button size="sm" variant="secondary" fullWidth isLoading={transitions.requestRevision.isPending}
+              onClick={() => transitions.requestRevision.mutate({})}>↺ Qaytarish</Button>
+          </div>
+        </div>
+      )}
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-3 space-y-3">
+        {isLoading ? <ChatBubbleSkeleton /> : null}
+        {roomMessages.map((msg) => (
+          <MessageBubble key={msg.id} message={msg} isMe={msg.senderId === user?.id} />
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <ChatInput onSend={handleSend} onTyping={() => emitTyping(taskId)} />
+    </div>
+  );
+}

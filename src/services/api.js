@@ -1,0 +1,121 @@
+// src/services/api.js
+import axios from 'axios';
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  timeout: 15000,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+});
+
+// ─── Request Interceptor (JWT token) ──────────────
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('edu_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// ─── Response Interceptor (error handling) ────────
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    const status = error.response?.status;
+    const code   = error.response?.data?.code;
+
+    if (status === 401) {
+      localStorage.removeItem('edu_token');
+      // Auth store logout handled by useAuth hook
+      window.dispatchEvent(new CustomEvent('auth:logout'));
+    }
+
+    // Attach extra info for UI
+    error.statusCode  = status;
+    error.serverCode  = code;
+    error.serverMsg   = error.response?.data?.message || error.message;
+
+    return Promise.reject(error);
+  }
+);
+
+// ─── Auth ──────────────────────────────────────────
+export const authApi = {
+  login:  (body)  => api.post('/auth/login', body),
+  logout: ()      => api.post('/auth/logout'),
+  me:     ()      => api.get('/auth/me'),
+};
+
+// ─── Users ─────────────────────────────────────────
+export const usersApi = {
+  getMe:        ()           => api.get('/users/me'),
+  updateMe:     (data)       => api.put('/users/me', data),
+  getUser:      (userId)     => api.get(`/users/${userId}`),
+  leaderboard:  ()           => api.get('/users/leaderboard'),
+};
+
+// ─── Tasks ─────────────────────────────────────────
+export const tasksApi = {
+  getAll:    (params)  => api.get('/tasks', { params }),
+  getOne:    (id)      => api.get(`/tasks/${id}`),
+  create:    (data)    => api.post('/tasks', data),
+  // State transitions
+  startProgress:    (id)          => api.post(`/tasks/${id}/start-progress`),
+  submitReview:     (id)          => api.post(`/tasks/${id}/submit-review`),
+  accept:           (id)          => api.post(`/tasks/${id}/accept`),
+  requestRevision:  (id, data)    => api.post(`/tasks/${id}/request-revision`, data),
+  cancel:           (id)          => api.post(`/tasks/${id}/cancel`),
+  dispute:          (id, data)    => api.post(`/tasks/${id}/dispute`, data),
+  // Rating
+  rate: (id, data) => api.post(`/tasks/${id}/rate`, data),
+};
+
+// ─── Bids ──────────────────────────────────────────
+export const bidsApi = {
+  create:   (data) => {
+    const { taskId, ...body } = data;
+    return api.post(`/bids/task/${taskId}`, body);
+  },
+  getByTask:(taskId)       => api.get(`/bids/task/${taskId}`),
+  accept:   (taskId, body) => api.post(`/bids/task/${taskId}/accept/${body.bidId}`),
+};
+
+// ─── Gigs ──────────────────────────────────────────
+export const gigsApi = {
+  getAll:  (params) => api.get('/gigs', { params }),
+  create:  (data)   => api.post('/gigs', data),
+  order:   (id)     => api.post(`/gigs/${id}/order`),
+};
+
+// ─── Files ─────────────────────────────────────────
+export const filesApi = {
+  upload:  (formData, onProgress) =>
+    api.post('/files/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (e) => {
+        if (onProgress) onProgress(Math.round((e.loaded * 100) / e.total));
+      },
+    }),
+  getUrl:  (fileId) => api.get(`/files/${fileId}/url`),
+};
+
+// ─── Portfolio ──────────────────────────────────────
+export const portfolioApi = {
+  add:    (data) => api.post('/portfolio', data),
+  delete: (id)   => api.delete(`/portfolio/${id}`),
+};
+
+// ─── VIP ───────────────────────────────────────────
+export const vipApi = {
+  buy: (data) => api.post('/vip/buy', data),
+};
+
+// ─── Messages ──────────────────────────────────────
+export const messagesApi = {
+  getByTask: (taskId) => api.get(`/messages/task/${taskId}`),
+};

@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+@import "@heroui/styles";
+
+:root {
+  /* iOS Light Theme Variables */
+  --edu-bg: #F2F2F7;
+  --edu-surface: #FFFFFF;
+  --edu-border: #C6C6C8;
+  --edu-muted: #8E8E93;
+  --edu-text: #000000;
+  
+  --edu-primary: #1D9E75;
+  --edu-primary-d: #0F6E56;
+  --edu-accent: #534AB7;
+  --edu-urgent: #D85A30;
+  --edu-vip: #BA7517;
+
+  --status-open: #1D9E75;
+  --status-assigned: #534AB7;
+  --status-progress: #185FA5;
+  --status-review: #BA7517;
+  --status-completed: #3B6D11;
+  --status-canceled: #888780;
+  --status-disputed: #A32D2D;
+
+  --nav-height:    56px;
+  --header-height: 52px;
+}
+
+.dark {
+  /* iOS Dark Theme Variables */
+  --edu-bg: #000000;
+  --edu-surface: #1C1C1E;
+  --edu-border: #38383A;
+  --edu-muted: #98989D;
+  --edu-text: #FFFFFF;
+  
+  --edu-primary: #24C08E;
+  --edu-primary-d: #1D9E75;
+  --edu-accent: #6C62D6;
+}
+
+@theme {
+  /* Theme mapping */
+  --color-edu-bg: var(--edu-bg);
+  --color-edu-surface: var(--edu-surface);
+  --color-edu-border: var(--edu-border);
+  --color-edu-muted: var(--edu-muted);
+  --color-edu-text: var(--edu-text);
+  
+  --color-edu-primary: var(--edu-primary);
+  --color-edu-primary-d: var(--edu-primary-d);
+  --color-edu-accent: var(--edu-accent);
+  --color-edu-urgent: var(--edu-urgent);
+  --color-edu-vip: var(--edu-vip);
+
+  --color-status-open: var(--status-open);
+  --color-status-assigned: var(--status-assigned);
+  --color-status-progress: var(--status-progress);
+  --color-status-review: var(--status-review);
+  --color-status-completed: var(--status-completed);
+  --color-status-canceled: var(--status-canceled);
+  --color-status-disputed: var(--status-disputed);
+
+  /* Apple Native System Fonts */
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+
+  /* Animations */
+  --animate-fade-up:  fadeUp 0.3s ease-out;
+  --animate-fade-down: fadeDown 0.3s ease-out;
+  --animate-fade-in:  fadeIn 0.25s ease-out;
+  --animate-slide-up: slideUp 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  --animate-shimmer:  shimmer 1.6s infinite;
+  --animate-pulse-slow: pulseSlow 4s ease-in-out infinite alternate;
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    from { background-position: -400px 0; }
+    to   { background-position: 400px 0; }
+  }
+  @keyframes pulseSlow {
+    from { transform: scale(1); opacity: 0.8; }
+    to   { transform: scale(1.05); opacity: 1; }
+  }
+}
+
+/* ─── Premium Utilities ──────────────────────────────────── */
+
+/* Bouncy buttons like iOS */
+.active-bounce {
+  transition: transform 0.15s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.active-bounce:active {
+  transform: scale(0.96);
+}
+
+/* Beautiful Animated Mesh/Aurora Background for Home Screen */
+.bg-mesh-aurora {
+  background-color: var(--edu-bg);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(29, 158, 117, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(83, 74, 183, 0.15) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+.dark .bg-mesh-aurora {
+  background-color: #050507; /* Slightly off-black for depth */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(36, 192, 142, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(108, 98, 214, 0.12) 0px, transparent 50%);
+}
+
+/* ─── Base Reset ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-edu-bg);
+  color: var(--color-edu-text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* ─── Scrollbar hide ─────────────────────────────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Shimmer skeleton ───────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(90deg, #ede9df 25%, #f8f5ef 50%, #ede9df 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite;
+}
+
+/* ─── Safe area / padding ────────────────────────────────── */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pb-nav {
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 8px);
+}
+
+/* ─── Glass ──────────────────────────────────────────────── */
+.glass {
+  background: color-mix(in srgb, var(--edu-surface) 75%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* ─── Line clamp ─────────────────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── Press scale ────────────────────────────────────────── */
+.press-scale {
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.press-scale:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+
+/* ─── Gradient text ──────────────────────────────────────── */
+.gradient-text-primary {
+  background: linear-gradient(135deg, #1D9E75, #0F6E56);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-text-vip {
+  background: linear-gradient(135deg, #BA7517, #d4941f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── HeroUI theme customization ─────────────────────────── */
+:root {
+  --heroui-primary: var(--color-edu-primary);
+  --heroui-primary-foreground: #ffffff;
+  --heroui-secondary: var(--color-edu-accent);
+  --heroui-secondary-foreground: #ffffff;
+  --heroui-success: var(--color-edu-primary);
+  --heroui-warning: var(--color-edu-urgent);
+  --heroui-font-sans: var(--font-body);
+}
