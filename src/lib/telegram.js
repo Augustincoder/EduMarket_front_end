@@ -56,23 +56,29 @@ const getMockTg = () => ({
   viewportStableHeight: window.innerHeight,
 });
 
-export const tg = isTMA() ? window.Telegram.WebApp : getMockTg();
+export const getTg = () => isTMA() ? window.Telegram.WebApp : getMockTg();
 
-export const ready    = () => tg.ready();
-export const expand   = () => tg.expand();
-export const getInitData = () => tg.initData || '';
-export const getUser     = () => tg.initDataUnsafe?.user || null;
+export const ready    = () => getTg().ready();
+export const expand   = () => getTg().expand();
+export const getInitData = () => {
+  if (isTMA()) return window.Telegram.WebApp.initData;
+  return getMockTg().initData;
+};
+export const getUser     = () => {
+  if (isTMA()) return window.Telegram.WebApp.initDataUnsafe?.user || null;
+  return getMockTg().initDataUnsafe?.user || null;
+};
 
-export const showBackButton  = (cb) => { tg.BackButton.show(); tg.BackButton.onClick(cb); };
-export const hideBackButton  = (cb) => { tg.BackButton.hide(); if (cb) tg.BackButton.offClick(cb); };
+export const showBackButton  = (cb) => { getTg().BackButton.show(); getTg().BackButton.onClick(cb); };
+export const hideBackButton  = (cb) => { getTg().BackButton.hide(); if (cb) getTg().BackButton.offClick(cb); };
 
-export const hapticLight   = () => tg.HapticFeedback.impactOccurred('light');
-export const hapticMedium  = () => tg.HapticFeedback.impactOccurred('medium');
-export const hapticSuccess = () => tg.HapticFeedback.notificationOccurred('success');
-export const hapticError   = () => tg.HapticFeedback.notificationOccurred('error');
-export const hapticWarning = () => tg.HapticFeedback.notificationOccurred('warning');
+export const hapticLight   = () => getTg().HapticFeedback.impactOccurred('light');
+export const hapticMedium  = () => getTg().HapticFeedback.impactOccurred('medium');
+export const hapticSuccess = () => getTg().HapticFeedback.notificationOccurred('success');
+export const hapticError   = () => getTg().HapticFeedback.notificationOccurred('error');
+export const hapticWarning = () => getTg().HapticFeedback.notificationOccurred('warning');
 
-export const enableClosingConfirmation  = () => tg.enableClosingConfirmation();
-export const disableClosingConfirmation = () => tg.disableClosingConfirmation();
+export const enableClosingConfirmation  = () => getTg().enableClosingConfirmation();
+export const disableClosingConfirmation = () => getTg().disableClosingConfirmation();
 
-export default tg;
+export default getTg;
