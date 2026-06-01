@@ -31,17 +31,17 @@ import toast from 'react-hot-toast';
 const gigSchema = zod.object({
   title: zod
     .string()
-    .min(10, "Sarlavha kamida 10 ta belgidan iborat bo'lishi kerak")
-    .max(80, "Sarlavha ko'pi bilan 80 ta belgi bo'lishi mumkin"),
+    .min(5, "Sarlavha kamida 5 ta belgidan iborat bo'lishi kerak")
+    .max(100, "Sarlavha ko'pi bilan 100 ta belgi bo'lishi mumkin"),
   description: zod
     .string()
-    .min(30, "Tavsif kamida 30 ta belgidan iborat bo'lishi kerak")
+    .min(10, "Tavsif kamida 10 ta belgidan iborat bo'lishi kerak")
     .max(1000, "Tavsif ko'pi bilan 1000 ta belgi bo'lishi mumkin"),
   price: zod
     .preprocess(
       (val) => Number(val),
       zod.number({ invalid_type_error: 'Raqam kiriting' })
-        .min(5000, "Minimal narx 5,000 so'm")
+        .min(1000, "Minimal narx 1,000 so'm")
         .max(10000000, "Maksimal narx 10,000,000 so'm")
     ),
   deliveryDays: zod
@@ -247,9 +247,9 @@ export default function CreateGigScreen() {
 
             {/* Back Button */}
             <Button
-              variant="flat"
+              variant="secondary"
               onClick={() => navigate('/gigs')}
-              className="w-full h-12 rounded-2xl font-bold border border-edu-border bg-white text-edu-muted active-bounce mt-2 text-sm"
+              className="w-full h-12 rounded-2xl font-bold mt-2 active-bounce text-sm"
             >
               Katalogga qaytish
             </Button>
@@ -297,7 +297,7 @@ export default function CreateGigScreen() {
                       label="XIZMAT SARLAVHASI"
                       placeholder="Masalan: Professional tarjima inglizchadan o'zbekchaga"
                       error={errors.title?.message}
-                      maxLength={80}
+                      maxLength={100}
                       currentLength={titleVal.length}
                       startContent={<Sparkles className="w-4 h-4 text-edu-primary shrink-0" />}
                       {...register('title')}
@@ -366,9 +366,9 @@ export default function CreateGigScreen() {
                   <div className="flex gap-3 mt-2">
                     <Button
                       type="button"
-                      variant="flat"
+                      variant="secondary"
                       onClick={() => setStep(1)}
-                      className="flex-1 h-12 rounded-2xl font-bold border border-edu-border bg-white text-edu-muted active-bounce flex items-center justify-center gap-1.5"
+                      className="flex-1 h-12 rounded-2xl font-bold active-bounce flex items-center justify-center gap-1.5"
                     >
                       <ArrowLeft className="w-4 h-4" /> Orqaga
                     </Button>

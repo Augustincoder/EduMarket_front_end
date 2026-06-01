@@ -23,7 +23,7 @@ export default function ChatScreen() {
   const { user, token }  = useAuthStore();
   const bottomRef = useRef(null);
 
-  const { socket, connected, messages, connect, joinRoom, leaveRoom, sendMessage, emitTyping, setMessages } = useChatStore();
+  const { socket, connected, messages, typingUsers, connect, joinRoom, leaveRoom, sendMessage, emitTyping, setMessages } = useChatStore();
   const { data: task } = useTask(id);
   const transitions = useTaskTransition(id);
   const taskId = id;
@@ -46,7 +46,11 @@ export default function ChatScreen() {
 
   const { data: history, isLoading } = useQuery({
     queryKey: ['messages', taskId],
-    queryFn:  () => chatApi.getByTask(taskId).then((r) => r.data.data),
+    queryFn:  () => chatApi.getByTask(taskId).then((r) => {
+      const data = r.data.data;
+      const msgs = Array.isArray(data) ? data : (data?.messages || []);
+      return msgs.slice().reverse();
+    }),
     enabled: !!taskId,
   });
 
@@ -56,9 +60,15 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (token) connect(token);
-    joinRoom(taskId);
     return () => leaveRoom(taskId);
   }, [token, taskId]);
+
+  // Rejoin room automatically if socket reconnects
+  useEffect(() => {
+    if (connected && taskId) {
+      joinRoom(taskId);
+    }
+  }, [connected, taskId, joinRoom]);
 
   const roomMessages = messages[taskId] || [];
 
@@ -130,9 +140,18 @@ export default function ChatScreen() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-3 space-y-3">
         {isLoading ? <ChatBubbleSkeleton /> : null}
-        {roomMessages.map((msg) => (
+        {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} isMe={msg.senderId === user?.id} />
-        ))}
+        )) : null}
+        
+        {typingUsers?.[taskId]?.length > 0 && (
+          <div className="flex items-center gap-1 text-edu-muted text-xs animate-pulse px-2 py-1">
+            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
+            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
+            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
+            <span className="ml-2">Suhbatdosh yozmoqda...</span>
+          </div>
+        )}
         <div ref={bottomRef} />
       </div>
 

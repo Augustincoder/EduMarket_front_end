@@ -14,7 +14,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
   const fileRef = useRef(null);
 
   const handleSend = () => {
-    const trimmed = text.trim();
+    const trimmed = text?.trim();
     if (!trimmed) return;
     onSend?.(trimmed, null);
     setText('');
@@ -101,6 +101,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
           onKeyDown={handleKeyDown}
           placeholder="Xabar yozing..."
           disabled={disabled}
+          maxLength={2000}
         />
 
         {/* Send button */}
@@ -110,7 +111,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
           radius="full"
           size="sm"
           className="w-10 h-10 bg-edu-primary flex-shrink-0"
-          isDisabled={!text.trim() && !uploading}
+          isDisabled={!text?.trim() && !uploading}
           onPress={handleSend}
         >
           <Send size={16} className="text-white" />

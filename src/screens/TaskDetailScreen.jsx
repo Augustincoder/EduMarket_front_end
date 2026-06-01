@@ -109,7 +109,26 @@ export default function TaskDetailScreen() {
 
   const handleBidSubmit = async () => {
     setBidErrors({});
-    if (!bidPrice || !bidMsg.trim()) return setBidErrors({ proposedPrice: !bidPrice ? ['Narx kiritilmagan'] : undefined, message: !bidMsg.trim() ? ['Xabar bo\'sh'] : undefined });
+    const errors = {};
+    if (!bidPrice) {
+      errors.proposedPrice = ['Narx kiritilmagan'];
+    } else if (Number(bidPrice) < 1000) {
+      errors.proposedPrice = ['Minimal narx 1000 so\'m'];
+    }
+
+    if (!bidMsg.trim()) {
+      errors.message = ['Xabar bo\'sh'];
+    } else if (bidMsg.trim().length < 10) {
+      errors.message = ['Taklif xabari kamida 10 ta belgidan iborat bo\'lishi kerak'];
+    } else if (bidMsg.trim().length > 1000) {
+      errors.message = ['Taklif xabari 1000 ta belgidan oshmasligi kerak'];
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setBidErrors(errors);
+      return;
+    }
+
     try {
       await createBid.mutateAsync({ taskId: task.id, proposedPrice: Number(bidPrice), message: bidMsg });
       setBidOpen(false);
@@ -122,7 +141,23 @@ export default function TaskDetailScreen() {
 
   const handleRatingSubmit = async () => {
     setRatingErrors({});
-    if (!rating) return setRatingErrors({ rating: ['Baho qo\'yish majburiy'] });
+    const errors = {};
+    if (!rating) {
+      errors.rating = ['Baho qo\'yish majburiy'];
+    }
+    if (!ratingComment.trim()) {
+      errors.comment = ['Fikr-mulohaza yozish majburiy'];
+    } else if (ratingComment.trim().length < 5) {
+      errors.comment = ['Izoh kamida 5 ta belgidan iborat bo\'lishi kerak'];
+    } else if (ratingComment.trim().length > 500) {
+      errors.comment = ['Izoh 500 ta belgidan oshmasligi kerak'];
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setRatingErrors(errors);
+      return;
+    }
+
     try {
       await tasksApi.rate(id, { rating, comment: ratingComment });
       toast.success("Baho qoldirildi. Rahmat!");
@@ -541,7 +576,7 @@ export default function TaskDetailScreen() {
             placeholder="Tajribangiz va muddatingiz haqida yozing..."
             value={bidMsg}
             onValueChange={(v) => { setBidMsg(v); setBidErrors(e => ({ ...e, message: null })); }}
-            maxLength={500}
+            maxLength={1000}
             error={bidErrors.message?.[0]}
           />
           <Button
@@ -572,11 +607,11 @@ export default function TaskDetailScreen() {
             <p className="text-xs text-edu-muted mt-2 font-medium">(1 — 5 yulduz)</p>
           </div>
           <TextArea
-            label="Sharh (ixtiyoriy)"
-            placeholder="Fikringizni yozing..."
+            label="Fikr-mulohaza (sharh) *"
+            placeholder="Fikringizni yozing (kamida 5 ta belgi)..."
             value={ratingComment}
             onValueChange={(v) => { setRatingComment(v); setRatingErrors(e => ({ ...e, comment: null })); }}
-            maxLength={300}
+            maxLength={500}
             error={ratingErrors.comment?.[0]}
           />
         </div>

@@ -40,7 +40,7 @@ export default function CreateTaskScreen() {
     if (step === 1) {
       if (!form.category) return setErrors({ category: ['Kategoriya tanlash majburiy'] });
       if (form.title.trim().length < 10) return setErrors({ title: ['Kamida 10 ta belgi kiritish shart'] });
-      if (form.description.trim().length < 30) return setErrors({ description: ['Kamida 30 ta belgi kiritish shart'] });
+      if (form.description.trim().length < 20) return setErrors({ description: ['Kamida 20 ta belgi kiritish shart'] });
       if (nlpSeverity === 'block') return;
     }
     if (step === 2) {
@@ -104,16 +104,16 @@ export default function CreateTaskScreen() {
               placeholder="Qisqacha aniq sarlavha"
               value={form.title}
               onValueChange={(v) => set('title', v)}
-              maxLength={100}
+              maxLength={200}
               currentLength={form.title.length}
               error={errors.title?.[0]}
             />
             <TextArea
               label="Tavsif *"
-              placeholder="Nima kerakligini batafsil yozing (min 30 harf)..."
+              placeholder="Nima kerakligini batafsil yozing (min 20 harf)..."
               value={form.description}
               onValueChange={(v) => set('description', v)}
-              maxLength={500}
+              maxLength={2000}
               minRows={4}
               error={errors.description?.[0]}
             />

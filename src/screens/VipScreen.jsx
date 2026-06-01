@@ -42,12 +42,18 @@ export default function VipScreen() {
       toast.error("Telefon raqam va to'lov skrinshotini kiriting");
       return;
     }
+    const cleanPhone = phone.replace(/[\s-]/g, '');
+    if (!/^\+?998\d{9}$/.test(cleanPhone)) {
+      setErrors({ phoneNumber: ['Telefon raqami +998XXXXXXXXX formatida bo\'lishi kerak'] });
+      toast.error("Telefon raqami noto'g'ri shaklda kiritilgan");
+      return;
+    }
     setLoading(true);
     try {
       await vipApi.buy({
         packageType:      selected,
         screenshotFileId: files[0].id,
-        phoneNumber:      phone.replace(/[\s-]/g, ''),
+        phoneNumber:      cleanPhone,
       });
       hapticSuccess();
       setSubmitted(true);

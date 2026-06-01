@@ -111,12 +111,23 @@ export const useChatStore = create((set, get) => ({
     get().socket?.emit('leave_task_room', taskId);
   },
 
-  sendMessage: (taskId, content, fileId = null) => {
-    get().socket?.emit('send_message', { taskId, content, fileId });
+  sendMessage: async (taskId, content, fileId = null) => {
+    try {
+      await chatApi.sendMessage(taskId, { content, fileId });
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      // Optional: Add toast error notification here if needed
+    }
   },
 
   emitTyping: (taskId) => {
-    get().socket?.emit('typing', { taskId });
+    // Basic throttle using a store variable
+    const now = Date.now();
+    const last = get().lastTypingTime || 0;
+    if (now - last > 1500) {
+      get().socket?.emit('typing', { taskId });
+      set({ lastTypingTime: now });
+    }
   },
 
   setMessages: (taskId, msgs) =>

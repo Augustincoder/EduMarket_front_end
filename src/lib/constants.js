@@ -88,7 +88,7 @@ export const ACCEPTED_MIME_TYPES = [
   'application/json',
 ].join(',');
 
-export const BLOCKED_EXTENSIONS = ['.exe', '.bat', '.py', '.sh', '.cmd', '.vbs'];
+export const BLOCKED_EXTENSIONS = ['.exe', '.bat', '.py', '.sh', '.cmd', '.vbs', '.js', '.php'];
 
 export const MAX_FILE_SIZE_MB = 20;
 export const MAX_FILES        = 5;

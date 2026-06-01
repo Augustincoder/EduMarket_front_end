@@ -97,8 +97,17 @@ export default function ProfileScreen() {
 
   const handleAddPortfolioSubmit = () => {
     setPortfolioError('');
-    if (!portfolioTitle.trim()) {
+    const trimmedTitle = portfolioTitle.trim();
+    if (!trimmedTitle) {
       setPortfolioError("Ish nomi kiritilishi majburiy");
+      return;
+    }
+    if (trimmedTitle.length < 5) {
+      setPortfolioError("Ish nomi kamida 5 ta belgidan iborat bo'lishi kerak");
+      return;
+    }
+    if (trimmedTitle.length > 100) {
+      setPortfolioError("Ish nomi maksimal 100 ta belgi bo'lishi kerak");
       return;
     }
     if (portfolioFiles.length === 0) {
@@ -106,7 +115,7 @@ export default function ProfileScreen() {
       return;
     }
     addPortfolio.mutate({
-      title: portfolioTitle,
+      title: trimmedTitle,
       fileId: portfolioFiles[0].id
     });
     hapticSuccess();
@@ -589,7 +598,7 @@ export default function ProfileScreen() {
                 label="Bio" 
                 value={editForm.bio || ''} 
                 onValueChange={(v) => { setEditForm(f => ({ ...f, bio: v })); setErrors(e => ({ ...e, bio: null })); }} 
-                maxLength={200} 
+                maxLength={1000} 
                 error={errors.bio?.[0]} 
               />
               <TextInput 
@@ -668,6 +677,8 @@ export default function ProfileScreen() {
             placeholder="Masalan: Web-dizayn loyihasi"
             value={portfolioTitle}
             onValueChange={(v) => { setPortfolioTitle(v); setPortfolioError(''); }}
+            maxLength={100}
+            currentLength={portfolioTitle.length}
           />
           
           <FileUpload
