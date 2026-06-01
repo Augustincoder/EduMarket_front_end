@@ -15,16 +15,10 @@ const getMockTg = () => ({
   disableClosingConfirmation: () => {},
   colorScheme: 'light',
   themeParams: { bg_color: '#F8F7F4', text_color: '#1A1916' },
-  initData: 'mock_init_data',
+  initData: '',
   initDataUnsafe: {
-    user: {
-      id: 99999999,
-      first_name: 'Test',
-      last_name: 'User',
-      username: 'testuser',
-      photo_url: null,
-    },
-    hash: 'mock_hash',
+    user: null,
+    hash: '',
   },
   BackButton: {
     show: () => {},

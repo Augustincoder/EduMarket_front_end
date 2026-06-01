@@ -71,7 +71,15 @@ export const useChatStore = create((set, get) => ({
 
   disconnect: () => {
     get().socket?.disconnect();
-    set({ socket: null, connected: false });
+    set({
+      socket: null,
+      connected: false,
+      messages: {},
+      typingUsers: {},
+      conversations: [],
+      totalUnread: 0,
+      retryCount: 0,
+    });
   },
 
   loadConversations: async () => {
