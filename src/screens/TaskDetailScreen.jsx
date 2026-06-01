@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import {
   Clock, DollarSign, Paperclip, ChevronDown, ChevronUp,
-  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star
+  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Share2
 } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageLayout } from '../components/layout/PageLayout';
@@ -15,6 +15,8 @@ import { Modal } from '../components/ui/Modal';
 import { BottomSheet } from '../components/ui/BottomSheet';
 import { StarRating } from '../components/ui/StarRating';
 import { FullPageSpinner } from '../components/ui/Spinner';
+import { TaskDetailSkeleton } from '../components/ui/SkeletonCard';
+import { ProgressStepper } from '../components/ui/ProgressStepper';
 import { TextArea } from '../components/forms/TextArea';
 import { TextInput } from '../components/forms/TextInput';
 import { useTask, useCreateBid, useTaskTransition } from '../hooks/useTasks';
@@ -38,10 +40,56 @@ export default function TaskDetailScreen() {
   const [ratingOpen, setRatingOpen]     = useState(false);
   const [bidPrice, setBidPrice]         = useState('');
   const [bidMsg, setBidMsg]             = useState('');
+  const [bidErrors, setBidErrors]       = useState({});
   const [rating, setRating]             = useState(0);
   const [ratingComment, setRatingComment] = useState('');
+  const [ratingErrors, setRatingErrors]   = useState({});
+  const [revisionOpen, setRevisionOpen]   = useState(false);
+  const [revisionNote, setRevisionNote]   = useState('');
+  const [revisionErrors, setRevisionErrors] = useState({});
+  const [disputeOpen, setDisputeOpen]     = useState(false);
+  const [disputeReason, setDisputeReason] = useState('');
+  const [disputeErrors, setDisputeErrors] = useState({});
 
-  if (isLoading) return <FullPageSpinner />;
+  const handleShare = () => {
+    hapticLight();
+    const shareData = {
+      title: task?.title,
+      text: `EduMarket'da yangi vazifa: ${task?.title}`,
+      url: window.location.href,
+    };
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      navigator.share(shareData).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Havola nusxalandi!");
+    }
+  };
+
+  const steps = ['E\'lon', 'Tayinlangan', 'Jarayonda', 'Tekshiruvda', 'Yakunlandi'];
+  const getStepNum = (status) => {
+    switch (status) {
+      case 'OPEN': return 1;
+      case 'ASSIGNED': return 2;
+      case 'IN_PROGRESS': return 3;
+      case 'IN_REVIEW': return 4;
+      case 'COMPLETED': return 5;
+      default: return 1;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <PageLayout showNav={false} scrollable={false}>
+        <div className="flex flex-col h-dvh bg-edu-bg">
+          <Header title="Yuklanmoqda..." showBack />
+          <div className="flex-1 overflow-y-auto">
+            <TaskDetailSkeleton />
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
   if (!task) return null;
 
   const isMe      = (uid) => user?.id === uid;
@@ -50,27 +98,65 @@ export default function TaskDetailScreen() {
   const isMember  = isClient || isFreelancer;
 
   const handleBidSubmit = async () => {
-    if (!bidPrice || !bidMsg.trim()) return;
-    await createBid.mutateAsync({ taskId: task.id, proposedPrice: Number(bidPrice), message: bidMsg });
-    setBidOpen(false);
-    setBidPrice('');
-    setBidMsg('');
+    setBidErrors({});
+    if (!bidPrice || !bidMsg.trim()) return setBidErrors({ proposedPrice: !bidPrice ? ['Narx kiritilmagan'] : undefined, message: !bidMsg.trim() ? ['Xabar bo\'sh'] : undefined });
+    try {
+      await createBid.mutateAsync({ taskId: task.id, proposedPrice: Number(bidPrice), message: bidMsg });
+      setBidOpen(false);
+      setBidPrice('');
+      setBidMsg('');
+    } catch (err) {
+      if (err.serverErrors) setBidErrors(err.serverErrors);
+    }
   };
 
   const handleRatingSubmit = async () => {
+    setRatingErrors({});
+    if (!rating) return setRatingErrors({ rating: ['Baho qo\'yish majburiy'] });
     try {
       await tasksApi.rate(id, { rating, comment: ratingComment });
       toast.success("Baho qoldirildi. Rahmat!");
       hapticSuccess();
       setRatingOpen(false);
-    } catch { toast.error("Baho yuborishda xato"); }
+    } catch (err) {
+      if (err.serverErrors) {
+        setRatingErrors(err.serverErrors);
+        toast.error("Iltimos, xatoliklarni to'g'irlang");
+      } else {
+        toast.error(err.serverMsg || "Baho yuborishda xato");
+      }
+    }
+  };
+
+  const handleRevisionSubmit = async () => {
+    setRevisionErrors({});
+    if (!revisionNote.trim()) return setRevisionErrors({ note: ['Izoh kiritish majburiy'] });
+    try {
+      await transitions.requestRevision.mutateAsync({ note: revisionNote });
+      setRevisionOpen(false);
+      setRevisionNote('');
+    } catch (err) {
+      if (err.serverErrors) setRevisionErrors(err.serverErrors);
+    }
+  };
+
+  const handleDisputeSubmit = async () => {
+    setDisputeErrors({});
+    if (!disputeReason.trim()) return setDisputeErrors({ reason: ['Sabab kiritish majburiy'] });
+    try {
+      await transitions.dispute.mutateAsync({ reason: disputeReason });
+      setDisputeOpen(false);
+      setDisputeReason('');
+    } catch (err) {
+      if (err.serverErrors) setDisputeErrors(err.serverErrors);
+    }
   };
 
   const renderCTA = () => {
     if (!user) {
       return (
         <div className="p-4">
-          <Button fullWidth variant="primary" size="lg">
+          <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')}>
             Kirish va taklif bering
           </Button>
         </div>
@@ -103,6 +189,23 @@ export default function TaskDetailScreen() {
             onClick={() => navigate(`/tasks/${id}/bids`)}>
             Takliflarni ko'rish →
           </Button>
+          <Button
+            fullWidth size="md" variant="ghost"
+            className="text-red-500 hover:bg-red-50"
+            isLoading={transitions.cancel.isPending}
+            onClick={async () => {
+              if (window.confirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?")) {
+                try {
+                  await transitions.cancel.mutateAsync();
+                  toast.success("Vazifa bekor qilindi");
+                } catch (err) {
+                  toast.error(err.serverMsg || "Bekor qilishda xato");
+                }
+              }
+            }}
+          >
+            Vazifani bekor qilish
+          </Button>
         </div>
       );
     }
@@ -126,7 +229,7 @@ export default function TaskDetailScreen() {
               📋 Tekshirishga topshirish
             </Button>
           )}
-          {isClient && task.status === 'ASSIGNED' && (
+          {isFreelancer && task.status === 'ASSIGNED' && (
             <Button
               fullWidth size="md" variant="secondary"
               isLoading={transitions.startProgress.isPending}
@@ -134,6 +237,11 @@ export default function TaskDetailScreen() {
             >
               ✅ Ishni boshlashni tasdiqlash
             </Button>
+          )}
+          {isClient && task.status === 'ASSIGNED' && (
+            <p className="text-xs text-center text-edu-muted bg-edu-border/20 p-2.5 rounded-xl border border-edu-border/40 font-medium animate-pulse">
+              ⏳ Ijrochi ishni boshlashini kutilmoqda...
+            </p>
           )}
         </div>
       );
@@ -153,15 +261,13 @@ export default function TaskDetailScreen() {
           <div className="flex gap-2">
             <Button
               size="md" variant="secondary" fullWidth
-              isLoading={transitions.requestRevision.isPending}
-              onClick={() => transitions.requestRevision.mutate({})}
+              onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}
             >
               <RotateCcw size={14} /> Qayta ishlash
             </Button>
             <Button
               size="md" variant="danger" fullWidth
-              isLoading={transitions.dispute.isPending}
-              onClick={() => transitions.dispute.mutate({ reason: 'Qabul qilmayman' })}
+              onClick={() => { setDisputeReason(''); setDisputeErrors({}); setDisputeOpen(true); }}
             >
               <AlertTriangle size={14} /> Nizo
             </Button>
@@ -190,10 +296,23 @@ export default function TaskDetailScreen() {
     return null;
   };
 
+  const isActiveStatus = ['OPEN', 'ASSIGNED', 'IN_PROGRESS', 'IN_REVIEW', 'COMPLETED'].includes(task.status);
+
   return (
     <PageLayout showNav={false} scrollable={false}>
       <div className="flex flex-col h-dvh">
-        <Header title="Vazifa tafsiloti" showBack />
+        <Header
+          title="Vazifa tafsiloti"
+          showBack
+          right={
+            <button
+              onClick={handleShare}
+              className="w-9 h-9 rounded-xl flex items-center justify-center bg-edu-bg press-scale transition-all hover:bg-edu-border/60"
+            >
+              <Share2 size={16} className="text-edu-text" />
+            </button>
+          }
+        />
 
         <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
           {/* Status row */}
@@ -202,12 +321,54 @@ export default function TaskDetailScreen() {
             <StatusBadge status={task.status} />
           </div>
 
+          {/* Stepper Timeline */}
+          {isActiveStatus && (
+            <div className="bg-edu-surface/50 border border-edu-border/30 rounded-2xl p-3 flex justify-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]">
+              <ProgressStepper steps={steps} current={getStepNum(task.status)} />
+            </div>
+          )}
+
+          {/* Canceled/Disputed Warnings */}
+          {task.status === 'CANCELED' && (
+            <div className="bg-red-50 text-red-700 p-3 rounded-2xl flex items-start gap-2.5 text-xs font-medium border border-red-100/50 shadow-sm animate-fade-in">
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold text-red-800">Vazifa bekor qilingan</p>
+                <p className="mt-0.5 text-red-600/90">Ushbu vazifa buyurtmachi tomonidan bekor qilingan.</p>
+              </div>
+            </div>
+          )}
+
+          {task.status === 'DISPUTED' && (
+            <div className="bg-amber-50 text-amber-800 p-3.5 rounded-2xl flex items-start gap-2.5 text-xs font-medium border border-amber-100 shadow-sm animate-fade-in">
+              <AlertTriangle size={16} className="shrink-0 mt-0.5 text-amber-600" />
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <p className="font-bold text-amber-900">Nizo (Dispute) jarayonida</p>
+                <p className="text-amber-700/90 leading-relaxed">
+                  Vazifa yuzasidan kelishmovchilik yuzaga keldi. Hozirda EduMarket ma'muriyati vaziyatni o'rganmoqda.
+                </p>
+                {task.dispute?.reason && (
+                  <div className="bg-amber-100/40 p-2.5 rounded-xl border border-amber-200/50">
+                    <span className="font-bold text-amber-950 block mb-0.5">Nizo sababi:</span>
+                    <span className="text-amber-800 italic">"{task.dispute.reason}"</span>
+                  </div>
+                )}
+                {task.dispute?.adminNotes && (
+                  <div className="bg-indigo-50/50 text-indigo-900 p-2.5 rounded-xl border border-indigo-100">
+                    <span className="font-bold text-indigo-950 block mb-0.5">Ma'muriyat izohi:</span>
+                    <span className="text-indigo-800">{task.dispute.adminNotes}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Title */}
           <h1 className="text-2xl font-black font-display text-edu-text leading-tight">
             {task.title}
           </h1>
 
-          {/* Client */}
+          {/* Client Card */}
           <Card
             isPressable
             onPress={() => navigate(`/profile/${task.client?.id}`)}
@@ -223,6 +384,57 @@ export default function TaskDetailScreen() {
               <UserBadge badge={task.client?.badge} isVip={task.client?.isVip} size="xs" />
             </CardContent>
           </Card>
+
+          {/* Freelancer Card */}
+          {task.freelancer && (
+            <Card
+              isPressable
+              onPress={() => navigate(`/profile/${task.freelancer.id}`)}
+              className="bg-edu-surface shadow-card border border-edu-border/40"
+              radius="xl"
+            >
+              <CardContent className="flex flex-row items-center gap-3 p-3">
+                <Avatar name={task.freelancer.fullname} avatarUrl={task.freelancer.avatarUrl} size="md" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-edu-text truncate">{task.freelancer.fullname}</p>
+                  <p className="text-xs text-edu-muted">Ijrochi</p>
+                </div>
+                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <UserBadge badge={task.freelancer.badge} isVip={task.freelancer.isVip} size="xs" />
+                  {task.freelancer.ratingCount > 0 && (
+                    <div className="flex items-center gap-0.5 text-xs text-amber-500 font-bold">
+                      <Star size={12} fill="currentColor" />
+                      <span>{(task.freelancer.ratingSum / task.freelancer.ratingCount).toFixed(1)}</span>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Accepted Bid Details Card */}
+          {task.bids?.[0] && task.status !== 'OPEN' && (
+            <Card className="bg-gradient-to-br from-edu-primary/5 to-edu-primary/10 border border-edu-primary/20 shadow-card" radius="xl">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-edu-primary uppercase tracking-wider">Kelishilgan taklif</span>
+                    {task.agreedPrice && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-edu-primary animate-ping" />
+                    )}
+                  </div>
+                  <span className="text-base font-black text-edu-primary">
+                    {formatPrice(task.agreedPrice || task.bids[0].proposedPrice)} so'm
+                  </span>
+                </div>
+                {task.bids[0].message && (
+                  <p className="text-xs text-edu-text/90 italic leading-relaxed bg-white/70 backdrop-blur-md p-2.5 rounded-xl border border-edu-border/20">
+                    "{task.bids[0].message}"
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Meta */}
           <Card className="bg-edu-surface shadow-card border border-edu-border/40" radius="xl">
@@ -300,14 +512,16 @@ export default function TaskDetailScreen() {
             type="number"
             placeholder={String(task.priceMin)}
             value={bidPrice}
-            onValueChange={setBidPrice}
+            onValueChange={(v) => { setBidPrice(v); setBidErrors(e => ({ ...e, proposedPrice: null })); }}
+            error={bidErrors.proposedPrice?.[0]}
           />
           <TextArea
             label="Xabar"
             placeholder="Tajribangiz va muddatingiz haqida yozing..."
             value={bidMsg}
-            onValueChange={setBidMsg}
+            onValueChange={(v) => { setBidMsg(v); setBidErrors(e => ({ ...e, message: null })); }}
             maxLength={500}
+            error={bidErrors.message?.[0]}
           />
           <Button
             fullWidth size="lg" variant="primary"
@@ -332,15 +546,69 @@ export default function TaskDetailScreen() {
       >
         <div className="flex flex-col items-center gap-4 py-2">
           <div className="text-center">
-            <StarRating value={rating} onChange={setRating} size={36} />
+            <StarRating value={rating} onChange={(v) => { setRating(v); setRatingErrors(e => ({ ...e, rating: null })); }} size={36} />
+            {ratingErrors.rating && <p className="text-red-500 text-xs mt-1 font-medium">{ratingErrors.rating[0]}</p>}
             <p className="text-xs text-edu-muted mt-2 font-medium">(1 — 5 yulduz)</p>
           </div>
           <TextArea
             label="Sharh (ixtiyoriy)"
             placeholder="Fikringizni yozing..."
             value={ratingComment}
-            onValueChange={setRatingComment}
+            onValueChange={(v) => { setRatingComment(v); setRatingErrors(e => ({ ...e, comment: null })); }}
             maxLength={300}
+            error={ratingErrors.comment?.[0]}
+          />
+        </div>
+      </Modal>
+
+      {/* ── Revision Modal ─────────────────────────── */}
+      <Modal
+        isOpen={revisionOpen}
+        onClose={() => setRevisionOpen(false)}
+        title="Qayta ishlashga yuborish"
+        footer={
+          <Button fullWidth variant="primary" onClick={handleRevisionSubmit} isLoading={transitions.requestRevision.isPending}>
+            Yuborish
+          </Button>
+        }
+      >
+        <div className="py-2">
+          <TextArea
+            label="Izoh (qayta ishlash sababi) *"
+            placeholder="Nimalarni to'g'irlash kerakligini batafsil yozing..."
+            value={revisionNote}
+            onValueChange={(v) => { setRevisionNote(v); setRevisionErrors(e => ({ ...e, note: null })); }}
+            maxLength={1000}
+            minRows={4}
+            error={revisionErrors.note?.[0]}
+          />
+        </div>
+      </Modal>
+
+      {/* ── Dispute Modal ──────────────────────────── */}
+      <Modal
+        isOpen={disputeOpen}
+        onClose={() => setDisputeOpen(false)}
+        title="Nizo ochish"
+        footer={
+          <Button fullWidth variant="danger" onClick={handleDisputeSubmit} isLoading={transitions.dispute.isPending}>
+            Tasdiqlash va Nizo ochish
+          </Button>
+        }
+      >
+        <div className="py-2 space-y-3">
+          <div className="bg-red-50 text-red-600 p-3 rounded-xl flex gap-2 items-start text-sm">
+            <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+            <p>Nizo ochilgandan so'ng ma'muriyat aralashadi va muammoni hal qiladi.</p>
+          </div>
+          <TextArea
+            label="Sabab *"
+            placeholder="Nima uchun nizo ochayotganingizni yozing..."
+            value={disputeReason}
+            onValueChange={(v) => { setDisputeReason(v); setDisputeErrors(e => ({ ...e, reason: null })); }}
+            maxLength={1000}
+            minRows={4}
+            error={disputeErrors.reason?.[0]}
           />
         </div>
       </Modal>

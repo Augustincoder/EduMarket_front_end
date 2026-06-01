@@ -35,7 +35,13 @@ export function useCreateTask() {
       qc.invalidateQueries({ queryKey: ['tasks'] });
       toast.success("Vazifa muvaffaqiyatli e'lon qilindi!");
     },
-    onError: (err) => toast.error(err.serverMsg || 'Vazifa yaratishda xato'),
+    onError: (err) => {
+      if (err.serverErrors) {
+        toast.error('Iltimos, xatoliklarni to\'g\'irlang');
+      } else {
+        toast.error(err.serverMsg || 'Vazifa yaratishda xato');
+      }
+    },
   });
 }
 
@@ -77,7 +83,9 @@ export function useCreateBid() {
       toast.success('Taklif yuborildi!');
     },
     onError: (err) => {
-      if (err.serverCode === 'ACADEMIC_FRAUD_DETECTED') {
+      if (err.serverErrors) {
+        toast.error('Iltimos, xatoliklarni to\'g\'irlang');
+      } else if (err.serverCode === 'ACADEMIC_FRAUD_DETECTED') {
         toast.error("Bu so'rov taqiqlangan: akademik halollik siyosati");
       } else {
         toast.error(err.serverMsg || 'Taklif yuborishda xato');

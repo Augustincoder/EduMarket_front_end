@@ -28,37 +28,56 @@ export default function CreateTaskScreen() {
     deadline: '', attachmentFileIds: [],
   });
   const [files, setFiles]  = useState([]);
+  const [errors, setErrors] = useState({});
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: null })); };
 
   const nlpSeverity = useNLPCheck(form.title + ' ' + form.description);
 
   const handleNext = () => {
+    setErrors({});
     if (step === 1) {
-      if (!form.category || !form.title.trim() || form.description.length < 30) return;
+      if (!form.category) return setErrors({ category: ['Kategoriya tanlash majburiy'] });
+      if (form.title.trim().length < 10) return setErrors({ title: ['Kamida 10 ta belgi kiritish shart'] });
+      if (form.description.trim().length < 30) return setErrors({ description: ['Kamida 30 ta belgi kiritish shart'] });
       if (nlpSeverity === 'block') return;
     }
     if (step === 2) {
-      if (!form.priceMin || !form.priceMax || !form.deadline) return;
-      if (Number(form.priceMin) >= Number(form.priceMax)) return;
+      if (!form.priceMin) return setErrors({ priceMin: ['Min narxni kiriting'] });
+      if (!form.priceMax) return setErrors({ priceMax: ['Max narxni kiriting'] });
+      if (!form.deadline) return setErrors({ deadline: ['Muddatni tanlang'] });
+      if (Number(form.priceMin) >= Number(form.priceMax)) return setErrors({ priceMin: ['Min narx maxdan kichik bo\'lishi kerak'] });
     }
     setStep((s) => s + 1);
   };
 
   const handleSubmit = async () => {
+    setErrors({});
     const payload = {
       category:             form.category,
       title:                form.title,
       description:          form.description,
-      priceMin:             Number(form.priceMin),
-      priceMax:             Number(form.priceMax),
+      priceMin:             Math.floor(Number(form.priceMin)),
+      priceMax:             Math.floor(Number(form.priceMax)),
       isUrgent:             form.isUrgent,
       deadline:             new Date(form.deadline).toISOString(),
       attachmentFileIds:    files.map((f) => f.id),
     };
-    await createTask.mutateAsync(payload);
-    hapticSuccess();
-    navigate('/tasks', { replace: true });
+    try {
+      await createTask.mutateAsync(payload);
+      hapticSuccess();
+      navigate('/tasks', { replace: true });
+    } catch (error) {
+      if (error.serverErrors) {
+        setErrors(error.serverErrors);
+        if (error.serverErrors.category || error.serverErrors.title || error.serverErrors.description) {
+          setStep(1);
+        } else if (error.serverErrors.priceMin || error.serverErrors.priceMax || error.serverErrors.deadline) {
+          setStep(2);
+        }
+      }
+      console.error("Task creation failed", error);
+    }
   };
 
   return (
@@ -77,6 +96,7 @@ export default function CreateTaskScreen() {
               options={CATEGORIES}
               value={form.category}
               onChange={(v) => set('category', v)}
+              error={errors.category?.[0]}
             />
             <TextInput
               label="Sarlavha *"
@@ -85,6 +105,7 @@ export default function CreateTaskScreen() {
               onValueChange={(v) => set('title', v)}
               maxLength={100}
               currentLength={form.title.length}
+              error={errors.title?.[0]}
             />
             <TextArea
               label="Tavsif *"
@@ -93,12 +114,13 @@ export default function CreateTaskScreen() {
               onValueChange={(v) => set('description', v)}
               maxLength={500}
               minRows={4}
+              error={errors.description?.[0]}
             />
             <NLPWarning text={form.title + ' ' + form.description} />
             <Button
               fullWidth size="lg" variant="primary"
               onClick={handleNext}
-              disabled={!form.category || form.title.length < 5 || form.description.length < 30 || nlpSeverity === 'block'}
+              disabled={nlpSeverity === 'block'}
             >
               Keyingisi →
             </Button>
@@ -117,6 +139,7 @@ export default function CreateTaskScreen() {
                   type="number"
                   value={form.priceMin}
                   onValueChange={(v) => set('priceMin', v)}
+                  error={errors.priceMin?.[0]}
                 />
                 <span className="text-edu-muted font-bold">—</span>
                 <TextInput
@@ -125,6 +148,7 @@ export default function CreateTaskScreen() {
                   type="number"
                   value={form.priceMax}
                   onValueChange={(v) => set('priceMax', v)}
+                  error={errors.priceMax?.[0]}
                 />
               </div>
               {Number(form.priceMin) >= Number(form.priceMax) && form.priceMin && form.priceMax && (
@@ -144,6 +168,8 @@ export default function CreateTaskScreen() {
               type="datetime-local"
               value={form.deadline}
               onValueChange={(v) => set('deadline', v)}
+              min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000 + 10 * 60 * 1000).toISOString().slice(0, 16)}
+              error={errors.deadline?.[0]}
             />
 
             <div className="flex gap-3">
@@ -151,7 +177,6 @@ export default function CreateTaskScreen() {
               <Button
                 variant="primary" fullWidth
                 onClick={handleNext}
-                disabled={!form.priceMin || !form.priceMax || !form.deadline || Number(form.priceMin) >= Number(form.priceMax)}
               >
                 Keyingisi →
               </Button>

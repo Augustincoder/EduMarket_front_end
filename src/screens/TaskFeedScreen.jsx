@@ -111,9 +111,9 @@ export default function TaskFeedScreen() {
               onValueChange={setLocalQuery}
               onFocus={() => setIsFocused(true)}
               onBlur={() => !localQuery && setIsFocused(false)}
-              startIcon={<Search size={16} className="text-edu-muted" />}
-              className="bg-transparent border-none shadow-none focus-within:ring-0"
-              containerClassName="bg-edu-bg border-none rounded-[16px] shadow-sm h-10"
+              startContent={<Search size={16} className="text-edu-muted" />}
+              className="bg-transparent border-none shadow-none focus-within:ring-0 w-full"
+              containerClassName="bg-edu-bg border border-edu-border/50 focus-within:border-edu-primary focus-within:ring-4 focus-within:ring-edu-primary/10 rounded-2xl shadow-sm h-10"
             />
           </div>
           <button

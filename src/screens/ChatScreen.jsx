@@ -8,6 +8,8 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { MessageBubble } from '../components/chat/MessageBubble';
 import { ChatInput } from '../components/chat/ChatInput';
 import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
+import { TextArea } from '../components/forms/TextArea';
 import { ChatBubbleSkeleton } from '../components/ui/SkeletonCard';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
@@ -24,6 +26,22 @@ export default function ChatScreen() {
   const { data: task } = useTask(id);
   const transitions = useTaskTransition(id);
   const taskId = id;
+
+  const [revisionOpen, setRevisionOpen] = useState(false);
+  const [revisionNote, setRevisionNote] = useState('');
+  const [revisionErrors, setRevisionErrors] = useState({});
+
+  const handleRevisionSubmit = async () => {
+    setRevisionErrors({});
+    if (!revisionNote.trim()) return setRevisionErrors({ note: ['Izoh kiritish majburiy'] });
+    try {
+      await transitions.requestRevision.mutateAsync({ note: revisionNote });
+      setRevisionOpen(false);
+      setRevisionNote('');
+    } catch (err) {
+      if (err.serverErrors) setRevisionErrors(err.serverErrors);
+    }
+  };
 
   const { data: history, isLoading } = useQuery({
     queryKey: ['messages', taskId],
@@ -91,8 +109,8 @@ export default function ChatScreen() {
           <div className="flex gap-2">
             <Button size="sm" variant="primary" fullWidth isLoading={transitions.accept.isPending}
               onClick={() => transitions.accept.mutate()}>✅ Qabul</Button>
-            <Button size="sm" variant="secondary" fullWidth isLoading={transitions.requestRevision.isPending}
-              onClick={() => transitions.requestRevision.mutate({})}>↺ Qaytarish</Button>
+            <Button size="sm" variant="secondary" fullWidth
+              onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}>↺ Qaytarish</Button>
           </div>
         </div>
       )}
@@ -108,6 +126,30 @@ export default function ChatScreen() {
 
       {/* Input */}
       <ChatInput onSend={handleSend} onTyping={() => emitTyping(taskId)} />
+
+      {/* ── Revision Modal ─────────────────────────── */}
+      <Modal
+        isOpen={revisionOpen}
+        onClose={() => setRevisionOpen(false)}
+        title="Qayta ishlashga yuborish"
+        footer={
+          <Button fullWidth variant="primary" onClick={handleRevisionSubmit} isLoading={transitions.requestRevision.isPending}>
+            Yuborish
+          </Button>
+        }
+      >
+        <div className="py-2">
+          <TextArea
+            label="Izoh (qayta ishlash sababi) *"
+            placeholder="Nimalarni to'g'irlash kerakligini batafsil yozing..."
+            value={revisionNote}
+            onValueChange={(v) => { setRevisionNote(v); setRevisionErrors(e => ({ ...e, note: null })); }}
+            maxLength={1000}
+            minRows={4}
+            error={revisionErrors.note?.[0]}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

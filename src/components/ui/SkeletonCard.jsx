@@ -76,4 +76,55 @@ export function GigCardSkeleton() {
   );
 }
 
+export function TaskDetailSkeleton() {
+  return (
+    <div className="space-y-4 p-4 animate-fade-in">
+      {/* Status row */}
+      <div className="flex gap-2">
+        <Bone className="w-16 h-6 rounded-full" />
+        <Bone className="w-24 h-6 rounded-full" />
+      </div>
+      {/* Title */}
+      <div className="space-y-2">
+        <Bone className="w-full h-8" />
+        <Bone className="w-2/3 h-8" />
+      </div>
+      {/* Client card */}
+      <div className="bg-edu-surface rounded-2xl p-3 border border-edu-border/40 flex items-center gap-3">
+        <Bone className="w-12 h-12 rounded-full" />
+        <div className="space-y-2 flex-1">
+          <Bone className="w-32 h-4" />
+          <Bone className="w-16 h-3" />
+        </div>
+        <Bone className="w-12 h-4" />
+      </div>
+      {/* Meta card */}
+      <div className="bg-edu-surface rounded-2xl p-4 border border-edu-border/40 space-y-4">
+        <div className="flex items-center gap-3">
+          <Bone className="w-8 h-8 rounded-xl" />
+          <div className="space-y-1.5 flex-1">
+            <Bone className="w-20 h-3" />
+            <Bone className="w-32 h-4" />
+          </div>
+        </div>
+        <hr className="border-edu-border/40" />
+        <div className="flex items-center gap-3">
+          <Bone className="w-8 h-8 rounded-xl" />
+          <div className="space-y-1.5 flex-1">
+            <Bone className="w-20 h-3" />
+            <Bone className="w-48 h-4" />
+          </div>
+        </div>
+      </div>
+      {/* Description card */}
+      <div className="bg-edu-surface rounded-2xl p-4 border border-edu-border/40 space-y-2">
+        <Bone className="w-20 h-4" />
+        <Bone className="w-full h-3" />
+        <Bone className="w-full h-3" />
+        <Bone className="w-3/4 h-3" />
+      </div>
+    </div>
+  );
+}
+
 export default TaskCardSkeleton;

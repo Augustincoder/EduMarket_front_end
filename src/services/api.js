@@ -36,9 +36,10 @@ api.interceptors.response.use(
     }
 
     // Attach extra info for UI
-    error.statusCode  = status;
-    error.serverCode  = code;
-    error.serverMsg   = error.response?.data?.message || error.message;
+    error.statusCode   = status;
+    error.serverCode   = code;
+    error.serverMsg    = error.response?.data?.message || error.message;
+    error.serverErrors = error.response?.data?.errors;
 
     return Promise.reject(error);
   }

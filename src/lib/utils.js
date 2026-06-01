@@ -8,6 +8,9 @@ export function formatPrice(price) {
 }
 
 export function formatPriceRange(min, max) {
+  if (min === max) {
+    return `${formatPrice(min)} so'm`;
+  }
   return `${formatPrice(min)} — ${formatPrice(max)} so'm`;
 }
 

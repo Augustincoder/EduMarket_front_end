@@ -27,6 +27,7 @@ export default function VipScreen() {
   const [loading, setLoading]      = useState(false);
   const [submitted, setSubmitted]  = useState(false);
   const [copied, setCopied]        = useState(false);
+  const [errors, setErrors]        = useState({});
 
   const handleCopyCard = () => {
     copyToClipboard(CARD_NUMBER);
@@ -36,6 +37,7 @@ export default function VipScreen() {
   };
 
   const handleSubmit = async () => {
+    setErrors({});
     if (!phone.trim() || !files.length) {
       toast.error("Telefon raqam va to'lov skrinshotini kiriting");
       return;
@@ -45,12 +47,17 @@ export default function VipScreen() {
       await vipApi.buy({
         packageType:      selected,
         screenshotFileId: files[0].id,
-        phoneNumber:      phone,
+        phoneNumber:      phone.replace(/[\s-]/g, ''),
       });
       hapticSuccess();
       setSubmitted(true);
     } catch (err) {
-      toast.error(err.serverMsg || "VIP so'rovida xato");
+      if (err.serverErrors) {
+        setErrors(err.serverErrors);
+        toast.error('Iltimos, xatoliklarni to\'g\'irlang');
+      } else {
+        toast.error(err.serverMsg || "VIP so'rovida xato");
+      }
     } finally {
       setLoading(false);
     }
@@ -171,8 +178,9 @@ export default function VipScreen() {
           label="📱 Telefon raqam *"
           placeholder="+998 90 123 45 67"
           value={phone}
-          onValueChange={setPhone}
+          onValueChange={(v) => { setPhone(v); setErrors((e) => ({ ...e, phoneNumber: null })); }}
           type="tel"
+          error={errors.phoneNumber?.[0]}
         />
 
         <FileUpload
