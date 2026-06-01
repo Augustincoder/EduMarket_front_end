@@ -31,7 +31,7 @@ export default function GigsScreen() {
     queryFn: () => gigsApi.getAll({ query: search }),
   });
 
-  const gigs = gigsRes?.data?.data || [];
+  const gigs = gigsRes?.data?.data?.gigs || [];
 
   // Order Gig Mutation
   const orderMutation = useMutation({

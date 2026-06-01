@@ -113,7 +113,7 @@ export default function TaskFeedScreen() {
               onBlur={() => !localQuery && setIsFocused(false)}
               startIcon={<Search size={16} className="text-edu-muted" />}
               className="bg-transparent border-none shadow-none focus-within:ring-0"
-              containerClassName="bg-edu-bg/80 border-none rounded-full h-10"
+              containerClassName="bg-edu-bg border-none rounded-[16px] shadow-sm h-10"
             />
           </div>
           <button
@@ -125,9 +125,9 @@ export default function TaskFeedScreen() {
               setIsFocused(false);
               document.activeElement?.blur();
             }}
-            className="w-12 h-10 flex items-center justify-center text-edu-text active-bounce font-medium text-[15px]"
+            className="w-10 h-10 flex items-center justify-center text-edu-text active-bounce"
           >
-            Bekor
+            <X size={20} />
           </button>
         </div>
       </div>
