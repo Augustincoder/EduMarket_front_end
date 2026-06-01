@@ -22,9 +22,11 @@ import toast from 'react-hot-toast';
 import { useThemeStore } from '../store/themeStore';
 import { Moon, Sun, Monitor } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileScreen() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const { logout } = useAuth();
   const [editOpen, setEditOpen]   = useState(false);
   const [editForm, setEditForm]   = useState({});
@@ -182,6 +184,18 @@ export default function ProfileScreen() {
           </Card>
         )}
 
+        {/* Become Freelancer Banner */}
+        {!me?.isFreelancer && (
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+            <h3 className="text-lg font-bold mb-1">Mutaxassis bo'lish</h3>
+            <p className="text-indigo-100 text-sm mb-4">Vazifalarni bajaring va daromad topishni boshlang.</p>
+            <Button variant="secondary" className="w-full bg-white text-indigo-600 hover:bg-slate-50" onClick={() => navigate('/become-freelancer')}>
+              Boshlash
+            </Button>
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid grid-cols-2 gap-3">
           {[
@@ -276,7 +290,11 @@ export default function ProfileScreen() {
                 size="md" variant="secondary"
                 className="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-none shrink-0"
                 icon={<Copy size={14} />}
-                onClick={() => { copyToClipboard(me?.referralCode || ''); toast.success('Havola nusxalandi!'); }}
+                onClick={() => {
+                  const botName = import.meta.env.VITE_BOT_USERNAME || 'EduMarketuz_bot';
+                  copyToClipboard(`https://t.me/${botName}?start=ref_${me?.referralCode}`);
+                  toast.success('Taklif havolasi nusxalandi!');
+                }}
               >
                 Nusxa
               </Button>

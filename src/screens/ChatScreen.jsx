@@ -1,10 +1,10 @@
-// src/screens/ChatScreen.jsx
-import { useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FilterChip as Chip } from '../components/ui/Chip';
 import { Circle } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageLayout } from '../components/layout/PageLayout';
+import { cn } from '../lib/utils';
 import { MessageBubble } from '../components/chat/MessageBubble';
 import { ChatInput } from '../components/chat/ChatInput';
 import { Button } from '../components/ui/Button';
@@ -15,10 +15,11 @@ import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
 import { useTask, useTaskTransition } from '../hooks/useTasks';
 import { useQuery } from '@tanstack/react-query';
-import { messagesApi } from '../services/api';
+import { chatApi } from '../services/api';
 
 export default function ChatScreen() {
   const { id }    = useParams();
+  const navigate  = useNavigate();
   const { user, token }  = useAuthStore();
   const bottomRef = useRef(null);
 
@@ -45,7 +46,7 @@ export default function ChatScreen() {
 
   const { data: history, isLoading } = useQuery({
     queryKey: ['messages', taskId],
-    queryFn:  () => messagesApi.getByTask(taskId).then((r) => r.data.data),
+    queryFn:  () => chatApi.getByTask(taskId).then((r) => r.data.data),
     enabled: !!taskId,
   });
 
@@ -81,15 +82,26 @@ export default function ChatScreen() {
         showBack
         className="!border-b-0"
         right={
-          <div className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
-            connected ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
-          )}>
+          <div className="flex items-center gap-2">
             <div className={cn(
-              "w-1.5 h-1.5 rounded-full transition-colors",
-              connected ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
-            )} />
-            {connected ? 'ONLAYN' : 'OFLAYN'}
+              "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
+              connected ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
+            )}>
+              <div className={cn(
+                "w-1.5 h-1.5 rounded-full transition-colors",
+                connected ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
+              )} />
+              {connected ? 'ONLAYN' : 'OFLAYN'}
+            </div>
+            {task && (
+              <button 
+                onClick={() => navigate(`/report?targetId=${isClient ? task.freelancerId : task.clientId}&targetType=USER`)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+                title="Shikoyat qilish"
+              >
+                <span className="text-sm">🚩</span>
+              </button>
+            )}
           </div>
         }
       />

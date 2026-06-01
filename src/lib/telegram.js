@@ -69,6 +69,14 @@ export const getUser     = () => {
   return getMockTg().initDataUnsafe?.user || null;
 };
 
+export const getStartParam = () => {
+  if (isTMA()) {
+    return window.Telegram.WebApp.initDataUnsafe?.start_param || null;
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('tgWebAppStartParam') || urlParams.get('start') || null;
+};
+
 export const showBackButton  = (cb) => { getTg().BackButton.show(); getTg().BackButton.onClick(cb); };
 export const hideBackButton  = (cb) => { getTg().BackButton.hide(); if (cb) getTg().BackButton.offClick(cb); };
 

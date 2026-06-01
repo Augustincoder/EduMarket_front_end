@@ -1,6 +1,6 @@
 // src/screens/CreateTaskScreen.jsx
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Header } from '../components/layout/Header';
 import { PageLayout } from '../components/layout/PageLayout';
@@ -20,10 +20,11 @@ const STEPS = ['Asosiy', 'Narx', 'Fayllar'];
 
 export default function CreateTaskScreen() {
   const navigate   = useNavigate();
+  const location   = useLocation();
   const createTask = useCreateTask();
   const [step, setStep]   = useState(1);
   const [form, setForm]   = useState({
-    category: '', title: '', description: '',
+    category: location.state?.category || '', title: '', description: '',
     priceMin: '', priceMax: '', isUrgent: false,
     deadline: '', attachmentFileIds: [],
   });

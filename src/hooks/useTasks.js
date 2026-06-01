@@ -16,6 +16,16 @@ export function useTaskFeed(filters = {}) {
   });
 }
 
+// ─── My Tasks ───────────────────────────────────────
+export function useMyTasks(role, status) {
+  return useQuery({
+    queryKey: ['tasks', 'my', { role, status }],
+    queryFn: () => tasksApi.getMyTasks({ role, status }).then(r => r.data.data),
+    staleTime: 10 * 1000,
+    refetchInterval: 30 * 1000,
+  });
+}
+
 // ─── Single Task ────────────────────────────────────
 export function useTask(id) {
   return useQuery({

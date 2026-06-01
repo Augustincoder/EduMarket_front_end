@@ -22,7 +22,7 @@ export default function LeaderboardScreen() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const users = data?.users || [];
+  const users = Array.isArray(data) ? data : (data?.users || []);
   const myRank = users.findIndex((u) => u.id === user?.id);
 
   const MEDALS = ['🥇', '🥈', '🥉'];

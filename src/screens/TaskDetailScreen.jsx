@@ -1,5 +1,5 @@
 // src/screens/TaskDetailScreen.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import {
@@ -21,6 +21,7 @@ import { TextArea } from '../components/forms/TextArea';
 import { TextInput } from '../components/forms/TextInput';
 import { useTask, useCreateBid, useTaskTransition } from '../hooks/useTasks';
 import { useAuthStore } from '../store/authStore';
+import { useChatStore } from '../store/chatStore';
 import { formatPrice, formatPriceRange, formatDate, deadlineCountdown } from '../lib/utils';
 import { hapticSuccess, hapticLight } from '../lib/telegram';
 import { tasksApi } from '../services/api';
@@ -34,6 +35,15 @@ export default function TaskDetailScreen() {
   const { data: task, isLoading } = useTask(id);
   const transitions = useTaskTransition(id);
   const createBid   = useCreateBid();
+  const joinRoom = useChatStore((s) => s.joinRoom);
+  const leaveRoom = useChatStore((s) => s.leaveRoom);
+
+  useEffect(() => {
+    if (id) {
+      joinRoom(id);
+      return () => leaveRoom(id);
+    }
+  }, [id, joinRoom, leaveRoom]);
 
   const [descExpanded, setDescExpanded] = useState(false);
   const [bidOpen, setBidOpen]           = useState(false);
@@ -305,12 +315,23 @@ export default function TaskDetailScreen() {
           title="Vazifa tafsiloti"
           showBack
           right={
-            <button
-              onClick={handleShare}
-              className="w-9 h-9 rounded-xl flex items-center justify-center bg-edu-bg press-scale transition-all hover:bg-edu-border/60"
-            >
-              <Share2 size={16} className="text-edu-text" />
-            </button>
+            <div className="flex items-center gap-2">
+              {task && user && (task.status === 'OPEN' ? task.clientId !== user.id : (isMember && ['IN_PROGRESS', 'IN_REVIEW'].includes(task.status))) && (
+                <button
+                  onClick={() => navigate(`/report?targetId=${id}&targetType=TASK`)}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+                  title="Shikoyat qilish"
+                >
+                  <AlertTriangle size={16} />
+                </button>
+              )}
+              <button
+                onClick={handleShare}
+                className="w-9 h-9 rounded-xl flex items-center justify-center bg-edu-bg press-scale transition-all hover:bg-edu-border/60"
+              >
+                <Share2 size={16} className="text-edu-text" />
+              </button>
+            </div>
           }
         />
 

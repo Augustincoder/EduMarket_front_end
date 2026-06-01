@@ -63,6 +63,7 @@ export const usersApi = {
 // ─── Tasks ─────────────────────────────────────────
 export const tasksApi = {
   getAll:    (params)  => api.get('/tasks', { params }),
+  getMyTasks: (params) => api.get('/tasks/my', { params }),
   getOne:    (id)      => api.get(`/tasks/${id}`),
   create:    (data)    => api.post('/tasks', data),
   // State transitions
@@ -116,7 +117,28 @@ export const vipApi = {
   buy: (data) => api.post('/vip/buy', data),
 };
 
-// ─── Messages ──────────────────────────────────────
-export const messagesApi = {
-  getByTask: (taskId) => api.get(`/messages/task/${taskId}`),
+// ─── Messages (Chat) ────────────────────────────────
+export const chatApi = {
+  getConversations: ()         => api.get('/chat/conversations'),
+  getByTask:        (taskId)   => api.get(`/chat/${taskId}`),
+  sendMessage:      (taskId, data) => api.post(`/chat/${taskId}`, data),
+};
+
+// ─── Onboarding ─────────────────────────────────────
+export const onboardingApi = {
+  complete:         (data) => api.post('/onboarding/complete', data),
+  verifyStudent:    (data) => api.post('/onboarding/verify-student', data),
+  becomeFreelancer: (data) => api.post('/onboarding/become-freelancer', data),
+  checkUsername:    (username) => api.get(`/onboarding/check-username?username=${username}`),
+  getUniversities:  () => api.get('/onboarding/universities'),
+};
+
+// ─── Reports (Shikoyatlar) ──────────────────────────
+export const reportsApi = {
+  create: (data) => api.post('/reports', data),
+};
+
+// ─── Analytics ──────────────────────────────────────
+export const analyticsApi = {
+  getMe: (params) => api.get('/analytics/me', { params }),
 };

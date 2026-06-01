@@ -26,7 +26,19 @@ export default function PublicProfileScreen() {
 
   return (
     <PageLayout showNav={false}>
-      <Header title="Profil" showBack />
+      <Header 
+        title="Profil" 
+        showBack 
+        right={
+          <button
+            onClick={() => navigate(`/report?targetId=${userId}&targetType=USER`)}
+            className="w-9 h-9 rounded-xl flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+            title="Shikoyat qilish"
+          >
+            <span className="text-sm">🚩</span>
+          </button>
+        }
+      />
       <div className="px-4 pt-4 space-y-4 pb-8">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-4 py-6 relative">

@@ -24,6 +24,10 @@ export const useAuthStore = create(
 
       setLoading: (v) => set({ isLoading: v }),
 
+      setFreelancerMode: (val) => set((s) => ({ user: { ...s.user, isFreelancer: val } })),
+
+      completeOnboarding: () => set((s) => ({ user: { ...s.user, isOnboardingComplete: true } })),
+
       isAuthenticated: () => !!get().token,
       isVip:           () => get().user?.isVip ?? false,
       isClient:        (taskClientId) => get().user?.id === taskClientId,

@@ -1,22 +1,38 @@
 // src/components/layout/BottomNav.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, ClipboardList, Plus, Briefcase, User } from 'lucide-react';
+import { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Wallet } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
+import { useAuthStore } from '../../store/authStore';
+import { useChatStore } from '../../store/chatStore';
 
-const ICONS = { Home, ClipboardList, Plus, Briefcase, User };
-
-const NAV = [
-  { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
-  { icon: 'ClipboardList', label: 'Vazifalar', route: '/tasks'        },
-  { icon: 'Plus',          label: '',           route: '/tasks/create' },
-  { icon: 'Briefcase',     label: 'Xizmatlar', route: '/gigs'          },
-  { icon: 'User',          label: 'Profil',    route: '/profile'       },
-];
+const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Wallet };
 
 export function BottomNav() {
   const location = useLocation();
   const navigate  = useNavigate();
+  const { user } = useAuthStore();
+  const totalUnread = useChatStore((s) => s.totalUnread);
+
+  const isFreelancer = user?.isFreelancer;
+
+  const CLIENT_NAV = [
+    { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
+    { icon: 'ClipboardList', label: 'Mening ishim', route: '/my-tasks'  },
+    { icon: 'Plus',          label: '',          route: '/tasks/create' },
+    { icon: 'MessageCircle', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'User',          label: 'Profil',    route: '/profile'      },
+  ];
+
+  const FREELANCER_NAV = [
+    { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
+    { icon: 'ClipboardList', label: 'Vazifalar', route: '/tasks'        },
+    { icon: 'MessageCircle', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'Wallet',        label: 'Daromad',   route: '/earnings'     },
+    { icon: 'User',          label: 'Profil',    route: '/profile'      },
+  ];
+
+  const NAV = isFreelancer ? FREELANCER_NAV : CLIENT_NAV;
 
   const handleNav = (route) => {
     hapticLight();
@@ -30,7 +46,7 @@ export function BottomNav() {
       'pb-safe z-40'
     )}>
       <div className="flex items-center justify-around h-[64px] px-2">
-        {NAV.map(({ icon, label, route }) => {
+        {NAV.map(({ icon, label, route, badge }) => {
           const Icon     = ICONS[icon];
           const isCenter = icon === 'Plus';
           const isActive = location.pathname === route || (
@@ -78,7 +94,7 @@ export function BottomNav() {
               )}
             >
               <div className={cn(
-                'w-9 h-6 flex items-center justify-center rounded-xl transition-all duration-300',
+                'w-9 h-6 flex items-center justify-center rounded-xl transition-all duration-300 relative',
                 isActive ? 'bg-edu-primary/10 scale-105' : 'bg-transparent'
               )}>
                 <Icon 
@@ -86,6 +102,11 @@ export function BottomNav() {
                   className={cn('transition-transform duration-300', isActive && 'scale-110')} 
                   strokeWidth={isActive ? 2.5 : 2} 
                 />
+                {badge > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full flex items-center justify-center border border-edu-surface">
+                    {badge}
+                  </span>
+                )}
               </div>
               <span className={cn(
                 'text-[10px] font-bold transition-all duration-300 mt-0.5',

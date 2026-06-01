@@ -2,28 +2,45 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { ready, expand } from '../lib/telegram';
+import { ready, expand, getStartParam } from '../lib/telegram';
 
 export default function SplashScreen() {
   const navigate = useNavigate();
-  const { login, token } = useAuth();
+  const { login, token, user } = useAuth();
 
   useEffect(() => {
     ready();
     expand();
 
     const init = async () => {
+      const startParam = getStartParam();
+      let referralCode = null;
+      if (startParam && startParam.startsWith('ref_')) {
+        referralCode = startParam.replace('ref_', '');
+      } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        referralCode = urlParams.get('ref');
+      }
+
       // Already logged in
       if (token) {
-        navigate('/home', { replace: true });
+        if (user && !user.isOnboardingComplete) {
+          navigate('/onboarding', { replace: true });
+        } else {
+          navigate('/home', { replace: true });
+        }
         return;
       }
 
       await new Promise((r) => setTimeout(r, 800)); // logo animation
 
-      const result = await login();
+      const result = await login(referralCode);
       if (result.success) {
-        navigate('/home', { replace: true });
+        if (!result.user.isOnboardingComplete) {
+          navigate('/onboarding', { replace: true });
+        } else {
+          navigate('/home', { replace: true });
+        }
       }
     };
 
