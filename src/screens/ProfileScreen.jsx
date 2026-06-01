@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '../components/ui/Card';
-import { Settings, Copy, Plus, Trash2 } from 'lucide-react';
+import { Settings, Copy, Plus, Trash2, LogOut } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageLayout } from '../components/layout/PageLayout';
 import { Avatar } from '../components/ui/Avatar';
@@ -21,8 +21,11 @@ import toast from 'react-hot-toast';
 import { useThemeStore } from '../store/themeStore';
 import { Moon, Sun, Monitor } from 'lucide-react';
 
+import { useAuth } from '../hooks/useAuth';
+
 export default function ProfileScreen() {
   const qc = useQueryClient();
+  const { logout } = useAuth();
   const [editOpen, setEditOpen]   = useState(false);
   const [editForm, setEditForm]   = useState({});
 
@@ -64,12 +67,23 @@ export default function ProfileScreen() {
       <Header
         title="Profil"
         right={
-          <button
-            onClick={() => { setEditForm({ fullname: me?.fullname, bio: me?.bio, skills: me?.skills?.join(', ') }); setEditOpen(true); }}
-            className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale"
-          >
-            <Settings size={18} className="text-edu-muted" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => { setEditForm({ fullname: me?.fullname, bio: me?.bio, skills: me?.skills?.join(', ') }); setEditOpen(true); }}
+              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale"
+            >
+              <Settings size={18} className="text-edu-muted" />
+            </button>
+            <button
+              onClick={() => {
+                hapticSuccess();
+                logout();
+              }}
+              className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center press-scale"
+            >
+              <LogOut size={18} className="text-red-500" />
+            </button>
+          </div>
         }
       />
 
