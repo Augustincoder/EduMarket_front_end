@@ -197,79 +197,83 @@ export default function ProfileScreen() {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: 'Bajarilgan vazifalar', value: me?.completedTasksCount ?? 0, icon: '🏆', color: 'from-green-500/10 to-emerald-500/5 border-green-500/20', textColor: 'text-green-600' },
-            { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: '⭐', color: 'from-amber-500/10 to-yellow-500/5 border-amber-500/20', textColor: 'text-amber-600' },
-            { label: 'Muvaffaqiyat darajasi', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: '📈', color: 'from-blue-500/10 to-indigo-500/5 border-blue-500/20', textColor: 'text-blue-600' },
-            { label: 'Javob tezligi (soat)', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: '⚡', color: 'from-orange-500/10 to-red-500/5 border-orange-500/20', textColor: 'text-orange-600' },
-          ].map((item, i) => (
-            <Card key={i} className={`bg-gradient-to-br ${item.color} border relative overflow-hidden`} radius="xl">
-              <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-white/5 dark:bg-black/5 rounded-full pointer-events-none" />
-              <CardContent className="p-4 flex flex-col justify-between h-full min-h-[92px]">
-                <div className="flex justify-between items-start">
-                  <span className="text-lg">{item.icon}</span>
-                  {i === 1 && avgRating !== '—' && (
-                    <span className="text-[9px] bg-amber-500/20 text-amber-800 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold border border-amber-500/30">FAOL</span>
-                  )}
-                </div>
-                <div className="mt-3">
-                  <p className="text-2xl font-black font-display text-edu-text leading-none">{item.value}</p>
-                  <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1.5 leading-snug">{item.label}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Portfolio */}
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between px-1">
-            <p className="text-sm font-black text-edu-text">Portfolio ishlari</p>
-            <span className="text-xs font-semibold text-edu-muted">
-              {me?.portfolioItems?.length ?? 0}/{portfolioLimit}
-              {!me?.isVip && <span className="text-edu-vip font-bold"> (VIP: 20)</span>}
-            </span>
-          </div>
-          
+        {me?.isFreelancer && (
           <div className="grid grid-cols-2 gap-3">
-            {me?.portfolioItems?.map((item) => (
-              <Card key={item.id} className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden" radius="xl">
-                <CardContent className="p-3 flex flex-col h-full justify-between">
-                  <div className="w-full h-20 bg-gradient-to-br from-edu-primary/5 to-edu-accent/5 rounded-xl flex items-center justify-center mb-2 border border-edu-border/30 relative">
-                    <div className="w-10 h-10 rounded-full bg-white dark:bg-edu-bg flex items-center justify-center shadow-sm">
-                      <Briefcase size={18} className="text-edu-primary" />
-                    </div>
+            {[
+              { label: 'Bajarilgan vazifalar', value: me?.completedTasksCount ?? 0, icon: '🏆', color: 'from-green-500/10 to-emerald-500/5 border-green-500/20', textColor: 'text-green-600' },
+              { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: '⭐', color: 'from-amber-500/10 to-yellow-500/5 border-amber-500/20', textColor: 'text-amber-600' },
+              { label: 'Muvaffaqiyat darajasi', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: '📈', color: 'from-blue-500/10 to-indigo-500/5 border-blue-500/20', textColor: 'text-blue-600' },
+              { label: 'Javob tezligi (soat)', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: '⚡', color: 'from-orange-500/10 to-red-500/5 border-orange-500/20', textColor: 'text-orange-600' },
+            ].map((item, i) => (
+              <Card key={i} className={`bg-gradient-to-br ${item.color} border relative overflow-hidden`} radius="xl">
+                <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-white/5 dark:bg-black/5 rounded-full pointer-events-none" />
+                <CardContent className="p-4 flex flex-col justify-between h-full min-h-[92px]">
+                  <div className="flex justify-between items-start">
+                    <span className="text-lg">{item.icon}</span>
+                    {i === 1 && avgRating !== '—' && (
+                      <span className="text-[9px] bg-amber-500/20 text-amber-800 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold border border-amber-500/30">FAOL</span>
+                    )}
                   </div>
-                  <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
-                  
-                  <button
-                    className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors"
-                    onClick={() => {
-                      if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {
-                        delPortfolio.mutate(item.id);
-                      }
-                    }}
-                  >
-                    <Trash2 size={11} className="text-red-500" />
-                  </button>
+                  <div className="mt-3">
+                    <p className="text-2xl font-black font-display text-edu-text leading-none">{item.value}</p>
+                    <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1.5 leading-snug">{item.label}</p>
+                  </div>
                 </CardContent>
               </Card>
             ))}
-            
-            {(me?.portfolioItems?.length ?? 0) < portfolioLimit && (
-              <button
-                onClick={() => { setPortfolioTitle(''); setPortfolioFiles([]); setPortfolioError(''); setAddPortfolioOpen(true); }}
-                className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[128px] group press-scale"
-              >
-                <div className="w-8 h-8 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
-                  <Plus size={18} className="text-edu-muted group-hover:text-edu-primary" />
-                </div>
-                <span className="text-xs font-bold text-edu-muted group-hover:text-edu-primary mt-2">Ish qo'shish</span>
-              </button>
-            )}
           </div>
-        </div>
+        )}
+
+        {/* Portfolio */}
+        {me?.isFreelancer && (
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between px-1">
+              <p className="text-sm font-black text-edu-text">Portfolio ishlari</p>
+              <span className="text-xs font-semibold text-edu-muted">
+                {me?.portfolioItems?.length ?? 0}/{portfolioLimit}
+                {!me?.isVip && <span className="text-edu-vip font-bold"> (VIP: 20)</span>}
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {me?.portfolioItems?.map((item) => (
+                <Card key={item.id} className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden" radius="xl">
+                  <CardContent className="p-3 flex flex-col h-full justify-between">
+                    <div className="w-full h-20 bg-gradient-to-br from-edu-primary/5 to-edu-accent/5 rounded-xl flex items-center justify-center mb-2 border border-edu-border/30 relative">
+                      <div className="w-10 h-10 rounded-full bg-white dark:bg-edu-bg flex items-center justify-center shadow-sm">
+                        <Briefcase size={18} className="text-edu-primary" />
+                      </div>
+                    </div>
+                    <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
+                    
+                    <button
+                      className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors"
+                      onClick={() => {
+                        if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {
+                          delPortfolio.mutate(item.id);
+                        }
+                      }}
+                    >
+                      <Trash2 size={11} className="text-red-500" />
+                    </button>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {(me?.portfolioItems?.length ?? 0) < portfolioLimit && (
+                <button
+                  onClick={() => { setPortfolioTitle(''); setPortfolioFiles([]); setPortfolioError(''); setAddPortfolioOpen(true); }}
+                  className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[128px] group press-scale"
+                >
+                  <div className="w-8 h-8 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
+                    <Plus size={18} className="text-edu-muted group-hover:text-edu-primary" />
+                  </div>
+                  <span className="text-xs font-bold text-edu-muted group-hover:text-edu-primary mt-2">Ish qo'shish</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Referral Card */}
         <Card className="bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent border border-purple-500/20 shadow-card overflow-hidden relative" radius="xl">

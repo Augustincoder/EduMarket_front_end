@@ -7,7 +7,7 @@ import { filesApi } from '../../services/api';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
 
-export function ChatInput({ onSend, onTyping }) {
+export function ChatInput({ onSend, onTyping, disabled }) {
   const [text, setText]       = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
