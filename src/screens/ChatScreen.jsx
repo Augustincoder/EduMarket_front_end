@@ -83,6 +83,9 @@ export default function ChatScreen() {
   const isInReview = task?.status === 'IN_REVIEW';
   const isClient   = user?.id === task?.clientId;
 
+  const counterpart = isClient ? task?.freelancer : task?.client;
+  const isCounterpartOnline = useChatStore((s) => s.userPresence[counterpart?.id]) ?? counterpart?.isOnline ?? false;
+
   return (
     <div className="flex flex-col h-dvh bg-edu-bg max-w-[430px] mx-auto">
       {/* Header */}
@@ -95,13 +98,13 @@ export default function ChatScreen() {
           <div className="flex items-center gap-2">
             <div className={cn(
               "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
-              connected ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
+              isCounterpartOnline ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
             )}>
               <div className={cn(
                 "w-1.5 h-1.5 rounded-full transition-colors",
-                connected ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
+                isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
               )} />
-              {connected ? 'ONLAYN' : 'OFLAYN'}
+              {isCounterpartOnline ? 'ONLAYN' : 'OFLAYN'}
             </div>
             {task && (
               <button 

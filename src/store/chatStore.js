@@ -13,6 +13,7 @@ export const useChatStore = create((set, get) => ({
   messages:    {},       // Record<taskId, Message[]>
   typingUsers: {},       // Record<taskId, userId[]>
   conversations: [],     // Array of Conversation
+  userPresence: {},      // Record<userId, boolean>
   totalUnread:  0,
   retryCount:  0,
 
@@ -64,6 +65,15 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
+    socket.on('user_status_changed', ({ userId, isOnline }) => {
+      set((s) => ({
+        userPresence: {
+          ...s.userPresence,
+          [userId]: isOnline
+        }
+      }));
+    });
+
     set({ socket });
     // Also load initial conversations upon connecting
     get().loadConversations();
@@ -77,6 +87,7 @@ export const useChatStore = create((set, get) => ({
       messages: {},
       typingUsers: {},
       conversations: [],
+      userPresence: {},
       totalUnread: 0,
       retryCount: 0,
     });
@@ -87,7 +98,22 @@ export const useChatStore = create((set, get) => ({
       const res = await chatApi.getConversations();
       const conversations = res.data.data || [];
       const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-      set({ conversations, totalUnread });
+      
+      const presence = {};
+      conversations.forEach((c) => {
+        if (c.otherUser) {
+          presence[c.otherUser.id] = c.otherUser.isOnline;
+        }
+      });
+
+      set((s) => ({
+        conversations,
+        totalUnread,
+        userPresence: {
+          ...s.userPresence,
+          ...presence
+        }
+      }));
     } catch (err) {
       console.error('Failed to load conversations:', err);
     }
