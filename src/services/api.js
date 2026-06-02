@@ -47,9 +47,10 @@ api.interceptors.response.use(
 
 // ─── Auth ──────────────────────────────────────────
 export const authApi = {
-  login:  (body)  => api.post('/auth/login', body),
-  logout: ()      => api.post('/auth/logout'),
-  me:     ()      => api.get('/auth/me'),
+  login:       (body) => api.post('/auth/login', body),
+  adminLogin:  (body) => api.post('/auth/admin-login', body),
+  logout:      ()     => api.post('/auth/logout'),
+  me:          ()     => api.get('/auth/me'),
 };
 
 // ─── Users ─────────────────────────────────────────
@@ -135,10 +136,36 @@ export const onboardingApi = {
 
 // ─── Reports (Shikoyatlar) ──────────────────────────
 export const reportsApi = {
-  create: (data) => api.post('/reports', data),
+  create:  (data)       => api.post('/reports', data),
+  getAll:  (params)     => api.get('/reports', { params }),
+  resolve: (id, body)   => api.patch(`/reports/${id}/resolve`, body),
 };
 
 // ─── Analytics ──────────────────────────────────────
 export const analyticsApi = {
   getMe: (params) => api.get('/analytics/me', { params }),
+};
+
+// ─── Admin ──────────────────────────────────────────
+export const adminApi = {
+  getStats:           ()            => api.get('/admin/stats'),
+  getUsers:           (params)      => api.get('/admin/users', { params }),
+  banUser:            (userId, body)=> api.post(`/admin/users/${userId}/ban`, body),
+  setUserVip:         (userId, body)=> api.post(`/admin/users/${userId}/vip`, body),
+  warnUser:           (userId, body)=> api.post(`/admin/users/${userId}/warn`, body),
+  verifyStudent:      (userId, body)=> api.post(`/admin/users/${userId}/verify-student`, body),
+  getVipRequests:     ()            => api.get('/admin/vip-requests'),
+  processVipRequest:  (id, body)    => api.post(`/admin/vip-requests/${id}`, body),
+  getFraudLogs:       ()            => api.get('/admin/fraud-logs'),
+  resolveFraudLog:    (id)          => api.post(`/admin/fraud-logs/${id}/resolve`),
+  getDisputes:        ()            => api.get('/admin/disputes'),
+  resolveDispute:     (id, body)    => api.post(`/admin/disputes/${id}/resolve`, body),
+  getDisputeChat:     (id)          => api.get(`/admin/disputes/${id}/chat`),
+  getTransactions:    ()            => api.get('/admin/transactions'),
+  getSettings:        ()            => api.get('/admin/settings'),
+  updateSetting:      (body)        => api.put('/admin/settings', body),
+  getAuditLogs:       ()            => api.get('/admin/logs'),
+  broadcast:          (body)        => api.post('/admin/broadcast', body),
+  deleteTask:         (taskId)      => api.delete(`/admin/tasks/${taskId}`),
+  deleteGig:          (gigId)       => api.delete(`/admin/gigs/${gigId}`),
 };

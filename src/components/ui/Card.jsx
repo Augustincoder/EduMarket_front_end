@@ -19,7 +19,7 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onPress
       ref={ref}
       onClick={isPressable || onPress ? onPress : undefined}
       className={cn(
-        "bg-edu-surface shadow-card border border-edu-border/40 overflow-hidden text-left",
+        "w-full block bg-edu-surface shadow-card border border-edu-border/40 overflow-hidden text-left",
         radiusClass,
         (isPressable || onPress) && "transition-all active:scale-[0.98] cursor-pointer hover:border-edu-primary/30",
         className

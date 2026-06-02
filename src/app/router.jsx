@@ -25,6 +25,20 @@ const CreateGigScreen   = lazy(() => import('../screens/CreateGigScreen'));
 const VipScreen         = lazy(() => import('../screens/VipScreen'));
 const LeaderboardScreen = lazy(() => import('../screens/LeaderboardScreen'));
 
+// Lazy load Admin screens
+const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
+const AdminLayout       = lazy(() => import('../screens/admin/AdminLayout'));
+const AdminDashboard    = lazy(() => import('../screens/admin/AdminDashboard'));
+const AdminUsers        = lazy(() => import('../screens/admin/AdminUsers'));
+const AdminVipRequests  = lazy(() => import('../screens/admin/AdminVipRequests'));
+const AdminComplaints   = lazy(() => import('../screens/admin/AdminComplaints'));
+const AdminDisputes     = lazy(() => import('../screens/admin/AdminDisputes'));
+const AdminFinancialLedger = lazy(() => import('../screens/admin/AdminFinancialLedger'));
+const AdminSettings     = lazy(() => import('../screens/admin/AdminSettings'));
+const AdminAuditLogs    = lazy(() => import('../screens/admin/AdminAuditLogs'));
+const AdminBroadcast    = lazy(() => import('../screens/admin/AdminBroadcast'));
+const AdminContentModerator = lazy(() => import('../screens/admin/AdminContentModerator'));
+
 function Screen({ element }) {
   return <Suspense fallback={<FullPageSpinner />}>{element}</Suspense>;
 }
@@ -49,6 +63,27 @@ const router = createBrowserRouter([
   { path: '/gigs/create',       element: <Screen element={<CreateGigScreen />} />       },
   { path: '/vip',               element: <Screen element={<VipScreen />} />             },
   { path: '/leaderboard',       element: <Screen element={<LeaderboardScreen />} />     },
+  
+  // Admin Routes
+  { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },
+  {
+    path: '/admin',
+    element: <Screen element={<AdminLayout />} />,
+    children: [
+      { path: 'dashboard', element: <Screen element={<AdminDashboard />} /> },
+      { path: 'users',     element: <Screen element={<AdminUsers />} /> },
+      { path: 'vip',       element: <Screen element={<AdminVipRequests />} /> },
+      { path: 'complaints',element: <Screen element={<AdminComplaints />} /> },
+      { path: 'disputes',  element: <Screen element={<AdminDisputes />} /> },
+      { path: 'financial', element: <Screen element={<AdminFinancialLedger />} /> },
+      { path: 'settings',  element: <Screen element={<AdminSettings />} /> },
+      { path: 'audit',     element: <Screen element={<AdminAuditLogs />} /> },
+      { path: 'broadcast', element: <Screen element={<AdminBroadcast />} /> },
+      { path: 'moderator', element: <Screen element={<AdminContentModerator />} /> },
+      { path: '*',         element: <Navigate to="dashboard" replace /> }
+    ]
+  },
+  
   { path: '*',                  element: <Navigate to="/" replace />                    },
 ]);
 
