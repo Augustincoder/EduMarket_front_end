@@ -7,6 +7,9 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
 const BACKOFF_DELAYS = [1000, 2000, 4000, 8000, 16000];
 
+const typingTimers = new Map();
+let loadConversationsTimeout = null;
+
 export const useChatStore = create((set, get) => ({
   socket:      null,
   connected:   false,
@@ -52,15 +55,24 @@ export const useChatStore = create((set, get) => ({
         const cur = s.typingUsers[taskId] || [];
         if (cur.includes(userId)) return s;
         const updated = { ...s.typingUsers, [taskId]: [...cur, userId] };
-        // Remove after 3 seconds
-        setTimeout(() => {
+        
+        const timerKey = `${taskId}_${userId}`;
+        if (typingTimers.has(timerKey)) {
+          clearTimeout(typingTimers.get(timerKey));
+        }
+
+        const timerId = setTimeout(() => {
           set((s2) => ({
             typingUsers: {
               ...s2.typingUsers,
               [taskId]: (s2.typingUsers[taskId] || []).filter((u) => u !== userId),
             },
           }));
+          typingTimers.delete(timerKey);
         }, 3000);
+        
+        typingTimers.set(timerKey, timerId);
+
         return { typingUsers: updated };
       });
     });
@@ -142,29 +154,33 @@ export const useChatStore = create((set, get) => ({
   },
 
   loadConversations: async () => {
-    try {
-      const res = await chatApi.getConversations();
-      const conversations = res.data.data || [];
-      const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-      
-      const presence = {};
-      conversations.forEach((c) => {
-        if (c.otherUser) {
-          presence[c.otherUser.id] = c.otherUser.isOnline;
-        }
-      });
+    if (loadConversationsTimeout) clearTimeout(loadConversationsTimeout);
+    
+    loadConversationsTimeout = setTimeout(async () => {
+      try {
+        const res = await chatApi.getConversations();
+        const conversations = res.data.data || [];
+        const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+        
+        const presence = {};
+        conversations.forEach((c) => {
+          if (c.otherUser) {
+            presence[c.otherUser.id] = c.otherUser.isOnline;
+          }
+        });
 
-      set((s) => ({
-        conversations,
-        totalUnread,
-        userPresence: {
-          ...s.userPresence,
-          ...presence
-        }
-      }));
-    } catch (err) {
-      console.error('Failed to load conversations:', err);
-    }
+        set((s) => ({
+          conversations,
+          totalUnread,
+          userPresence: {
+            ...s.userPresence,
+            ...presence
+          }
+        }));
+      } catch (err) {
+        console.error('Failed to load conversations:', err);
+      }
+    }, 500);
   },
 
   markConversationRead: (taskId) => {

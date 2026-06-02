@@ -70,8 +70,8 @@ export default function CreateGigScreen() {
 
   // Check requirements: VIP or 3+ completed tasks.
   const isVip = !!userData?.isVip;
-  const ratingCount = userData?.ratingCount ?? 0;
-  const hasAccess = isVip || ratingCount >= 3;
+  const completedTasks = userData?._count?.freelancerTasks ?? 0;
+  const hasAccess = isVip || completedTasks >= 3;
 
   const {
     register,
@@ -120,7 +120,7 @@ export default function CreateGigScreen() {
   };
 
   // Progress calculations for locking banner
-  const completedTasksProgress = Math.min(100, (ratingCount / 3) * 100);
+  const completedTasksProgress = Math.min(100, (completedTasks / 3) * 100);
 
   return (
     <PageLayout
@@ -210,26 +210,26 @@ export default function CreateGigScreen() {
 
               {/* Option 2: Completed Tasks */}
               <div className={`p-4 rounded-2xl border transition-all duration-300 ${
-                ratingCount >= 3 
+                completedTasks >= 3 
                   ? 'bg-edu-primary/5 border-edu-primary/30' 
                   : 'bg-edu-surface border-edu-border/40 shadow-sm'
               }`}>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-xl shrink-0 ${ratingCount >= 3 ? 'bg-edu-primary/10 text-edu-primary' : 'bg-edu-accent/10 text-edu-accent'}`}>
+                    <div className={`p-2 rounded-xl shrink-0 ${completedTasks >= 3 ? 'bg-edu-primary/10 text-edu-primary' : 'bg-edu-accent/10 text-edu-accent'}`}>
                       <Briefcase className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-sm font-bold text-edu-text font-display flex items-center gap-1.5">
                         Kamida 3 ta vazifani yakunlash
-                        {ratingCount >= 3 && <span className="text-[10px] bg-edu-primary/15 text-edu-primary px-2 py-0.5 rounded-full font-bold">Bajarilgan</span>}
+                        {completedTasks >= 3 && <span className="text-[10px] bg-edu-primary/15 text-edu-primary px-2 py-0.5 rounded-full font-bold">Bajarilgan</span>}
                       </h3>
                       <p className="text-xs text-edu-muted mt-1 leading-normal">
-                        Muvaffaqiyatli yakunlangan va baholangan vazifalar soni 3 tadan kam bo'lmasligi kerak.
+                        Muvaffaqiyatli yakunlangan vazifalar soni 3 tadan kam bo'lmasligi kerak.
                       </p>
                     </div>
                   </div>
-                  {ratingCount >= 3 ? (
+                  {completedTasks >= 3 ? (
                     <CheckCircle2 className="w-5 h-5 text-edu-primary shrink-0" />
                   ) : (
                     <Lock className="w-4 h-4 text-edu-muted shrink-0 mt-1" />
@@ -240,7 +240,7 @@ export default function CreateGigScreen() {
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-[11px] font-bold text-edu-muted mb-1.5">
                     <span>BAJARILISH PROGRESSI</span>
-                    <span className="text-edu-text">{ratingCount} / 3 vazifa</span>
+                    <span className="text-edu-text">{completedTasks} / 3 vazifa</span>
                   </div>
                   <div className="w-full h-2 bg-edu-border/20 rounded-full overflow-hidden">
                     <div 

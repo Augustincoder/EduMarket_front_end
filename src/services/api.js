@@ -122,7 +122,7 @@ export const vipApi = {
 // ─── Messages (Chat) ────────────────────────────────
 export const chatApi = {
   getConversations: ()         => api.get('/chat/conversations'),
-  getByTask:        (taskId)   => api.get(`/chat/${taskId}`),
+  getByTask:        (taskId, params)   => api.get(`/chat/${taskId}`, { params }),
   sendMessage:      (taskId, data) => api.post(`/chat/${taskId}`, data),
   markAsRead:       (taskId)   => api.post(`/chat/${taskId}/read`),
   editMessage:      (messageId, data) => api.put(`/chat/messages/${messageId}`, data),

@@ -30,6 +30,7 @@ export default function MyTasksScreen() {
   const handleTabChange = (tab) => {
     hapticLight();
     setActiveTab(tab);
+    setSearchParams({}); // Reset filters when switching tabs
   };
 
   const { data: tasks, isLoading } = useMyTasks(activeTab, statusFilter);

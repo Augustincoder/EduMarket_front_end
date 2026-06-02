@@ -55,6 +55,7 @@ export default function TaskDetailScreen() {
   const [rating, setRating]             = useState(0);
   const [ratingComment, setRatingComment] = useState('');
   const [ratingErrors, setRatingErrors]   = useState({});
+  const [isRatingLoading, setIsRatingLoading] = useState(false);
   const [revisionOpen, setRevisionOpen]   = useState(false);
   const [revisionNote, setRevisionNote]   = useState('');
   const [revisionErrors, setRevisionErrors] = useState({});
@@ -159,6 +160,7 @@ export default function TaskDetailScreen() {
       return;
     }
 
+    setIsRatingLoading(true);
     try {
       await tasksApi.rate(id, { rating, comment: ratingComment });
       toast.success("Baho qoldirildi. Rahmat!");
@@ -171,6 +173,8 @@ export default function TaskDetailScreen() {
       } else {
         toast.error(err.serverMsg || "Baho yuborishda xato");
       }
+    } finally {
+      setIsRatingLoading(false);
     }
   };
 
@@ -330,7 +334,7 @@ export default function TaskDetailScreen() {
       );
     }
 
-    if (task.status === 'COMPLETED') {
+    if (task.status === 'COMPLETED' && isMember) {
       return (
         <div className="p-4 space-y-2">
           <div className="flex items-center justify-center gap-2 text-edu-primary font-bold">
@@ -525,7 +529,7 @@ export default function TaskDetailScreen() {
                   </p>
                 </div>
               </div>
-              {task.attachments?.length > 0 && isMember && (
+              {task.attachmentFileIds?.length > 0 && isMember && (
                 <>
                   <hr className="border-edu-border/40" />
                   <div className="flex items-center gap-3">
@@ -533,7 +537,7 @@ export default function TaskDetailScreen() {
                       <Paperclip size={16} className="text-edu-accent" />
                     </div>
                     <p className="text-sm text-edu-muted">
-                      {task.attachments.length} ta biriktirma
+                      {task.attachmentFileIds.length} ta biriktirma
                     </p>
                   </div>
                 </>
@@ -604,7 +608,7 @@ export default function TaskDetailScreen() {
         onClose={() => setRatingOpen(false)}
         title="Bajaruvchini baholang"
         footer={
-          <Button fullWidth variant="primary" onClick={handleRatingSubmit} isLoading={false}>
+          <Button fullWidth variant="primary" onClick={handleRatingSubmit} isLoading={isRatingLoading}>
             Yuborish
           </Button>
         }
