@@ -3,50 +3,38 @@ import { Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export function ProgressStepper({ steps, current }) {
+  // Mobile-first minimalistic stepper
   return (
-    <div className="flex items-center gap-0 w-full px-2">
-      {steps.map((label, i) => {
-        const stepNum = i + 1;
-        const isDone  = stepNum < current;
-        const isActive= stepNum === current;
+    <div className="w-full flex flex-col items-center">
+      {/* Current Step Text */}
+      <div className="mb-3 text-center">
+        <span className="text-[10px] font-bold text-edu-primary uppercase tracking-wider bg-edu-primary/10 px-2 py-1 rounded-full">
+          Qadam {current} / {steps.length}
+        </span>
+        <h4 className="text-sm font-bold text-edu-text mt-1.5">
+          {steps[current - 1]}
+        </h4>
+      </div>
 
-        return (
-          <div key={i} className="flex items-center flex-1">
-            {/* Circle */}
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={cn(
-                  'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold',
-                  'transition-all duration-300',
-                  isDone  && 'bg-edu-primary text-white',
-                  isActive&& 'bg-edu-primary text-white ring-4 ring-edu-primary/20',
-                  !isDone && !isActive && 'bg-edu-border text-edu-muted'
-                )}
-              >
-                {isDone ? <Check size={14} /> : stepNum}
-              </div>
-              {label && (
-                <span className={cn(
-                  'text-2xs font-medium whitespace-nowrap',
-                  isActive ? 'text-edu-primary' : 'text-edu-muted'
-                )}>
-                  {label}
-                </span>
+      {/* Progress Bars / Dots */}
+      <div className="flex items-center justify-center gap-1.5 w-full max-w-[280px]">
+        {steps.map((_, i) => {
+          const stepNum = i + 1;
+          const isDone = stepNum < current;
+          const isActive = stepNum === current;
+
+          return (
+            <div
+              key={i}
+              className={cn(
+                'h-1.5 rounded-full transition-all duration-500 ease-out',
+                isActive ? 'w-8 bg-edu-primary shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 
+                isDone ? 'w-4 bg-edu-primary/60' : 'w-4 bg-edu-border/50'
               )}
-            </div>
-
-            {/* Line */}
-            {i < steps.length - 1 && (
-              <div
-                className={cn(
-                  'flex-1 h-0.5 mx-1 transition-all duration-300',
-                  isDone ? 'bg-edu-primary' : 'bg-edu-border'
-                )}
-              />
-            )}
-          </div>
-        );
-      })}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -24,11 +24,17 @@ export default function GigsScreen() {
   const [search, setSearch] = useState('');
   const [selectedGig, setSelectedGig] = useState(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  
+  // Tab state: 'MARKET' or 'MY_GIGS'
+  const [activeTab, setActiveTab] = useState('MARKET');
 
-  // Fetch Gigs
+  // Fetch Gigs based on tab
   const { data: gigsRes, isLoading, refetch } = useQuery({
-    queryKey: ['gigs', search],
-    queryFn: () => gigsApi.getAll({ query: search }),
+    queryKey: ['gigs', search, activeTab],
+    queryFn: () => gigsApi.getAll({ 
+      query: search,
+      freelancerId: activeTab === 'MY_GIGS' ? currentUser?.id : undefined
+    }),
   });
 
   const gigs = gigsRes?.data?.data?.gigs || [];
@@ -41,7 +47,6 @@ export default function GigsScreen() {
       setIsOrderModalOpen(false);
       setSelectedGig(null);
       
-      // Navigate to the newly created task (from the backend order response data if available)
       const newTask = res.data?.data;
       if (newTask?.id) {
         navigate(`/tasks/${newTask.id}`);
@@ -65,8 +70,6 @@ export default function GigsScreen() {
     }
   };
 
-  // Check if user is allowed to create gigs (VIP or has completed 3+ tasks)
-  // We'll let the user click "Gig yaratish" and handle requirements on the screen itself
   const handleCreateGigClick = () => {
     navigate('/gigs/create');
   };
@@ -77,60 +80,94 @@ export default function GigsScreen() {
         <Header
           title="Xizmatlar"
           rightAction={
-            <Button
-              isIconOnly
-              size="sm"
-              variant="flat"
-              color="primary"
-              onClick={handleCreateGigClick}
-              className="rounded-xl bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
+            currentUser?.isFreelancer ? (
+              <Button
+                isIconOnly
+                size="sm"
+                variant="flat"
+                color="primary"
+                onClick={handleCreateGigClick}
+                className="rounded-xl bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            ) : null
           }
         />
       }
       bottomNav={<BottomNav />}
     >
       <div className="flex flex-col gap-4 p-4 pb-nav animate-fade-in">
-        {/* Banner with modern premium gradient */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-edu-primary to-edu-primary-d text-white p-5 shadow-btn">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl translate-x-10 -translate-y-10" />
-          <div className="relative z-10 max-w-[80%]">
-            <h2 className="text-lg font-bold font-display mb-1">Tayyor Xizmatlar</h2>
-            <p className="text-xs text-white/90 leading-relaxed">
-              Freelancerlar tomonidan taklif etilayotgan tayyor xizmatlarni toping va buyurtma bering.
-            </p>
+        
+        {/* Role Tabs for Freelancers */}
+        {currentUser?.isFreelancer && (
+          <div className="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl mb-1">
+            <button
+              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+                activeTab === 'MARKET' ? 'bg-white dark:bg-slate-700 shadow-sm text-edu-primary' : 'text-slate-500'
+              }`}
+              onClick={() => setActiveTab('MARKET')}
+            >
+              Bozor
+            </button>
+            <button
+              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
+                activeTab === 'MY_GIGS' ? 'bg-white dark:bg-slate-700 shadow-sm text-edu-primary' : 'text-slate-500'
+              }`}
+              onClick={() => setActiveTab('MY_GIGS')}
+            >
+              Mening Xizmatlarim
+            </button>
           </div>
-        </div>
+        )}
+
+        {/* Banner with modern premium gradient */}
+        {activeTab === 'MARKET' && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-edu-primary to-edu-primary-d text-white p-5 shadow-btn">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl translate-x-10 -translate-y-10" />
+            <div className="relative z-10 max-w-[80%]">
+              <h2 className="text-lg font-bold font-display mb-1">Tayyor Xizmatlar</h2>
+              <p className="text-xs text-white/90 leading-relaxed">
+                Freelancerlar tomonidan taklif etilayotgan tayyor xizmatlarni toping va buyurtma bering.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Search Input */}
         <div className="relative w-full">
           <TextInput
             value={search}
             onValueChange={setSearch}
-            placeholder="Xizmatlardan qidirish..."
+            placeholder={activeTab === 'MARKET' ? "Xizmatlardan qidirish..." : "O'z xizmatlaringizdan qidirish..."}
             startContent={<Search className="w-4 h-4 text-edu-muted" />}
           />
         </div>
 
         {/* Content Area */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Spinner size="lg" />
+          <div className="flex flex-col gap-4">
+            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
           </div>
         ) : gigs.length === 0 ? (
-          <EmptyState
-            emoji="💼"
-            title="Xizmatlar topilmadi"
-            subtitle={
-              search
+          <div className="h-full flex flex-col items-center justify-center py-10 px-4 text-center mt-4">
+            <div className="w-24 h-24 mb-4 rounded-full bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50">
+              <span className="text-4xl animate-bounce">💼</span>
+            </div>
+            <h3 className="text-lg font-bold text-edu-text mb-2">Xizmatlar topilmadi</h3>
+            <p className="text-sm text-edu-muted max-w-[250px] leading-relaxed mb-4">
+              {search
                 ? "Siz kiritgan so'rov bo'yicha hech qanday xizmat topilmadi."
-                : "Hozircha hech qanday xizmat joylashtirilmagan. Birinchilardan bo'lib o'z xizmatingizni yarating!"
-            }
-            action={search ? () => setSearch('') : handleCreateGigClick}
-            actionLabel={search ? "Qidiruvni tozalash" : "Xizmat yaratish 🚀"}
-          />
+                : (activeTab === 'MARKET' ? "Hozircha hech qanday xizmat joylashtirilmagan." : "Siz hali hech qanday xizmat yaratmadingiz.")}
+            </p>
+            {activeTab === 'MY_GIGS' && (
+              <Button color="primary" onClick={handleCreateGigClick} className="shadow-btn">
+                Xizmat yaratish 🚀
+              </Button>
+            )}
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
             {gigs.map((gig) => (

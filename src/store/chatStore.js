@@ -74,6 +74,27 @@ export const useChatStore = create((set, get) => ({
       }));
     });
 
+    socket.on('messages_read', ({ taskId, readerId, messageIds }) => {
+      set((s) => {
+        const roomMessages = s.messages[taskId];
+        if (!roomMessages) return s;
+
+        // Update messages that were read
+        const updatedMessages = roomMessages.map(msg => 
+          (messageIds && messageIds.includes(msg.id)) || (!messageIds && !msg.isRead && msg.senderId !== readerId)
+            ? { ...msg, isRead: true } 
+            : msg
+        );
+
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: updatedMessages
+          }
+        };
+      });
+    });
+
     set({ socket });
     // Also load initial conversations upon connecting
     get().loadConversations();

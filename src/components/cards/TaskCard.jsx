@@ -64,7 +64,7 @@ function TaskCard({ task, variant = 'full', className }) {
       </p>
 
       {/* Meta */}
-      <div className="flex items-center gap-4 text-xs text-edu-muted">
+      <div className="flex items-center gap-4 text-xs text-edu-muted mb-3">
         <span className="flex items-center gap-1">
           <Clock size={12} />
           {deadlineCountdown(task.deadline)}
@@ -74,6 +74,13 @@ function TaskCard({ task, variant = 'full', className }) {
           {task._count?.bids ?? 0} taklif
         </span>
       </div>
+
+      {/* Assigned Task Banner */}
+      {task.status === 'ASSIGNED' && (
+        <div className="mt-2 w-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center border border-blue-100 dark:border-blue-900/30">
+          👉 Chatga o'ting va vazifani boshlang
+        </div>
+      )}
     </div>
   );
 }

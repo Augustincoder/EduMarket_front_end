@@ -74,7 +74,13 @@ export default function ChatScreen() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [roomMessages.length]);
+
+    // Mark messages as read
+    const hasUnread = roomMessages.some(m => !m.isRead && m.senderId !== user?.id);
+    if (hasUnread) {
+      chatApi.markAsRead(taskId).catch(() => {});
+    }
+  }, [roomMessages.length, taskId, user?.id]);
 
   const handleSend = useCallback((content, fileId) => {
     sendMessage(taskId, content, fileId);
@@ -140,9 +146,48 @@ export default function ChatScreen() {
         </div>
       )}
 
-      {/* Messages */}
+      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-3 space-y-3">
+        {/* Task Details Card (Sticky at top of scroll or always visible first message) */}
+        {task && (
+          <div className="bg-edu-surface/80 border border-edu-border/50 rounded-2xl p-4 shadow-sm mb-4 mx-2">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xl">📋</span>
+              <h3 className="font-bold text-sm text-edu-text line-clamp-1">{task.title}</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs text-edu-muted mb-2">
+              <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg">
+                <span className="block opacity-70 mb-0.5">Narxi</span>
+                <strong className="text-edu-primary">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded-lg">
+                <span className="block opacity-70 mb-0.5">Muddat</span>
+                <strong className="text-edu-text">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
+              </div>
+            </div>
+            {task.status === 'ASSIGNED' && isClient && (
+              <p className="text-[11px] text-blue-500 mt-2 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg text-center">
+                Freelancer ushbu ishni "Boshlash"ini kuting.
+              </p>
+            )}
+            {task.status === 'ASSIGNED' && !isClient && (
+              <Button size="sm" color="primary" fullWidth className="mt-2" onClick={() => navigate(`/tasks/${task.id}`)}>
+                Vazifani boshlash 🚀
+              </Button>
+            )}
+          </div>
+        )}
+
         {isLoading ? <ChatBubbleSkeleton /> : null}
+        
+        {!isLoading && roomMessages.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-10 opacity-60">
+            <span className="text-4xl mb-2">👋</span>
+            <p className="text-sm font-medium">Suhbatni boshlang!</p>
+            <p className="text-xs mt-1 text-center max-w-[200px]">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
+          </div>
+        )}
+
         {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} isMe={msg.senderId === user?.id} />
         )) : null}

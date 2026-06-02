@@ -46,8 +46,7 @@ const CATEGORIES = [
 export default function ProfileScreen() {
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [profileMode, setProfileMode] = useState(null); // 'client' | 'freelancer'
+  const { logout, activeRole, toggleActiveRole } = useAuthStore();
   const [editOpen, setEditOpen]       = useState(false);
   const [editTab, setEditTab]         = useState('client'); // 'client' | 'freelancer'
   const [editForm, setEditForm]       = useState({});
@@ -71,13 +70,6 @@ export default function ProfileScreen() {
     queryFn: () => analyticsApi.getMe({ role: 'CLIENT' }).then(r => r.data.data),
     enabled: !!me,
   });
-
-  // Initialize display mode
-  useEffect(() => {
-    if (me && profileMode === null) {
-      setProfileMode(me.isFreelancer ? 'freelancer' : 'client');
-    }
-  }, [me, profileMode]);
 
   // Add Portfolio Mutation
   const addPortfolio = useMutation({
@@ -205,6 +197,12 @@ export default function ProfileScreen() {
         right={
           <div className="flex items-center gap-2">
             <button
+              onClick={() => { hapticLight(); setTheme(theme === 'dark' ? 'light' : 'dark'); }}
+              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/50 transition-colors border border-edu-border/30"
+            >
+              {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-indigo-500" />}
+            </button>
+            <button
               onClick={openEditProfile}
               className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/50 transition-colors border border-edu-border/30"
             >
@@ -225,36 +223,36 @@ export default function ProfileScreen() {
 
       <div className="px-4 pt-4 space-y-5 pb-6">
         
-        {/* Profile Switcher (Only for freelancers) */}
+        {/* Global App Mode Switcher (Only for freelancers) */}
         {me?.isFreelancer && (
-          <div className="flex bg-edu-surface p-1 rounded-2xl border border-edu-border/30 shadow-sm animate-fade-in">
+          <div className="flex bg-edu-surface p-1 rounded-2xl border border-edu-border/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] animate-fade-in relative z-10">
             <button
-              onClick={() => { hapticLight(); setProfileMode('client'); }}
+              onClick={() => { hapticLight(); if(activeRole !== 'CLIENT') toggleActiveRole(); }}
               className={cn(
-                "flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-1.5",
-                profileMode === 'client' 
-                  ? "bg-edu-primary text-white shadow-md shadow-edu-primary/10" 
-                  : "text-edu-muted hover:text-edu-text"
+                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                activeRole === 'CLIENT' 
+                  ? "bg-edu-primary text-white shadow-lg shadow-edu-primary/20 scale-[1.02]" 
+                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
               )}
             >
-              <User size={13} /> Buyurtmachi
+              <User size={16} /> Buyurtmachi
             </button>
             <button
-              onClick={() => { hapticLight(); setProfileMode('freelancer'); }}
+              onClick={() => { hapticLight(); if(activeRole !== 'FREELANCER') toggleActiveRole(); }}
               className={cn(
-                "flex-1 py-2.5 text-xs font-bold rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-1.5",
-                profileMode === 'freelancer' 
-                  ? "bg-edu-primary text-white shadow-md shadow-edu-primary/10" 
-                  : "text-edu-muted hover:text-edu-text"
+                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                activeRole === 'FREELANCER' 
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-[1.02]" 
+                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
               )}
             >
-              <Briefcase size={13} /> Mutaxassis
+              <Briefcase size={16} /> Mutaxassis
             </button>
           </div>
         )}
 
         {/* ─── CLIENT VIEW ────────────────────────────────────────────────────────── */}
-        {profileMode === 'client' && (
+        {activeRole === 'CLIENT' && (
           <div className="space-y-4 animate-fade-up">
             {/* Avatar & name */}
             <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
@@ -356,7 +354,7 @@ export default function ProfileScreen() {
         )}
 
         {/* ─── FREELANCER VIEW ────────────────────────────────────────────────────── */}
-        {profileMode === 'freelancer' && (
+        {activeRole === 'FREELANCER' && (
           <div className="space-y-4 animate-fade-up">
             {/* Freelancer Header card */}
             <Card className="bg-gradient-to-br from-indigo-500/10 via-edu-primary/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
@@ -518,38 +516,6 @@ export default function ProfileScreen() {
               >
                 Nusxa
               </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Theme Settings Card */}
-        <Card className="bg-edu-surface/50 border border-edu-border/30" radius="xl">
-          <CardContent className="p-3">
-            <p className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-2.5 px-1">Mavzu sozlamalari</p>
-            <div className="flex bg-edu-bg p-1 rounded-xl border border-edu-border/30">
-              {[
-                { id: 'light', label: 'Yorug\'', icon: Sun },
-                { id: 'dark', label: 'Qorong\'u', icon: Moon },
-                { id: 'system', label: 'Tizim', icon: Monitor },
-              ].map((t) => {
-                const Icon = t.icon;
-                const active = theme === t.id;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => { hapticLight(); setTheme(t.id); }}
-                    className={cn(
-                      "flex-1 flex flex-col items-center justify-center gap-1.5 py-2.5 rounded-lg transition-all press-scale text-2xs font-bold",
-                      active 
-                        ? "bg-edu-primary shadow-btn text-white" 
-                        : "text-edu-muted hover:bg-edu-surface/80"
-                    )}
-                  >
-                    <Icon size={16} />
-                    <span>{t.label}</span>
-                  </button>
-                );
-              })}
             </div>
           </CardContent>
         </Card>

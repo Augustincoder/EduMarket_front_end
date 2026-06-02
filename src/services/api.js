@@ -123,6 +123,7 @@ export const chatApi = {
   getConversations: ()         => api.get('/chat/conversations'),
   getByTask:        (taskId)   => api.get(`/chat/${taskId}`),
   sendMessage:      (taskId, data) => api.post(`/chat/${taskId}`, data),
+  markAsRead:       (taskId)   => api.post(`/chat/${taskId}/read`),
 };
 
 // ─── Onboarding ─────────────────────────────────────

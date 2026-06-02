@@ -55,6 +55,7 @@ export default function MyTasksScreen() {
         <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 pb-1">
           <FilterChip label="Barchasi" active={!statusFilter} onClick={() => setStatusFilter('')} />
           <FilterChip label="Faol" active={statusFilter === 'OPEN'} onClick={() => setStatusFilter('OPEN')} />
+          <FilterChip label="Tayinlangan" active={statusFilter === 'ASSIGNED'} onClick={() => setStatusFilter('ASSIGNED')} />
           <FilterChip label="Bajarilmoqda" active={statusFilter === 'IN_PROGRESS'} onClick={() => setStatusFilter('IN_PROGRESS')} />
           <FilterChip label="Tekshiruvda" active={statusFilter === 'IN_REVIEW'} onClick={() => setStatusFilter('IN_REVIEW')} />
           <FilterChip label="Yakunlangan" active={statusFilter === 'COMPLETED'} onClick={() => setStatusFilter('COMPLETED')} />
@@ -73,9 +74,16 @@ export default function MyTasksScreen() {
               <TaskCard key={task.id} task={task} />
             ))
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-400">
-              <span className="text-4xl mb-3">📭</span>
-              <p>Vazifalar topilmadi</p>
+            <div className="h-full flex flex-col items-center justify-center py-10 px-4 text-center">
+              <div className="w-24 h-24 mb-4 rounded-full bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50">
+                <span className="text-4xl animate-bounce">📭</span>
+              </div>
+              <h3 className="text-lg font-bold text-edu-text mb-2">Vazifalar topilmadi</h3>
+              <p className="text-sm text-edu-muted max-w-[250px] leading-relaxed">
+                {statusFilter 
+                  ? "Ushbu holatga mos keladigan vazifalar yo'q." 
+                  : (activeTab === 'CLIENT' ? "Hali hech qanday vazifa yaratmadingiz." : "Hali hech qanday vazifa tayinlanmagan.")}
+              </p>
             </div>
           )}
         </div>

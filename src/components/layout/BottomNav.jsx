@@ -11,10 +11,10 @@ const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Walle
 export function BottomNav() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const { user } = useAuthStore();
+  const { user, activeRole } = useAuthStore();
   const totalUnread = useChatStore((s) => s.totalUnread);
 
-  const isFreelancer = user?.isFreelancer;
+  const isFreelancerMode = activeRole === 'FREELANCER';
 
   const CLIENT_NAV = [
     { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
@@ -32,7 +32,7 @@ export function BottomNav() {
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
 
-  const NAV = isFreelancer ? FREELANCER_NAV : CLIENT_NAV;
+  const NAV = isFreelancerMode ? FREELANCER_NAV : CLIENT_NAV;
 
   const handleNav = (route) => {
     hapticLight();
