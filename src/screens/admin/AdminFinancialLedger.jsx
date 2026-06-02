@@ -2,7 +2,9 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../services/api';
 import { formatPrice } from '../../lib/constants';
-import { Coins, ArrowUpRight, ArrowDownLeft } from 'lucide-react';
+import { Coins, ArrowUpRight, ArrowDownLeft, Download } from 'lucide-react';
+import { exportToCSV } from '../../lib/export';
+import { toast } from 'react-hot-toast';
 
 export default function AdminFinancialLedger() {
   // Fetch transactions
@@ -14,6 +16,29 @@ export default function AdminFinancialLedger() {
   return (
     <div className="space-y-6 animate-fade-in text-slate-100">
       
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            if (transactions && transactions.length) {
+              const exportData = transactions.map(tx => ({
+                Tranzaksiya_ID: tx.id,
+                Foydalanuvchi: tx.user?.fullname || 'Nomalum',
+                Turi: tx.type,
+                Miqdor: tx.amount,
+                Sana: new Date(tx.createdAt).toLocaleString('uz-UZ'),
+                Izoh: tx.notes || tx.reference || 'Izohsiz'
+              }));
+              exportToCSV(exportData, 'Tranzaksiyalar_Tarixi');
+            } else {
+              toast.error("Eksport qilish uchun tranzaksiyalar topilmadi");
+            }
+          }}
+          className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+        >
+          <Download size={16} /> Export CSV
+        </button>
+      </div>
+
       <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">

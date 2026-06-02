@@ -59,6 +59,7 @@ export const usersApi = {
   updateMe:     (data)       => api.put('/users/me', data),
   getUser:      (userId)     => api.get(`/users/${userId}`),
   leaderboard:  ()           => api.get('/users/leaderboard'),
+  getMyReferrals: ()         => api.get('/users/me/referrals'),
 };
 
 // ─── Tasks ─────────────────────────────────────────

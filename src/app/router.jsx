@@ -24,6 +24,7 @@ const GigsScreen        = lazy(() => import('../screens/GigsScreen'));
 const CreateGigScreen   = lazy(() => import('../screens/CreateGigScreen'));
 const VipScreen         = lazy(() => import('../screens/VipScreen'));
 const LeaderboardScreen = lazy(() => import('../screens/LeaderboardScreen'));
+const ReferralsScreen   = lazy(() => import('../screens/ReferralsScreen'));
 
 // Lazy load Admin screens
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
   { path: '/gigs/create',       element: <Screen element={<CreateGigScreen />} />       },
   { path: '/vip',               element: <Screen element={<VipScreen />} />             },
   { path: '/leaderboard',       element: <Screen element={<LeaderboardScreen />} />     },
+  { path: '/referrals',         element: <Screen element={<ReferralsScreen />} />       },
   
   // Admin Routes
   { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },
@@ -87,9 +89,15 @@ const router = createBrowserRouter([
   { path: '*',                  element: <Navigate to="/" replace />                    },
 ]);
 
+import { ErrorBoundary } from '../components/layout/ErrorBoundary';
+
 export function AppRouter() {
   useSocket(); // Automatically connects/disconnects websocket based on token state
-  return <RouterProvider router={router} />;
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  );
 }
 
 export default AppRouter;

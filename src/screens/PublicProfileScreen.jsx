@@ -73,6 +73,16 @@ export default function PublicProfileScreen() {
               <UserBadge badge={profile.badge} isVip={profile.isVip} />
             </div>
             {avgRating && <div className="mt-1.5"><DisplayRating rating={Number(avgRating)} count={profile.ratingCount} /></div>}
+            
+            {/* Gamification Stats */}
+            <div className="flex items-center justify-center gap-4 mt-3">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
+                <span>🔥</span> {profile.streakCount || 0} Kun
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20">
+                <span>⚡</span> {profile.xp || 0} XP
+              </div>
+            </div>
           </div>
         </div>
 
@@ -90,6 +100,23 @@ export default function PublicProfileScreen() {
               <p className="text-xs font-semibold text-edu-muted uppercase tracking-wider mb-2">Ko'nikmalar</p>
               <div className="flex flex-wrap gap-2">
                 {profile.skills.map((s) => <SkillChip key={s} label={s} />)}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Achievements Section */}
+        {profile.achievements?.length > 0 && (
+          <Card className="bg-edu-surface shadow-card border border-edu-border/40" radius="xl">
+            <CardContent className="p-4">
+              <p className="text-xs font-semibold text-edu-muted uppercase tracking-wider mb-2">Yutuqlar</p>
+              <div className="grid grid-cols-2 gap-3">
+                {profile.achievements.map((ach, idx) => (
+                  <div key={idx} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-2 rounded-xl">
+                    <span className="text-xl">🏆</span>
+                    <span className="text-xs font-bold text-edu-text">{ach}</span>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

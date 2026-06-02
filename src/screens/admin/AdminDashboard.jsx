@@ -13,6 +13,15 @@ import {
   TrendingUp,
   Activity
 } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -97,22 +106,68 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex-1 flex items-end justify-between px-2 h-48 py-4 relative">
-            {/* Guide lines */}
-            <div className="absolute left-0 right-0 top-1/4 border-t border-slate-800/40 pointer-events-none" />
-            <div className="absolute left-0 right-0 top-2/4 border-t border-slate-800/40 pointer-events-none" />
-            <div className="absolute left-0 right-0 top-3/4 border-t border-slate-800/40 pointer-events-none" />
-
-            {/* Simple Graphic Bar Representation */}
-            {[45, 60, 55, 75, 90, 85, 100].map((h, i) => (
-              <div key={i} className="w-10 flex flex-col items-center gap-2 z-10">
-                <div 
-                  style={{ height: `${h}%` }} 
-                  className="w-4 bg-gradient-to-t from-indigo-600 to-blue-500 rounded-full shadow-lg shadow-indigo-500/20 transition-all duration-1000 group-hover:from-indigo-500"
-                />
-                <span className="text-[9px] font-bold text-slate-500">Day {i + 1}</span>
+          <div className="flex-1 px-2 h-48 py-4 relative w-full">
+            {statsData?.chartData ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={statsData.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#818cf8" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorTasks" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#34d399" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="#475569" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickMargin={10}
+                  />
+                  <YAxis 
+                    stroke="#475569" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => Math.round(value)}
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '12px', color: '#f1f5f9' }}
+                    itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                    labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="users" 
+                    name="Yangi foydalanuvchilar" 
+                    stroke="#818cf8" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#colorUsers)" 
+                    activeDot={{ r: 6, strokeWidth: 0, fill: '#818cf8' }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="tasks" 
+                    name="Yangi topshiriqlar" 
+                    stroke="#34d399" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#colorTasks)" 
+                    activeDot={{ r: 6, strokeWidth: 0, fill: '#34d399' }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full flex items-center justify-center text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                Grafik ma'lumotlari yuklanmoqda...
               </div>
-            ))}
+            )}
           </div>
         </div>
 

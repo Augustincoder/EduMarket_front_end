@@ -36,6 +36,7 @@ import { hapticSuccess, hapticLight } from '../lib/telegram';
 import toast from 'react-hot-toast';
 import { useThemeStore } from '../store/themeStore';
 import { useAuth } from '../hooks/useAuth';
+import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { calculateLevel, calculateStreak } from '../lib/gamification';
 
@@ -277,6 +278,16 @@ export default function ProfileScreen() {
                   <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-edu-primary/10 text-edu-primary px-2.5 py-0.5 rounded-full mt-1.5 border border-edu-primary/20">
                     Buyurtmachi profili
                   </span>
+                  
+                  {/* Gamification Stats */}
+                  <div className="flex items-center justify-center gap-4 mt-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
+                      <span>🔥</span> {me?.streakCount || 0} Kun
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20">
+                      <span>⚡</span> {me?.xp || 0} XP
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -533,33 +544,24 @@ export default function ProfileScreen() {
           </div>
         )}
 
-        {/* Referral Card */}
-        <Card className="bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent border border-purple-500/20 shadow-card overflow-hidden relative" radius="xl">
+        {/* Referral Card -> ReferralsScreen */}
+        <Card 
+          className="bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent border border-purple-500/20 shadow-card overflow-hidden relative cursor-pointer press-scale" 
+          radius="xl"
+          onClick={() => navigate('/referrals')}
+        >
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 blur-xl rounded-full pointer-events-none" />
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">🎁 Hamkorlik dasturi (Referral)</p>
-              <span className="text-[10px] text-purple-600 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded-full font-bold">Ulashish</span>
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">🎁 Taklif va Bonuslar</p>
+              </div>
+              <p className="text-[11px] text-edu-muted leading-relaxed max-w-[200px]">
+                Do'stlaringizni taklif qiling va ularning har bir buyurtmasidan 5% foyda ko'ring!
+              </p>
             </div>
-            <p className="text-xs text-edu-muted mb-3 leading-relaxed">
-              Do'stlaringizni taklif qiling va ularning har bir buyurtmasidan bonuslarni qo'lga kiriting!
-            </p>
-            <div className="flex items-center gap-2">
-              <code className="flex-1 bg-white/60 dark:bg-black/30 rounded-xl px-3 py-2.5 text-sm font-mono font-bold text-edu-text border border-edu-border/30 truncate">
-                {me?.referralCode || '--------'}
-              </code>
-              <Button
-                size="md" variant="secondary"
-                className="bg-purple-100 hover:bg-purple-200 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-none shrink-0"
-                icon={<Copy size={14} />}
-                onClick={() => {
-                  const botName = import.meta.env.VITE_BOT_USERNAME || 'EduMarketuz_bot';
-                  copyToClipboard(`https://t.me/${botName}?start=ref_${me?.referralCode}`);
-                  toast.success('Taklif havolasi nusxalandi!');
-                }}
-              >
-                Nusxa
-              </Button>
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/40 rounded-full flex items-center justify-center text-purple-600">
+              <ArrowRight size={18} />
             </div>
           </CardContent>
         </Card>

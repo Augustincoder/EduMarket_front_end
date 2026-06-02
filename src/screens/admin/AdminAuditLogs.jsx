@@ -1,7 +1,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../services/api';
-import { Scroll, Terminal } from 'lucide-react';
+import { Scroll, Terminal, Download } from 'lucide-react';
+import { exportToCSV } from '../../lib/export';
+import { toast } from 'react-hot-toast';
 
 export default function AdminAuditLogs() {
   const { data: logs, isLoading } = useQuery({
@@ -12,6 +14,27 @@ export default function AdminAuditLogs() {
   return (
     <div className="space-y-6 animate-fade-in text-slate-100">
       
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            if (logs && logs.length) {
+              const exportData = logs.map(log => ({
+                Sana: new Date(log.createdAt).toLocaleString('uz-UZ'),
+                Admin_ID: log.adminId,
+                Amal: log.action,
+                Tafsilotlar: log.details
+              }));
+              exportToCSV(exportData, 'Audit_Loglar');
+            } else {
+              toast.error("Eksport qilish uchun loglar topilmadi");
+            }
+          }}
+          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+        >
+          <Download size={16} /> Export CSV
+        </button>
+      </div>
+
       <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
