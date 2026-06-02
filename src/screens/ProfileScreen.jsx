@@ -17,7 +17,8 @@ import {
   User,
   Moon, 
   Sun, 
-  Monitor 
+  Monitor,
+  Bell
 } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageLayout } from '../components/layout/PageLayout';
@@ -50,6 +51,7 @@ export default function ProfileScreen() {
   const navigate = useNavigate();
   const { logout, activeRole, toggleActiveRole } = useAuthStore();
   const [editOpen, setEditOpen]       = useState(false);
+  const [settingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [editTab, setEditTab]         = useState('client'); // 'client' | 'freelancer'
   const [editForm, setEditForm]       = useState({});
   const [errors, setErrors]           = useState({});
@@ -205,7 +207,7 @@ export default function ProfileScreen() {
               {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-indigo-500" />}
             </button>
             <button
-              onClick={openEditProfile}
+              onClick={() => setSettingsMenuOpen(true)}
               className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/50 transition-colors border border-edu-border/30"
             >
               <Settings size={18} className="text-edu-text" />
@@ -566,6 +568,31 @@ export default function ProfileScreen() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Settings Menu Sheet */}
+      <BottomSheet isOpen={settingsMenuOpen} onClose={() => setSettingsMenuOpen(false)} title="Sozlamalar">
+        <div className="space-y-2 py-4">
+          <button 
+            className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            onClick={() => { setSettingsMenuOpen(false); openEditProfile(); }}
+          >
+            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+              <User size={18} />
+            </div>
+            <span className="font-bold text-edu-text">Profilni tahrirlash</span>
+          </button>
+          
+          <button 
+            className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            onClick={() => { setSettingsMenuOpen(false); navigate('/settings/notifications'); }}
+          >
+            <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+              <Bell size={18} />
+            </div>
+            <span className="font-bold text-edu-text">Bildirishnomalar (Push)</span>
+          </button>
+        </div>
+      </BottomSheet>
 
       {/* Edit Profile Sheet */}
       <BottomSheet isOpen={editOpen} onClose={() => setEditOpen(false)} title="Profilni tahrirlash" fullHeight>

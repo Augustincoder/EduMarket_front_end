@@ -125,6 +125,8 @@ export const chatApi = {
   getByTask:        (taskId)   => api.get(`/chat/${taskId}`),
   sendMessage:      (taskId, data) => api.post(`/chat/${taskId}`, data),
   markAsRead:       (taskId)   => api.post(`/chat/${taskId}/read`),
+  editMessage:      (messageId, data) => api.put(`/chat/messages/${messageId}`, data),
+  deleteMessage:    (messageId) => api.delete(`/chat/messages/${messageId}`),
 };
 
 // ─── Onboarding ─────────────────────────────────────

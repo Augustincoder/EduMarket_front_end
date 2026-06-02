@@ -1,7 +1,7 @@
 // src/screens/CreateGigScreen.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as zod from 'zod';
@@ -25,7 +25,7 @@ import { PageLayout } from '../components/layout/PageLayout';
 import { TextInput } from '../components/forms/TextInput';
 import { TextArea } from '../components/forms/TextArea';
 import { useAuthStore } from '../store/authStore';
-import { gigsApi } from '../services/api';
+import { gigsApi, usersApi } from '../services/api';
 import toast from 'react-hot-toast';
 
 const gigSchema = zod.object({
@@ -60,9 +60,17 @@ export default function CreateGigScreen() {
   
   const [step, setStep] = useState(1);
 
-  // Check requirements: VIP or 3+ completed tasks. Strictly typed to boolean to avoid rendering raw 0.
-  const isVip = !!currentUser?.isVip;
-  const ratingCount = currentUser?.ratingCount ?? 0;
+  const { data: me } = useQuery({
+    queryKey: ['users', 'me'],
+    queryFn: () => usersApi.getMe().then(r => r.data.data),
+  });
+
+  // Use fresh data from me if available, otherwise fallback to currentUser
+  const userData = me || currentUser;
+
+  // Check requirements: VIP or 3+ completed tasks.
+  const isVip = !!userData?.isVip;
+  const ratingCount = userData?.ratingCount ?? 0;
   const hasAccess = isVip || ratingCount >= 3;
 
   const {

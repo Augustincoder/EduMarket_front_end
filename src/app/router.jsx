@@ -25,6 +25,7 @@ const CreateGigScreen   = lazy(() => import('../screens/CreateGigScreen'));
 const VipScreen         = lazy(() => import('../screens/VipScreen'));
 const LeaderboardScreen = lazy(() => import('../screens/LeaderboardScreen'));
 const ReferralsScreen   = lazy(() => import('../screens/ReferralsScreen'));
+const NotificationSettingsScreen = lazy(() => import('../screens/NotificationSettingsScreen'));
 
 // Lazy load Admin screens
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
@@ -65,6 +66,7 @@ const router = createBrowserRouter([
   { path: '/vip',               element: <Screen element={<VipScreen />} />             },
   { path: '/leaderboard',       element: <Screen element={<LeaderboardScreen />} />     },
   { path: '/referrals',         element: <Screen element={<ReferralsScreen />} />       },
+  { path: '/settings/notifications', element: <Screen element={<NotificationSettingsScreen />} /> },
   
   // Admin Routes
   { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },

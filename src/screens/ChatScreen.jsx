@@ -23,7 +23,7 @@ export default function ChatScreen() {
   const { user, token }  = useAuthStore();
   const bottomRef = useRef(null);
 
-  const { socket, connected, messages, typingUsers, connect, joinRoom, leaveRoom, sendMessage, emitTyping, setMessages } = useChatStore();
+  const { socket, connected, messages, typingUsers, connect, joinRoom, leaveRoom, sendMessage, editMessage, deleteMessage, emitTyping, setMessages } = useChatStore();
   const { data: task } = useTask(id);
   const transitions = useTaskTransition(id);
   const taskId = id;
@@ -31,6 +31,9 @@ export default function ChatScreen() {
   const [revisionOpen, setRevisionOpen] = useState(false);
   const [revisionNote, setRevisionNote] = useState('');
   const [revisionErrors, setRevisionErrors] = useState({});
+
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
 
   const handleRevisionSubmit = async () => {
     setRevisionErrors({});
@@ -83,8 +86,19 @@ export default function ChatScreen() {
   }, [roomMessages.length, taskId, user?.id]);
 
   const handleSend = useCallback((content, fileId) => {
-    sendMessage(taskId, content, fileId);
-  }, [taskId, sendMessage]);
+    if (editingMessage) {
+      editMessage(editingMessage.id, content);
+      setEditingMessage(null);
+    } else {
+      sendMessage(taskId, content, fileId, replyingTo?.id);
+      setReplyingTo(null);
+    }
+  }, [taskId, sendMessage, editMessage, replyingTo, editingMessage]);
+
+  const handleCancelAction = () => {
+    setReplyingTo(null);
+    setEditingMessage(null);
+  };
 
   const isInReview = task?.status === 'IN_REVIEW';
   const isClient   = user?.id === task?.clientId;
@@ -189,7 +203,14 @@ export default function ChatScreen() {
         )}
 
         {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} isMe={msg.senderId === user?.id} />
+          <MessageBubble 
+            key={msg.id} 
+            message={msg} 
+            isMe={msg.senderId === user?.id} 
+            onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
+            onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
+            onDelete={(id) => { if (window.confirm("Rostdan ham o'chirmoqchimisiz?")) deleteMessage(id); }}
+          />
         )) : null}
         
         {typingUsers?.[taskId]?.length > 0 && (
@@ -204,7 +225,13 @@ export default function ChatScreen() {
       </div>
 
       {/* Input */}
-      <ChatInput onSend={handleSend} onTyping={() => emitTyping(taskId)} />
+      <ChatInput 
+        onSend={handleSend} 
+        onTyping={() => emitTyping(taskId)} 
+        replyingTo={replyingTo}
+        editingMessage={editingMessage}
+        onCancelAction={handleCancelAction}
+      />
 
       {/* ── Revision Modal ─────────────────────────── */}
       <Modal

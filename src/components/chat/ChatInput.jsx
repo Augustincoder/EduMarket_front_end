@@ -1,23 +1,31 @@
 // src/components/chat/ChatInput.jsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { TextInput } from '../forms/TextInput';
 import { Button } from '../ui/Button';
-import { Paperclip, Send, X, Image, FileText } from 'lucide-react';
+import { Paperclip, Send, X, Image, FileText, CornerDownRight, Edit2 } from 'lucide-react';
 import { filesApi } from '../../services/api';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
 
-export function ChatInput({ onSend, onTyping, disabled }) {
+export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessage, onCancelAction }) {
   const [text, setText]       = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef(null);
 
+  useEffect(() => {
+    if (editingMessage) {
+      setText(editingMessage.content || '');
+    } else if (!replyingTo) {
+      setText('');
+    }
+  }, [editingMessage, replyingTo]);
+
   const handleSend = () => {
     const trimmed = text?.trim();
     if (!trimmed) return;
     onSend?.(trimmed, null);
-    setText('');
+    if (!editingMessage) setText('');
   };
 
   const handleKeyDown = (e) => {
@@ -52,7 +60,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
   };
 
   return (
-    <div className="relative border-t border-edu-border/60 bg-edu-surface/95 backdrop-blur-xl pb-safe">
+    <div className="relative border-t border-edu-border/60 bg-edu-surface/95 backdrop-blur-xl pb-safe flex flex-col">
       {/* File menu */}
       {showMenu && (
         <div className="absolute bottom-full left-4 mb-2 bg-edu-surface rounded-2xl shadow-sheet border border-edu-border overflow-hidden z-10 animate-fade-up">
@@ -79,6 +87,26 @@ export function ChatInput({ onSend, onTyping, disabled }) {
         </div>
       )}
 
+      {/* Reply / Edit Preview Bar */}
+      {(replyingTo || editingMessage) && (
+        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-2 border-b border-edu-border/30">
+          <div className="flex items-start gap-2 flex-1 min-w-0">
+            {replyingTo ? <CornerDownRight size={16} className="text-edu-primary mt-0.5" /> : <Edit2 size={16} className="text-blue-500 mt-0.5" />}
+            <div className="flex-1 min-w-0">
+              <div className={cn("text-xs font-bold", replyingTo ? "text-edu-primary" : "text-blue-500")}>
+                {replyingTo ? `Javob: ${replyingTo.sender?.fullname || 'Foydalanuvchi'}` : 'Xabarni tahrirlash'}
+              </div>
+              <div className="text-xs truncate opacity-80 text-edu-text">
+                {replyingTo ? replyingTo.content : editingMessage?.content}
+              </div>
+            </div>
+          </div>
+          <button onClick={onCancelAction} className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-edu-muted">
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       <div className="flex items-end gap-2 px-3 py-2">
         {/* Attach button */}
         <button
@@ -87,6 +115,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
             'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 press-scale',
             showMenu ? 'bg-edu-primary text-white' : 'bg-edu-bg text-edu-muted'
           )}
+          disabled={!!editingMessage}
         >
           {uploading
             ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
@@ -100,7 +129,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Xabar yozing..."
-          disabled={disabled}
+          disabled={disabled || uploading}
           maxLength={2000}
         />
 
@@ -114,7 +143,7 @@ export function ChatInput({ onSend, onTyping, disabled }) {
           disabled={!text?.trim() && !uploading}
           onClick={handleSend}
         >
-          <Send size={16} className="text-white" />
+          {editingMessage ? <Check size={16} className="text-white" /> : <Send size={16} className="text-white" />}
         </Button>
       </div>
 

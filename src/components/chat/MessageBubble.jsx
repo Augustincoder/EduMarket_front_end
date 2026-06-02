@@ -1,7 +1,7 @@
 // src/components/chat/MessageBubble.jsx
 import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
-import { Check, CheckCheck, FileText, Download, Image as ImageIcon, X } from 'lucide-react';
+import { Check, CheckCheck, FileText, Download, Image as ImageIcon, X, MoreVertical, CornerDownRight, Edit2, Trash2, Ban } from 'lucide-react';
 import { filesApi } from '../../services/api';
 import toast from 'react-hot-toast';
 import { Spinner } from '../ui/Spinner';
@@ -46,11 +46,12 @@ function ImageAttachment({ fileId, onClick }) {
   );
 }
 
-export function MessageBubble({ message, isMe }) {
+export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
   const hasFile = !!message.fileId;
   const isImage = message.fileType === 'photo' || (message.fileName && /\.(jpg|jpeg|png|gif|webp)$/i.test(message.fileName));
 
   const [viewerUrl, setViewerUrl] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   const downloadFile = async () => {
     try {
@@ -61,9 +62,52 @@ export function MessageBubble({ message, isMe }) {
     }
   };
 
+  if (message.isDeleted) {
+    return (
+      <div className={cn('flex items-end gap-2 max-w-[85%] animate-fade-in', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
+        <div className={cn('px-3 py-2 text-[14px] italic relative rounded-[22px]', isMe ? 'bg-edu-border/30 rounded-br-[4px] text-edu-muted' : 'bg-edu-border/30 rounded-bl-[4px] text-edu-muted border border-edu-border/50')}>
+          <div className="flex items-center gap-2">
+            <Ban size={14} className="opacity-50" />
+            <span>Ushbu xabar o'chirildi</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className={cn('flex items-end gap-2 max-w-[85%] animate-slide-up', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
+      <div className={cn('group flex items-end gap-2 max-w-[85%] animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
+        
+        {/* Actions Menu Trigger */}
+        <div className={cn("opacity-0 group-hover:opacity-100 transition-opacity flex items-center relative", isMe ? "mr-1" : "ml-1")}>
+          <button 
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-edu-muted"
+          >
+            <MoreVertical size={16} />
+          </button>
+          
+          {/* Actions Menu */}
+          {showMenu && (
+            <div className={cn("absolute bottom-8 z-20 w-36 bg-edu-surface border border-edu-border rounded-xl shadow-sheet py-1 animate-fade-in", isMe ? "right-0" : "left-0")}>
+              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { setShowMenu(false); onReply?.(message); }}>
+                <CornerDownRight size={14} /> Javob berish
+              </button>
+              {isMe && !hasFile && (
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { setShowMenu(false); onEdit?.(message); }}>
+                  <Edit2 size={14} /> Tahrirlash
+                </button>
+              )}
+              {isMe && (
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10" onClick={() => { setShowMenu(false); onDelete?.(message.id); }}>
+                  <Trash2 size={14} /> O'chirish
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
         <div
           className={cn(
             'px-3 py-2 text-[15px] leading-relaxed break-words relative',
@@ -73,7 +117,21 @@ export function MessageBubble({ message, isMe }) {
             hasFile && !isImage && 'cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all'
           )}
           onClick={(hasFile && !isImage) ? downloadFile : undefined}
+          onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
         >
+          {/* Reply Preview */}
+          {message.replyTo && !message.replyTo.isDeleted && (
+            <div 
+              className={cn(
+                "mb-2 p-1.5 px-2.5 rounded-lg text-xs border-l-2",
+                isMe ? "bg-black/10 border-white/40" : "bg-black/5 dark:bg-white/5 border-edu-primary"
+              )}
+            >
+              <div className={cn("font-bold mb-0.5", isMe ? "text-white/90" : "text-edu-primary")}>{message.replyTo.sender?.fullname || 'Foydalanuvchi'}</div>
+              <div className={cn("truncate opacity-80", isMe ? "text-white" : "text-edu-text")}>{message.replyTo.content || "Biriktirma"}</div>
+            </div>
+          )}
+
           {hasFile ? (
             isImage ? (
               <ImageAttachment fileId={message.fileId} onClick={(url) => setViewerUrl(url)} />
@@ -103,6 +161,11 @@ export function MessageBubble({ message, isMe }) {
             'flex items-center gap-1 mt-1.5',
             isMe ? 'justify-end' : 'justify-start'
           )}>
+            {message.isEdited && (
+              <span className={cn('text-[10px] italic mr-1', isMe ? 'text-white/60' : 'text-edu-muted')}>
+                (tahrirlangan)
+              </span>
+            )}
             <span className={cn('text-[10px]', isMe ? 'text-white/60' : 'text-edu-muted')}>
               {formatDatetime(message.createdAt)}
             </span>

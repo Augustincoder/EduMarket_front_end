@@ -25,7 +25,12 @@ export default function AdminLayout() {
   useEffect(() => {
     if (!token || user?.role !== 'ADMIN') {
       navigate('/adminlog', { replace: true });
+    } else {
+      document.getElementById('root').style.maxWidth = '100%';
     }
+    return () => {
+      document.getElementById('root').style.maxWidth = '430px';
+    };
   }, [token, user, navigate]);
 
   const handleLogout = () => {

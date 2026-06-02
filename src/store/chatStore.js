@@ -74,6 +74,33 @@ export const useChatStore = create((set, get) => ({
       }));
     });
 
+    socket.on('message_edited', (updatedMsg) => {
+      const taskId = updatedMsg.taskId;
+      set((s) => {
+        const roomMsgs = s.messages[taskId];
+        if (!roomMsgs) return s;
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m)
+          }
+        };
+      });
+    });
+
+    socket.on('message_deleted', ({ messageId, taskId }) => {
+      set((s) => {
+        const roomMsgs = s.messages[taskId];
+        if (!roomMsgs) return s;
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m)
+          }
+        };
+      });
+    });
+
     socket.on('messages_read', ({ taskId, readerId, messageIds }) => {
       set((s) => {
         const roomMessages = s.messages[taskId];
@@ -158,12 +185,27 @@ export const useChatStore = create((set, get) => ({
     get().socket?.emit('leave_task_room', taskId);
   },
 
-  sendMessage: async (taskId, content, fileId = null) => {
+  sendMessage: async (taskId, content, fileId = null, replyToId = null) => {
     try {
-      await chatApi.sendMessage(taskId, { content, fileId });
+      await chatApi.sendMessage(taskId, { content, fileId, replyToId });
     } catch (err) {
       console.error('Failed to send message:', err);
-      // Optional: Add toast error notification here if needed
+    }
+  },
+
+  editMessage: async (messageId, content) => {
+    try {
+      await chatApi.editMessage(messageId, { content });
+    } catch (err) {
+      console.error('Failed to edit message:', err);
+    }
+  },
+
+  deleteMessage: async (messageId) => {
+    try {
+      await chatApi.deleteMessage(messageId);
+    } catch (err) {
+      console.error('Failed to delete message:', err);
     }
   },
 
