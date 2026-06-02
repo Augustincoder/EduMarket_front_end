@@ -24,6 +24,7 @@ import { useAuthStore } from '../store/authStore';
 import { useChatStore } from '../store/chatStore';
 import { formatPrice, formatPriceRange, formatDate, deadlineCountdown } from '../lib/utils';
 import { hapticSuccess, hapticLight } from '../lib/telegram';
+import { fireConfetti } from '../lib/gamification';
 import { tasksApi } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -269,7 +270,11 @@ export default function TaskDetailScreen() {
             <Button
               fullWidth size="md" variant="secondary"
               isLoading={transitions.submitReview.isPending}
-              onClick={() => transitions.submitReview.mutate()}
+              onClick={async () => {
+                await transitions.submitReview.mutateAsync();
+                fireConfetti();
+                toast.success("Tekshirishga yuborildi!");
+              }}
             >
               📋 Tekshirishga topshirish
             </Button>
@@ -299,7 +304,11 @@ export default function TaskDetailScreen() {
             fullWidth size="lg" variant="primary"
             icon={<CheckCircle size={18} />}
             isLoading={transitions.accept.isPending}
-            onClick={() => transitions.accept.mutate()}
+            onClick={async () => {
+              await transitions.accept.mutateAsync();
+              fireConfetti();
+              toast.success("Vazifa qabul qilindi!");
+            }}
           >
             ✅ Qabul qilish
           </Button>

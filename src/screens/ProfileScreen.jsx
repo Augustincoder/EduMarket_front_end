@@ -37,6 +37,7 @@ import toast from 'react-hot-toast';
 import { useThemeStore } from '../store/themeStore';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { calculateLevel, calculateStreak } from '../lib/gamification';
 
 const CATEGORIES = [
   'Dasturlash', 'Dizayn', 'Tarjima', 'SMM', 'Kopirayterlik',
@@ -396,6 +397,49 @@ export default function ProfileScreen() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Gamification: Level & Streak */}
+            <div className="bg-edu-surface border border-edu-border/40 shadow-sm rounded-2xl p-4 animate-fade-in relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-3xl rounded-full pointer-events-none" />
+              
+              <div className="flex justify-between items-center mb-3 relative z-10">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-edu-muted">Sizning darajangiz</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-lg font-black text-edu-text">{calculateLevel(me?.completedTasksCount).name}</span>
+                    <span className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400 text-[9px] px-1.5 py-0.5 rounded-md font-bold">LVL {calculateLevel(me?.completedTasksCount).level}</span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-edu-muted">Davomiylik</span>
+                  <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-900/50">
+                    <span className="text-orange-500 font-black text-sm">🔥</span>
+                    <span className="text-orange-600 dark:text-orange-400 font-bold text-xs">{calculateStreak(me)} kun</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="relative z-10">
+                <div className="flex justify-between text-[9px] font-bold text-edu-muted mb-1.5">
+                  <span>Joriy daraja</span>
+                  {calculateLevel(me?.completedTasksCount).nextTarget ? (
+                    <span>Yangi darajaga: {calculateLevel(me?.completedTasksCount).nextTarget - (me?.completedTasksCount || 0)} ta ish</span>
+                  ) : (
+                    <span className="text-yellow-500">Eng yuqori daraja!</span>
+                  )}
+                </div>
+                <div className="h-2 w-full bg-edu-border/50 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000 ease-out relative"
+                    style={{ width: `${Math.min(100, Math.max(0, calculateLevel(me?.completedTasksCount).progress * 100))}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 w-full animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Freelancer Bio */}
             {me?.freelancerBio && (

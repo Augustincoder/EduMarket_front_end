@@ -11,18 +11,25 @@ import { DisplayRating } from '../components/ui/StarRating';
 import { ProfileSkeleton } from '../components/ui/SkeletonCard';
 import { usersApi } from '../services/api';
 
+import { Heart } from 'lucide-react';
+import { useFavorites } from '../hooks/useFavorites';
+
 export default function PublicProfileScreen() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { data: profile, isLoading } = useQuery({
     queryKey: ['users', userId],
     queryFn:  () => usersApi.getUser(userId).then((r) => r.data.data),
     staleTime: 60 * 1000,
   });
 
+  const { isFavorite, toggleFavorite } = useFavorites();
+
   if (isLoading) return <ProfileSkeleton />;
   if (!profile) return null;
 
   const avgRating = profile.ratingCount ? (profile.ratingSum / profile.ratingCount).toFixed(1) : null;
+  const isFav = isFavorite(userId);
 
   return (
     <PageLayout showNav={false}>
@@ -30,16 +37,25 @@ export default function PublicProfileScreen() {
         title="Profil" 
         showBack 
         right={
-          <button
-            onClick={() => navigate(`/report?targetId=${userId}&targetType=USER`)}
-            className="w-9 h-9 rounded-xl flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
-            title="Shikoyat qilish"
-          >
-            <span className="text-sm">🚩</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => toggleFavorite(profile)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+              title="Sevimlilarga qo'shish"
+            >
+              <Heart size={16} fill={isFav ? "currentColor" : "none"} className={isFav ? "text-red-500" : "text-edu-muted"} />
+            </button>
+            <button
+              onClick={() => navigate(`/report?targetId=${userId}&targetType=USER`)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center bg-edu-bg text-edu-muted hover:bg-edu-border/50 transition-colors border border-edu-border/30"
+              title="Shikoyat qilish"
+            >
+              <span className="text-sm">🚩</span>
+            </button>
+          </div>
         }
       />
-      <div className="px-4 pt-4 space-y-4 pb-8">
+      <div className="px-4 pt-4 space-y-4 pb-24">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-4 py-6 relative">
           <div className="absolute top-8 w-32 h-32 bg-edu-primary/20 blur-3xl rounded-full" />
@@ -94,6 +110,19 @@ export default function PublicProfileScreen() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Sticky Hire Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-edu-surface/90 backdrop-blur-xl border-t border-edu-border/40 pb-safe z-50">
+        <button
+          onClick={() => {
+            hapticLight();
+            navigate(`/tasks/create?freelancerId=${userId}`);
+          }}
+          className="w-full flex items-center justify-center gap-2 bg-edu-primary hover:bg-edu-primary/90 text-white py-3.5 rounded-xl font-bold text-lg shadow-lg shadow-edu-primary/25 transition-all active:scale-[0.98]"
+        >
+          <span>Menga ishlash</span>
+        </button>
       </div>
     </PageLayout>
   );

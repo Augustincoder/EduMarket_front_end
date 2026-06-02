@@ -52,6 +52,8 @@ export default function CreateTaskScreen() {
     setStep((s) => s + 1);
   };
 
+  const targetFreelancerId = new URLSearchParams(location.search).get('freelancerId');
+
   const handleSubmit = async () => {
     setErrors({});
     const payload = {
@@ -65,8 +67,12 @@ export default function CreateTaskScreen() {
       attachmentFileIds:    files.map((f) => f.id),
     };
     try {
-      await createTask.mutateAsync(payload);
+      const res = await createTask.mutateAsync(payload);
       hapticSuccess();
+      if (targetFreelancerId) {
+        toast.success("Vazifa yaratildi! Uni havolasini jo'nating.");
+        navigator.clipboard.writeText(`${window.location.origin}/tasks/${res.data?.data?.id || ''}`);
+      }
       navigate('/tasks', { replace: true });
     } catch (error) {
       if (error.serverErrors) {
@@ -87,6 +93,13 @@ export default function CreateTaskScreen() {
 
       <div className="px-4 pt-3 pb-6 space-y-5">
         <ProgressStepper steps={STEPS} current={step} />
+
+        {targetFreelancerId && (
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 p-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-indigo-100 dark:border-indigo-800">
+            <span className="text-lg">🎯</span>
+            Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.
+          </div>
+        )}
 
         {/* ── Step 1 ─────────────────────────────────── */}
         {step === 1 && (
