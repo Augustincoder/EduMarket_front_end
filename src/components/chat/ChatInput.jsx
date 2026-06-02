@@ -111,8 +111,8 @@ export function ChatInput({ onSend, onTyping, disabled }) {
           radius="full"
           size="sm"
           className="w-10 h-10 bg-edu-primary flex-shrink-0"
-          isDisabled={!text?.trim() && !uploading}
-          onPress={handleSend}
+          disabled={!text?.trim() && !uploading}
+          onClick={handleSend}
         >
           <Send size={16} className="text-white" />
         </Button>

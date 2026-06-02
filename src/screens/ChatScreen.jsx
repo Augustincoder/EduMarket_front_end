@@ -56,7 +56,7 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (history) setMessages(taskId, history);
-  }, [history]);
+  }, [history, taskId, setMessages]);
 
   useEffect(() => {
     if (token) connect(token);
