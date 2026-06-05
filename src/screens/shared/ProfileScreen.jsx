@@ -15,6 +15,7 @@ import {
   Sparkles,
   ArrowRight,
   User,
+  ShieldCheck,
   Moon, 
   Sun, 
   Monitor,
