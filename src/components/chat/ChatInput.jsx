@@ -33,13 +33,19 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   const handleVoiceSend = async (blob) => {
     setUploading(true);
     try {
+      const extension = blob.type.includes('webm') ? 'webm' : 
+                        blob.type.includes('mp4')  ? 'm4a' : 
+                        blob.type.includes('ogg')  ? 'ogg' : 'wav';
+      
       const fd = new FormData();
-      fd.append('files', blob, 'voice_message.webm');
+      fd.append('files', blob, `voice_message.${extension}`);
       const res = await filesApi.upload(fd);
       const fileId = res.data.data.fileIds[0];
       onSend?.(null, fileId, 'voice');
-    } catch {
-      toast.error('Ovozli xabar yuborishda xato');
+    } catch (err) {
+      const msg = err.serverMsg || err.response?.data?.message || 'Ovozli xabar yuborishda xato';
+      toast.error(msg);
+      console.error("Voice upload error:", err);
     } finally {
       setUploading(false);
       setIsVoiceMode(false);
@@ -78,67 +84,66 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   };
 
   return (
-    <div className="relative border-t border-edu-border/60 bg-edu-surface/95 backdrop-blur-xl pb-safe flex flex-col">
+    <div className="relative border-t border-edu-border ios-glass pb-safe flex flex-col">
       {/* File menu */}
       {showMenu && (
-        <div className="absolute bottom-full left-4 mb-2 bg-edu-surface rounded-2xl shadow-sheet border border-edu-border overflow-hidden z-10 animate-fade-up">
+        <div className="absolute bottom-full left-4 mb-3 w-[200px] ios-glass rounded-[20px] shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
           <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-edu-bg text-sm font-medium text-edu-text"
+            className="flex items-center gap-3 px-4 py-3.5 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
             onClick={() => { fileRef.current.accept='image/*'; fileRef.current.click(); }}
           >
-            <Image size={18} className="text-blue-500" /> Foto/Video
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <Image size={18} className="text-blue-500" />
+            </div>
+            Foto / Video
           </button>
-          <div className="h-px bg-edu-border" />
+          <div className="h-[1px] bg-edu-border mx-4" />
           <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-edu-bg text-sm font-medium text-edu-text"
+            className="flex items-center gap-3 px-4 py-3.5 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
             onClick={() => { fileRef.current.accept='*'; fileRef.current.click(); }}
           >
-            <FileText size={18} className="text-edu-accent" /> Fayl (PDF, PPTX...)
-          </button>
-          <div className="h-px bg-edu-border" />
-          <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-edu-bg text-sm font-medium text-red-500"
-            onClick={() => setShowMenu(false)}
-          >
-            <X size={18} /> Bekor qilish
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
+              <FileText size={18} className="text-edu-accent" />
+            </div>
+            Fayl (Hujjat)
           </button>
         </div>
       )}
 
       {/* Reply / Edit Preview Bar */}
       {(replyingTo || editingMessage) && (
-        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-2 border-b border-edu-border/30">
-          <div className="flex items-start gap-2 flex-1 min-w-0">
-            {replyingTo ? <CornerDownRight size={16} className="text-edu-primary mt-0.5" /> : <Edit2 size={16} className="text-blue-500 mt-0.5" />}
+        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-2.5 border-b border-edu-border/30">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div className="w-1 h-8 bg-edu-primary rounded-full mt-0.5" />
             <div className="flex-1 min-w-0">
-              <div className={cn("text-xs font-bold", replyingTo ? "text-edu-primary" : "text-blue-500")}>
-                {replyingTo ? `Javob: ${replyingTo.sender?.fullname || 'Foydalanuvchi'}` : 'Xabarni tahrirlash'}
+              <div className={cn("text-[11px] font-black uppercase tracking-wider", replyingTo ? "text-edu-primary" : "text-blue-500")}>
+                {replyingTo ? `Javob: ${replyingTo.sender?.fullname || 'Foydalanuvchi'}` : 'Tahrirlash'}
               </div>
-              <div className="text-xs truncate opacity-80 text-edu-text">
+              <div className="text-[13px] truncate font-medium text-edu-text opacity-70">
                 {replyingTo ? replyingTo.content : editingMessage?.content}
               </div>
             </div>
           </div>
-          <button onClick={onCancelAction} className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 text-edu-muted">
+          <button onClick={onCancelAction} className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active-spring">
             <X size={16} />
           </button>
         </div>
       )}
 
-      <div className="flex items-end gap-2 px-3 py-2">
+      <div className="flex items-end gap-3 px-3 py-2.5">
         {/* Attach button */}
         {!isVoiceMode && (
           <button
-            onClick={() => setShowMenu((s) => !s)}
+            onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 press-scale',
-              showMenu ? 'bg-edu-primary text-white' : 'bg-edu-bg text-edu-muted'
+              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all',
+              showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-black/5 dark:bg-white/5 text-edu-muted'
             )}
             disabled={!!editingMessage || uploading}
           >
             {uploading
-              ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
-              : <Paperclip size={18} />
+              ? <div className="w-5 h-5 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
+              : <Paperclip size={20} className={showMenu ? 'text-white' : 'text-edu-text'} />
             }
           </button>
         )}
@@ -151,33 +156,32 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           />
         ) : (
           <>
-            <TextInput
-              value={text}
-              onChange={(e) => handleChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Xabar yozing..."
-              disabled={disabled || uploading}
-              maxLength={2000}
-            />
+            <div className="flex-1">
+              <textarea
+                value={text}
+                onChange={(e) => handleChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Xabar..."
+                disabled={disabled || uploading}
+                rows={1}
+                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary transition-all max-h-32 overflow-y-auto resize-none"
+              />
+            </div>
 
             {/* Send or Mic button */}
             {text.trim() || editingMessage ? (
-              <Button
-                isIconOnly
-                color="primary"
-                radius="full"
-                size="sm"
-                className="w-10 h-10 bg-edu-primary flex-shrink-0"
+              <button
                 disabled={uploading}
-                onClick={handleSend}
+                onClick={() => { hapticSuccess(); handleSend(); }}
+                className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring flex-shrink-0"
               >
-                {editingMessage ? <Check size={16} className="text-white" /> : <Send size={16} className="text-white" />}
-              </Button>
+                {editingMessage ? <Check size={18} /> : <Send size={18} className="ml-0.5" />}
+              </button>
             ) : (
               <button
-                onClick={() => setIsVoiceMode(true)}
+                onClick={() => { hapticLight(); setIsVoiceMode(true); }}
                 disabled={uploading}
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-edu-bg text-edu-muted hover:text-edu-primary press-scale transition-colors"
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 text-edu-text hover:text-edu-primary active-spring transition-colors flex-shrink-0"
               >
                 <Mic size={20} />
               </button>

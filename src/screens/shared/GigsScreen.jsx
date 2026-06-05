@@ -98,40 +98,36 @@ export default function GigsScreen() {
       header={
         <Header
           title="Xizmatlar"
-          rightAction={
+          right={
             (activeRole === 'FREELANCER' && activeTab === 'MY_GIGS') ? (
-              <Button
-                isIconOnly
-                size="sm"
-                variant="flat"
-                color="primary"
+              <button
                 onClick={handleCreateGigClick}
-                className="rounded-xl bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20"
+                className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center text-edu-primary active-spring"
               >
-                <Plus className="w-5 h-5" />
-              </Button>
+                <Plus size={20} />
+              </button>
             ) : null
           }
         />
       }
       bottomNav={<BottomNav />}
     >
-      <div className="flex flex-col gap-4 p-4 pb-nav animate-fade-in">
+      <div className="flex flex-col gap-5 p-4 pb-nav animate-fade-in">
         
         {/* Role Tabs for Freelancers */}
         {activeRole === 'FREELANCER' && (
-          <div className="flex p-1 bg-slate-200 dark:bg-slate-800 rounded-xl mb-1">
+          <div className="flex p-1 bg-black/5 dark:bg-white/5 rounded-[18px] border border-edu-border/30 mb-1">
             <button
-              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-                activeTab === 'MARKET' ? 'bg-white dark:bg-slate-700 shadow-sm text-edu-primary' : 'text-slate-500'
+              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active-spring ${
+                activeTab === 'MARKET' ? 'bg-edu-surface shadow-ios text-edu-primary' : 'text-edu-muted'
               }`}
               onClick={() => setActiveTab('MARKET')}
             >
               Bozor
             </button>
             <button
-              className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
-                activeTab === 'MY_GIGS' ? 'bg-white dark:bg-slate-700 shadow-sm text-edu-primary' : 'text-slate-500'
+              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active-spring ${
+                activeTab === 'MY_GIGS' ? 'bg-edu-surface shadow-ios text-edu-primary' : 'text-edu-muted'
               }`}
               onClick={() => setActiveTab('MY_GIGS')}
             >
@@ -142,16 +138,16 @@ export default function GigsScreen() {
 
         {/* Banner with modern premium gradient */}
         {(activeRole === 'CLIENT' || activeTab === 'MARKET') && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-edu-primary to-edu-primary-d text-white p-5 shadow-btn">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl translate-x-10 -translate-y-10" />
-            <div className="relative z-10 max-w-[80%]">
-              <h2 className="text-lg font-bold font-display mb-1">
-                {activeRole === 'FREELANCER' ? 'Bozor tahlili va Xizmatlar' : 'Tayyor Xizmatlar'}
+          <div className="relative overflow-hidden squircle bg-gradient-to-br from-edu-primary to-edu-primary-d text-white p-6 shadow-btn border border-white/10">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
+            <div className="relative z-10 max-w-[85%]">
+              <h2 className="text-xl font-black font-display mb-1 tracking-ios-display">
+                {activeRole === 'FREELANCER' ? 'Bozor tahlili' : 'Tayyor Xizmatlar'}
               </h2>
-              <p className="text-xs text-white/90 leading-relaxed">
+              <p className="text-[13px] text-white/90 leading-relaxed font-medium tracking-ios-text">
                 {activeRole === 'FREELANCER' 
                   ? "Boshqalar qanday xizmatlar taklif qilayotganini ko'ring va trendlarni o'rganing."
-                  : "Freelancerlar tomonidan taklif etilayotgan tayyor xizmatlarni toping va buyurtma bering."}
+                  : "Mutaxassislar tomonidan taklif etilayotgan xizmatlarni toping va buyurtma bering."}
               </p>
             </div>
           </div>
@@ -160,18 +156,18 @@ export default function GigsScreen() {
         {/* Analytics for Freelancers in Market */}
         {activeRole === 'FREELANCER' && activeTab === 'MARKET' && (
           <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1">
-            <div className="min-w-[140px] bg-indigo-50 dark:bg-indigo-900/20 p-3 rounded-2xl border border-indigo-100 dark:border-indigo-800 flex flex-col gap-2">
-              <TrendingUp className="w-5 h-5 text-indigo-500" />
+            <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
+              <TrendingUp className="w-5 h-5 text-edu-accent" />
               <div>
-                <p className="text-2xs text-indigo-600 dark:text-indigo-400 font-bold uppercase">Trenddagi toifa</p>
-                <p className="text-sm font-black text-indigo-900 dark:text-indigo-100">Dasturlash</p>
+                <p className="text-[10px] text-edu-muted font-black uppercase tracking-widest">Trenddagi toifa</p>
+                <p className="text-[15px] font-black text-edu-text tracking-ios-display">Dasturlash</p>
               </div>
             </div>
-            <div className="min-w-[140px] bg-orange-50 dark:bg-orange-900/20 p-3 rounded-2xl border border-orange-100 dark:border-orange-800 flex flex-col gap-2">
+            <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
               <Clock className="w-5 h-5 text-orange-500" />
               <div>
-                <p className="text-2xs text-orange-600 dark:text-orange-400 font-bold uppercase">Eng ko'p qidirilgan</p>
-                <p className="text-sm font-black text-orange-900 dark:text-orange-100">Telegram Botlar</p>
+                <p className="text-[10px] text-edu-muted font-black uppercase tracking-widest">Eng ko'p qidirilgan</p>
+                <p className="text-[15px] font-black text-edu-text tracking-ios-display">Botlar</p>
               </div>
             </div>
           </div>
@@ -184,29 +180,29 @@ export default function GigsScreen() {
             onValueChange={setLocalSearch}
             placeholder={activeTab === 'MARKET' ? "Xizmatlardan qidirish..." : "O'z xizmatlaringizdan qidirish..."}
             startContent={<Search className="w-4 h-4 text-edu-muted" />}
+            containerClassName="h-12 rounded-2xl bg-edu-surface shadow-ios"
           />
         </div>
 
         {/* Content Area */}
         {isLoading ? (
           <div className="flex flex-col gap-4">
-            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
-            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
-            <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+            <GigCardSkeleton />
+            <GigCardSkeleton />
           </div>
         ) : gigs.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center py-10 px-4 text-center mt-4">
-            <div className="w-24 h-24 mb-4 rounded-full bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50">
-              <span className="text-4xl animate-bounce">💼</span>
+          <div className="h-full flex flex-col items-center justify-center py-16 px-4 text-center mt-4">
+            <div className="w-24 h-24 mb-5 rounded-full bg-edu-surface flex items-center justify-center shadow-ios border border-edu-border/30">
+              <span className="text-5xl animate-bounce">💼</span>
             </div>
-            <h3 className="text-lg font-bold text-edu-text mb-2">Xizmatlar topilmadi</h3>
-            <p className="text-sm text-edu-muted max-w-[250px] leading-relaxed mb-4">
-              {search
+            <h3 className="text-xl font-black text-edu-text mb-2 font-display">Xizmatlar topilmadi</h3>
+            <p className="text-sm text-edu-muted max-w-[260px] leading-relaxed mb-6 font-medium">
+              {localSearch
                 ? "Siz kiritgan so'rov bo'yicha hech qanday xizmat topilmadi."
                 : (activeTab === 'MARKET' ? "Hozircha hech qanday xizmat joylashtirilmagan." : "Siz hali hech qanday xizmat yaratmadingiz.")}
             </p>
             {activeTab === 'MY_GIGS' && (
-              <Button color="primary" onClick={handleCreateGigClick} className="shadow-btn">
+              <Button variant="primary" size="lg" onClick={handleCreateGigClick} className="shadow-btn px-10">
                 Xizmat yaratish 🚀
               </Button>
             )}
@@ -221,7 +217,9 @@ export default function GigsScreen() {
 
             <div ref={sentinelRef} className="h-4" />
             {isFetchingNextPage && (
-              <div className="h-32 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse mt-4"></div>
+              <div className="py-4 flex justify-center">
+                <Spinner size="md" />
+              </div>
             )}
           </>
         )}
@@ -234,17 +232,17 @@ export default function GigsScreen() {
           onClose={() => setIsOrderModalOpen(false)}
           title="Buyurtmani tasdiqlash"
           footer={
-            <div className="flex gap-3 w-full">
+            <div className="flex gap-3 w-full pt-2">
               <Button
-                variant="flat"
-                className="flex-1 rounded-xl h-11 border border-edu-border font-semibold text-edu-muted bg-white"
+                variant="secondary"
+                className="flex-1"
                 onClick={() => setIsOrderModalOpen(false)}
               >
                 Bekor qilish
               </Button>
               <Button
-                color="primary"
-                className="flex-1 rounded-xl h-11 text-white bg-edu-primary font-bold shadow-btn"
+                variant="primary"
+                className="flex-1 shadow-btn"
                 onClick={confirmOrder}
                 isLoading={orderMutation.isPending}
               >
@@ -253,25 +251,25 @@ export default function GigsScreen() {
             </div>
           }
         >
-          <div className="flex flex-col gap-3">
-            <p className="text-sm text-edu-muted">
-              Ushbu xizmatni buyurtma qilganingizda, tizimda avtomatik ravishda yangi vazifa yaratiladi va freelancerga biriktiriladi.
+          <div className="flex flex-col gap-4">
+            <p className="text-[14px] text-edu-muted leading-relaxed font-medium">
+              Ushbu xizmatni buyurtma qilganingizda, tizimda avtomatik ravishda yangi vazifa yaratiladi va mutaxassisga biriktiriladi.
             </p>
-            <div className="p-3 bg-edu-bg rounded-xl border border-edu-border/50">
-              <h4 className="font-bold text-sm text-edu-text mb-1">{selectedGig.title}</h4>
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center gap-1 text-xs text-edu-muted">
-                  <Clock className="w-3.5 h-3.5" />
+            <div className="p-4 bg-edu-surface-2 rounded-2xl border border-edu-border/40 shadow-inner">
+              <h4 className="font-bold text-[15px] text-edu-text mb-2 font-display leading-tight">{selectedGig.title}</h4>
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-edu-border/10">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-edu-muted">
+                  <Clock className="w-4 h-4 text-edu-primary" />
                   <span>{selectedGig.deliveryDays} kun yetkazib berish</span>
                 </div>
-                <span className="font-bold text-md text-edu-primary">
-                  {new Intl.NumberFormat('uz-UZ').format(selectedGig.price)} so'm
+                <span className="font-black text-lg text-edu-primary tracking-ios-display">
+                  {formatPrice(selectedGig.price)} so'm
                 </span>
               </div>
             </div>
             {selectedGig.freelancerId === currentUser?.id && (
-              <div className="p-2.5 bg-red-500/10 text-red-600 text-xs rounded-xl border border-red-500/20">
-                ⚠️ Diqqat: Siz o'z xizmatingizni buyurtma qila olmaysiz.
+              <div className="p-3 bg-red-500/10 text-red-600 text-xs rounded-xl border border-red-500/20 font-bold flex items-center gap-2">
+                <span>⚠️</span> Siz o'z xizmatingizni buyurtma qila olmaysiz.
               </div>
             )}
           </div>

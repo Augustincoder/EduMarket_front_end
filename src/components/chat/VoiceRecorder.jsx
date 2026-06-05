@@ -23,7 +23,7 @@ export function VoiceRecorder({ onSend, onCancel }) {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
         if (chunksRef.current.length > 0) {
            // We only call onSend if we didn't cancel
         }
@@ -45,8 +45,9 @@ export function VoiceRecorder({ onSend, onCancel }) {
 
   const stopAndSend = () => {
     if (mediaRecorderRef.current && isRecording) {
+      const mimeType = mediaRecorderRef.current.mimeType;
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: mimeType });
         onSend(audioBlob);
         hapticSuccess();
       };

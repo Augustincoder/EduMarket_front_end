@@ -43,8 +43,25 @@ export const useChatStore = create((set, get) => ({
       const taskId = msg.taskId;
       set((s) => {
         const roomMsgs = s.messages[taskId] || [];
-        // Prevent duplicate messages if API already inserted it
+        
+        // 1. If we already have this message (real ID), ignore duplicate
         if (roomMsgs.some(m => m.id === msg.id)) return s;
+
+        // 2. Optimization: Check if this message from socket is actually our own optimistic message
+        // returning from the server. If so, replace the 'isSending' one to avoid jumpy UI.
+        const user = useAuthStore.getState().user;
+        const isMyOwn = msg.senderId === user?.id;
+        
+        if (isMyOwn) {
+          const optIndex = roomMsgs.findLastIndex(m => m.isSending && m.content === msg.content);
+          if (optIndex !== -1) {
+            const newMsgs = [...roomMsgs];
+            newMsgs[optIndex] = msg;
+            return {
+              messages: { ...s.messages, [taskId]: newMsgs }
+            };
+          }
+        }
         
         return {
           messages: {
@@ -53,7 +70,6 @@ export const useChatStore = create((set, get) => ({
           },
         };
       });
-      // Auto-reload conversations to sync lists and unread counts
       get().loadConversations();
     });
 
@@ -238,6 +254,19 @@ export const useChatStore = create((set, get) => ({
       
       set((s) => {
         const roomMsgs = s.messages[taskId] || [];
+        
+        // If the socket event already added this message (real ID is present), 
+        // just remove the temp one to clean up.
+        if (roomMsgs.some(m => m.id === realMsg.id)) {
+           return {
+             messages: {
+               ...s.messages,
+               [taskId]: roomMsgs.filter(m => m.id !== tempId)
+             }
+           };
+        }
+
+        // Otherwise replace the temp one
         return {
           messages: {
             ...s.messages,

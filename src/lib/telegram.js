@@ -80,6 +80,25 @@ export const hapticSuccess = () => getTg().HapticFeedback.notificationOccurred('
 export const hapticError   = () => getTg().HapticFeedback.notificationOccurred('error');
 export const hapticWarning = () => getTg().HapticFeedback.notificationOccurred('warning');
 
+export const showConfirm = (message, callback) => {
+  if (isTMA()) {
+    window.Telegram.WebApp.showConfirm(message, (ok) => {
+      if (ok) callback();
+    });
+  } else {
+    if (window.confirm(message)) callback();
+  }
+};
+
+export const showAlert = (message, callback) => {
+  if (isTMA()) {
+    window.Telegram.WebApp.showAlert(message, callback);
+  } else {
+    window.alert(message);
+    if (callback) callback();
+  }
+};
+
 export const enableClosingConfirmation  = () => getTg().enableClosingConfirmation();
 export const disableClosingConfirmation = () => getTg().disableClosingConfirmation();
 

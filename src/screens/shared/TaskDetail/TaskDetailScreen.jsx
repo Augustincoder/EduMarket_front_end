@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../../components/ui/Card';
 import {
   Clock, DollarSign, Paperclip, ChevronDown, ChevronUp,
-  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star
+  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Sparkles
 } from 'lucide-react';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { Avatar } from '../../../components/ui/Avatar';
@@ -17,6 +17,7 @@ import { useChatStore } from '../../../store/chatStore';
 import { useMainButton } from '../../../hooks/useMainButton';
 import { formatPrice, formatPriceRange, formatDate, deadlineCountdown } from '../../../lib/utils';
 import { fireConfetti } from '../../../lib/gamification';
+import { showConfirm } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
 
 // Decomposed Components
@@ -160,15 +161,15 @@ export default function TaskDetailScreen() {
             fullWidth size="md" variant="ghost"
             className="text-red-500 hover:bg-red-50"
             isLoading={transitions.cancel.isPending}
-            onClick={async () => {
-              if (window.confirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?")) {
+            onClick={() => {
+              showConfirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?", async () => {
                 try {
                   await transitions.cancel.mutateAsync();
                   toast.success("Vazifa bekor qilindi");
                 } catch (err) {
                   toast.error(err.serverMsg || "Bekor qilishda xato");
                 }
-              }
+              });
             }}
           >
             Vazifani bekor qilish

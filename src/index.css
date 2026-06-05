@@ -3,48 +3,51 @@
 @import "tailwindcss";
 
 :root {
-  /* iOS Light Theme Variables */
-  --edu-bg: #F2F2F7;
-  --edu-surface: #FFFFFF;
-  --edu-border: #C6C6C8;
-  --edu-muted: #8E8E93;
-  --edu-text: #000000;
+  /* iOS 17+ System Light Palette */
+  --edu-bg: #F2F2F7;         /* systemGroupedBackground */
+  --edu-surface: #FFFFFF;    /* secondarySystemGroupedBackground */
+  --edu-surface-2: #F9F9F9;  /* tertiarySystemGroupedBackground */
+  --edu-border: rgba(60, 60, 67, 0.12); /* separator */
+  --edu-muted: #8E8E93;      /* secondaryLabel */
+  --edu-text: #000000;       /* label */
   
-  --edu-primary: #1D9E75;
-  --edu-primary-d: #0F6E56;
-  --edu-accent: #534AB7;
-  --edu-urgent: #D85A30;
-  --edu-vip: #BA7517;
+  --edu-primary: #007AFF;    /* iOS Blue - cleaner for premium look */
+  --edu-primary-d: #0056B3;
+  --edu-accent: #5856D6;     /* iOS Indigo */
+  --edu-urgent: #FF3B30;     /* iOS Red */
+  --edu-vip: #AF8B3B;        /* Muted Gold */
 
-  --status-open: #1D9E75;
-  --status-assigned: #534AB7;
-  --status-progress: #185FA5;
-  --status-review: #BA7517;
-  --status-completed: #3B6D11;
-  --status-canceled: #888780;
-  --status-disputed: #A32D2D;
+  --status-open: #34C759;      /* iOS Green */
+  --status-assigned: #5856D6;  /* iOS Indigo */
+  --status-progress: #007AFF;  /* iOS Blue */
+  --status-review: #FF9500;    /* iOS Orange */
+  --status-completed: #34C759;
+  --status-canceled: #8E8E93;
+  --status-disputed: #FF3B30;
 
-  --nav-height:    56px;
-  --header-height: 52px;
+  --nav-height:    64px;
+  --header-height: 56px;
 }
 
 .dark {
-  /* iOS Dark Theme Variables */
+  /* iOS 17+ System Dark Palette */
   --edu-bg: #000000;
   --edu-surface: #1C1C1E;
-  --edu-border: #38383A;
+  --edu-surface-2: #2C2C2E;
+  --edu-border: rgba(84, 84, 88, 0.48);
   --edu-muted: #98989D;
   --edu-text: #FFFFFF;
   
-  --edu-primary: #24C08E;
-  --edu-primary-d: #1D9E75;
-  --edu-accent: #6C62D6;
+  --edu-primary: #0A84FF;
+  --edu-primary-d: #007AFF;
+  --edu-accent: #5E5CE6;
 }
 
 @theme {
   /* Theme mapping */
   --color-edu-bg: var(--edu-bg);
   --color-edu-surface: var(--edu-surface);
+  --color-edu-surface-2: var(--edu-surface-2);
   --color-edu-border: var(--edu-border);
   --color-edu-muted: var(--edu-muted);
   --color-edu-text: var(--edu-text);
@@ -63,52 +66,60 @@
   --color-status-canceled: var(--status-canceled);
   --color-status-disputed: var(--status-disputed);
 
-  /* Apple Native System Fonts */
+  /* Apple Native System Fonts with corrected tracking */
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
   --font-body:    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 
-  /* Animations */
-  --animate-fade-up:  fadeUp 0.3s ease-out;
-  --animate-fade-down: fadeDown 0.3s ease-out;
-  --animate-fade-in:  fadeIn 0.25s ease-out;
-  --animate-slide-up: slideUp 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-shimmer:  shimmer 1.6s infinite;
-  --animate-pulse-slow: pulseSlow 4s ease-in-out infinite alternate;
+  /* Premium Spring-based Animations */
+  --animate-ios-slide: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-ios-pop:   popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-shimmer:   shimmer 2.5s ease-in-out infinite;
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
   }
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
   }
   @keyframes shimmer {
-    from { background-position: -400px 0; }
-    to   { background-position: 400px 0; }
-  }
-  @keyframes pulseSlow {
-    from { transform: scale(1); opacity: 0.8; }
-    to   { transform: scale(1.05); opacity: 1; }
+    from { background-position: -1000px 0; }
+    to   { background-position: 1000px 0; }
   }
 }
 
 /* ─── Premium Utilities ──────────────────────────────────── */
 
-/* Bouncy buttons like iOS */
-.active-bounce {
-  transition: transform 0.15s cubic-bezier(0.32, 0.72, 0, 1);
+/* iOS Vibrancy (Glassmorphism) */
+.ios-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
-.active-bounce:active {
-  transform: scale(0.96);
+.dark .ios-glass {
+  background: rgba(28, 28, 30, 0.75);
+}
+
+/* Smooth Curved Surfaces (Apple G2 Curvature Proxy) */
+.squircle {
+  border-radius: 24px;
+}
+
+/* Multi-layered Ambient Shadows */
+.shadow-ios {
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.04), 0 2px 5px 0 rgba(0, 0, 0, 0.02);
+}
+.shadow-ios-lg {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Bouncy buttons with Spring physics emulation */
+.active-spring {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.active-spring:active {
+  transform: scale(0.94);
 }
 
 /* Beautiful Animated Mesh/Aurora Background for Home Screen */

@@ -3,7 +3,7 @@ import { STATUS_CONFIG, BADGE_CONFIG } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 
 // Standardized base classes for all badges to ensure pixel-perfect consistency
-const baseBadgeClass = "inline-flex items-center justify-center gap-1.5 font-semibold rounded-md h-[24px] px-2 text-[11px] tracking-wide uppercase";
+const baseBadgeClass = "inline-flex items-center justify-center gap-1.5 font-bold rounded-full h-[22px] px-2.5 text-[10px] tracking-wide uppercase";
 
 export function StatusBadge({ status, size = 'sm' }) {
   const cfg = STATUS_CONFIG[status];
@@ -11,7 +11,7 @@ export function StatusBadge({ status, size = 'sm' }) {
 
   return (
     <span
-      className={cn(baseBadgeClass)}
+      className={cn(baseBadgeClass, "shadow-sm border border-black/5 dark:border-white/5")}
       style={{ backgroundColor: cfg.bg, color: cfg.text }}
     >
       <span
@@ -29,11 +29,11 @@ export function UserBadge({ badge, isVip, size = 'sm' }) {
     <span
       className={cn(
         baseBadgeClass,
-        isVip && 'ring-1 ring-edu-vip/40'
+        isVip && 'bg-gradient-to-r from-edu-vip to-amber-600 text-white shadow-sm border border-white/20'
       )}
-      style={{ backgroundColor: cfg.bg, color: cfg.color }}
+      style={!isVip ? { backgroundColor: cfg.bg, color: cfg.color } : {}}
     >
-      {isVip && <span>👑</span>}
+      {isVip && <span className="text-[12px] -mt-0.5">👑</span>}
       {cfg.label}
     </span>
   );

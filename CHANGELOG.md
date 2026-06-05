@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-05
+
+### Added
+- **Premium iOS Redesign**: Migrated visual identity to iOS 17+ standards, including system palettes, squircle geometry, and glassmorphism.
+- **Native Integration**: Replaced browser dialogues with high-fidelity Telegram SDK native overlays (`showConfirm`, `showAlert`).
+- **Enhanced Loading UX**: New premium spinners and soft-pulse skeleton loaders for a physically reactive feel.
+
+### Changed
+- **Micro-interactions**: Implemented spring-based physics for tactile feedback and smooth screen transitions across all core components.
+- **Visual Hierarchy**: Refined typography tracking and surface depth layering to improve "breathability" and reduce scan fatigue.
+
+### Fixed
+- **Voice Message Support**: Dynamically handles audio MIME types (including iOS M4A) for seamless cross-platform recording and playback.
+- **Chat Stability**: Refactored Zustand store to eliminate duplicate messages and improve optimistic state synchronization.
+- **Referral Flow**: Fixed UI sync issues by integrating the new backend referral stats implementation.
+
 ## [1.0.0] - 2026-06-05
 
 ### Added

@@ -31,23 +31,23 @@ export function Button({
   onClick,
   ...props
 }) {
-  const baseClass = "inline-flex items-center justify-center gap-2 font-semibold transition-all rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-edu-primary disabled:opacity-50 disabled:pointer-events-none active:scale-95";
-  
+  const baseClass = "inline-flex items-center justify-center gap-2 font-bold transition-all rounded-2xl focus:outline-none disabled:opacity-40 disabled:pointer-events-none active-spring";
+
   const sizeClass = {
-    sm: 'h-9 px-3 text-xs',
-    md: 'h-11 px-4 text-sm',
-    lg: 'h-12 px-6 text-base',
-  }[size] || 'h-11 px-4 text-sm';
+    sm: 'h-9 px-4 text-[13px] tracking-ios-text',
+    md: 'h-12 px-6 text-[15px] tracking-ios-text',
+    lg: 'h-14 px-8 text-[17px] tracking-ios-display font-black',
+  }[size] || 'h-12 px-6 text-[15px]';
 
   const variantClass = {
-    primary:   'bg-edu-primary text-white hover:bg-edu-primary-d shadow-btn',
-    secondary: 'bg-edu-border/50 text-edu-text hover:bg-edu-border',
-    outline:   'border-2 border-edu-primary text-edu-primary hover:bg-edu-primary/10',
-    ghost:     'bg-transparent text-edu-text hover:bg-edu-surface',
-    danger:    'bg-edu-urgent text-white hover:opacity-90',
-    vip:       'bg-gradient-to-r from-edu-vip to-yellow-500 text-white shadow-vip border-none',
-    accent:    'bg-edu-accent text-white hover:opacity-90 shadow-accent',
-  }[variant] || 'bg-edu-primary text-white hover:bg-edu-primary-d';
+    primary:   'bg-edu-primary text-white shadow-btn border border-white/10',
+    secondary: 'bg-edu-surface-2 text-edu-text border border-edu-border/50',
+    outline:   'border-2 border-edu-primary text-edu-primary bg-transparent',
+    ghost:     'bg-transparent text-edu-text',
+    danger:    'bg-edu-urgent text-white shadow-lg shadow-red-500/20',
+    vip:       'bg-gradient-to-br from-edu-vip to-[#D4AF37] text-white shadow-vip border border-white/20',
+    accent:    'bg-edu-accent text-white shadow-lg shadow-indigo-500/20',
+  }[variant] || 'bg-edu-primary text-white shadow-btn';
 
   const handleClick = (e) => {
     if (haptic && HAPTIC_MAP[haptic]) {

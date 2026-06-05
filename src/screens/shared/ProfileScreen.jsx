@@ -34,7 +34,7 @@ import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { usersApi } from '../../services/users.service';
 import { portfolioApi, analyticsApi } from '../../services/other.service';
 import { copyToClipboard, formatPrice, cn } from '../../lib/utils';
-import { hapticSuccess, hapticLight } from '../../lib/telegram';
+import { hapticSuccess, hapticLight, showConfirm } from '../../lib/telegram';
 import toast from 'react-hot-toast';
 import { useThemeStore } from '../../store/themeStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -232,25 +232,25 @@ export default function ProfileScreen() {
         
         {/* Global App Mode Switcher (Only for freelancers) */}
         {me?.isFreelancer && (
-          <div className="flex bg-edu-surface p-1 rounded-2xl border border-edu-border/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] animate-fade-in relative z-10">
+          <div className="flex bg-edu-surface p-1 rounded-[18px] border border-edu-border/30 shadow-ios animate-fade-in relative z-10">
             <button
-              onClick={() => { if(activeRole !== 'CLIENT') toggleActiveRole(); }}
+              onClick={() => { if(activeRole !== 'CLIENT') { hapticLight(); toggleActiveRole(); } }}
               className={cn(
-                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                "flex-1 py-2.5 text-[12px] font-black rounded-[14px] transition-all duration-300 active-spring flex items-center justify-center gap-2",
                 activeRole === 'CLIENT' 
-                  ? "bg-edu-primary text-white shadow-lg shadow-edu-primary/20 scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
+                  ? "bg-edu-primary text-white shadow-btn scale-[1.02]" 
+                  : "text-edu-muted hover:text-edu-text"
               )}
             >
               <User size={16} /> Buyurtmachi
             </button>
             <button
-              onClick={() => { if(activeRole !== 'FREELANCER') toggleActiveRole(); }}
+              onClick={() => { if(activeRole !== 'FREELANCER') { hapticLight(); toggleActiveRole(); } }}
               className={cn(
-                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                "flex-1 py-2.5 text-[12px] font-black rounded-[14px] transition-all duration-300 active-spring flex items-center justify-center gap-2",
                 activeRole === 'FREELANCER' 
                   ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
+                  : "text-edu-muted hover:text-edu-text"
               )}
             >
               <Briefcase size={16} /> Mutaxassis

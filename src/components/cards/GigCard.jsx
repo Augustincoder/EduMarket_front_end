@@ -13,15 +13,15 @@ export function GigCard({ gig, onOrder }) {
 
   return (
     <div className={cn(
-      'bg-edu-surface rounded-2xl p-4 shadow-card border border-edu-border/40',
-      'transition-all duration-200 hover:shadow-md hover:border-edu-primary/20'
+      'bg-edu-surface squircle p-5 shadow-ios border border-edu-border/30',
+      'transition-all duration-300 hover:border-edu-primary/30'
     )}>
       {/* Freelancer */}
-      <div className="flex items-center gap-3 mb-3">
-        <Avatar name={freelancer?.fullname} avatarUrl={freelancer?.avatarUrl} size="md" />
+      <div className="flex items-center gap-3 mb-4">
+        <Avatar name={freelancer?.fullname} avatarUrl={freelancer?.avatarUrl} size="md" className="shadow-sm" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-bold text-edu-text text-sm truncate">{freelancer?.fullname}</span>
+            <span className="font-bold text-edu-text text-[14px] tracking-ios-text truncate">{freelancer?.fullname}</span>
             <UserBadge badge={freelancer?.badge} isVip={freelancer?.isVip} size="xs" />
           </div>
           <DisplayRating
@@ -35,30 +35,31 @@ export function GigCard({ gig, onOrder }) {
       </div>
 
       {/* Gig title */}
-      <h3 className="font-bold text-edu-text text-md font-display line-clamp-2 mb-1 leading-snug">
+      <h3 className="font-black text-edu-text text-[17px] font-display tracking-ios-display line-clamp-2 mb-2 leading-tight">
         {gig.title}
       </h3>
       {gig.description && (
-        <p className="text-xs text-edu-muted line-clamp-2 mb-3 leading-relaxed">
+        <p className="text-[13px] text-edu-muted line-clamp-2 mb-4 leading-relaxed font-medium tracking-ios-text">
           {gig.description}
         </p>
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-edu-border/50">
+      <div className="flex items-center justify-between mt-2 pt-4 border-t border-edu-border/10">
         <div>
-          <p className="text-2xs text-edu-muted mb-0.5">Narx</p>
-          <p className="text-lg font-bold text-edu-primary">
-            {formatPrice(gig.price)} <span className="text-xs font-normal text-edu-muted">so'm</span>
+          <p className="text-[10px] font-black text-edu-muted uppercase tracking-widest mb-1">Narxi</p>
+          <p className="text-xl font-black text-edu-primary tracking-ios-display">
+            {formatPrice(gig.price)} <span className="text-[11px] font-bold text-edu-muted uppercase">so'm</span>
           </p>
-          <p className="flex items-center gap-1 text-2xs text-edu-muted mt-0.5">
-            <Clock size={10} /> {gig.deliveryDays} kun ichida
+          <p className="flex items-center gap-1.5 text-[11px] font-bold text-edu-muted mt-1 tracking-ios-text">
+            <Clock size={12} className="text-edu-primary" /> {gig.deliveryDays} kun yetkazib berish
           </p>
         </div>
         <Button
           size="sm"
           variant="primary"
-          onClick={() => { onOrder?.(gig); }}
+          className="shadow-btn px-6 rounded-xl"
+          onClick={() => { hapticLight(); onOrder?.(gig); }}
         >
           Buyurtma
         </Button>

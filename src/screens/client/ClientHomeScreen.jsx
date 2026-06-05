@@ -46,36 +46,36 @@ export default function ClientHomeScreen() {
     <div className="flex flex-col h-full bg-edu-bg pb-24 p-4 overflow-y-auto scrollbar-hide">
       
       {/* ── Header / Greeting ─────────────────────────── */}
-      <div className="flex justify-between items-center mb-6 pt-2">
-        <div className="space-y-0.5">
-          <p className="text-xs font-semibold text-edu-muted uppercase tracking-wider">Xush kelibsiz 👋</p>
-          <h1 className="text-2xl font-black font-display text-edu-text">{user?.fullname}</h1>
+      <div className="flex justify-between items-center mb-8 pt-4">
+        <div className="space-y-1">
+          <p className="text-[11px] font-black text-edu-muted uppercase tracking-[0.1em] opacity-80">Xush kelibsiz 👋</p>
+          <h1 className="text-3xl font-black font-display text-edu-text tracking-ios-display">{user?.fullname}</h1>
         </div>
-        <div className="relative press-scale" onClick={() => navigate('/profile')}>
-          <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="md" />
+        <div className="relative active-spring" onClick={() => navigate('/profile')}>
+          <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="lg" className="ring-4 ring-edu-surface shadow-ios" />
           {user?.isVip && (
-            <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-0.5 border border-white text-[8px]">👑</span>
+            <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-edu-vip to-amber-600 rounded-full p-1 border-2 border-edu-surface text-[10px] shadow-sm">👑</span>
           )}
         </div>
       </div>
 
       {/* ── Quick Actions Grid ────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3.5 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-8">
         {/* Card 1: Topshiriq berish */}
         <Card 
           isPressable
           haptic="success"
           onPress={() => { navigate('/tasks/create'); }}
-          className="bg-gradient-to-br from-edu-primary to-edu-primary-d rounded-3xl text-white shadow-md shadow-edu-primary/10 relative overflow-hidden flex flex-col justify-between min-h-[135px] border border-white/5"
+          className="bg-gradient-to-br from-edu-primary to-edu-primary-d squircle text-white shadow-btn relative overflow-hidden flex flex-col justify-between min-h-[150px] border border-white/20"
         >
-          <CardContent className="p-4 flex flex-col justify-between h-full">
-            <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
-            <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
-              <Plus size={18} className="text-white" />
+          <CardContent className="p-5 flex flex-col justify-between h-full">
+            <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
+              <Plus size={24} className="text-white" />
             </div>
             <div className="mt-4">
-              <h2 className="text-sm font-black font-display mb-0.5">Topshiriq berish</h2>
-              <p className="text-white/80 text-[10px] font-medium leading-relaxed">Talabalarga tezkor vazifa e'lon qiling</p>
+              <h2 className="text-[16px] font-black font-display mb-1 tracking-ios-display">Topshiriq berish</h2>
+              <p className="text-white/80 text-[11px] font-bold leading-snug tracking-ios-text">Vazifa e'lon qiling</p>
             </div>
           </CardContent>
         </Card>
@@ -85,54 +85,45 @@ export default function ClientHomeScreen() {
           isPressable
           haptic="success"
           onPress={() => { navigate('/gigs'); }}
-          className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl text-white shadow-md shadow-blue-600/10 relative overflow-hidden flex flex-col justify-between min-h-[135px] border border-white/5"
+          className="bg-gradient-to-br from-edu-accent to-[#7064E2] squircle text-white shadow-lg shadow-edu-accent/20 relative overflow-hidden flex flex-col justify-between min-h-[150px] border border-white/20"
         >
-          <CardContent className="p-4 flex flex-col justify-between h-full">
-            <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
-            <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center">
-              <ClipboardList size={18} className="text-white" />
+          <CardContent className="p-5 flex flex-col justify-between h-full">
+            <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
+              <ClipboardList size={24} className="text-white" />
             </div>
             <div className="mt-4">
-              <h2 className="text-sm font-black font-display mb-0.5">Xizmat buyurtma</h2>
-              <p className="text-white/80 text-[10px] font-medium leading-relaxed">Tayyor giglar/xizmatlarni sotib oling</p>
+              <h2 className="text-[16px] font-black font-display mb-1 tracking-ios-display">Xizmat buyurtma</h2>
+              <p className="text-white/80 text-[11px] font-bold leading-snug tracking-ios-text">Tayyor xizmatlar</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* ── My Tasks Status Grid ─────────────────────── */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-sm font-bold text-edu-text uppercase tracking-wider">Mening vazifalarim</h3>
-          <Link to="/my-tasks" className="text-xs font-bold text-edu-primary flex items-center gap-0.5 hover:underline">
-            Barchasi <ArrowRight size={12} />
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4 px-1">
+          <h3 className="text-xs font-black text-edu-muted uppercase tracking-[0.1em]">Mening vazifalarim</h3>
+          <Link to="/my-tasks" className="text-xs font-bold text-edu-primary flex items-center gap-0.5 hover:opacity-70 transition-opacity">
+            Barchasi <ArrowRight size={14} />
           </Link>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div 
-            onClick={() => navigate('/my-tasks?status=OPEN')}
-            className="bg-edu-surface border border-edu-border/40 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer active-bounce"
-          >
-            <span className="text-xs text-edu-primary bg-edu-primary/10 w-8 h-8 rounded-full flex items-center justify-center mb-2">📋</span>
-            <span className="text-lg font-black text-edu-text">{openCount}</span>
-            <span className="text-[10px] font-bold text-edu-muted mt-0.5">Kutmoqda</span>
-          </div>
-          <div 
-            onClick={() => navigate('/my-tasks?status=IN_PROGRESS')}
-            className="bg-edu-surface border border-edu-border/40 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer active-bounce"
-          >
-            <span className="text-xs text-blue-600 bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center mb-2">⚡</span>
-            <span className="text-lg font-black text-edu-text">{inProgressCount}</span>
-            <span className="text-[10px] font-bold text-edu-muted mt-0.5">Jarayonda</span>
-          </div>
-          <div 
-            onClick={() => navigate('/my-tasks?status=IN_REVIEW')}
-            className="bg-edu-surface border border-edu-border/40 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer active-bounce"
-          >
-            <span className="text-xs text-amber-600 bg-amber-50 w-8 h-8 rounded-full flex items-center justify-center mb-2">🔍</span>
-            <span className="text-lg font-black text-edu-text">{inReviewCount}</span>
-            <span className="text-[10px] font-bold text-edu-muted mt-0.5">Tekshiruvda</span>
-          </div>
+          {[
+            { label: 'Ochiq', count: openCount, emoji: '📋', status: 'OPEN' },
+            { label: 'Jarayonda', count: inProgressCount, emoji: '⚡', status: 'IN_PROGRESS' },
+            { label: 'Tekshiruvda', count: inReviewCount, emoji: '🔍', status: 'IN_REVIEW' },
+          ].map((item) => (
+            <div 
+              key={item.status}
+              onClick={() => navigate(`/my-tasks?status=${item.status}`)}
+              className="bg-edu-surface shadow-ios border border-edu-border/30 rounded-[22px] p-4 flex flex-col items-center text-center cursor-pointer active-spring"
+            >
+              <span className="text-2xl mb-2.5">{item.emoji}</span>
+              <span className="text-xl font-black text-edu-text tracking-ios-display">{item.count}</span>
+              <span className="text-[10px] font-bold text-edu-muted uppercase tracking-wider mt-1">{item.label}</span>
+            </div>
+          ))}
         </div>
       </div>
 

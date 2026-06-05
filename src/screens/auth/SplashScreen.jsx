@@ -60,30 +60,33 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-mesh-aurora gap-6 animate-fade-in">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-edu-bg gap-6 animate-fade-in overflow-hidden">
+      {/* Premium background aurora */}
+      <div className="absolute inset-0 bg-mesh-aurora opacity-60" />
+
       {/* Logo */}
-      <div className="flex flex-col items-center gap-4 animate-fade-up">
+      <div className="flex flex-col items-center gap-6 animate-ios-pop relative z-10">
         {/* Logo mark */}
-        <div className="w-22 h-22 rounded-[32px] bg-gradient-to-br from-edu-primary to-edu-primary-d flex items-center justify-center shadow-lg shadow-edu-primary/20 animate-pulse-slow border border-white/10">
-          <span className="text-5xl">📚</span>
+        <div className="w-24 h-24 rounded-[32px] bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
+          <span className="text-5xl drop-shadow-lg">📚</span>
         </div>
 
         {/* Brand name */}
         <div className="text-center">
-          <h1 className="text-4xl font-black text-edu-text font-display tracking-tight drop-shadow-sm">
+          <h1 className="text-4xl font-black text-edu-text font-display tracking-ios-display drop-shadow-sm">
             EduMarket
           </h1>
-          <p className="text-sm font-medium text-edu-muted mt-1 font-body uppercase tracking-widest">Bilim bozori</p>
+          <p className="text-[12px] font-black text-edu-muted mt-2 font-body uppercase tracking-[0.2em] opacity-70">Bilim bozori</p>
         </div>
       </div>
 
       {/* Loading indicator */}
-      <div className="flex flex-col items-center gap-4 w-48 mt-8">
+      <div className="flex flex-col items-center gap-5 w-56 mt-10 relative z-10">
         {/* Progress bar */}
-        <div className="w-full h-1 bg-edu-border/40 rounded-full overflow-hidden">
-          <div className="h-full bg-edu-primary rounded-full animate-shimmer w-1/2" />
+        <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden border border-black/5">
+          <div className="h-full bg-gradient-to-r from-edu-primary to-edu-accent rounded-full animate-shimmer w-1/2" />
         </div>
-        <p className="text-[11px] uppercase tracking-wider text-edu-muted/80 font-semibold">Ulanmoqda...</p>
+        <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-black opacity-60">Ulanmoqda...</p>
       </div>
     </div>
   );

@@ -35,9 +35,9 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onPress
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "w-full block bg-edu-surface shadow-card border border-edu-border/40 overflow-hidden text-left",
-        radiusClass,
-        (isPressable || onPress) && "transition-all active:scale-[0.98] cursor-pointer hover:border-edu-primary/30",
+        "w-full block bg-edu-surface shadow-ios border border-edu-border/30 overflow-hidden text-left",
+        radiusClass === 'rounded-2xl' ? 'squircle' : radiusClass,
+        (isPressable || onPress) && "transition-all active-spring cursor-pointer",
         className
       )}
       {...props}

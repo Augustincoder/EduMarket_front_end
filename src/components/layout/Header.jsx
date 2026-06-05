@@ -24,7 +24,7 @@ export function Header({
   return (
     <header className={cn(
       'sticky top-0 z-30 w-full max-w-[430px]',
-      !transparent && 'bg-edu-surface/80 backdrop-blur-3xl border-b border-edu-border/50',
+      !transparent && 'ios-glass border-b border-edu-border',
       transparent && 'bg-transparent',
       className
     )}>
@@ -33,22 +33,22 @@ export function Header({
           <button
             onClick={handleBack}
             className={cn(
-              'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0',
-              'bg-edu-bg press-scale transition-all hover:bg-edu-border/60'
+              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+              'bg-black/5 dark:bg-white/5 active-spring transition-all'
             )}
           >
-            <ArrowLeft size={18} className="text-edu-text" />
+            <ArrowLeft size={20} className="text-edu-text" />
           </button>
         )}
 
         <div className="flex-1 min-w-0">
           {title && (
-            <h1 className="text-lg font-bold font-display text-edu-text truncate leading-tight">
+            <h1 className="text-[17px] font-bold font-display text-edu-text tracking-ios-display truncate leading-tight">
               {title}
             </h1>
           )}
           {subtitle && (
-            <p className="text-xs text-edu-muted truncate">{subtitle}</p>
+            <p className="text-[11px] font-semibold text-edu-muted tracking-wide truncate uppercase opacity-80">{subtitle}</p>
           )}
         </div>
 
