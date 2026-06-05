@@ -26,6 +26,7 @@ const VipScreen         = lazy(() => import('../screens/shared/VipScreen'));
 const LeaderboardScreen = lazy(() => import('../screens/shared/LeaderboardScreen'));
 const ReferralsScreen   = lazy(() => import('../screens/shared/ReferralsScreen'));
 const NotificationSettingsScreen = lazy(() => import('../screens/shared/NotificationSettingsScreen'));
+const VerificationScreen = lazy(() => import('../screens/shared/VerificationScreen'));
 
 // Lazy load Admin screens
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
@@ -40,6 +41,7 @@ const AdminSettings     = lazy(() => import('../screens/admin/AdminSettings'));
 const AdminAuditLogs    = lazy(() => import('../screens/admin/AdminAuditLogs'));
 const AdminBroadcast    = lazy(() => import('../screens/admin/AdminBroadcast'));
 const AdminContentModerator = lazy(() => import('../screens/admin/AdminContentModerator'));
+const AdminVerificationScreen = lazy(() => import('../screens/admin/AdminVerificationScreen'));
 
 function Screen({ element }) {
   return <Suspense fallback={<FullPageSpinner />}>{element}</Suspense>;
@@ -80,6 +82,7 @@ const router = createBrowserRouter([
   { path: '/leaderboard',       element: <Screen element={<ProtectedRoute><LeaderboardScreen /></ProtectedRoute>} />     },
   { path: '/referrals',         element: <Screen element={<ProtectedRoute><ReferralsScreen /></ProtectedRoute>} />       },
   { path: '/settings/notifications', element: <Screen element={<ProtectedRoute><NotificationSettingsScreen /></ProtectedRoute>} /> },
+  { path: '/verification',      element: <Screen element={<ProtectedRoute><VerificationScreen /></ProtectedRoute>} /> },
   
   // Admin Routes
   { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },
@@ -89,6 +92,7 @@ const router = createBrowserRouter([
     children: [
       { path: 'dashboard', element: <Screen element={<AdminDashboard />} /> },
       { path: 'users',     element: <Screen element={<AdminUsers />} /> },
+      { path: 'verification', element: <Screen element={<AdminVerificationScreen />} /> },
       { path: 'vip',       element: <Screen element={<AdminVipRequests />} /> },
       { path: 'complaints',element: <Screen element={<AdminComplaints />} /> },
       { path: 'disputes',  element: <Screen element={<AdminDisputes />} /> },

@@ -117,7 +117,7 @@ export default function CreateTaskScreen() {
         <ProgressStepper steps={STEPS} current={step} />
 
         {targetFreelancerId && (
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 p-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-indigo-100 dark:border-indigo-800">
+          <div className="bg-edu-accent/10 text-edu-accent p-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-edu-accent/20">
             <span className="text-lg">🎯</span>
             Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.
           </div>

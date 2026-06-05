@@ -42,7 +42,7 @@ export default function ChatListScreen() {
                 <div className="relative">
                   <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="md" />
                   {conv.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-edu-urgent text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-edu-surface">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-edu-primary text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-edu-surface shadow-sm">
                       {conv.unreadCount}
                     </span>
                   )}

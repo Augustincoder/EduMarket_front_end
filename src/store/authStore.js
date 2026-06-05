@@ -8,6 +8,7 @@ export const useAuthStore = create(
       user:      null,
       token:     null,
       activeRole: 'CLIENT', // 'CLIENT' or 'FREELANCER'
+      isSwitching: false,
       isLoading: false,
 
       setAuth: ({ user, token }) => {
@@ -27,9 +28,16 @@ export const useAuthStore = create(
 
       setFreelancerMode: (val) => set((s) => ({ user: { ...s.user, isFreelancer: val }, activeRole: val ? 'FREELANCER' : 'CLIENT' })),
       
-      toggleActiveRole: () => set((s) => ({ 
-        activeRole: s.activeRole === 'CLIENT' ? (s.user?.isFreelancer ? 'FREELANCER' : 'CLIENT') : 'CLIENT' 
-      })),
+      toggleActiveRole: () => {
+        set({ isSwitching: true });
+        
+        setTimeout(() => {
+          set((s) => ({ 
+            activeRole: s.activeRole === 'CLIENT' ? (s.user?.isFreelancer ? 'FREELANCER' : 'CLIENT') : 'CLIENT',
+            isSwitching: false
+          }));
+        }, 800);
+      },
 
       completeOnboarding: () => set((s) => ({ user: { ...s.user, isOnboardingComplete: true } })),
 

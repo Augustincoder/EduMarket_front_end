@@ -29,6 +29,19 @@
   --header-height: 56px;
 }
 
+/* Workspace Overrides */
+.workspace-freelancer {
+  --edu-primary: #6366F1;
+  --edu-primary-d: #4F46E5;
+  --edu-accent: #10B981;
+}
+
+.workspace-client {
+  --edu-primary: #10B981;
+  --edu-primary-d: #059669;
+  --edu-accent: #6366F1;
+}
+
 .dark {
   /* iOS 17+ System Dark Palette */
   --edu-bg: #000000;

@@ -44,6 +44,7 @@ export default function AdminLayout() {
   const navItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Foydalanuvchilar', path: '/admin/users', icon: Users },
+    { label: 'Tasdiqlash (KYC)', path: '/admin/verification', icon: ShieldAlert },
     { label: 'VIP Arizalar', path: '/admin/vip', icon: Crown },
     { label: 'Shikoyatlar', path: '/admin/complaints', icon: AlertOctagon },
     { label: 'Nizolar (Disputes)', path: '/admin/disputes', icon: Gavel },

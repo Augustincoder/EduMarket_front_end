@@ -230,38 +230,86 @@ export default function ProfileScreen() {
 
       <div className="px-4 pt-4 space-y-5 pb-6">
         
-        {/* Global App Mode Switcher (Only for freelancers) */}
+        {/* Workspace Context Switcher Card (Only for freelancers) */}
         {me?.isFreelancer && (
-          <div className="flex bg-edu-surface p-1 rounded-[18px] border border-edu-border/30 shadow-ios animate-fade-in relative z-10">
-            <button
-              onClick={() => { if(activeRole !== 'CLIENT') { hapticLight(); toggleActiveRole(); } }}
-              className={cn(
-                "flex-1 py-2.5 text-[12px] font-black rounded-[14px] transition-all duration-300 active-spring flex items-center justify-center gap-2",
-                activeRole === 'CLIENT' 
-                  ? "bg-edu-primary text-white shadow-btn scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text"
-              )}
-            >
-              <User size={16} /> Buyurtmachi
-            </button>
-            <button
-              onClick={() => { if(activeRole !== 'FREELANCER') { hapticLight(); toggleActiveRole(); } }}
-              className={cn(
-                "flex-1 py-2.5 text-[12px] font-black rounded-[14px] transition-all duration-300 active-spring flex items-center justify-center gap-2",
-                activeRole === 'FREELANCER' 
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text"
-              )}
-            >
-              <Briefcase size={16} /> Mutaxassis
-            </button>
-          </div>
+          <Card 
+            className={cn(
+              "border-2 relative overflow-hidden group cursor-pointer press-scale animate-fade-in shadow-ios",
+              activeRole === 'CLIENT' 
+                ? "bg-indigo-600/5 border-indigo-600/10 dark:bg-indigo-500/10 dark:border-indigo-500/20" 
+                : "bg-edu-primary/5 border-edu-primary/10 dark:bg-edu-primary/10 dark:border-edu-primary/20"
+            )}
+            onClick={() => { hapticLight(); toggleActiveRole(); }}
+            radius="2xl"
+          >
+            <div className={cn(
+              "absolute -right-6 -top-6 w-24 h-24 blur-2xl rounded-full opacity-20 pointer-events-none transition-colors duration-500",
+              activeRole === 'CLIENT' ? "bg-indigo-600" : "bg-edu-primary"
+            )} />
+            
+            <CardContent className="p-4 flex items-center justify-between relative z-10">
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500",
+                  activeRole === 'CLIENT' 
+                    ? "bg-indigo-600 text-white shadow-indigo-600/20" 
+                    : "bg-edu-primary text-white shadow-edu-primary/20"
+                )}>
+                  {activeRole === 'CLIENT' ? <Briefcase size={22} /> : <User size={22} />}
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-black text-edu-text leading-tight">
+                    {activeRole === 'CLIENT' ? 'Mutaxassis ish joyi' : 'Mijoz ish joyi'}
+                  </h3>
+                  <p className="text-[10px] text-edu-muted font-bold uppercase tracking-wider mt-0.5">
+                    {activeRole === 'CLIENT' ? 'Daromad olishga o\'tish' : 'E\'lon berishga o\'tish'}
+                  </p>
+                </div>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-edu-surface border border-edu-border flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+                <ArrowRight size={14} className="text-edu-muted" />
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* ─── CLIENT VIEW ────────────────────────────────────────────────────────── */}
         {activeRole === 'CLIENT' && (
           <div className="space-y-4 animate-fade-up">
-            {/* Avatar & name */}
+
+            {/* Verification Status Card */}
+            <Card 
+              className={cn(
+                "border relative overflow-hidden press-scale",
+                me?.verificationStatus === 'APPROVED' ? "bg-edu-primary/5 border-edu-primary/20" : 
+                me?.verificationStatus === 'PENDING' ? "bg-amber-500/5 border-amber-500/20" : "bg-edu-surface border-edu-border/40"
+              )}
+              onClick={() => navigate('/verification')}
+              radius="xl"
+            >
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center",
+                    me?.verificationStatus === 'APPROVED' ? "bg-edu-primary text-white" : 
+                    me?.verificationStatus === 'PENDING' ? "bg-amber-500 text-white" : "bg-edu-bg text-edu-muted"
+                  )}>
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-edu-text">Profilingizni tasdiqlang</h4>
+                    <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider">
+                      {me?.verificationStatus === 'APPROVED' ? 'Tasdiqlangan' : 
+                       me?.verificationStatus === 'PENDING' ? 'Kutilmoqda...' : 'Hujjat topshirish'}
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight size={16} className="text-edu-muted" />
+              </CardContent>
+            </Card>
+
+            {/* Client Stats Grid */}
+
             <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/15 blur-3xl rounded-full pointer-events-none" />
               <CardContent className="p-6 flex flex-col items-center text-center gap-3.5 relative z-10">
@@ -373,12 +421,44 @@ export default function ProfileScreen() {
         {/* ─── FREELANCER VIEW ────────────────────────────────────────────────────── */}
         {activeRole === 'FREELANCER' && (
           <div className="space-y-4 animate-fade-up">
+
+            {/* Verification Status Card */}
+            <Card 
+              className={cn(
+                "border relative overflow-hidden press-scale",
+                me?.verificationStatus === 'APPROVED' ? "bg-edu-primary/5 border-edu-primary/20" : 
+                me?.verificationStatus === 'PENDING' ? "bg-amber-500/5 border-amber-500/20" : "bg-edu-surface border-edu-border/40"
+              )}
+              onClick={() => navigate('/verification')}
+              radius="xl"
+            >
+              <CardContent className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center",
+                    me?.verificationStatus === 'APPROVED' ? "bg-edu-primary text-white" : 
+                    me?.verificationStatus === 'PENDING' ? "bg-amber-500 text-white" : "bg-edu-bg text-edu-muted"
+                  )}>
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-edu-text">Profilingizni tasdiqlang</h4>
+                    <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider">
+                      {me?.verificationStatus === 'APPROVED' ? 'Tasdiqlangan' : 
+                       me?.verificationStatus === 'PENDING' ? 'Kutilmoqda...' : 'Hujjat topshirish'}
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight size={16} className="text-edu-muted" />
+              </CardContent>
+            </Card>
+
             {/* Freelancer Header card */}
-            <Card className="bg-gradient-to-br from-indigo-500/10 via-edu-primary/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/15 blur-3xl rounded-full pointer-events-none" />
+            <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/15 blur-3xl rounded-full pointer-events-none" />
               <CardContent className="p-6 flex flex-col items-center text-center gap-3.5 relative z-10">
                 <div className="relative">
-                  <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-indigo-500/20 shadow-md animate-fade-in" />
+                  <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/20 shadow-md animate-fade-in" />
                   {me?.isVip && (
                     <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-edu-surface shadow-sm">
                       <span className="text-white text-[11px] block leading-none">👑</span>
@@ -397,7 +477,7 @@ export default function ProfileScreen() {
                   {me?.freelancerCategories?.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-1 mt-2.5">
                       {me.freelancerCategories.map(cat => (
-                        <span key={cat} className="text-[9px] font-black bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 uppercase tracking-wide">
+                        <span key={cat} className="text-[9px] font-black bg-edu-primary/10 text-edu-primary px-2 py-0.5 rounded-full border border-edu-primary/20 uppercase tracking-wide">
                           {cat}
                         </span>
                       ))}
@@ -461,7 +541,7 @@ export default function ProfileScreen() {
             {me?.freelancerBio && (
               <Card className="bg-edu-surface border border-edu-border/40 shadow-sm" radius="xl">
                 <CardContent className="p-4">
-                  <p className="text-2xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Mutaxassis tavsifi (Freelancer Bio)</p>
+                  <p className="text-2xs font-bold text-edu-primary uppercase tracking-wider mb-2">Mutaxassis tavsifi (Freelancer Bio)</p>
                   <p className="text-sm text-edu-text leading-relaxed font-medium">{me.freelancerBio}</p>
                 </CardContent>
               </Card>
@@ -579,7 +659,7 @@ export default function ProfileScreen() {
             className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             onClick={() => { setSettingsMenuOpen(false); openEditProfile(); }}
           >
-            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <div className="w-8 h-8 rounded-full bg-edu-primary/10 flex items-center justify-center text-edu-primary">
               <User size={18} />
             </div>
             <span className="font-bold text-edu-text">Profilni tahrirlash</span>

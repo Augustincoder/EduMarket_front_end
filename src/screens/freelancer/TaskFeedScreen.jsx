@@ -197,10 +197,10 @@ export default function TaskFeedScreen() {
             emoji="📋"
             title="Vazifalar topilmadi"
             subtitle={Object.values(filterState).some(Boolean) 
-              ? "Siz tanlayan filtrlar bo'yicha vazifa topilmadi." 
-              : "Hozircha vazifalar yo'q. Birinchilardan bo'lib o'z vazifangizni e'lon qiling va mutaxassislarni jalb qiling!"}
-            action={Object.values(filterState).some(Boolean) ? resetFilters : () => navigate('/tasks/create')}
-            actionLabel={Object.values(filterState).some(Boolean) ? "Filtrlarni tozalash" : "Vazifa yaratish 🚀"}
+              ? "Siz tanlagan filtrlar bo'yicha vazifa topilmadi." 
+              : "Hozircha ochiq vazifalar mavjud emas. Birozdan so'ng qayta tekshirib ko'ring!"}
+            action={Object.values(filterState).some(Boolean) ? resetFilters : undefined}
+            actionLabel={Object.values(filterState).some(Boolean) ? "Filtrlarni tozalash" : undefined}
           />
         ) : (
           <div

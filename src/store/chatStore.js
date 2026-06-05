@@ -182,11 +182,22 @@ export const useChatStore = create((set, get) => ({
     loadConversationsTimeout = setTimeout(async () => {
       try {
         const res = await chatApi.getConversations();
-        const conversations = res.data.data || [];
+        const allConversations = res.data.data || [];
+        
+        const user = useAuthStore.getState().user;
+        const activeRole = useAuthStore.getState().activeRole;
+
+        // Filter conversations based on role
+        const conversations = allConversations.filter(c => {
+          if (activeRole === 'CLIENT') return c.clientId === user?.id;
+          if (activeRole === 'FREELANCER') return c.freelancerId === user?.id;
+          return true;
+        });
+
         const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
         
         const presence = {};
-        conversations.forEach((c) => {
+        allConversations.forEach((c) => {
           if (c.otherUser) {
             presence[c.otherUser.id] = c.otherUser.isOnline;
           }

@@ -12,9 +12,7 @@ import { Briefcase, User, SearchX } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export default function MyTasksScreen() {
-  const user = useAuthStore((s) => s.user);
-  const [activeTab, setActiveTab] = useState(user?.isFreelancer ? 'FREELANCER' : 'CLIENT');
-  
+  const activeRole = useAuthStore((s) => s.activeRole);
   const [searchParams, setSearchParams] = useSearchParams();
   const statusFilter = searchParams.get('status') || '';
 
@@ -26,46 +24,16 @@ export default function MyTasksScreen() {
     }
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSearchParams({}); // Reset filters when switching tabs
-  };
-
-  const { data: tasks, isLoading } = useMyTasks(activeTab, statusFilter);
+  const { data: tasks, isLoading } = useMyTasks(activeRole, statusFilter);
 
   return (
     <PageLayout scrollable={false}>
-      <Header title="Mening vazifalarim" />
+      <Header 
+        title={activeRole === 'FREELANCER' ? "Mening ishlarim" : "Mening e'lonlarim"} 
+        subtitle={activeRole === 'FREELANCER' ? "Ijrochi ish joyi" : "Mijoz ish joyi"}
+      />
       <div className="flex-1 overflow-y-auto pt-3 pb-nav px-3 space-y-4 scrollbar-hide">
         
-        {/* Role Tabs */}
-        {user?.isFreelancer && (
-          <div className="flex bg-edu-surface p-1 rounded-2xl border border-edu-border/30 shadow-[0_4px_20px_rgba(0,0,0,0.05)] animate-fade-in relative z-10 shrink-0">
-            <button
-              onClick={() => handleTabChange('FREELANCER')}
-              className={cn(
-                "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
-                activeTab === 'FREELANCER' 
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
-              )}
-            >
-              <Briefcase size={16} /> Ijrochi
-            </button>
-            <button
-              onClick={() => handleTabChange('CLIENT')}
-              className={cn(
-                "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
-                activeTab === 'CLIENT' 
-                  ? "bg-edu-primary text-white shadow-lg shadow-edu-primary/20 scale-[1.02]" 
-                  : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
-              )}
-            >
-              <User size={16} /> Mijoz
-            </button>
-          </div>
-        )}
-
         {/* Status Filters */}
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1.5 shrink-0 animate-fade-in">
           <FilterChip label="Barchasi" active={!statusFilter} onClick={() => setStatusFilter('')} />
@@ -100,7 +68,7 @@ export default function MyTasksScreen() {
               <p className="text-sm font-medium text-edu-muted max-w-[260px] leading-relaxed">
                 {statusFilter 
                   ? "Tanlangan holat bo'yicha vazifalar mavjud emas." 
-                  : (activeTab === 'CLIENT' 
+                  : (activeRole === 'CLIENT' 
                       ? "Siz hali o'z vazifalaringizni platformaga joylashtirmadingiz." 
                       : "Sizga hali vazifa tayinlanmagan yoki ishtirok etmayapsiz.")}
               </p>

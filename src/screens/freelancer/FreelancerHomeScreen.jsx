@@ -77,7 +77,7 @@ export default function FreelancerHomeScreen() {
           radius="2xl"
         >
           <CardContent className="p-4 flex flex-col justify-between h-28">
-            <span className="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <span className="w-9 h-9 rounded-2xl bg-edu-primary/10 text-edu-primary flex items-center justify-center">
               <Wallet size={20} />
             </span>
             <div>
@@ -180,7 +180,7 @@ export default function FreelancerHomeScreen() {
                 key={task.id}
                 isPressable
                 onPress={() => { navigate(`/tasks/${task.id}`); }}
-                className="bg-gradient-to-tr from-indigo-50/40 to-edu-primary/5 border border-edu-primary/20 hover:border-edu-primary/30 active-bounce"
+                className="bg-gradient-to-tr from-edu-primary/5 to-edu-accent/5 border border-edu-primary/20 hover:border-edu-primary/30 active-bounce"
                 radius="2xl"
               >
                 <CardContent className="p-3.5 flex justify-between items-center gap-3">
@@ -188,7 +188,7 @@ export default function FreelancerHomeScreen() {
                     <h4 className="text-xs font-black text-edu-text truncate">{task.title}</h4>
                     <p className="text-[10px] text-edu-muted mt-0.5">Mijoz: {task.client?.fullname || 'Mijoz'}</p>
                   </div>
-                  <span className="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-xl shrink-0">
+                  <span className="text-[10px] bg-edu-primary/10 text-edu-primary font-bold px-3 py-1.5 rounded-xl shrink-0 border border-edu-primary/20">
                     Bajarilmoqda
                   </span>
                 </CardContent>

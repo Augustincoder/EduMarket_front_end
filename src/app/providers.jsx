@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { initKeepAlive } from '../lib/keepAlive';
 import { initNotifications } from '../lib/notifications';
 import { useThemeStore } from '../store/themeStore';
+import { useAuthStore } from '../store/authStore';
 
 const handleGlobalError = (error) => {
   if (error?.statusCode === 401) return; // handled by interceptor
@@ -35,6 +36,7 @@ const queryClient = new QueryClient({
 
 export function Providers({ children }) {
   const theme = useThemeStore((s) => s.theme);
+  const activeRole = useAuthStore((s) => s.activeRole);
 
   useEffect(() => {
     initKeepAlive();
@@ -43,7 +45,13 @@ export function Providers({ children }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
+    root.classList.remove('light', 'dark', 'workspace-client', 'workspace-freelancer');
+
+    if (activeRole === 'FREELANCER') {
+      root.classList.add('workspace-freelancer');
+    } else {
+      root.classList.add('workspace-client');
+    }
 
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
