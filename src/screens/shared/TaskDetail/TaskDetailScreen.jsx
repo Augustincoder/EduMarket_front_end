@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../../components/ui/Card';
 import {
   Clock, DollarSign, Paperclip, ChevronDown, ChevronUp,
-  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Sparkles
+  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Sparkles, FileText
 } from 'lucide-react';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { Avatar } from '../../../components/ui/Avatar';
@@ -19,6 +19,7 @@ import { formatPrice, formatPriceRange, formatDate, deadlineCountdown } from '..
 import { fireConfetti } from '../../../lib/gamification';
 import { showConfirm } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
+import { filesApi, portfolioApi, analyticsApi } from '../../../services/other.service';
 
 // Decomposed Components
 import { TaskHeader } from './components/TaskHeader';
