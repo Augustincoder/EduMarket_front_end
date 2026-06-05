@@ -186,7 +186,7 @@ export default function TaskFeedScreen() {
       {/* ── Task list ───────────────────────────────── */}
       <div 
         ref={parentRef}
-        className="flex-1 overflow-y-auto px-4 scrollbar-hide relative"
+        className="flex-1 overflow-y-auto px-3 scrollbar-hide relative"
       >
         {isLoading ? (
           <div className="space-y-3 pt-3">
@@ -197,7 +197,7 @@ export default function TaskFeedScreen() {
             emoji="📋"
             title="Vazifalar topilmadi"
             subtitle={Object.values(filterState).some(Boolean) 
-              ? "Siz tanlagan filtrlar bo'yicha vazifa topilmadi." 
+              ? "Siz tanlayan filtrlar bo'yicha vazifa topilmadi." 
               : "Hozircha vazifalar yo'q. Birinchilardan bo'lib o'z vazifangizni e'lon qiling va mutaxassislarni jalb qiling!"}
             action={Object.values(filterState).some(Boolean) ? resetFilters : () => navigate('/tasks/create')}
             actionLabel={Object.values(filterState).some(Boolean) ? "Filtrlarni tozalash" : "Vazifa yaratish 🚀"}
@@ -225,7 +225,7 @@ export default function TaskFeedScreen() {
                     left: 0,
                     width: '100%',
                     transform: `translateY(${virtualRow.start}px)`,
-                    paddingBottom: '12px',
+                    paddingBottom: '8px',
                   }}
                 >
                   {isLoaderRow ? (

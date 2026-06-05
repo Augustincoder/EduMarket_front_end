@@ -36,7 +36,7 @@ export default function MyTasksScreen() {
   return (
     <PageLayout>
       <Header title="Mening vazifalarim" />
-      <div className="pt-4 pb-nav px-4 h-full flex flex-col space-y-5">
+      <div className="pt-3 pb-nav px-3 h-full flex flex-col space-y-4">
         
         {/* Role Tabs */}
         {user?.isFreelancer && (
@@ -44,7 +44,7 @@ export default function MyTasksScreen() {
             <button
               onClick={() => handleTabChange('FREELANCER')}
               className={cn(
-                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
                 activeTab === 'FREELANCER' 
                   ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 scale-[1.02]" 
                   : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
@@ -55,7 +55,7 @@ export default function MyTasksScreen() {
             <button
               onClick={() => handleTabChange('CLIENT')}
               className={cn(
-                "flex-1 py-3 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
+                "flex-1 py-2.5 text-xs font-black rounded-xl transition-all duration-300 press-scale flex items-center justify-center gap-2",
                 activeTab === 'CLIENT' 
                   ? "bg-edu-primary text-white shadow-lg shadow-edu-primary/20 scale-[1.02]" 
                   : "text-edu-muted hover:text-edu-text hover:bg-edu-bg"
@@ -67,7 +67,7 @@ export default function MyTasksScreen() {
         )}
 
         {/* Status Filters */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 shrink-0 animate-fade-in">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1.5 shrink-0 animate-fade-in">
           <FilterChip label="Barchasi" active={!statusFilter} onClick={() => setStatusFilter('')} />
           <FilterChip label="Faol" active={statusFilter === 'OPEN'} onClick={() => setStatusFilter('OPEN')} />
           <FilterChip label="Tayinlangan" active={statusFilter === 'ASSIGNED'} onClick={() => setStatusFilter('ASSIGNED')} />
@@ -77,15 +77,15 @@ export default function MyTasksScreen() {
         </div>
 
         {/* Tasks List */}
-        <div className="flex-1 overflow-y-auto space-y-4 pb-4 scrollbar-hide">
+        <div className="flex-1 overflow-y-auto space-y-3 pb-4 scrollbar-hide">
           {isLoading ? (
-            <div className="space-y-4 animate-fade-up">
+            <div className="space-y-3 animate-fade-up">
               <TaskCardSkeleton />
               <TaskCardSkeleton />
               <TaskCardSkeleton />
             </div>
           ) : tasks?.length > 0 ? (
-            <div className="space-y-4 animate-slide-up">
+            <div className="space-y-3 animate-slide-up">
               {tasks.map(task => (
                 <TaskCard key={task.id} task={task} />
               ))}

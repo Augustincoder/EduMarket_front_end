@@ -155,6 +155,7 @@ export function useTaskActions(taskId) {
     revisionErrors, setRevisionErrors,
     disputeReason, setDisputeReason,
     disputeErrors, setDisputeErrors,
+    createBid,
     handleBidSubmit,
     handleRatingSubmit,
     handleRevisionSubmit,

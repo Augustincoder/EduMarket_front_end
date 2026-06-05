@@ -7,21 +7,27 @@ function Bone({ className }) {
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-2xl p-4 shadow-card space-y-3">
-      <div className="flex items-center gap-2">
-        <Bone className="w-16 h-5" />
-        <Bone className="w-20 h-5" />
+    <div className="bg-edu-surface rounded-2xl p-3 shadow-card space-y-2.5">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex gap-1.5">
+          <Bone className="w-16 h-5" />
+          <Bone className="w-20 h-5" />
+        </div>
+        <Bone className="w-24 h-6" />
       </div>
-      <Bone className="w-full h-4" />
-      <Bone className="w-3/4 h-4" />
-      <div className="flex items-center gap-2">
-        <Bone className="w-6 h-6 rounded-full" />
-        <Bone className="w-24 h-4" />
-        <Bone className="w-12 h-4 ml-auto" />
+      <div className="space-y-1.5">
+        <Bone className="w-full h-4" />
+        <Bone className="w-3/4 h-4" />
       </div>
-      <div className="flex gap-4">
-        <Bone className="w-24 h-4" />
-        <Bone className="w-20 h-4" />
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center gap-1.5">
+          <Bone className="w-5 h-5 rounded-full" />
+          <Bone className="w-20 h-3" />
+        </div>
+        <div className="flex gap-3">
+          <Bone className="w-12 h-3" />
+          <Bone className="w-8 h-3" />
+        </div>
       </div>
     </div>
   );

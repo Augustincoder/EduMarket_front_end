@@ -30,13 +30,20 @@ export default function SplashScreen() {
         if (!currentUser) {
           currentUser = await refreshUser();
         }
-        // If refresh fails, it will likely trigger the 401 interceptor which clears the token and redirects to '/' anyway.
-        if (currentUser && !currentUser.isOnboardingComplete) {
-          navigate('/onboarding', { replace: true });
-        } else if (currentUser) {
-          navigate('/home', { replace: true });
+        
+        if (currentUser) {
+          if (!currentUser.isOnboardingComplete) {
+            navigate('/onboarding', { replace: true });
+          } else {
+            navigate('/home', { replace: true });
+          }
+          return;
+        } else {
+          // If token exists but refreshUser failed, the token is likely invalid or stale.
+          // Clear it and proceed to a fresh login.
+          console.warn("Session stale, re-authenticating...");
+          localStorage.removeItem('edu_token');
         }
-        return;
       }
 
       const result = await login(referralCode);

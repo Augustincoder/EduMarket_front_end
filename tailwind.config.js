@@ -52,12 +52,12 @@ export default {
         'full':'9999px',
       },
       boxShadow: {
-        'card':   '0 1px 4px rgba(26,25,22,0.08), 0 0 0 1px rgba(232,230,223,0.6)',
-        'nav':    '0 -1px 0 rgba(232,230,223,0.8), 0 -4px 16px rgba(26,25,22,0.06)',
-        'sheet':  '0 -8px 40px rgba(26,25,22,0.12)',
-        'btn':    '0 2px 8px rgba(29,158,117,0.30)',
-        'vip':    '0 2px 12px rgba(186,117,23,0.35)',
-        'accent': '0 2px 8px rgba(83,74,183,0.30)',
+        'card':   '0 2px 12px -3px rgba(0,0,0,0.04), 0 4px 20px -2px rgba(0,0,0,0.03)',
+        'nav':    '0 -1px 0 rgba(0,0,0,0.05), 0 -4px 20px rgba(0,0,0,0.03)',
+        'sheet':  '0 -10px 40px -10px rgba(0,0,0,0.15)',
+        'btn':    '0 4px 12px rgba(29,158,117,0.25)',
+        'vip':    '0 4px 16px rgba(186,117,23,0.30)',
+        'accent': '0 4px 12px rgba(83,74,183,0.25)',
       },
       animation: {
         'fade-up':    'fadeUp 0.3s ease-out',

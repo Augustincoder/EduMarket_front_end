@@ -54,10 +54,13 @@ export default function TaskDetailScreen() {
     revisionErrors, setRevisionErrors,
     disputeReason, setDisputeReason,
     disputeErrors, setDisputeErrors,
+    promoteOpen, setPromoteOpen,
+    createBid,
     handleBidSubmit,
     handleRatingSubmit,
     handleRevisionSubmit,
     handleDisputeSubmit,
+    handlePromoteSubmit,
   } = useTaskActions(id);
 
   const joinRoom = useChatStore((s) => s.joinRoom);

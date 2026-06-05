@@ -1,6 +1,6 @@
 // src/lib/notifications.js
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage, isSupported } from "firebase/messaging";
 import { usersApi } from "../services/users.service";
 
 const firebaseConfig = {
@@ -14,29 +14,53 @@ const firebaseConfig = {
 
 let messaging = null;
 
+/**
+ * Manual check for required Web Push APIs.
+ * This is more reliable in TMA/WebView than Firebase's isSupported() alone.
+ */
+const hasRequiredAPIs = () => {
+  return (
+    typeof window !== 'undefined' &&
+    'serviceWorker' in navigator &&
+    'Notification' in window &&
+    'PushManager' in window &&
+    'indexedDB' in window &&
+    window.indexedDB !== null
+  );
+};
+
 export const initNotifications = async () => {
   try {
-    if (!firebaseConfig.apiKey) {
-      console.warn("Firebase config missing. Push notifications disabled.");
+    if (!firebaseConfig.apiKey) return;
+
+    // 1. Pre-flight check: If basic APIs are missing, don't even try to load Firebase Messaging
+    if (!hasRequiredAPIs()) {
+      console.info("Push notifications are not supported in this environment (TMA/WebView).");
       return;
     }
 
     const app = initializeApp(firebaseConfig);
+    
+    // 2. Secondary check using SDK helper
+    const supported = await isSupported().catch(() => false);
+    if (!supported) return;
+
     messaging = getMessaging(app);
 
     // Foreground messages handler
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
-      // You can show a custom toast here if needed
     });
 
   } catch (error) {
-    console.error("Firebase init failed", error);
+    // Silently fail for compatibility reasons in TMA
+    console.warn("Notification system initialization skipped:", error.message);
   }
 };
 
 export const requestNotificationPermission = async () => {
-  if (!messaging) return;
+  // If messaging didn't initialize, just return
+  if (!messaging || !hasRequiredAPIs()) return;
 
   try {
     const permission = await Notification.requestPermission();
@@ -46,13 +70,12 @@ export const requestNotificationPermission = async () => {
       });
       
       if (token) {
-        // Send token to backend
         await usersApi.updatePushToken(token);
-        console.log("Push token updated");
         return token;
       }
     }
   } catch (error) {
-    console.error("An error occurred while retrieving token. ", error);
+    // Standard error log, but won't crash the app
+    console.warn("Could not retrieve push token:", error.message);
   }
 };

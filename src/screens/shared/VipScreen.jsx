@@ -12,7 +12,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useMainButton } from '../../hooks/useMainButton';
 import { vipApi, filesApi } from '../../services/other.service';
 import { VIP_PACKAGES, VIP_BENEFITS } from '../../lib/constants';
-import { copyToClipboard } from '../../lib/utils';
+import { copyToClipboard, cn } from '../../lib/utils';
 import { hapticSuccess } from '../../lib/telegram';
 import { trackEvent } from '../../lib/observability';
 import toast from 'react-hot-toast';

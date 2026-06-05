@@ -23,62 +23,62 @@ function TaskCard({ task, variant = 'full', className }) {
       isPressable
       onPress={handleClick}
       className={cn(
-        'p-5 active-bounce cursor-pointer',
+        'p-3 active-bounce cursor-pointer border-edu-border/30 hover:border-edu-primary/20',
         className
       )}
     >
       <CardContent className="p-0">
-        {/* Top row */}
-        <div className="flex items-center gap-2 flex-wrap mb-2.5">
-          {task.isUrgent && <UrgentBadge size="xs" />}
-          <CategoryChip
-            category={catInfo?.label || task.category}
-            emoji={catInfo?.emoji}
-          />
-          <StatusBadge status={task.status} size="xs" />
+        {/* Top row: Badges & Price */}
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {task.isUrgent && <UrgentBadge size="xs" />}
+            <CategoryChip
+              category={catInfo?.label || task.category}
+              emoji={catInfo?.emoji}
+              className="text-[10px] py-0.5"
+            />
+          </div>
+          <span className="text-[13px] font-black text-edu-primary bg-edu-primary/5 px-2 py-0.5 rounded-lg border border-edu-primary/10">
+            {formatPriceRange(task.priceMin, task.priceMax)}
+          </span>
         </div>
 
         {/* Title */}
-        <h3 className="font-bold text-edu-text text-md font-display line-clamp-2 mb-2.5 leading-snug">
+        <h3 className="font-bold text-edu-text text-[15px] font-display line-clamp-2 mb-2 leading-tight">
           {task.title}
         </h3>
 
-        {/* Client row */}
-        <div className="flex items-center gap-2 mb-3">
-          <Avatar
-            name={task.client?.fullname}
-            avatarUrl={task.client?.avatarUrl}
-            size="xs"
-          />
-          <span className="text-xs text-edu-muted font-medium truncate">
-            {task.client?.fullname}
-          </span>
-          {task.client?.badge && (
-            <UserBadge badge={task.client.badge} isVip={task.client?.isVip} size="xs" />
-          )}
-        </div>
+        {/* Client & Meta Row */}
+        <div className="flex items-center justify-between gap-2 mt-auto">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Avatar
+              name={task.client?.fullname}
+              avatarUrl={task.client?.avatarUrl}
+              size="xs"
+              className="w-5 h-5"
+            />
+            <span className="text-[11px] text-edu-muted font-bold truncate">
+              {task.client?.fullname}
+            </span>
+            {task.client?.isVip && <span className="text-[10px]">👑</span>}
+          </div>
 
-        {/* Price */}
-        <p className="text-md font-bold text-edu-text mb-2.5">
-          {formatPriceRange(task.priceMin, task.priceMax)}
-        </p>
-
-        {/* Meta */}
-        <div className="flex items-center gap-4 text-xs text-edu-muted mb-3">
-          <span className="flex items-center gap-1">
-            <Clock size={12} />
-            {deadlineCountdown(task.deadline)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Users size={12} />
-            {task._count?.bids ?? 0} taklif
-          </span>
+          <div className="flex items-center gap-3 text-[10px] font-black text-edu-muted uppercase tracking-tighter shrink-0">
+            <span className="flex items-center gap-1">
+              <Clock size={11} className="text-orange-500" />
+              {deadlineCountdown(task.deadline)}
+            </span>
+            <span className="flex items-center gap-1">
+              <Users size={11} className="text-blue-500" />
+              {task._count?.bids ?? 0}
+            </span>
+          </div>
         </div>
 
         {/* Assigned Task Banner */}
         {task.status === 'ASSIGNED' && (
-          <div className="mt-2 w-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center border border-blue-100 dark:border-blue-900/30">
-            👉 Chatga o'ting va vazifani boshlang
+          <div className="mt-2.5 w-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-black py-1.5 px-3 rounded-xl flex items-center justify-center border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-wider">
+            👉 Chatga o'ting
           </div>
         )}
       </CardContent>
