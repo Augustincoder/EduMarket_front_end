@@ -4,10 +4,11 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { FullPageSpinner } from '../components/ui/Spinner';
 import { useSocket } from '../hooks/useSocket';
 
+import SplashScreen from '../screens/auth/SplashScreen';
+import HomeScreen from '../screens/shared/HomeScreen';
+import OnboardingContainer from '../screens/auth/onboarding/OnboardingContainer';
+
 // Lazy load all screens
-const SplashScreen      = lazy(() => import('../screens/auth/SplashScreen'));
-const OnboardingContainer = lazy(() => import('../screens/auth/onboarding/OnboardingContainer'));
-const HomeScreen        = lazy(() => import('../screens/shared/HomeScreen'));
 const TaskFeedScreen    = lazy(() => import('../screens/freelancer/TaskFeedScreen'));
 const MyTasksScreen     = lazy(() => import('../screens/client/MyTasksScreen'));
 const TaskDetailScreen  = lazy(() => import('../screens/shared/TaskDetail/TaskDetailScreen'));
@@ -61,9 +62,9 @@ export function AppRouter() {
 }
 
 const router = createBrowserRouter([
-  { path: '/',                  element: <Screen element={<SplashScreen />} />           },
-  { path: '/onboarding',        element: <Screen element={<ProtectedRoute><OnboardingContainer /></ProtectedRoute>} /> },
-  { path: '/home',              element: <Screen element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} /> },
+  { path: '/',                  element: <SplashScreen />                                },
+  { path: '/onboarding',        element: <ProtectedRoute><OnboardingContainer /></ProtectedRoute> },
+  { path: '/home',              element: <ProtectedRoute><HomeScreen /></ProtectedRoute> },
   { path: '/tasks',             element: <Screen element={<ProtectedRoute><TaskFeedScreen /></ProtectedRoute>} /> },
   { path: '/my-tasks',          element: <Screen element={<ProtectedRoute><MyTasksScreen /></ProtectedRoute>} /> },
   { path: '/tasks/create',      element: <Screen element={<ProtectedRoute><CreateTaskScreen /></ProtectedRoute>} /> },
