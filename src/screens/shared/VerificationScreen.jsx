@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Header } from '../../components/layout/Header';
 import { Button } from '../../components/ui/Button';
@@ -9,7 +9,7 @@ import { FileUpload } from '../../components/forms/FileUpload';
 import { SelectInput } from '../../components/forms/SelectInput';
 import { verificationApi } from '../../services/verification.service';
 import { hapticSuccess, hapticError } from '../../lib/telegram';
-import { CheckCircle2, ShieldCheck, AlertCircle, Info, Camera, FileText, ChevronRight } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, AlertCircle, Info, Camera, FileText, ChevronRight, RefreshCcw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import toast from 'react-hot-toast';
 
@@ -21,27 +21,39 @@ const DOC_TYPES = [
 
 export default function VerificationScreen() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [docType, setDocType] = useState('STUDENT_ID');
   const [docFiles, setDocFiles] = useState([]);
   const [selfieFiles, setSelfieFiles] = useState([]);
   const [error, setError] = useState('');
 
-  const { data: status, isLoading: statusLoading, refetch } = useQuery({
+  const { data: status, isLoading: statusLoading, isError: statusError, error: queryError, refetch } = useQuery({
     queryKey: ['verification-status'],
     queryFn: () => verificationApi.getMyStatus().then(res => res.data.data),
+    retry: 1,
   });
 
   const submit = useMutation({
     mutationFn: (data) => verificationApi.submit(data),
+    onMutate: async (newData) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ['verification-status'] });
+      const previousStatus = queryClient.getQueryData(['verification-status']);
+      queryClient.setQueryData(['verification-status'], { status: 'PENDING' });
+      return { previousStatus };
+    },
+    onError: (err, newData, context) => {
+      hapticError();
+      // Rollback to previous state if error occurs
+      queryClient.setQueryData(['verification-status'], context.previousStatus);
+      const msg = err.response?.data?.message || 'Server bilan bog\'lanishda xatolik (404/500)';
+      toast.error(msg);
+    },
     onSuccess: () => {
       hapticSuccess();
       toast.success('So\'rov yuborildi!');
-      refetch();
-    },
-    onError: (err) => {
-      hapticError();
-      toast.error(err.response?.data?.message || 'Xatolik yuz berdi');
+      queryClient.invalidateQueries({ queryKey: ['verification-status'] });
     }
   });
 
@@ -61,7 +73,30 @@ export default function VerificationScreen() {
     });
   };
 
-  if (statusLoading) return <PageLayout><div className="p-20 text-center">Yuklanmoqda...</div></PageLayout>;
+  if (statusLoading) return <PageLayout><div className="p-20 text-center flex flex-col items-center gap-4"><RefreshCcw className="animate-spin text-edu-primary" /> <span>Yuklanmoqda...</span></div></PageLayout>;
+
+  if (statusError) {
+    return (
+      <PageLayout>
+        <Header title="Xatolik" showBack />
+        <div className="px-4 py-16 flex flex-col items-center text-center space-y-6">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center text-red-500">
+            <AlertCircle size={40} />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-black">Bog'lanib bo'lmadi</h2>
+            <p className="text-sm text-edu-muted max-w-[280px]">
+              Tizim bilan bog'lanishda xatolik yuz berdi. Bu server yangilanayotganligi yoki manzil o'zgarganligi sababli bo'lishi mumkin.
+            </p>
+            <p className="text-[10px] font-mono text-red-400 bg-red-50 p-2 rounded-lg break-all">
+              {queryError?.message || 'Error 404: Not Found'}
+            </p>
+          </div>
+          <Button onClick={() => refetch()} fullWidth variant="primary" icon={<RefreshCcw size={16} />}>Qayta urinish</Button>
+        </div>
+      </PageLayout>
+    );
+  }
 
   // If already verified or pending
   if (status && (status.status === 'APPROVED' || status.status === 'PENDING')) {

@@ -1,12 +1,12 @@
 // src/components/layout/BottomNav.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Wallet } from 'lucide-react';
+import { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
 import { useAuthStore } from '../../store/authStore';
 import { useChatStore } from '../../store/chatStore';
 
-const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Wallet };
+const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet };
 
 export function BottomNav() {
   const location = useLocation();
@@ -21,14 +21,14 @@ export function BottomNav() {
     { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
     { icon: 'ClipboardList', label: 'Mening ishim', route: '/my-tasks'  },
     { icon: 'Plus',          label: '',          route: '/tasks/create' },
-    { icon: 'MessageCircle', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
 
   const FREELANCER_NAV = [
     { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
     { icon: 'ClipboardList', label: 'Vazifalar', route: '/tasks'        },
-    { icon: 'MessageCircle', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
     { icon: 'Wallet',        label: 'Daromad',   route: '/earnings'     },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];

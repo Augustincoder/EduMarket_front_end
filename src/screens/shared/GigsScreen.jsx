@@ -16,6 +16,8 @@ import { gigsApi } from '../../services/gigs.service';
 import { useAuthStore } from '../../store/authStore';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+import { GigCardSkeleton } from '../../components/ui/SkeletonCard';
+import { formatPrice } from '../../lib/utils';
 import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
