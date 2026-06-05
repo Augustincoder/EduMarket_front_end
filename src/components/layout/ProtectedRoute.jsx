@@ -3,7 +3,8 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
 export function ProtectedRoute({ children, require: req = 'auth', task }) {
-  const { user, token } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
 
   // Not logged in at all
   if (!token || !user) {

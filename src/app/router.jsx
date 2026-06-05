@@ -5,27 +5,27 @@ import { FullPageSpinner } from '../components/ui/Spinner';
 import { useSocket } from '../hooks/useSocket';
 
 // Lazy load all screens
-const SplashScreen      = lazy(() => import('../screens/SplashScreen'));
-const OnboardingContainer = lazy(() => import('../screens/onboarding/OnboardingContainer'));
-const HomeScreen        = lazy(() => import('../screens/HomeScreen'));
-const TaskFeedScreen    = lazy(() => import('../screens/TaskFeedScreen'));
-const MyTasksScreen     = lazy(() => import('../screens/MyTasksScreen'));
-const TaskDetailScreen  = lazy(() => import('../screens/TaskDetailScreen'));
-const CreateTaskScreen  = lazy(() => import('../screens/CreateTaskScreen'));
-const BidsScreen        = lazy(() => import('../screens/BidsScreen'));
-const ChatListScreen    = lazy(() => import('../screens/ChatListScreen'));
-const ChatScreen        = lazy(() => import('../screens/ChatScreen'));
-const EarningsScreen    = lazy(() => import('../screens/EarningsScreen'));
-const ProfileScreen     = lazy(() => import('../screens/ProfileScreen'));
-const PublicProfileScreen = lazy(() => import('../screens/PublicProfileScreen'));
-const BecomeFreelancerScreen = lazy(() => import('../screens/BecomeFreelancerScreen'));
-const ReportScreen      = lazy(() => import('../screens/ReportScreen'));
-const GigsScreen        = lazy(() => import('../screens/GigsScreen'));
-const CreateGigScreen   = lazy(() => import('../screens/CreateGigScreen'));
-const VipScreen         = lazy(() => import('../screens/VipScreen'));
-const LeaderboardScreen = lazy(() => import('../screens/LeaderboardScreen'));
-const ReferralsScreen   = lazy(() => import('../screens/ReferralsScreen'));
-const NotificationSettingsScreen = lazy(() => import('../screens/NotificationSettingsScreen'));
+const SplashScreen      = lazy(() => import('../screens/auth/SplashScreen'));
+const OnboardingContainer = lazy(() => import('../screens/auth/onboarding/OnboardingContainer'));
+const HomeScreen        = lazy(() => import('../screens/shared/HomeScreen'));
+const TaskFeedScreen    = lazy(() => import('../screens/freelancer/TaskFeedScreen'));
+const MyTasksScreen     = lazy(() => import('../screens/client/MyTasksScreen'));
+const TaskDetailScreen  = lazy(() => import('../screens/shared/TaskDetail/TaskDetailScreen'));
+const CreateTaskScreen  = lazy(() => import('../screens/client/CreateTaskScreen'));
+const BidsScreen        = lazy(() => import('../screens/shared/BidsScreen'));
+const ChatListScreen    = lazy(() => import('../screens/shared/ChatListScreen'));
+const ChatScreen        = lazy(() => import('../screens/shared/ChatScreen'));
+const EarningsScreen    = lazy(() => import('../screens/freelancer/EarningsScreen'));
+const ProfileScreen     = lazy(() => import('../screens/shared/ProfileScreen'));
+const PublicProfileScreen = lazy(() => import('../screens/shared/PublicProfileScreen'));
+const BecomeFreelancerScreen = lazy(() => import('../screens/freelancer/BecomeFreelancerScreen'));
+const ReportScreen      = lazy(() => import('../screens/shared/ReportScreen'));
+const GigsScreen        = lazy(() => import('../screens/shared/GigsScreen'));
+const CreateGigScreen   = lazy(() => import('../screens/shared/CreateGigScreen'));
+const VipScreen         = lazy(() => import('../screens/shared/VipScreen'));
+const LeaderboardScreen = lazy(() => import('../screens/shared/LeaderboardScreen'));
+const ReferralsScreen   = lazy(() => import('../screens/shared/ReferralsScreen'));
+const NotificationSettingsScreen = lazy(() => import('../screens/shared/NotificationSettingsScreen'));
 
 // Lazy load Admin screens
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
@@ -45,34 +45,47 @@ function Screen({ element }) {
   return <Suspense fallback={<FullPageSpinner />}>{element}</Suspense>;
 }
 
+import { RoleGuard } from '../components/layout/RoleGuard';
+import { ProtectedRoute } from '../components/layout/ProtectedRoute';
+import { ErrorBoundary } from '../components/layout/ErrorBoundary';
+
+export function AppRouter() {
+  useSocket(); // Automatically connects/disconnects websocket based on token state
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  );
+}
+
 const router = createBrowserRouter([
   { path: '/',                  element: <Screen element={<SplashScreen />} />           },
-  { path: '/onboarding',        element: <Screen element={<OnboardingContainer />} />    },
-  { path: '/home',              element: <Screen element={<HomeScreen />} />             },
-  { path: '/tasks',             element: <Screen element={<TaskFeedScreen />} />         },
-  { path: '/my-tasks',          element: <Screen element={<MyTasksScreen />} />          },
-  { path: '/tasks/create',      element: <Screen element={<CreateTaskScreen />} />       },
-  { path: '/tasks/:id',         element: <Screen element={<TaskDetailScreen />} />       },
-  { path: '/tasks/:id/bids',    element: <Screen element={<BidsScreen />} />            },
-  { path: '/chats',             element: <Screen element={<ChatListScreen />} />        },
-  { path: '/tasks/:id/chat',    element: <Screen element={<ChatScreen />} />            },
-  { path: '/earnings',          element: <Screen element={<EarningsScreen />} />        },
-  { path: '/profile',           element: <Screen element={<ProfileScreen />} />         },
-  { path: '/become-freelancer', element: <Screen element={<BecomeFreelancerScreen />} />},
-  { path: '/report',            element: <Screen element={<ReportScreen />} />          },
-  { path: '/profile/:userId',   element: <Screen element={<PublicProfileScreen />} />   },
-  { path: '/gigs',              element: <Screen element={<GigsScreen />} />            },
-  { path: '/gigs/create',       element: <Screen element={<CreateGigScreen />} />       },
-  { path: '/vip',               element: <Screen element={<VipScreen />} />             },
-  { path: '/leaderboard',       element: <Screen element={<LeaderboardScreen />} />     },
-  { path: '/referrals',         element: <Screen element={<ReferralsScreen />} />       },
-  { path: '/settings/notifications', element: <Screen element={<NotificationSettingsScreen />} /> },
+  { path: '/onboarding',        element: <Screen element={<ProtectedRoute><OnboardingContainer /></ProtectedRoute>} /> },
+  { path: '/home',              element: <Screen element={<ProtectedRoute><HomeScreen /></ProtectedRoute>} /> },
+  { path: '/tasks',             element: <Screen element={<ProtectedRoute><TaskFeedScreen /></ProtectedRoute>} /> },
+  { path: '/my-tasks',          element: <Screen element={<ProtectedRoute><MyTasksScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/create',      element: <Screen element={<ProtectedRoute><CreateTaskScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/:id',         element: <Screen element={<ProtectedRoute><TaskDetailScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute require="client_only"><BidsScreen /></ProtectedRoute>} /> },
+  { path: '/chats',             element: <Screen element={<ProtectedRoute><ChatListScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/:id/chat',    element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
+  { path: '/earnings',          element: <Screen element={<RoleGuard require="FREELANCER"><EarningsScreen /></RoleGuard>} /> },
+  { path: '/profile',           element: <Screen element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} /> },
+  { path: '/become-freelancer', element: <Screen element={<ProtectedRoute><BecomeFreelancerScreen /></ProtectedRoute>} />},
+  { path: '/report',            element: <Screen element={<ProtectedRoute><ReportScreen /></ProtectedRoute>} />          },
+  { path: '/profile/:userId',   element: <Screen element={<ProtectedRoute><PublicProfileScreen /></ProtectedRoute>} />   },
+  { path: '/gigs',              element: <Screen element={<ProtectedRoute><GigsScreen /></ProtectedRoute>} />            },
+  { path: '/gigs/create',       element: <Screen element={<ProtectedRoute><CreateGigScreen /></ProtectedRoute>} />       },
+  { path: '/vip',               element: <Screen element={<ProtectedRoute><VipScreen /></ProtectedRoute>} />             },
+  { path: '/leaderboard',       element: <Screen element={<ProtectedRoute><LeaderboardScreen /></ProtectedRoute>} />     },
+  { path: '/referrals',         element: <Screen element={<ProtectedRoute><ReferralsScreen /></ProtectedRoute>} />       },
+  { path: '/settings/notifications', element: <Screen element={<ProtectedRoute><NotificationSettingsScreen /></ProtectedRoute>} /> },
   
   // Admin Routes
   { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },
   {
     path: '/admin',
-    element: <Screen element={<AdminLayout />} />,
+    element: <RoleGuard require="ADMIN"><Screen element={<AdminLayout />} /></RoleGuard>,
     children: [
       { path: 'dashboard', element: <Screen element={<AdminDashboard />} /> },
       { path: 'users',     element: <Screen element={<AdminUsers />} /> },
@@ -90,16 +103,5 @@ const router = createBrowserRouter([
   
   { path: '*',                  element: <Navigate to="/" replace />                    },
 ]);
-
-import { ErrorBoundary } from '../components/layout/ErrorBoundary';
-
-export function AppRouter() {
-  useSocket(); // Automatically connects/disconnects websocket based on token state
-  return (
-    <ErrorBoundary>
-      <RouterProvider router={router} />
-    </ErrorBoundary>
-  );
-}
 
 export default AppRouter;

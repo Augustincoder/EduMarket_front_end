@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@ta
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import { initKeepAlive } from '../lib/keepAlive';
+import { initNotifications } from '../lib/notifications';
 import { useThemeStore } from '../store/themeStore';
 
 const handleGlobalError = (error) => {
@@ -37,6 +38,7 @@ export function Providers({ children }) {
 
   useEffect(() => {
     initKeepAlive();
+    initNotifications();
   }, []);
 
   useEffect(() => {
@@ -69,24 +71,24 @@ export function Providers({ children }) {
         toastOptions={{
           duration: 3500,
           style: {
-            background:   '#fff',
-            color:        '#1A1916',
+            background:   'var(--edu-surface)',
+            color:        'var(--edu-text)',
             borderRadius: '14px',
-            border:       '1px solid #E8E6DF',
-            boxShadow:    '0 4px 24px rgba(26,25,22,0.10)',
+            border:       '1px solid var(--edu-border)',
+            boxShadow:    '0 4px 24px rgba(0,0,0,0.12)',
             fontSize:     '14px',
-            fontFamily:   "'DM Sans', sans-serif",
+            fontFamily:   'var(--font-body)',
             fontWeight:   500,
             maxWidth:     '380px',
             padding:      '12px 16px',
           },
           success: {
-            iconTheme: { primary: '#1D9E75', secondary: '#fff' },
-            style: { borderLeft: '3px solid #1D9E75' },
+            iconTheme: { primary: 'var(--edu-primary)', secondary: 'var(--edu-surface)' },
+            style: { borderLeft: '3px solid var(--edu-primary)' },
           },
           error: {
-            iconTheme: { primary: '#D85A30', secondary: '#fff' },
-            style: { borderLeft: '3px solid #D85A30' },
+            iconTheme: { primary: 'var(--edu-urgent)', secondary: 'var(--edu-surface)' },
+            style: { borderLeft: '3px solid var(--edu-urgent)' },
             duration: 5000,
           },
         }}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../../store/authStore';
-import { authApi } from '../../services/api';
+import { authApi } from '../../services/auth.service';
 import { Lock, User, Terminal } from 'lucide-react';
 
 export default function AdminLoginScreen() {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksApi, gigsApi, adminApi } from '../../services/api';
+import { tasksApi } from '../../services/tasks.service';
+import { gigsApi } from '../../services/gigs.service';
+import { adminApi } from '../../services/admin.service';
 import { formatPrice } from '../../lib/constants';
 import { toast } from 'react-hot-toast';
 import { ShieldAlert, Trash2, Briefcase, Award } from 'lucide-react';

@@ -58,7 +58,7 @@ export function GigCard({ gig, onOrder }) {
         <Button
           size="sm"
           variant="primary"
-          onClick={() => { hapticLight(); onOrder?.(gig); }}
+          onClick={() => { onOrder?.(gig); }}
         >
           Buyurtma
         </Button>

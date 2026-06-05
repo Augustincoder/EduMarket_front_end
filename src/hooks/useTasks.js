@@ -1,6 +1,6 @@
 // src/hooks/useTasks.js
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksApi, bidsApi } from '../services/api';
+import { tasksApi, bidsApi } from '../services/tasks.service';
 import toast from 'react-hot-toast';
 
 // ─── Task Feed (infinite) ───────────────────────────
@@ -63,14 +63,74 @@ export function useTaskTransition(taskId) {
     qc.invalidateQueries({ queryKey: ['tasks'] });
   };
 
-  const startProgress   = useMutation({ mutationFn: () => tasksApi.startProgress(taskId),   onSuccess: invalidate });
-  const submitReview    = useMutation({ mutationFn: () => tasksApi.submitReview(taskId),    onSuccess: invalidate });
-  const accept          = useMutation({ mutationFn: () => tasksApi.accept(taskId),          onSuccess: invalidate });
-  const requestRevision = useMutation({ mutationFn: (d) => tasksApi.requestRevision(taskId, d), onSuccess: invalidate });
-  const cancel          = useMutation({ mutationFn: () => tasksApi.cancel(taskId),          onSuccess: invalidate });
-  const dispute         = useMutation({ mutationFn: (d) => tasksApi.dispute(taskId, d),     onSuccess: invalidate });
+  const optimisticStatusUpdate = async (newStatus) => {
+    await qc.cancelQueries({ queryKey: ['task', taskId] });
+    const previousTask = qc.getQueryData(['task', taskId]);
+    if (previousTask) {
+      qc.setQueryData(['task', taskId], { ...previousTask, status: newStatus });
+    }
+    return { previousTask };
+  };
 
-  return { startProgress, submitReview, accept, requestRevision, cancel, dispute };
+  const onError = (err, variables, context) => {
+    if (context?.previousTask) {
+      qc.setQueryData(['task', taskId], context.previousTask);
+    }
+    toast.error(err.serverMsg || "Harakat amalga oshmadi.");
+  };
+
+  const startProgress   = useMutation({ 
+    mutationFn: () => tasksApi.startProgress(taskId),
+    onMutate: () => optimisticStatusUpdate('IN_PROGRESS'),
+    onError,
+    onSettled: invalidate 
+  });
+  
+  const submitReview    = useMutation({ 
+    mutationFn: () => tasksApi.submitReview(taskId),
+    onMutate: () => optimisticStatusUpdate('IN_REVIEW'),
+    onError,
+    onSettled: invalidate 
+  });
+  
+  const accept          = useMutation({ 
+    mutationFn: () => tasksApi.accept(taskId),
+    onMutate: () => optimisticStatusUpdate('COMPLETED'),
+    onError,
+    onSettled: invalidate 
+  });
+  
+  const requestRevision = useMutation({ 
+    mutationFn: (d) => tasksApi.requestRevision(taskId, d),
+    onMutate: () => optimisticStatusUpdate('IN_PROGRESS'),
+    onError,
+    onSettled: invalidate 
+  });
+  
+  const cancel          = useMutation({ 
+    mutationFn: () => tasksApi.cancel(taskId),
+    onMutate: () => optimisticStatusUpdate('CANCELED'),
+    onError,
+    onSettled: invalidate 
+  });
+  
+  const dispute         = useMutation({ 
+    mutationFn: (d) => tasksApi.dispute(taskId, d),
+    onMutate: () => optimisticStatusUpdate('DISPUTED'),
+    onError,
+    onSettled: invalidate 
+  });
+
+  const promote         = useMutation({ 
+    mutationFn: (d) => tasksApi.promote(taskId, d),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Vazifa muvaffaqiyatli ko'tarildi!");
+    },
+    onError: (err) => toast.error(err.serverMsg || "Xatolik yuz berdi")
+  });
+
+  return { startProgress, submitReview, accept, requestRevision, cancel, dispute, promote };
 }
 
 // ─── Bids ───────────────────────────────────────────

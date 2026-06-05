@@ -2,15 +2,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { TextInput } from '../forms/TextInput';
 import { Button } from '../ui/Button';
-import { Paperclip, Send, X, Image, FileText, CornerDownRight, Edit2 } from 'lucide-react';
-import { filesApi } from '../../services/api';
+import { Paperclip, Send, X, Image, FileText, CornerDownRight, Edit2, Check } from 'lucide-react';
+import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
+import { VoiceRecorder } from './VoiceRecorder';
 
 export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessage, onCancelAction }) {
   const [text, setText]       = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -26,6 +28,22 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     if (!trimmed) return;
     onSend?.(trimmed, null);
     if (!editingMessage) setText('');
+  };
+
+  const handleVoiceSend = async (blob) => {
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('files', blob, 'voice_message.webm');
+      const res = await filesApi.upload(fd);
+      const fileId = res.data.data.fileIds[0];
+      onSend?.(null, fileId, 'voice');
+    } catch {
+      toast.error('Ovozli xabar yuborishda xato');
+    } finally {
+      setUploading(false);
+      setIsVoiceMode(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -109,42 +127,63 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
 
       <div className="flex items-end gap-2 px-3 py-2">
         {/* Attach button */}
-        <button
-          onClick={() => setShowMenu((s) => !s)}
-          className={cn(
-            'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 press-scale',
-            showMenu ? 'bg-edu-primary text-white' : 'bg-edu-bg text-edu-muted'
-          )}
-          disabled={!!editingMessage}
-        >
-          {uploading
-            ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
-            : <Paperclip size={18} />
-          }
-        </button>
+        {!isVoiceMode && (
+          <button
+            onClick={() => setShowMenu((s) => !s)}
+            className={cn(
+              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 press-scale',
+              showMenu ? 'bg-edu-primary text-white' : 'bg-edu-bg text-edu-muted'
+            )}
+            disabled={!!editingMessage || uploading}
+          >
+            {uploading
+              ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
+              : <Paperclip size={18} />
+            }
+          </button>
+        )}
 
-        {/* Text input */}
-        <TextInput
-          value={text}
-          onChange={(e) => handleChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Xabar yozing..."
-          disabled={disabled || uploading}
-          maxLength={2000}
-        />
+        {/* Text input or Voice UI */}
+        {isVoiceMode ? (
+          <VoiceRecorder 
+            onSend={handleVoiceSend} 
+            onCancel={() => setIsVoiceMode(false)} 
+          />
+        ) : (
+          <>
+            <TextInput
+              value={text}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Xabar yozing..."
+              disabled={disabled || uploading}
+              maxLength={2000}
+            />
 
-        {/* Send button */}
-        <Button
-          isIconOnly
-          color="primary"
-          radius="full"
-          size="sm"
-          className="w-10 h-10 bg-edu-primary flex-shrink-0"
-          disabled={!text?.trim() && !uploading}
-          onClick={handleSend}
-        >
-          {editingMessage ? <Check size={16} className="text-white" /> : <Send size={16} className="text-white" />}
-        </Button>
+            {/* Send or Mic button */}
+            {text.trim() || editingMessage ? (
+              <Button
+                isIconOnly
+                color="primary"
+                radius="full"
+                size="sm"
+                className="w-10 h-10 bg-edu-primary flex-shrink-0"
+                disabled={uploading}
+                onClick={handleSend}
+              >
+                {editingMessage ? <Check size={16} className="text-white" /> : <Send size={16} className="text-white" />}
+              </Button>
+            ) : (
+              <button
+                onClick={() => setIsVoiceMode(true)}
+                disabled={uploading}
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-edu-bg text-edu-muted hover:text-edu-primary press-scale transition-colors"
+              >
+                <Mic size={20} />
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       <input ref={fileRef} type="file" className="hidden" onChange={handleFileUpload} />

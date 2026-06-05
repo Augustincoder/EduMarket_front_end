@@ -18,7 +18,9 @@ import {
 } from 'lucide-react';
 
 export default function AdminLayout() {
-  const { user, token, logout } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const location = useLocation();
 

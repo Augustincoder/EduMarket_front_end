@@ -11,7 +11,8 @@ const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageCircle, Walle
 export function BottomNav() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const { user, activeRole } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const activeRole = useAuthStore((s) => s.activeRole);
   const totalUnread = useChatStore((s) => s.totalUnread);
 
   const isFreelancerMode = activeRole === 'FREELANCER';

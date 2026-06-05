@@ -43,7 +43,7 @@ export const useAuthStore = create(
     }),
     {
       name:    'edu_auth',
-      partialize: (s) => ({ token: s.token, user: s.user }),
+      partialize: (s) => ({ token: s.token, activeRole: s.activeRole }),
     }
   )
 );

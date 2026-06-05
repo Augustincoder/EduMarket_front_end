@@ -6,14 +6,22 @@ import { useAuthStore } from '../store/authStore';
 import { useChatStore } from '../store/chatStore';
 import useOnboardingStore from '../store/onboardingStore';
 import { useUiStore } from '../store/uiStore';
-import { authApi, usersApi } from '../services/api';
+import { authApi } from '../services/auth.service';
+import { usersApi } from '../services/users.service';
 import { getInitData } from '../lib/telegram';
+import { identifyUser } from '../lib/observability';
 import toast from 'react-hot-toast';
 
 export function useAuth() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user, token, isLoading, setAuth, logout: storeLogout, setLoading, updateProfile } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const storeLogout = useAuthStore((s) => s.logout);
+  const setLoading = useAuthStore((s) => s.setLoading);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
   const chatDisconnect = useChatStore((s) => s.disconnect);
 
   // Login via Telegram initData
@@ -24,6 +32,7 @@ export function useAuth() {
       const res = await authApi.login({ initData, referralCode });
       const { user: u, token: t } = res.data.data;
       setAuth({ user: u, token: t });
+      identifyUser(u);
       return { success: true, user: u };
     } catch (err) {
       const msg = err.serverMsg || 'Kirish xatoligi yuz berdi';
@@ -38,8 +47,13 @@ export function useAuth() {
   const refreshUser = useCallback(async () => {
     try {
       const res = await usersApi.getMe();
-      updateProfile(res.data.data);
-    } catch (_) { /* silent */ }
+      const u = res.data.data;
+      updateProfile(u);
+      identifyUser(u);
+      return u;
+    } catch (_) { 
+      return null;
+    }
   }, [updateProfile]);
 
   // Helper to reset all caches and stores on logout

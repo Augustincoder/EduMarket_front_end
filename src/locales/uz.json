@@ -1,0 +1,19 @@
+{
+  "app": {
+    "name": "EduMarket",
+    "slogan": "Bilim bozori",
+    "loading": "Ulanmoqda..."
+  },
+  "nav": {
+    "home": "Asosiy",
+    "tasks": "Vazifalar",
+    "my_tasks": "Mening ishim",
+    "gigs": "Xizmatlar",
+    "chat": "Chat",
+    "earnings": "Daromad",
+    "profile": "Profil"
+  },
+  "auth": {
+    "login_error": "Kirish xatoligi yuz berdi"
+  }
+}

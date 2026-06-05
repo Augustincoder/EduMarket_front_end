@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '../../services/api';
+import { adminApi } from '../../services/admin.service';
 import { toast } from 'react-hot-toast';
 import { Settings, Save, Percent, ShieldAlert } from 'lucide-react';
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { adminApi } from '../../services/api';
+import { adminApi } from '../../services/admin.service';
 import { toast } from 'react-hot-toast';
 import { Select } from '../../components/ui/AdminComponents';
 import { Send, Users, ShieldAlert } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 export default function AdminBroadcast() {
   const [targetType, setTargetType] = useState('ALL');
@@ -26,7 +27,8 @@ export default function AdminBroadcast() {
     }
 
     if (window.confirm('Haqiqatdan ham ushbu xabarni barcha tanlangan foydalanuvchilarga yubormoqchimisiz?')) {
-      broadcastMutation.mutate({ targetType, text });
+      const sanitizedText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'code', 's', 'strike', 'del', 'pre', 'a'] });
+      broadcastMutation.mutate({ targetType, text: sanitizedText });
     }
   };
 

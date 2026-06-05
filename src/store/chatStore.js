@@ -1,7 +1,8 @@
 // src/store/chatStore.js
 import { create } from 'zustand';
 import { io } from 'socket.io-client';
-import { chatApi } from '../services/api';
+import { chatApi } from '../services/chat.service';
+import { useAuthStore } from './authStore';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
@@ -40,12 +41,18 @@ export const useChatStore = create((set, get) => ({
 
     socket.on('new_message', (msg) => {
       const taskId = msg.taskId;
-      set((s) => ({
-        messages: {
-          ...s.messages,
-          [taskId]: [...(s.messages[taskId] || []), msg],
-        },
-      }));
+      set((s) => {
+        const roomMsgs = s.messages[taskId] || [];
+        // Prevent duplicate messages if API already inserted it
+        if (roomMsgs.some(m => m.id === msg.id)) return s;
+        
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: [...roomMsgs, msg],
+          },
+        };
+      });
       // Auto-reload conversations to sync lists and unread counts
       get().loadConversations();
     });
@@ -202,10 +209,53 @@ export const useChatStore = create((set, get) => ({
   },
 
   sendMessage: async (taskId, content, fileId = null, replyToId = null) => {
+    const tempId = `temp_${Date.now()}_${Math.random()}`;
+    const user = useAuthStore.getState().user;
+    
+    // Create optimistic message
+    const tempMsg = {
+      id: tempId,
+      taskId,
+      senderId: user?.id,
+      sender: user,
+      content,
+      fileId,
+      replyToId,
+      replyTo: replyToId ? get().messages[taskId]?.find(m => m.id === replyToId) : null,
+      createdAt: new Date().toISOString(),
+      isRead: false,
+      isSending: true,
+    };
+
+    set((s) => {
+      const roomMsgs = s.messages[taskId] || [];
+      return { messages: { ...s.messages, [taskId]: [...roomMsgs, tempMsg] } };
+    });
+
     try {
-      await chatApi.sendMessage(taskId, { content, fileId, replyToId });
+      const res = await chatApi.sendMessage(taskId, { content, fileId, replyToId });
+      const realMsg = res.data.data;
+      
+      set((s) => {
+        const roomMsgs = s.messages[taskId] || [];
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === tempId ? realMsg : m),
+          }
+        };
+      });
     } catch (err) {
       console.error('Failed to send message:', err);
+      set((s) => {
+        const roomMsgs = s.messages[taskId] || [];
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === tempId ? { ...m, isError: true, isSending: false } : m),
+          }
+        };
+      });
     }
   },
 

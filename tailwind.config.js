@@ -28,8 +28,8 @@ export default {
         'status-disputed':  'var(--status-disputed)',
       },
       fontFamily: {
-        display: ['Nunito', 'sans-serif'],
-        body:    ['DM Sans', 'sans-serif'],
+        display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Inter"', 'sans-serif'],
+        body:    ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Inter"', 'sans-serif'],
       },
       fontSize: {
         '2xs': ['10px', '14px'],

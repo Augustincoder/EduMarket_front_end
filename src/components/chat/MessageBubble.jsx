@@ -1,10 +1,12 @@
 // src/components/chat/MessageBubble.jsx
 import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
-import { Check, CheckCheck, FileText, Download, Image as ImageIcon, X, MoreVertical, CornerDownRight, Edit2, Trash2, Ban } from 'lucide-react';
-import { filesApi } from '../../services/api';
+import { Check, CheckCheck, FileText, Download, Image as ImageIcon, X, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle } from 'lucide-react';
+import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { Spinner } from '../ui/Spinner';
+import DOMPurify from 'dompurify';
+import { VoicePlayer } from './VoicePlayer';
 
 function ImageAttachment({ fileId, onClick }) {
   const [url, setUrl] = useState(null);
@@ -135,6 +137,8 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
           {hasFile ? (
             isImage ? (
               <ImageAttachment fileId={message.fileId} onClick={(url) => setViewerUrl(url)} />
+            ) : message.fileType === 'voice' ? (
+              <VoicePlayer fileId={message.fileId} isMe={isMe} />
             ) : (
               <div className="flex items-center gap-2.5 min-w-[160px] p-1">
                 <div className={cn(
@@ -153,7 +157,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
               </div>
             )
           ) : (
-            message.content
+            <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content, { ALLOWED_TAGS: ['b', 'i', 'a', 'code', 'pre'] }) }} />
           )}
 
           {/* Timestamp + read receipt */}
@@ -170,9 +174,15 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
               {formatDatetime(message.createdAt)}
             </span>
             {isMe && (
-              message.isRead
-                ? <CheckCheck size={14} className="text-blue-300 drop-shadow-md" />
-                : <Check size={12} className="text-white/50" />
+              message.isError ? (
+                <AlertCircle size={12} className="text-red-300" title="Xatolik" />
+              ) : message.isSending ? (
+                <Clock size={12} className="text-white/50 animate-pulse" title="Yuborilmoqda..." />
+              ) : message.isRead ? (
+                <CheckCheck size={14} className="text-blue-300 drop-shadow-md" />
+              ) : (
+                <Check size={12} className="text-white/50" />
+              )
             )}
           </div>
         </div>

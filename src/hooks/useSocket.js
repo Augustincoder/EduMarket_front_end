@@ -8,7 +8,10 @@ import toast from 'react-hot-toast';
 
 export function useSocket() {
   const token = useAuthStore((s) => s.token);
-  const { connect, disconnect, socket, connected } = useChatStore();
+  const connect = useChatStore((s) => s.connect);
+  const disconnect = useChatStore((s) => s.disconnect);
+  const socket = useChatStore((s) => s.socket);
+  const connected = useChatStore((s) => s.connected);
   const queryClient = useQueryClient();
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '../../services/api';
+import { adminApi } from '../../services/admin.service';
 import { Scroll, Terminal, Download } from 'lucide-react';
 import { exportToCSV } from '../../lib/export';
 import { toast } from 'react-hot-toast';

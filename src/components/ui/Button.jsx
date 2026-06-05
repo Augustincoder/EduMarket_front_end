@@ -1,22 +1,34 @@
 // src/components/ui/Button.jsx
 import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { hapticLight, hapticMedium, hapticSuccess, hapticError, hapticWarning } from '../../lib/telegram';
+
+const HAPTIC_MAP = {
+  light:   hapticLight,
+  medium:  hapticMedium,
+  success: hapticSuccess,
+  error:   hapticError,
+  warning: hapticWarning,
+};
 
 /**
  * EduMarket Button (Radix/Native Tailwind)
  * variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'vip' | 'accent'
  * size:    'sm' | 'md' | 'lg'
+ * haptic:  'light' | 'medium' | 'success' | 'error' | 'warning' | null
  */
 export function Button({
   variant   = 'primary',
   size      = 'md',
   isLoading = false,
+  haptic    = 'light',
   icon,
   iconRight,
   fullWidth = false,
   children,
   className = '',
   disabled,
+  onClick,
   ...props
 }) {
   const baseClass = "inline-flex items-center justify-center gap-2 font-semibold transition-all rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-edu-primary disabled:opacity-50 disabled:pointer-events-none active:scale-95";
@@ -32,15 +44,23 @@ export function Button({
     secondary: 'bg-edu-border/50 text-edu-text hover:bg-edu-border',
     outline:   'border-2 border-edu-primary text-edu-primary hover:bg-edu-primary/10',
     ghost:     'bg-transparent text-edu-text hover:bg-edu-surface',
-    danger:    'bg-red-500 text-white hover:bg-red-600',
+    danger:    'bg-edu-urgent text-white hover:opacity-90',
     vip:       'bg-gradient-to-r from-edu-vip to-yellow-500 text-white shadow-vip border-none',
-    accent:    'bg-edu-accent text-white hover:bg-indigo-700 shadow-accent',
+    accent:    'bg-edu-accent text-white hover:opacity-90 shadow-accent',
   }[variant] || 'bg-edu-primary text-white hover:bg-edu-primary-d';
+
+  const handleClick = (e) => {
+    if (haptic && HAPTIC_MAP[haptic]) {
+      HAPTIC_MAP[haptic]();
+    }
+    onClick?.(e);
+  };
 
   return (
     <button
       disabled={isLoading || disabled}
       className={cn(baseClass, sizeClass, variantClass, fullWidth && 'w-full', className)}
+      onClick={handleClick}
       {...props}
     >
       {isLoading && <Loader2 size={18} className="animate-spin" />}

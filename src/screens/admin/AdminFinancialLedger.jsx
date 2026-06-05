@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { adminApi } from '../../services/api';
+import { adminApi } from '../../services/admin.service';
 import { formatPrice } from '../../lib/constants';
 import { Coins, ArrowUpRight, ArrowDownLeft, Download } from 'lucide-react';
 import { exportToCSV } from '../../lib/export';
