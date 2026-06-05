@@ -224,10 +224,10 @@ export const useChatStore = create((set, get) => ({
     get().socket?.emit('leave_task_room', taskId);
   },
 
-  sendMessage: async (taskId, content, fileId = null, replyToId = null) => {
+  sendMessage: async (taskId, content, fileId = null, replyToId = null, fileType = null, fileName = null) => {
     const tempId = `temp_${Date.now()}_${Math.random()}`;
     const user = useAuthStore.getState().user;
-    
+
     // Create optimistic message
     const tempMsg = {
       id: tempId,
@@ -236,6 +236,8 @@ export const useChatStore = create((set, get) => ({
       sender: user,
       content,
       fileId,
+      fileType,
+      fileName,
       replyToId,
       replyTo: replyToId ? get().messages[taskId]?.find(m => m.id === replyToId) : null,
       createdAt: new Date().toISOString(),
@@ -249,7 +251,7 @@ export const useChatStore = create((set, get) => ({
     });
 
     try {
-      const res = await chatApi.sendMessage(taskId, { content, fileId, replyToId });
+      const res = await chatApi.sendMessage(taskId, { content, fileId, fileType, fileName, replyToId });
       const realMsg = res.data.data;
       
       set((s) => {

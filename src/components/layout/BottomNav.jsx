@@ -43,7 +43,7 @@ export function BottomNav() {
   return (
     <nav className={cn(
       'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px]',
-      'ios-glass border-t border-edu-border shadow-nav',
+      'bg-edu-surface/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border-t border-edu-border shadow-nav',
       'pb-safe z-40'
     )}>
       <div className="flex items-center justify-around h-[64px] px-3">

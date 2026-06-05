@@ -11,9 +11,9 @@
   --edu-muted: #8E8E93;      /* secondaryLabel */
   --edu-text: #000000;       /* label */
   
-  --edu-primary: #007AFF;    /* iOS Blue - cleaner for premium look */
-  --edu-primary-d: #0056B3;
-  --edu-accent: #5856D6;     /* iOS Indigo */
+  --edu-primary: #10B981;    /* Clean Green */
+  --edu-primary-d: #059669;
+  --edu-accent: #6366F1;     /* Indigo Accent */
   --edu-urgent: #FF3B30;     /* iOS Red */
   --edu-vip: #AF8B3B;        /* Muted Gold */
 
@@ -38,9 +38,9 @@
   --edu-muted: #98989D;
   --edu-text: #FFFFFF;
   
-  --edu-primary: #0A84FF;
-  --edu-primary-d: #007AFF;
-  --edu-accent: #5E5CE6;
+  --edu-primary: #10B981;
+  --edu-primary-d: #059669;
+  --edu-accent: #818CF8;
 }
 
 @theme {

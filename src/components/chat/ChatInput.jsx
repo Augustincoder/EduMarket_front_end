@@ -74,7 +74,14 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       fd.append('files', file);
       const res = await filesApi.upload(fd);
       const fileId = res.data.data.fileIds[0];
-      onSend?.(null, fileId);
+      
+      // Determine fileType
+      let fileType = 'document';
+      if (file.type.startsWith('image/')) fileType = 'photo';
+      else if (file.type.startsWith('video/')) fileType = 'video';
+      else if (file.type.startsWith('audio/')) fileType = 'voice';
+
+      onSend?.(null, fileId, fileType, file.name);
     } catch {
       toast.error('Fayl yuklashda xato');
     } finally {

@@ -15,7 +15,7 @@ export const tasksApi = {
   dispute:          (id, data)    => api.post(`/tasks/${id}/dispute`, data),
   promote:          (id, data)    => api.post(`/tasks/${id}/promote`, data),
   // Rating
-  rate: (id, data) => api.post(`/tasks/${id}/rate`, data),
+  rate: (id, data) => api.post(`/reviews/task/${id}`, data),
 };
 
 export const bidsApi = {

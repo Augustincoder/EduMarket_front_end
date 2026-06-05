@@ -34,9 +34,9 @@ export default function MyTasksScreen() {
   const { data: tasks, isLoading } = useMyTasks(activeTab, statusFilter);
 
   return (
-    <PageLayout>
+    <PageLayout scrollable={false}>
       <Header title="Mening vazifalarim" />
-      <div className="pt-3 pb-nav px-3 h-full flex flex-col space-y-4">
+      <div className="flex-1 overflow-y-auto pt-3 pb-nav px-3 space-y-4 scrollbar-hide">
         
         {/* Role Tabs */}
         {user?.isFreelancer && (

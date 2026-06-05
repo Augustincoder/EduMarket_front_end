@@ -346,7 +346,7 @@ export default function TaskDetailScreen() {
                   </span>
                 </div>
                 {task.bids[0].message && (
-                  <p className="text-xs text-edu-text/90 italic leading-relaxed bg-white/70 backdrop-blur-md p-2.5 rounded-xl border border-edu-border/20">
+                  <p className="text-xs text-edu-text/90 italic leading-relaxed bg-white/70 dark:bg-white/10 backdrop-blur-md p-2.5 rounded-xl border border-edu-border/20">
                     "{task.bids[0].message}"
                   </p>
                 )}
@@ -380,13 +380,33 @@ export default function TaskDetailScreen() {
               {task.attachmentFileIds?.length > 0 && isMember && (
                 <>
                   <hr className="border-edu-border/40" />
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-edu-accent/10 flex items-center justify-center">
-                      <Paperclip size={16} className="text-edu-accent" />
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-edu-accent/10 flex items-center justify-center">
+                        <Paperclip size={16} className="text-edu-accent" />
+                      </div>
+                      <p className="text-sm font-bold text-edu-text">
+                        Biriktirilgan fayllar ({task.attachmentFileIds.length})
+                      </p>
                     </div>
-                    <p className="text-sm text-edu-muted">
-                      {task.attachmentFileIds.length} ta biriktirma
-                    </p>
+                    <div className="grid grid-cols-1 gap-2 pl-11">
+                      {task.attachmentFileIds.map((fileId, idx) => (
+                        <button
+                          key={fileId}
+                          onClick={async () => {
+                            try {
+                              const res = await filesApi.getUrl(fileId);
+                              window.open(res.data.data.url, '_blank');
+                            } catch {
+                              toast.error('Faylni yuklab olishda xato');
+                            }
+                          }}
+                          className="flex items-center gap-2 p-2 rounded-xl bg-edu-bg border border-edu-border/50 text-[11px] font-bold text-edu-primary hover:bg-edu-primary/5 transition-colors active:scale-95 text-left"
+                        >
+                          <FileText size={14} /> Fayl #{idx + 1} ni yuklab olish
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </>
               )}
@@ -411,7 +431,10 @@ export default function TaskDetailScreen() {
           </Card>
         </div>
 
-        <div className="border-t border-edu-border/40 bg-edu-surface/85 backdrop-blur-2xl pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.06)] relative z-20">
+        <div className={cn(
+          "border-t border-edu-border/40 bg-edu-surface/85 backdrop-blur-2xl pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.06)] relative z-20 transition-all duration-300",
+          bidOpen ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+        )}>
           {renderCTA()}
         </div>
       </div>

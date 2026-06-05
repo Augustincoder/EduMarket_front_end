@@ -594,6 +594,19 @@ export default function ProfileScreen() {
             </div>
             <span className="font-bold text-edu-text">Bildirishnomalar (Push)</span>
           </button>
+
+          <button 
+            className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            onClick={() => { 
+              setSettingsMenuOpen(false); 
+              toast("Tilni o'zgartirish tez orada qo'shiladi!", { icon: '🌐' });
+            }}
+          >
+            <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500">
+              <span className="text-[16px]">🇺🇿</span>
+            </div>
+            <span className="font-bold text-edu-text">Til (O'zbek)</span>
+          </button>
         </div>
       </BottomSheet>
 
