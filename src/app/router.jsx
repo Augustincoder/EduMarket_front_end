@@ -7,17 +7,17 @@ import { useSocket } from '../hooks/useSocket';
 import SplashScreen from '../screens/auth/SplashScreen';
 import HomeScreen from '../screens/shared/HomeScreen';
 import OnboardingContainer from '../screens/auth/onboarding/OnboardingContainer';
+import TaskFeedScreen from '../screens/freelancer/TaskFeedScreen';
+import MyTasksScreen from '../screens/client/MyTasksScreen';
+import ChatListScreen from '../screens/shared/ChatListScreen';
+import ProfileScreen from '../screens/shared/ProfileScreen';
 
-// Lazy load all screens
-const TaskFeedScreen    = lazy(() => import('../screens/freelancer/TaskFeedScreen'));
-const MyTasksScreen     = lazy(() => import('../screens/client/MyTasksScreen'));
+// Lazy load remaining screens
 const TaskDetailScreen  = lazy(() => import('../screens/shared/TaskDetail/TaskDetailScreen'));
 const CreateTaskScreen  = lazy(() => import('../screens/client/CreateTaskScreen'));
 const BidsScreen        = lazy(() => import('../screens/shared/BidsScreen'));
-const ChatListScreen    = lazy(() => import('../screens/shared/ChatListScreen'));
 const ChatScreen        = lazy(() => import('../screens/shared/ChatScreen'));
 const EarningsScreen    = lazy(() => import('../screens/freelancer/EarningsScreen'));
-const ProfileScreen     = lazy(() => import('../screens/shared/ProfileScreen'));
 const PublicProfileScreen = lazy(() => import('../screens/shared/PublicProfileScreen'));
 const BecomeFreelancerScreen = lazy(() => import('../screens/freelancer/BecomeFreelancerScreen'));
 const ReportScreen      = lazy(() => import('../screens/shared/ReportScreen'));
@@ -65,15 +65,15 @@ const router = createBrowserRouter([
   { path: '/',                  element: <SplashScreen />                                },
   { path: '/onboarding',        element: <ProtectedRoute><OnboardingContainer /></ProtectedRoute> },
   { path: '/home',              element: <ProtectedRoute><HomeScreen /></ProtectedRoute> },
-  { path: '/tasks',             element: <Screen element={<ProtectedRoute><TaskFeedScreen /></ProtectedRoute>} /> },
-  { path: '/my-tasks',          element: <Screen element={<ProtectedRoute><MyTasksScreen /></ProtectedRoute>} /> },
+  { path: '/tasks',             element: <ProtectedRoute><TaskFeedScreen /></ProtectedRoute> },
+  { path: '/my-tasks',          element: <ProtectedRoute><MyTasksScreen /></ProtectedRoute> },
   { path: '/tasks/create',      element: <Screen element={<ProtectedRoute><CreateTaskScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id',         element: <Screen element={<ProtectedRoute><TaskDetailScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute require="client_only"><BidsScreen /></ProtectedRoute>} /> },
-  { path: '/chats',             element: <Screen element={<ProtectedRoute><ChatListScreen /></ProtectedRoute>} /> },
+  { path: '/chats',             element: <ProtectedRoute><ChatListScreen /></ProtectedRoute> },
   { path: '/tasks/:id/chat',    element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
   { path: '/earnings',          element: <Screen element={<RoleGuard require="FREELANCER"><EarningsScreen /></RoleGuard>} /> },
-  { path: '/profile',           element: <Screen element={<ProtectedRoute><ProfileScreen /></ProtectedRoute>} /> },
+  { path: '/profile',           element: <ProtectedRoute><ProfileScreen /></ProtectedRoute> },
   { path: '/become-freelancer', element: <Screen element={<ProtectedRoute><BecomeFreelancerScreen /></ProtectedRoute>} />},
   { path: '/report',            element: <Screen element={<ProtectedRoute><ReportScreen /></ProtectedRoute>} />          },
   { path: '/profile/:userId',   element: <Screen element={<ProtectedRoute><PublicProfileScreen /></ProtectedRoute>} />   },
