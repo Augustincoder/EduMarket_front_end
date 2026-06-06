@@ -10,6 +10,7 @@ import { formatPrice } from '../../lib/utils';
 import { Avatar } from '../../components/ui/Avatar';
 import { Card, CardContent } from '../../components/ui/Card';
 import { ArrowRight, Wallet, CheckCircle, Search, Clock, Star } from 'lucide-react';
+import { HomeTopBar } from '../../components/layout/HomeTopBar';
 
 export default function FreelancerHomeScreen() {
   const navigate = useNavigate();
@@ -58,18 +59,7 @@ export default function FreelancerHomeScreen() {
     <div className="flex flex-col h-full bg-edu-bg pb-24 p-4 overflow-y-auto scrollbar-hide">
       
       {/* ── Header / Greeting ─────────────────────────── */}
-      <div className="flex justify-between items-center mb-8 pt-4">
-        <div className="space-y-1">
-          <p className="text-[11px] font-black text-edu-muted uppercase tracking-[0.1em] opacity-80">Freelancer kabineti 💼</p>
-          <h1 className="text-3xl font-black font-display text-edu-text tracking-ios-display">{user?.fullname}</h1>
-        </div>
-        <div className="relative active-spring" onClick={() => navigate('/profile')}>
-          <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="lg" className="ring-4 ring-edu-surface shadow-ios" />
-          {user?.isVip && (
-            <span className="absolute -bottom-1 -right-1 bg-gradient-to-r from-edu-vip to-amber-600 rounded-full p-1 border-2 border-edu-surface text-[10px] shadow-sm">👑</span>
-          )}
-        </div>
-      </div>
+      <HomeTopBar greeting="Freelancer kabineti 💼" />
 
       {/* ── Statistics Grid (4 items) ────────────────── */}
       <div className="grid grid-cols-2 gap-3.5 mb-8">

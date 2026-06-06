@@ -24,7 +24,6 @@ export function BottomNav() {
     { icon: 'ClipboardList', label: 'Mening ishim', route: '/my-tasks'  },
     { icon: 'Plus',          label: '',          route: '/tasks/create' },
     { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
-    { icon: 'Bell',          label: 'Bildirish', route: '/notifications', badge: unreadNotifications },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
 
@@ -32,7 +31,6 @@ export function BottomNav() {
     { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
     { icon: 'ClipboardList', label: 'Vazifalar', route: '/tasks'        },
     { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
-    { icon: 'Bell',          label: 'Bildirish', route: '/notifications', badge: unreadNotifications },
     { icon: 'Wallet',        label: 'Daromad',   route: '/earnings'     },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
