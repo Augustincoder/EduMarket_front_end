@@ -10,7 +10,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
   const { data: milestones = [], isLoading } = useMilestones(taskId);
   const { create, toggle, remove } = useMilestoneMutations(taskId);
   const [newTitle, setNewTitle] = useState('');
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (!socket) return;

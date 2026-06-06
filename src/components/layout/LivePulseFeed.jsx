@@ -4,7 +4,7 @@ import { useSocket } from '../../hooks/useSocket';
 import { CATEGORIES } from '../../lib/constants';
 
 export function LivePulseFeed() {
-  const socket = useSocket();
+  const { socket } = useSocket();
   const [pulseEvents, setPulseEvents] = useState([]);
 
   useEffect(() => {
