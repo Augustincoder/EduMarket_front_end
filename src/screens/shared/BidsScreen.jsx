@@ -51,28 +51,32 @@ export default function BidsScreen() {
   const hasMore = bids && bids.length > displayLimit;
 
   return (
-    <PageLayout showNav={false}>
-      <Header title={`Takliflar (${bids?.length ?? 0} ta)`} showBack />
+    <PageLayout showNav={false} bgClass="bg-[#F2F2F7] dark:bg-black">
+      <Header title={`Takliflar (${bids?.length ?? 0} ta)`} showBack className="ios-glass" />
 
-      <div className="px-4 py-4 space-y-3">
+      <div className="px-4 py-6 space-y-4">
         {isLoading ? (
-          [1,2,3].map(i => <TaskCardSkeleton key={i} />)
+          <div className="space-y-4">
+            {[1,2,3].map(i => <TaskCardSkeleton key={i} />)}
+          </div>
         ) : !bids?.length ? (
           <EmptyState emoji="🤷" title="Hali hech kim taklif bermagan" subtitle="Biroz kuting..." />
         ) : (
           <>
-            {displayedBids.map((bid) => (
-              <BidCard
-                key={bid.id}
-                bid={bid}
-                isSelected={!!bid.isAccepted}
-                isDisabled={bids.some(b => b.isAccepted)}
-                onAccept={(bid) => setConfirming(bid)}
-              />
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {displayedBids.map((bid) => (
+                <BidCard
+                  key={bid.id}
+                  bid={bid}
+                  isSelected={!!bid.isAccepted}
+                  isDisabled={bids.some(b => b.isAccepted)}
+                  onAccept={(bid) => setConfirming(bid)}
+                />
+              ))}
+            </div>
             {hasMore && (
-              <div className="flex justify-center pt-4 pb-8">
-                <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)}>
+              <div className="flex justify-center pt-6 pb-10">
+                <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-2xl px-8 font-black uppercase tracking-widest text-[12px] h-11">
                   Ko'proq ko'rsatish
                 </Button>
               </div>

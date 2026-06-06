@@ -41,9 +41,18 @@ export default function AdminVipRequests() {
   const openRequest = async (req) => {
     setSelectedReq(req);
     setScreenshotUrl('');
+
+    // 1. Try direct public URL (instant)
+    const publicUrl = filesApi.getPublicUrl(req.screenshotFileId);
+    if (publicUrl) {
+      setScreenshotUrl(publicUrl);
+      return;
+    }
+
+    // 2. Fallback: get presigned URL
     try {
       const res = await filesApi.getUrl(req.screenshotFileId);
-      setScreenshotUrl(res.data.data || res.data || '');
+      setScreenshotUrl(res.data.data.url);
     } catch (err) {
       toast.error('Chek rasmini yuklab bo\'lmadi');
     }

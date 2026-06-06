@@ -22,14 +22,6 @@ export function VoiceRecorder({ onSend, onCancel }) {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
 
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType });
-        if (chunksRef.current.length > 0) {
-           // We only call onSend if we didn't cancel
-        }
-        stream.getTracks().forEach(track => track.stop());
-      };
-
       mediaRecorder.start();
       setIsRecording(true);
       setDuration(0);
@@ -43,6 +35,12 @@ export function VoiceRecorder({ onSend, onCancel }) {
     }
   };
 
+  const stopTracks = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.stream) {
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+  };
+
   const stopAndSend = () => {
     if (mediaRecorderRef.current && isRecording) {
       const mimeType = mediaRecorderRef.current.mimeType;
@@ -50,6 +48,7 @@ export function VoiceRecorder({ onSend, onCancel }) {
         const audioBlob = new Blob(chunksRef.current, { type: mimeType });
         onSend(audioBlob);
         hapticSuccess();
+        stopTracks();
       };
       mediaRecorderRef.current.stop();
       cleanup();
@@ -58,7 +57,9 @@ export function VoiceRecorder({ onSend, onCancel }) {
 
   const cancelRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.onstop = () => {}; // don't send
+      mediaRecorderRef.current.onstop = () => {
+        stopTracks();
+      };
       mediaRecorderRef.current.stop();
       cleanup();
       onCancel();

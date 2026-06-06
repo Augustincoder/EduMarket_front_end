@@ -83,10 +83,10 @@ export const hapticWarning = () => getTg().HapticFeedback.notificationOccurred('
 export const showConfirm = (message, callback) => {
   if (isTMA()) {
     window.Telegram.WebApp.showConfirm(message, (ok) => {
-      if (ok) callback();
+      if (ok) callback(true);
     });
   } else {
-    if (window.confirm(message)) callback();
+    if (window.confirm(message)) callback(true);
   }
 };
 

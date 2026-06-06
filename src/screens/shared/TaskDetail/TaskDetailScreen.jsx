@@ -240,203 +240,191 @@ export default function TaskDetailScreen() {
   };
 
   return (
-    <PageLayout showNav={false} scrollable={false}>
+    <PageLayout showNav={false} scrollable={false} bgClass="bg-[#F2F2F7] dark:bg-black">
       <div className="flex flex-col h-dvh">
         <TaskHeader task={task} user={user} isMember={isMember} />
 
-        <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            {task.isUrgent && <UrgentBadge />}
-            <StatusBadge status={task.status} />
+        <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-6 space-y-5">
+          {/* Status & Timeline Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 flex-wrap px-1">
+              {task.isUrgent && (
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FF3B30]/10 text-[#FF3B30] text-[10px] font-black uppercase tracking-widest border border-[#FF3B30]/10 animate-pulse-subtle">
+                  <Clock size={10} strokeWidth={3} /> Tezkor
+                </span>
+              )}
+              <StatusBadge status={task.status} className="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest" />
+            </div>
+
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 shadow-ios border border-black/5 dark:border-white/5">
+              <TaskTimeline status={task.status} />
+            </div>
           </div>
 
-          <TaskTimeline status={task.status} />
-
+          {/* Alerts */}
           {task.status === 'CANCELED' && (
-            <div className="bg-red-50 text-red-700 p-3 rounded-2xl flex items-start gap-2.5 text-xs font-medium border border-red-100/50 shadow-sm animate-fade-in">
-              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+            <div className="bg-[#FF3B30]/10 text-[#FF3B30] p-4 rounded-[24px] flex items-start gap-3 border border-[#FF3B30]/10 shadow-sm">
+              <AlertTriangle size={20} className="shrink-0" />
               <div>
-                <p className="font-bold text-red-800">Vazifa bekor qilingan</p>
-                <p className="mt-0.5 text-red-600/90">Ushbu vazifa buyurtmachi tomonidan bekor qilingan.</p>
+                <p className="font-bold text-[15px]">Vazifa bekor qilingan</p>
+                <p className="mt-0.5 text-[13px] opacity-80 font-medium">Ushbu vazifa buyurtmachi tomonidan bekor qilingan.</p>
               </div>
             </div>
           )}
 
           {task.status === 'DISPUTED' && (
-            <div className="bg-amber-50 text-amber-800 p-3.5 rounded-2xl flex items-start gap-2.5 text-xs font-medium border border-amber-100 shadow-sm animate-fade-in">
-              <AlertTriangle size={16} className="shrink-0 mt-0.5 text-amber-600" />
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <p className="font-bold text-amber-900">Nizo (Dispute) jarayonida</p>
-                <p className="text-amber-700/90 leading-relaxed">
+            <div className="bg-[#FF9500]/10 text-[#FF9500] p-4 rounded-[28px] flex items-start gap-3 border border-[#FF9500]/10 shadow-sm animate-fade-in">
+              <AlertTriangle size={20} className="shrink-0" />
+              <div className="space-y-2 flex-1 min-w-0">
+                <p className="font-bold text-[15px]">Nizo (Dispute) jarayonida</p>
+                <p className="text-[13px] opacity-80 leading-relaxed font-medium">
                   Vazifa yuzasidan kelishmovchilik yuzaga keldi. Hozirda EduMarket ma'muriyati vaziyatni o'rganmoqda.
                 </p>
                 {task.dispute?.reason && (
-                  <div className="bg-amber-100/40 p-2.5 rounded-xl border border-amber-200/50">
-                    <span className="font-bold text-amber-950 block mb-0.5">Nizo sababi:</span>
-                    <span className="text-amber-800 italic">"{task.dispute.reason}"</span>
-                  </div>
-                )}
-                {task.dispute?.adminNotes && (
-                  <div className="bg-indigo-50/50 text-indigo-900 p-2.5 rounded-xl border border-indigo-100">
-                    <span className="font-bold text-indigo-950 block mb-0.5">Ma'muriyat izohi:</span>
-                    <span className="text-indigo-800">{task.dispute.adminNotes}</span>
+                  <div className="bg-white/40 dark:bg-black/20 p-3 rounded-2xl border border-[#FF9500]/10 italic text-[12px]">
+                    "{task.dispute.reason}"
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          <h1 className="text-2xl font-black font-display text-edu-text leading-tight">
-            {task.title}
-          </h1>
+          {/* Title & Description */}
+          <div className="space-y-4">
+            <h1 className="text-[26px] font-black font-display text-gray-900 dark:text-white leading-[1.2] tracking-tight px-1">
+              {task.title}
+            </h1>
 
-          <Card
-            isPressable
-            onClick={() => navigate(`/profile/${task.client?.id}`)}
-            className="bg-edu-surface shadow-card border border-edu-border/40"
-            radius="xl"
-          >
-            <CardContent className="flex flex-row items-center gap-3 p-3">
-              <Avatar name={task.client?.fullname} avatarUrl={task.client?.avatarUrl} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-edu-text truncate">{task.client?.fullname}</p>
-                <p className="text-xs text-edu-muted">Mijoz</p>
-              </div>
-              <UserBadge badge={task.client?.badge} isVip={task.client?.isVip} size="xs" />
-            </CardContent>
-          </Card>
-
-          {task.freelancer && (
-            <Card
-              isPressable
-              onClick={() => navigate(`/profile/${task.freelancer.id}`)}
-              className="bg-edu-surface shadow-card border border-edu-border/40"
-              radius="xl"
-            >
-              <CardContent className="flex flex-row items-center gap-3 p-3">
-                <Avatar name={task.freelancer.fullname} avatarUrl={task.freelancer.avatarUrl} size="md" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-edu-text truncate">{task.freelancer.fullname}</p>
-                  <p className="text-xs text-edu-muted">Ijrochi</p>
-                </div>
-                <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  <UserBadge badge={task.freelancer.badge} isVip={task.freelancer.isVip} size="xs" />
-                  {task.freelancer.ratingCount > 0 && (
-                    <div className="flex items-center gap-0.5 text-xs text-amber-500 font-bold">
-                      <Star size={12} fill="currentColor" />
-                      <span>{(task.freelancer.ratingSum / task.freelancer.ratingCount).toFixed(1)}</span>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {task.bids?.[0] && task.status !== 'OPEN' && (
-            <Card className="bg-gradient-to-br from-edu-primary/5 to-edu-primary/10 border border-edu-primary/20 shadow-card" radius="xl">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-edu-primary uppercase tracking-wider">Kelishilgan taklif</span>
-                    {task.agreedPrice && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-edu-primary animate-ping" />
-                    )}
-                  </div>
-                  <span className="text-base font-black text-edu-primary">
-                    {formatPrice(task.agreedPrice || task.bids[0].proposedPrice)} so'm
-                  </span>
-                </div>
-                {task.bids[0].message && (
-                  <p className="text-xs text-edu-text/90 italic leading-relaxed bg-white/70 dark:bg-white/10 backdrop-blur-md p-2.5 rounded-xl border border-edu-border/20">
-                    "{task.bids[0].message}"
-                  </p>
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 shadow-ios border border-black/5 dark:border-white/5 space-y-4">
+              <div className="space-y-2">
+                <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em]">Tavsif</p>
+                <p className={cn(
+                  'text-[15px] text-gray-800 dark:text-gray-200 leading-[1.5] font-medium transition-all duration-300',
+                  !descExpanded && 'line-clamp-4'
+                )}>
+                  {task.description}
+                </p>
+                {task.description?.length > 180 && (
+                  <button
+                    className="text-[13px] text-[#007AFF] font-bold mt-1 flex items-center gap-1 active:scale-95"
+                    onClick={() => setDescExpanded((v) => !v)}
+                  >
+                    {descExpanded ? <><ChevronUp size={14} /> Yopish</> : <><ChevronDown size={14} /> Ko'proq ko'rish</>}
+                  </button>
                 )}
-              </CardContent>
-            </Card>
-          )}
+              </div>
 
-          <Card className="bg-edu-surface shadow-card border border-edu-border/40" radius="xl">
-            <CardContent className="p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-edu-primary/10 flex items-center justify-center">
-                  <DollarSign size={16} className="text-edu-primary" />
-                </div>
-                <div>
-                  <p className="text-2xs text-edu-muted">Narx oralig'i</p>
-                  <p className="font-bold text-edu-text">{formatPriceRange(task.priceMin, task.priceMax)}</p>
-                </div>
-              </div>
-              <hr className="border-edu-border/40" />
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-orange-100 flex items-center justify-center">
-                  <Clock size={16} className="text-edu-urgent" />
-                </div>
-                <div>
-                  <p className="text-2xs text-edu-muted">Muddat</p>
-                  <p className="font-bold text-edu-text">
-                    {formatDate(task.deadline)} · {deadlineCountdown(task.deadline)}
-                  </p>
-                </div>
-              </div>
               {task.attachmentFileIds?.length > 0 && isMember && (
-                <>
-                  <hr className="border-edu-border/40" />
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-edu-accent/10 flex items-center justify-center">
-                        <Paperclip size={16} className="text-edu-accent" />
-                      </div>
-                      <p className="text-sm font-bold text-edu-text">
-                        Biriktirilgan fayllar ({task.attachmentFileIds.length})
-                      </p>
+                <div className="pt-4 border-t border-gray-100 dark:border-white/5 space-y-3">
+                  <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.1em]">Biriktirilgan fayllar</p>
+                  <div className="grid gap-2">
+                    {task.attachmentFileIds.map((fileId, idx) => (
+                      <button
+                        key={fileId}
+                        onClick={async () => {
+                          try {
+                            const res = await filesApi.getUrl(fileId);
+                            window.open(res.data.data.url, '_blank');
+                          } catch {
+                            toast.error('Xatolik');
+                          }
+                        }}
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 text-[13px] font-bold text-gray-700 dark:text-gray-300 hover:bg-[#007AFF]/5 active:scale-[0.97] transition-all"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF]">
+                          <FileText size={16} />
+                        </div>
+                        <span className="truncate">Fayl #{idx + 1} ni yuklab olish</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Pricing & Time Info */}
+          <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 shadow-ios border border-black/5 dark:border-white/5 grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Narxi</p>
+              <p className="text-[17px] font-black text-emerald-600 dark:text-[#30D158] tracking-tight">{formatPriceRange(task.priceMin, task.priceMax)}</p>
+            </div>
+            <div className="space-y-1 text-right">
+              <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Muddati</p>
+              <div className="flex items-center justify-end gap-1 text-[17px] font-bold text-gray-900 dark:text-white tracking-tight">
+                 <Clock size={16} className="text-[#FF9500]" />
+                 {deadlineCountdown(task.deadline)}
+              </div>
+            </div>
+          </div>
+
+          {/* Member Cards (Client/Freelancer) */}
+          <div className="space-y-3">
+             <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">Platforma a'zolari</p>
+             
+             <div className="grid gap-3">
+                <div 
+                  onClick={() => navigate(`/profile/${task.client?.id}`)}
+                  className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-4 shadow-ios border border-black/5 dark:border-white/5 flex items-center gap-3 active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  <Avatar name={task.client?.fullname} avatarUrl={task.client?.avatarUrl} size="md" className="rounded-2xl" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-bold text-gray-900 dark:text-white truncate">{task.client?.fullname}</p>
+                    <p className="text-[12px] text-gray-400 font-medium uppercase tracking-wider">Mijoz</p>
+                  </div>
+                  <UserBadge badge={task.client?.badge} isVip={task.client?.isVip} size="xs" />
+                </div>
+
+                {task.freelancer && (
+                  <div 
+                    onClick={() => navigate(`/profile/${task.freelancer.id}`)}
+                    className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-4 shadow-ios border border-black/5 dark:border-white/5 flex items-center gap-3 active:scale-[0.98] transition-all cursor-pointer"
+                  >
+                    <Avatar name={task.freelancer.fullname} avatarUrl={task.freelancer.avatarUrl} size="md" className="rounded-2xl" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-bold text-gray-900 dark:text-white truncate">{task.freelancer.fullname}</p>
+                      <p className="text-[12px] text-gray-400 font-medium uppercase tracking-wider">Ijrochi</p>
                     </div>
-                    <div className="grid grid-cols-1 gap-2 pl-11">
-                      {task.attachmentFileIds.map((fileId, idx) => (
-                        <button
-                          key={fileId}
-                          onClick={async () => {
-                            try {
-                              const res = await filesApi.getUrl(fileId);
-                              window.open(res.data.data.url, '_blank');
-                            } catch {
-                              toast.error('Faylni yuklab olishda xato');
-                            }
-                          }}
-                          className="flex items-center gap-2 p-2 rounded-xl bg-edu-bg border border-edu-border/50 text-[11px] font-bold text-edu-primary hover:bg-edu-primary/5 transition-colors active:scale-95 text-left"
-                        >
-                          <FileText size={14} /> Fayl #{idx + 1} ni yuklab olish
-                        </button>
-                      ))}
+                    <div className="flex flex-col items-end gap-1">
+                      <UserBadge badge={task.freelancer.badge} isVip={task.freelancer.isVip} size="xs" />
+                      {task.freelancer.ratingCount > 0 && (
+                        <div className="flex items-center gap-0.5 text-[11px] text-[#FF9500] font-black">
+                          <Star size={10} fill="currentColor" />
+                          <span>{(task.freelancer.ratingSum / task.freelancer.ratingCount).toFixed(1)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+                )}
+             </div>
+          </div>
 
-          <Card className="bg-edu-surface shadow-card border border-edu-border/40" radius="xl">
-            <CardContent className="p-4">
-              <p className="text-xs font-semibold text-edu-muted uppercase tracking-wider mb-2">Tavsif</p>
-              <p className={['text-sm text-edu-text leading-relaxed', !descExpanded && 'line-clamp-3'].filter(Boolean).join(' ')}>
-                {task.description}
-              </p>
-              {task.description?.length > 150 && (
-                <button
-                  className="text-xs text-edu-primary font-semibold mt-2 flex items-center gap-1 press-scale"
-                  onClick={() => setDescExpanded((v) => !v)}
-                >
-                  {descExpanded ? <><ChevronUp size={14} /> Yopish</> : <><ChevronDown size={14} /> Ko'proq ko'rish</>}
-                </button>
-              )}
-            </CardContent>
-          </Card>
+          {/* Negotiated Bid Banner */}
+          {task.bids?.[0] && task.status !== 'OPEN' && (
+            <div className="bg-[#007AFF]/10 rounded-[28px] p-5 border border-[#007AFF]/10 space-y-3">
+               <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black text-[#007AFF] uppercase tracking-[0.15em]">Tasdiqlangan narx</span>
+                  <span className="text-[18px] font-black text-[#007AFF] tracking-tight">
+                    {formatPrice(task.agreedPrice || task.bids[0].proposedPrice)} UZS
+                  </span>
+               </div>
+               {task.bids[0].message && (
+                 <p className="text-[13px] text-gray-700 dark:text-gray-300 italic leading-relaxed bg-white/50 dark:bg-black/20 p-4 rounded-2xl border border-white/10">
+                   "{task.bids[0].message}"
+                 </p>
+               )}
+            </div>
+          )}
         </div>
 
+        {/* Bottom CTA Bar */}
         <div className={cn(
-          "border-t border-edu-border/40 bg-edu-surface/85 backdrop-blur-2xl pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.06)] relative z-20 transition-all duration-300",
-          bidOpen ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+          "border-t border-gray-200/50 dark:border-white/5 bg-white/90 dark:bg-black/90 backdrop-blur-2xl pb-safe shadow-ios-lg relative z-20 transition-all duration-500",
+          bidOpen ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
         )}>
-          {renderCTA()}
+          <div className="p-4 max-w-[430px] mx-auto">
+            {renderCTA()}
+          </div>
         </div>
       </div>
 

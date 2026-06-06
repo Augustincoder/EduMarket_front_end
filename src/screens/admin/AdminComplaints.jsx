@@ -198,6 +198,31 @@ export default function AdminComplaints() {
               <p className="text-xs text-slate-200 leading-relaxed font-mono">{selectedReport?.reason}</p>
             </div>
 
+            {selectedReport?.evidenceFileId && (
+              <div className="space-y-2">
+                <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dalil (Fayl/Rasm)</h4>
+                <div className="border border-slate-850 rounded-2xl overflow-hidden bg-slate-950 p-2 flex justify-center">
+                  {filesApi.getPublicUrl(selectedReport.evidenceFileId) ? (
+                    <img 
+                      src={filesApi.getPublicUrl(selectedReport.evidenceFileId)} 
+                      alt="Dalil" 
+                      className="max-h-[250px] object-contain rounded-lg"
+                    />
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        const res = await filesApi.getUrl(selectedReport.evidenceFileId);
+                        window.open(res.data.data.url, '_blank');
+                      }}
+                      className="px-4 py-2 bg-slate-800 text-slate-300 text-[11px] font-bold rounded-xl flex items-center gap-2"
+                    >
+                      <Eye size={14} /> Faylni ko'rish
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
             {selectedReport?.task && (
               <div className="p-3.5 bg-slate-900 border border-slate-850 rounded-2xl flex items-center justify-between text-xs">
                 <div>

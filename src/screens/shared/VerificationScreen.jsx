@@ -8,6 +8,7 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { FileUpload } from '../../components/forms/FileUpload';
 import { SelectInput } from '../../components/forms/SelectInput';
 import { verificationApi } from '../../services/verification.service';
+import { useAuth } from '../../hooks/useAuth';
 import { hapticSuccess, hapticError } from '../../lib/telegram';
 import { CheckCircle2, ShieldCheck, AlertCircle, Info, Camera, FileText, ChevronRight, RefreshCcw } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -33,6 +34,8 @@ export default function VerificationScreen() {
     queryFn: () => verificationApi.getMyStatus().then(res => res.data.data),
     retry: 1,
   });
+
+  const currentStatus = status?.status || user?.verificationStatus;
 
   const submit = useMutation({
     mutationFn: (data) => verificationApi.submit(data),
@@ -99,28 +102,35 @@ export default function VerificationScreen() {
   }
 
   // If already verified or pending
-  if (status && (status.status === 'APPROVED' || status.status === 'PENDING')) {
+  if (currentStatus === 'APPROVED' || currentStatus === 'PENDING') {
     return (
       <PageLayout>
         <Header title="Tasdiqlash" showBack />
         <div className="px-4 py-10 flex flex-col items-center text-center space-y-6">
           <div className={cn(
             "w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl",
-            status.status === 'APPROVED' ? "bg-edu-primary text-white" : "bg-amber-500 text-white"
+            currentStatus === 'APPROVED' ? "bg-edu-primary text-white" : "bg-amber-500 text-white"
           )}>
-            {status.status === 'APPROVED' ? <ShieldCheck size={48} /> : <AlertCircle size={48} />}
+            {currentStatus === 'APPROVED' ? <ShieldCheck size={48} /> : <AlertCircle size={48} />}
           </div>
           
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-edu-text">
-              {status.status === 'APPROVED' ? 'Profil tasdiqlangan' : 'So\'rov kutilmoqda'}
+              {currentStatus === 'APPROVED' ? 'Profil tasdiqlangan' : 'So\'rov kutilmoqda'}
             </h2>
             <p className="text-sm text-edu-muted max-w-[280px]">
-              {status.status === 'APPROVED' 
+              {currentStatus === 'APPROVED' 
                 ? "Tabriklaymiz! Sizning profilingiz rasman tasdiqlandi. Endi sizga ko'proq ishonch bildiriladi."
                 : "Sizning hujjatlaringiz adminlar tomonidan ko'rib chiqilmoqda. Bu odatda 24 soatgacha vaqt oladi."}
             </p>
           </div>
+
+          {status?.adminNote && (
+            <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/50 text-left w-full">
+              <p className="text-[10px] font-black text-edu-muted uppercase tracking-wider mb-1">Admin izohi:</p>
+              <p className="text-xs text-edu-text italic leading-relaxed">{status.adminNote}</p>
+            </div>
+          )}
 
           <Button variant="secondary" onClick={() => navigate(-1)} fullWidth>Orqaga qaytish</Button>
         </div>

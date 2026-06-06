@@ -1,8 +1,7 @@
 // src/components/cards/BidCard.jsx
-import { Check } from 'lucide-react';
+import { Check, Star, Crown, MessageCircle } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
 import { UserBadge } from '../ui/Badge';
-import { DisplayRating } from '../ui/StarRating';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
@@ -13,43 +12,43 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
 
   return (
     <div className={cn(
-      'bg-edu-surface rounded-2xl p-4 shadow-card border',
-      'transition-all duration-200',
-      isVip        && 'border-edu-vip/50 bg-gradient-to-br from-edu-surface to-yellow-50/30',
-      !isVip       && 'border-edu-border/40',
-      isSelected   && 'border-edu-primary ring-2 ring-edu-primary/20',
+      'group relative bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 active:scale-[0.99] transition-all duration-300 border border-black/5 dark:border-white/5 shadow-ios hover:shadow-ios-lg',
+      isSelected && 'border-[#007AFF]/30 ring-4 ring-[#007AFF]/5',
     )}>
-      {/* VIP top label */}
+      {/* VIP Badge Overlay */}
       {isVip && (
-        <div className="flex items-center gap-1.5 mb-3 w-fit px-2.5 py-1 rounded-lg bg-gradient-to-r from-edu-vip/20 to-yellow-500/10 border border-edu-vip/30 shadow-sm">
-          <span className="text-sm">👑</span>
-          <span className="text-edu-vip text-xs font-black tracking-widest uppercase">VIP Freelancer</span>
+        <div className="absolute -top-3 left-6 px-3 py-1 bg-gradient-to-r from-[#AF8B3B] to-[#d4941f] rounded-full shadow-ios flex items-center gap-1.5 border border-white/20">
+          <Crown size={12} className="text-white fill-white" />
+          <span className="text-white text-[10px] font-black uppercase tracking-widest">VIP PRO</span>
         </div>
       )}
 
       {/* Freelancer info */}
-      <div className="flex items-center gap-3 mb-3">
-        <Avatar
-          name={freelancer?.fullname}
-          avatarUrl={freelancer?.avatarUrl}
-          size="md"
-        />
+      <div className="flex items-center gap-3.5 mb-4">
+        <div className="relative">
+          <Avatar
+            name={freelancer?.fullname}
+            avatarUrl={freelancer?.avatarUrl}
+            size="md"
+            className="rounded-2xl ring-2 ring-gray-50 dark:ring-white/5 shadow-sm"
+          />
+          {isVip && (
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-amber-400 rounded-full border-2 border-white dark:border-[#1C1C1E] flex items-center justify-center text-[10px]">👑</div>
+          )}
+        </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-bold text-edu-text truncate">{freelancer?.fullname}</span>
+            <span className="font-bold text-gray-900 dark:text-white text-[16px] truncate tracking-tight">{freelancer?.fullname}</span>
             <UserBadge badge={freelancer?.badge} isVip={isVip} size="xs" />
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <DisplayRating
-              rating={freelancer?.ratingCount
-                ? (freelancer?.ratingSum / freelancer?.ratingCount)
-                : 0}
-              count={freelancer?.ratingCount}
-              size={12}
-            />
+          <div className="flex items-center gap-2.5 mt-0.5">
+            <div className="flex items-center gap-1 text-[12px] font-black text-[#FF9500]">
+              <Star size={12} fill="currentColor" />
+              <span>{freelancer?.ratingCount ? (freelancer?.ratingSum / freelancer?.ratingCount).toFixed(1) : '0.0'}</span>
+            </div>
             {freelancer?.completionRate != null && (
-              <span className="text-2xs text-edu-muted">
-                {Math.round(freelancer.completionRate)}% yakunlash
+              <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">
+                {Math.round(freelancer.completionRate)}% yakunlangan
               </span>
             )}
           </div>
@@ -57,29 +56,35 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
       </div>
 
       {/* Message */}
-      <p className="text-sm text-edu-muted leading-relaxed mb-3 line-clamp-3 italic">
-        "{bid.message}"
-      </p>
+      <div className="bg-gray-50 dark:bg-black/20 rounded-2xl p-4 mb-5 border border-gray-100 dark:border-white/5 relative">
+        <MessageCircle size={14} className="absolute -top-1.5 -left-1.5 text-gray-300 dark:text-gray-600 bg-white dark:bg-[#1C1C1E] rounded-full p-0.5" />
+        <p className="text-[14px] text-gray-600 dark:text-gray-300 leading-relaxed font-medium line-clamp-3 italic">
+          "{bid.message || 'Hech qanday xabar qoldirilmagan.'}"
+        </p>
+      </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-2xs text-edu-muted">Taklif narxi</p>
-          <p className="text-lg font-bold text-edu-text">
-            {formatPrice(bid.proposedPrice)} <span className="text-xs font-normal text-edu-muted">so'm</span>
+      <div className="flex items-center justify-between pt-1">
+        <div className="space-y-0.5">
+          <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-none">Taklif narxi</p>
+          <p className="text-[20px] font-black text-gray-900 dark:text-white tracking-tight">
+            {formatPrice(bid.proposedPrice)} <span className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase ml-0.5 tracking-wide">UZS</span>
           </p>
         </div>
 
         {isSelected ? (
-          <div className="flex items-center gap-1 text-edu-primary font-semibold text-sm">
-            <Check size={16} /> Tanlangan
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 dark:text-[#30D158] rounded-full font-black text-[13px] uppercase tracking-wider border border-emerald-500/20">
+            <Check size={16} strokeWidth={3} /> Tanlangan
           </div>
         ) : (
           <Button
-            size="sm"
-            variant={isVip ? 'vip' : 'primary'}
+            size="md"
+            className={cn(
+              "rounded-2xl px-6 font-black uppercase tracking-widest text-[12px] active:scale-95 transition-all shadow-btn",
+              isVip ? "bg-gray-900 dark:bg-white text-white dark:text-black" : "bg-[#007AFF] text-white"
+            )}
             disabled={isDisabled}
-            onClick={() => onAccept(bid.id)}
+            onClick={() => onAccept(bid)}
           >
             Tanlash
           </Button>

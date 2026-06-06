@@ -153,13 +153,36 @@ export default function AdminDisputes() {
                   ) : chatMessages.length > 0 ? (
                     chatMessages.map((msg) => {
                       const isClient = msg.senderId === selectedDispute.task?.clientId;
+                      const publicUrl = msg.fileId ? filesApi.getPublicUrl(msg.fileId) : null;
                       return (
                         <div key={msg.id} className={`flex flex-col ${isClient ? 'items-start' : 'items-end'}`}>
                           <div className={`p-2.5 rounded-2xl max-w-[80%] ${
                             isClient ? 'bg-slate-900 text-slate-300' : 'bg-indigo-600/10 text-indigo-300 border border-indigo-500/20'
                           }`}>
                             <p className="font-bold text-[9px] mb-0.5 opacity-60">{msg.sender?.fullname}</p>
-                            <p className="leading-relaxed">{msg.content || 'Fayl jo\'natilgan'}</p>
+                            {msg.content && <p className="leading-relaxed mb-1">{msg.content}</p>}
+                            {msg.fileId && (
+                              <div className="mt-1">
+                                {publicUrl ? (
+                                  <img 
+                                    src={publicUrl} 
+                                    alt="Chat file" 
+                                    className="max-w-full rounded-lg border border-white/10 cursor-pointer"
+                                    onClick={() => window.open(publicUrl, '_blank')}
+                                  />
+                                ) : (
+                                  <button
+                                    onClick={async () => {
+                                      const res = await filesApi.getUrl(msg.fileId);
+                                      window.open(res.data.data.url, '_blank');
+                                    }}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-black/20 hover:bg-black/40 rounded-xl text-[10px] font-bold border border-white/5"
+                                  >
+                                    📂 {msg.fileName || 'Faylni yuklash'}
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <span className="text-[8px] text-slate-600 mt-0.5">{new Date(msg.createdAt).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>

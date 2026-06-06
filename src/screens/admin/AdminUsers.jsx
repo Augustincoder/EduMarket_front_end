@@ -100,9 +100,17 @@ export default function AdminUsers() {
     setSelectedUser(user);
     setActiveModal('STUDENT');
     if (user.studentCardFileId) {
+      // Try direct public URL first (instant)
+      const publicUrl = filesApi.getPublicUrl(user.studentCardFileId);
+      if (publicUrl) {
+        setStudentCardUrl(publicUrl);
+        return;
+      }
+
+      // Fallback: get presigned URL
       try {
         const res = await filesApi.getUrl(user.studentCardFileId);
-        setStudentCardUrl(res.data.data || res.data || '');
+        setStudentCardUrl(res.data.data.url);
       } catch (err) {
         toast.error('Guvohnoma faylini yuklab bo\'lmadi');
       }
