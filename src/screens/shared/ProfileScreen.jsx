@@ -18,7 +18,7 @@ import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
 import { Button } from '../../components/ui/Button';
-import { UserBadge } from '../../components/ui/Badge';
+import { UserBadge, VipBadge, VerifiedBadge } from '../../components/ui/Badge';
 import { SkillChip } from '../../components/ui/Chip';
 import { BottomSheet } from '../../components/ui/BottomSheet';
 import { TextInput } from '../../components/forms/TextInput';
@@ -274,10 +274,12 @@ export default function ProfileScreen() {
           <div className="space-y-4 animate-fade-up">
 
             {/* Verification Status Card */}
-            <VerificationStatusCard 
-              status={me?.verificationStatus}
-              onClick={() => navigate('/verification')}
-            />
+            {me?.verificationStatus !== 'APPROVED' && (
+              <VerificationStatusCard 
+                status={me?.verificationStatus}
+                onClick={() => navigate('/verification')}
+              />
+            )}
 
             {/* Client Stats Grid */}
 
@@ -293,12 +295,16 @@ export default function ProfileScreen() {
                   )}
                 </div>
                 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight">{me?.fullname}</h1>
-                    <UserBadge badge={me?.badge} isVip={me?.isVip} size="xs" />
-                  </div>
+                <div className="space-y-2">
+                  <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
                   <p className="text-xs font-semibold text-edu-muted tracking-wide">@{me?.username || 'username'}</p>
+                  
+                  {/* Badges Container */}
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+                    <UserBadge badge={me?.badge} size="xs" />
+                    {me?.isVip && <VipBadge size="xs" />}
+                    {me?.verificationStatus === 'APPROVED' && <VerifiedBadge size="xs" />}
+                  </div>
                   <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-edu-primary/10 text-edu-primary px-2.5 py-0.5 rounded-full mt-1.5 border border-edu-primary/20">
                     Buyurtmachi profili
                   </span>
@@ -394,10 +400,12 @@ export default function ProfileScreen() {
           <div className="space-y-4 animate-fade-up">
 
             {/* Verification Status Card */}
-            <VerificationStatusCard 
-              status={me?.verificationStatus}
-              onClick={() => navigate('/verification')}
-            />
+            {me?.verificationStatus !== 'APPROVED' && (
+              <VerificationStatusCard 
+                status={me?.verificationStatus}
+                onClick={() => navigate('/verification')}
+              />
+            )}
 
             {/* Freelancer Header card */}
             <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
@@ -412,12 +420,16 @@ export default function ProfileScreen() {
                   )}
                 </div>
                 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-center gap-2">
-                    <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight">{me?.fullname}</h1>
-                    <UserBadge badge={me?.badge} isVip={me?.isVip} size="xs" />
-                  </div>
+                <div className="space-y-2">
+                  <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
                   <p className="text-xs font-semibold text-edu-muted tracking-wide">@{me?.username || 'username'}</p>
+                  
+                  {/* Badges Container */}
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+                    <UserBadge badge={me?.badge} size="xs" />
+                    {me?.isVip && <VipBadge size="xs" />}
+                    {me?.verificationStatus === 'APPROVED' && <VerifiedBadge size="xs" />}
+                  </div>
                   
                   {/* Categories */}
                   {me?.freelancerCategories?.length > 0 && (

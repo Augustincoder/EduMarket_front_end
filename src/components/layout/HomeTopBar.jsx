@@ -26,15 +26,15 @@ export function HomeTopBar({ greeting }) {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-8 pt-4">
-        <div className="space-y-1">
-          <p className="text-[11px] font-black text-edu-muted uppercase tracking-[0.1em] opacity-80">{greeting}</p>
-          <h1 className="text-3xl font-black font-display text-edu-text tracking-ios-display truncate pr-2">
+      <div className="flex justify-between items-center gap-4 mb-8 pt-4">
+        <div className="flex-1 min-w-0 space-y-0.5">
+          <p className="text-[11px] font-black text-edu-muted uppercase tracking-[0.12em] opacity-80">{greeting}</p>
+          <h1 className="text-2xl sm:text-3xl font-black font-display text-edu-text tracking-tight truncate">
             {user?.fullname}
           </h1>
         </div>
         
-        <div className="relative active-spring cursor-pointer" onClick={handleOpen}>
+        <div className="relative shrink-0 active-spring cursor-pointer" onClick={handleOpen}>
           <div className="relative">
             <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="lg" className="ring-4 ring-edu-surface shadow-ios" />
             {unreadNotifications > 0 && (

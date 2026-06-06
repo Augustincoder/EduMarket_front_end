@@ -5,7 +5,7 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
-import { UserBadge } from '../../components/ui/Badge';
+import { UserBadge, VipBadge, VerifiedBadge } from '../../components/ui/Badge';
 import { SkillChip } from '../../components/ui/Chip';
 import { DisplayRating } from '../../components/ui/StarRating';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
@@ -69,12 +69,17 @@ export default function PublicProfileScreen() {
               </div>
             )}
           </div>
-          <div className="text-center relative z-10">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight">{profile.fullname}</h1>
-              <UserBadge badge={profile.badge} isVip={profile.isVip} />
+          <div className="text-center relative z-10 space-y-2">
+            <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight leading-tight">{profile.fullname}</h1>
+            
+            {/* Badges Container */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <UserBadge badge={profile.badge} size="xs" />
+              {profile.isVip && <VipBadge size="xs" />}
+              {profile.verificationStatus === 'APPROVED' && <VerifiedBadge size="xs" />}
             </div>
-            {avgRating && <div className="mt-1.5"><DisplayRating rating={Number(avgRating)} count={profile.ratingCount} /></div>}
+            
+            {avgRating && <div className="pt-0.5"><DisplayRating rating={Number(avgRating)} count={profile.ratingCount} /></div>}
             
             {/* Gamification Stats */}
             <div className="flex items-center justify-center gap-4 mt-3">

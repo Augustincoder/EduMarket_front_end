@@ -2,6 +2,7 @@
 import { AlertTriangle, XCircle } from 'lucide-react';
 import { NLP_PATTERNS } from '../../lib/constants';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useNLPCheck(text = '') {
   for (const { pattern, severity } of NLP_PATTERNS) {
     if (pattern.test(text)) return severity;

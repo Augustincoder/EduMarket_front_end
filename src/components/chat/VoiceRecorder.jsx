@@ -1,7 +1,8 @@
 // src/components/chat/VoiceRecorder.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Mic, X, Send } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import { hapticMedium, hapticSuccess } from '../../lib/telegram';
+import toast from 'react-hot-toast';
 
 export function VoiceRecorder({ onSend, onCancel }) {
   const [isRecording, setIsRecording] = useState(false);
@@ -31,6 +32,8 @@ export function VoiceRecorder({ onSend, onCancel }) {
       }, 1000);
     } catch (err) {
       console.error("Microphone access denied", err);
+      toast.error("Mikrofonga ruxsat berilmadi");
+      onCancel();
     }
   };
 
@@ -62,6 +65,8 @@ export function VoiceRecorder({ onSend, onCancel }) {
       mediaRecorderRef.current.stop();
       cleanup();
       onCancel();
+    } else {
+      onCancel();
     }
   };
 
@@ -77,17 +82,21 @@ export function VoiceRecorder({ onSend, onCancel }) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    startRecording();
     return () => cleanup();
   }, []);
 
   if (!isRecording) {
     return (
-      <button
-        onClick={startRecording}
-        className="w-10 h-10 rounded-full flex items-center justify-center bg-edu-bg text-edu-muted hover:text-edu-primary press-scale transition-colors"
-      >
-        <Mic size={20} />
-      </button>
+      <div className="flex-1 flex items-center gap-3 bg-black/5 dark:bg-white/5 rounded-2xl px-4 py-2.5 animate-pulse text-xs text-edu-muted font-bold">
+        <div className="w-1.5 h-1.5 rounded-full bg-edu-primary animate-ping shrink-0" />
+        <span>Mikrofon faollashtirilmoqda...</span>
+        <div className="flex-1" />
+        <button onClick={cancelRecording} className="p-1 text-red-500 hover:bg-red-50 rounded-full transition-colors shrink-0">
+          <X size={16} />
+        </button>
+      </div>
     );
   }
 

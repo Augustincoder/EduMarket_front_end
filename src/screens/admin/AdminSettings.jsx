@@ -21,9 +21,9 @@ export default function AdminSettings() {
     if (settingsData) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setVipPrice7(settingsData.vip_price_7_days || '15000');
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setVipPrice30(settingsData.vip_price_30_days || '45000');
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setCommission(settingsData.commission_percentage || '10');
     }
   }, [settingsData]);

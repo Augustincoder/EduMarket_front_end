@@ -124,10 +124,10 @@ export default function TaskDetailScreen() {
   }
 
   useMainButton({
-    text: mainBtnText,
-    onClick: mainBtnClick,
-    isLoading: mainBtnLoading,
-  }, [task, user, transitions.startProgress.isPending, transitions.accept.isPending]);
+    text: '',
+    onClick: () => {},
+    isLoading: false,
+  }, []);
 
   if (isLoading) {
     return (
@@ -150,111 +150,257 @@ export default function TaskDetailScreen() {
 
     if (!user) {
       return (
-        <div className="p-4">
-          <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')}>
-            Kirish va taklif bering
-          </Button>
-        </div>
+        <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')}>
+          Kirish va taklif bering
+        </Button>
       );
     }
 
-    if (canFlag) {
-      return (
-         <div className="p-4 space-y-2">
-            <Button fullWidth variant="primary" size="lg" onClick={mainBtnClick}>
-               Taklif berish
-            </Button>
-            <Button fullWidth variant="ghost" size="md" className="text-red-500 hover:bg-red-50" onClick={() => setFlagOpen(true)}>
-               🚩 Qoidabuzarlik haqida shikoyat
-            </Button>
-         </div>
-      );
-    }
-
-    if (task.status === 'OPEN' && isClient) {
-      return (
-        <div className="p-4 space-y-2">
-          <Button
-            fullWidth size="md" variant="vip"
-            icon={<Sparkles size={16} />}
-            onClick={() => setPromoteOpen(true)}
-          >
-            Vazifani ko'tarish
-          </Button>
-          <Button
-            fullWidth size="md" variant="ghost"
-            className="text-red-500 hover:bg-red-50"
-            isLoading={transitions.cancel.isPending}
-            onClick={() => {
-              showConfirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?", async () => {
-                try {
-                  await transitions.cancel.mutateAsync();
-                  toast.success("Vazifa bekor qilindi");
-                } catch (err) {
-                  toast.error(err.serverMsg || "Bekor qilishda xato");
-                }
-              });
-            }}
-          >
-            Vazifani bekor qilish
-          </Button>
-        </div>
-      );
-    }
-
-    if (['ASSIGNED', 'IN_PROGRESS'].includes(task.status) && isMember) {
-      return (
-        <div className="p-4 space-y-2">
-          <Button
-            fullWidth size="lg" variant="primary"
-            icon={<MessageSquare size={18} />}
-            onClick={() => navigate(`/tasks/${id}/chat`)}
-          >
-            Chatga o'tish →
-          </Button>
-          {isClient && task.status === 'ASSIGNED' && (
-            <p className="text-xs text-center text-edu-muted bg-edu-border/20 p-2.5 rounded-xl border border-edu-border/40 font-medium animate-pulse">
-              ⏳ Ijrochi ishni boshlashini kutilmoqda...
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    if (task.status === 'IN_REVIEW' && isClient) {
-      return (
-        <div className="p-4 space-y-2">
-          <div className="flex gap-2">
-            <Button
-              size="md" variant="secondary" fullWidth
-              onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}
-            >
-              <RotateCcw size={14} /> Qayta ishlash
-            </Button>
-            <Button
-              size="md" variant="danger" fullWidth
-              onClick={() => { setDisputeReason(''); setDisputeErrors({}); setDisputeOpen(true); }}
-            >
-              <AlertTriangle size={14} /> Nizo
+    // 1. Task is OPEN
+    if (task.status === 'OPEN') {
+      if (isClient) {
+        return (
+          <div className="flex flex-col gap-2.5 w-full">
+            <div className="flex gap-2">
+              <Button
+                size="md" variant="vip" className="flex-1"
+                icon={<Sparkles size={14} />}
+                onClick={() => setPromoteOpen(true)}
+              >
+                Ko'tarish
+              </Button>
+              <Button
+                size="md" variant="outline" className="flex-1 text-[#FF3B30] border-[#FF3B30]/20 hover:bg-[#FF3B30]/5"
+                isLoading={transitions.cancel.isPending}
+                onClick={() => {
+                  showConfirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?", async () => {
+                    try {
+                      await transitions.cancel.mutateAsync();
+                      toast.success("Vazifa bekor qilindi");
+                    } catch (err) {
+                      toast.error(err.serverMsg || "Bekor qilishda xato");
+                    }
+                  });
+                }}
+              >
+                Bekor qilish
+              </Button>
+            </div>
+            <Button fullWidth size="lg" variant="primary" onClick={() => navigate(`/tasks/${id}/bids`)}>
+              Takliflarni ko'rish {task._count?.bids > 0 && `(${task._count.bids})`}
             </Button>
           </div>
-        </div>
-      );
+        );
+      } else {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <Button fullWidth variant="primary" size="lg" onClick={() => setBidOpen(true)}>
+              Taklif berish
+            </Button>
+            {canFlag && (
+              <Button fullWidth variant="ghost" size="sm" className="text-red-500 hover:bg-red-50" onClick={() => setFlagOpen(true)}>
+                🚩 Qoidabuzarlik haqida shikoyat
+              </Button>
+            )}
+          </div>
+        );
+      }
     }
 
+    // 2. Task is ASSIGNED
+    if (task.status === 'ASSIGNED') {
+      if (isFreelancer) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <Button
+              fullWidth size="lg" variant="primary"
+              isLoading={transitions.startProgress.isPending}
+              onClick={() => transitions.startProgress.mutate()}
+            >
+              Ishni boshlash 🚀
+            </Button>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      } else if (isClient) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-xs text-center text-edu-muted bg-edu-border/10 p-3 rounded-2xl border border-edu-border/30 font-medium animate-pulse">
+              ⏳ Ijrochi ishni boshlashini kutilmoqda...
+            </div>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      }
+    }
+
+    // 3. Task is IN_PROGRESS
+    if (task.status === 'IN_PROGRESS') {
+      if (isFreelancer) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <Button
+              fullWidth size="lg" variant="primary"
+              onClick={() => setDeliverySubmitOpen(true)}
+            >
+              Natijani yuborish 📤
+            </Button>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      } else if (isClient) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-xs text-center text-[#007AFF] bg-[#007AFF]/5 p-3 rounded-2xl border border-[#007AFF]/10 font-bold">
+              ⚙️ Ijrochi vazifa ustida ishlamoqda
+            </div>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      }
+    }
+
+    // 4. Task is PREVIEW_PENDING
+    if (task.status === 'PREVIEW_PENDING') {
+      if (isClient) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <Button
+              fullWidth size="lg" variant="primary"
+              onClick={() => setRatingOpen(true)}
+            >
+              Vazifani baholash va qabul qilish ⭐
+            </Button>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      } else if (isFreelancer) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-xs text-center text-amber-600 bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10 font-bold">
+              ⏳ Mijoz yuborilgan fayllarni tekshirmoqda
+            </div>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      }
+    }
+
+    // 5. Task is IN_REVIEW
+    if (task.status === 'IN_REVIEW') {
+      if (isClient) {
+        return (
+          <div className="flex flex-col gap-2.5 w-full">
+            <Button
+              fullWidth size="lg" variant="primary"
+              isLoading={transitions.accept.isPending}
+              onClick={async () => {
+                await transitions.accept.mutateAsync();
+                setRatingOpen(true);
+              }}
+            >
+              Vazifani yakuniy qabul qilish ✅
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="md" variant="secondary" className="flex-1"
+                onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}
+              >
+                <RotateCcw size={14} /> Qayta ishlash
+              </Button>
+              <Button
+                size="md" variant="danger" className="flex-1"
+                onClick={() => { setDisputeReason(''); setDisputeErrors({}); setDisputeOpen(true); }}
+              >
+                <AlertTriangle size={14} /> Nizo
+              </Button>
+            </div>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      } else if (isFreelancer) {
+        return (
+          <div className="flex flex-col gap-2 w-full">
+            <div className="text-xs text-center text-amber-600 bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10 font-bold animate-pulse">
+              ⏳ Mijoz yakuniy qabul qilishini kutilmoqda...
+            </div>
+            <Button
+              fullWidth size="md" variant="outline"
+              icon={<MessageSquare size={16} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chatga o'tish
+            </Button>
+          </div>
+        );
+      }
+    }
+
+    // 6. Task is COMPLETED
     if (task.status === 'COMPLETED' && isMember) {
       return (
-        <div className="p-4 space-y-2">
-          <div className="flex items-center justify-center gap-2 text-edu-primary font-bold">
-            <CheckCircle size={20} /> Muvaffaqiyatli yakunlandi
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold text-sm bg-emerald-500/5 py-2.5 rounded-2xl border border-emerald-500/10">
+            <CheckCircle size={18} /> Muvaffaqiyatli yakunlandi
           </div>
-          <Button
-            fullWidth size="md" variant="outline"
-            icon={<Star size={16} />}
-            onClick={() => setRatingOpen(true)}
-          >
-            Reyting qoldirish
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline" className="flex-1"
+              icon={<Star size={14} />}
+              onClick={() => setRatingOpen(true)}
+            >
+              Baholash
+            </Button>
+            <Button
+              variant="outline" className="flex-1"
+              icon={<MessageSquare size={14} />}
+              onClick={() => navigate(`/tasks/${id}/chat`)}
+            >
+              Chat
+            </Button>
+          </div>
         </div>
       );
     }

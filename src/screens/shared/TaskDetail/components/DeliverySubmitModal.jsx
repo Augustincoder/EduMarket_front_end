@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, UploadCloud, FileText, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { X, UploadCloud, FileText, Loader2, ShieldCheck, AlertCircle, Lock } from 'lucide-react';
 import { Button } from '../../../../components/ui/Button';
 
 export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting }) {

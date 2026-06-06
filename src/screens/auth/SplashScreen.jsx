@@ -14,7 +14,7 @@ export default function SplashScreen() {
 
     const init = async () => {
       const startParam = getStartParam();
-      let referralCode = null;
+      let referralCode;
       if (startParam && startParam.startsWith('ref_')) {
         referralCode = startParam.replace('ref_', '');
       } else {

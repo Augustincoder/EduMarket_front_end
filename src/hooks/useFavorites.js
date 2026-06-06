@@ -1,21 +1,20 @@
 // src/hooks/useFavorites.js
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { hapticSuccess, hapticLight } from '../lib/telegram';
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState([]);
-
-  useEffect(() => {
+  const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('edu_favorites');
     if (saved) {
       try {
-        setFavorites(JSON.parse(saved));
+        return JSON.parse(saved);
       } catch (e) {
-        setFavorites([]);
+        return [];
       }
     }
-  }, []);
+    return [];
+  });
 
   const toggleFavorite = (user) => {
     hapticLight();

@@ -71,7 +71,7 @@ export function useAuth() {
 
   // Logout
   const logout = useCallback(async () => {
-    try { await authApi.logout(); } catch (_) {}
+    try { await authApi.logout(); } catch (_) { /* ignore */ }
     resetAllCachesAndStores();
     navigate('/', { replace: true });
   }, [resetAllCachesAndStores, navigate]);

@@ -7,7 +7,6 @@ import { tasksApi } from '../../services/tasks.service';
 import { gigsApi } from '../../services/gigs.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { formatPrice } from '../../lib/utils';
-import { Avatar } from '../../components/ui/Avatar';
 import { Card, CardContent } from '../../components/ui/Card';
 import { ArrowRight, Wallet, CheckCircle, Search, Clock, Star } from 'lucide-react';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';

@@ -23,18 +23,42 @@ export function StatusBadge({ status, size = 'sm' }) {
   );
 }
 
-export function UserBadge({ badge, isVip, size = 'sm' }) {
+export function UserBadge({ badge, size = 'sm' }) {
   const cfg = BADGE_CONFIG[badge] || BADGE_CONFIG.YANGI;
+  return (
+    <span
+      className={cn(baseBadgeClass, "shadow-sm border border-black/5 dark:border-white/5")}
+      style={{ backgroundColor: cfg.bg, color: cfg.color }}
+    >
+      {cfg.label}
+    </span>
+  );
+}
+
+export function VipBadge({ size = 'sm' }) {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        isVip && 'bg-gradient-to-r from-edu-vip to-amber-600 text-white shadow-sm border border-white/20'
+        "bg-gradient-to-r from-edu-vip to-amber-600 text-white shadow-sm border border-white/20"
       )}
-      style={!isVip ? { backgroundColor: cfg.bg, color: cfg.color } : {}}
     >
-      {isVip && <span className="text-[12px] -mt-0.5">👑</span>}
-      {cfg.label}
+      <span className="text-[12px] -mt-0.5">👑</span>
+      VIP
+    </span>
+  );
+}
+
+export function VerifiedBadge({ size = 'sm' }) {
+  return (
+    <span
+      className={cn(
+        baseBadgeClass,
+        "bg-blue-500/10 text-[#007AFF] border border-blue-500/20 shadow-sm"
+      )}
+    >
+      <span className="text-[10px] font-black text-[#007AFF]">✓</span>
+      TASDIQLANGAN
     </span>
   );
 }

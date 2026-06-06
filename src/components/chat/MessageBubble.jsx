@@ -18,7 +18,9 @@ function ImageAttachment({ fileId, onClick }) {
     // Images from R2: try direct CDN URL first (instant, no API call)
     const publicUrl = filesApi.getPublicUrl(fileId);
     if (publicUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUrl(publicUrl);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
@@ -89,7 +91,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
 
   return (
     <>
-      <div className={cn('group flex items-end gap-2 max-w-[85%] animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
+      <div className={cn('group flex items-end gap-2 max-w-[80%] my-0.5 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
         
         {/* Actions Menu Trigger */}
         <div className={cn("opacity-0 group-hover:opacity-100 transition-opacity flex items-center relative", isMe ? "mr-1" : "ml-1")}>
@@ -122,10 +124,10 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
 
         <div
           className={cn(
-            'px-3 py-2 text-[15px] leading-relaxed break-words relative',
+            'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm',
             isMe
-              ? 'bg-gradient-to-r from-edu-primary to-[#188F68] text-white rounded-[22px] rounded-br-[4px] shadow-sm shadow-edu-primary/20'
-              : 'bg-edu-surface/95 backdrop-blur-xl text-edu-text rounded-[22px] rounded-bl-[4px] shadow-sm border border-edu-border/50',
+              ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
+              : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
             hasFile && !isImage && 'cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all'
           )}
           onClick={(hasFile && !isImage) ? downloadFile : undefined}

@@ -27,6 +27,7 @@ export default function NotificationSettingsScreen() {
 
   useEffect(() => {
     if (me?.notifPrefs) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPrefs(p => ({
         ...p,
         ...me.notifPrefs
