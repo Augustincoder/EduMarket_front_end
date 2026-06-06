@@ -7,9 +7,13 @@ import toast from 'react-hot-toast';
 export function useTaskFeed(filters = {}) {
   return useInfiniteQuery({
     queryKey: ['tasks', filters],
-    queryFn:  ({ pageParam }) =>
-      tasksApi.getAll({ ...filters, cursor: pageParam, limit: 10 })
-        .then((r) => r.data.data),
+    queryFn:  ({ pageParam }) => {
+      const cleanFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== '' && !(Array.isArray(v) && v.length === 0))
+      );
+      return tasksApi.getAll({ ...cleanFilters, cursor: pageParam, limit: 10 })
+        .then((r) => r.data.data);
+    },
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     initialPageParam: undefined,
     staleTime: 30 * 1000,

@@ -5,7 +5,7 @@ import { analyticsApi } from '../../services/other.service';
 import { tasksApi } from '../../services/tasks.service';
 import { gigsApi } from '../../services/gigs.service';
 import { useMyTasks } from '../../hooks/useTasks';
-import { formatPrice } from '../../lib/constants';
+import { formatPrice } from '../../lib/utils';
 import { Avatar } from '../../components/ui/Avatar';
 import { UserBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
@@ -27,10 +27,10 @@ export default function FreelancerHomeScreen() {
   const { data: activeTasks } = useMyTasks('FREELANCER', 'IN_PROGRESS');
 
   // 3. Filter near-deadline tasks (< 24 hours remaining)
-  const now = new Date();
+  const now = Date.now();
   const nearDeadlineTasks = activeTasks?.filter(task => {
     const deadlineTime = new Date(task.deadline).getTime();
-    const timeDiff = deadlineTime - now.getTime();
+    const timeDiff = deadlineTime - now;
     return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000;
   }) || [];
 
@@ -72,7 +72,7 @@ export default function FreelancerHomeScreen() {
       <div className="grid grid-cols-2 gap-3.5 mb-8">
         <Card 
           isPressable 
-          onPress={() => navigate('/earnings')}
+          onClick={() => navigate('/earnings')}
           className="bg-edu-surface border border-edu-border/20 active-spring relative overflow-hidden shadow-ios"
           radius="2xl"
         >
@@ -162,7 +162,7 @@ export default function FreelancerHomeScreen() {
                   <p className="text-[10px] text-red-700 dark:text-red-400/80 mt-0.5">Topshirish muddati kam qoldi!</p>
                 </div>
                 <span className="text-[10px] bg-red-600 text-white font-black px-2.5 py-1 rounded-xl shrink-0">
-                  {Math.round((new Date(task.deadline).getTime() - now.getTime()) / (1000 * 60 * 60))} soat qoldi
+                  {Math.round((new Date(task.deadline).getTime() - now) / (1000 * 60 * 60))} soat qoldi
                 </span>
               </div>
             ))}
@@ -179,7 +179,7 @@ export default function FreelancerHomeScreen() {
               <Card 
                 key={task.id}
                 isPressable
-                onPress={() => { navigate(`/tasks/${task.id}`); }}
+                onClick={() => { navigate(`/tasks/${task.id}`); }}
                 className="bg-gradient-to-tr from-edu-primary/5 to-edu-accent/5 border border-edu-primary/20 hover:border-edu-primary/30 active-bounce"
                 radius="2xl"
               >
@@ -219,7 +219,7 @@ export default function FreelancerHomeScreen() {
               <Card
                 key={task.id}
                 isPressable
-                onPress={() => { navigate(`/tasks/${task.id}`); }}
+                onClick={() => { navigate(`/tasks/${task.id}`); }}
                 className="bg-edu-surface border border-edu-border/40 hover:border-edu-border active-bounce"
                 radius="2xl"
               >
@@ -263,7 +263,7 @@ export default function FreelancerHomeScreen() {
               <Card 
                 key={gig.id}
                 isPressable
-                onPress={() => { navigate('/gigs'); }}
+                onClick={() => { navigate('/gigs'); }}
                 className="bg-edu-surface border border-edu-border/40 hover:border-edu-border active-bounce"
                 radius="2xl"
               >

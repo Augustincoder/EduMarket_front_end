@@ -39,6 +39,24 @@ export default function TaskFeedScreen() {
   const [localQuery, setLocalQuery] = useState('');
   const debouncedQuery = useDebounce(localQuery, 400);
 
+  const [recentSearches, setRecentSearches] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('recentSearches')) || []; }
+    catch { return []; }
+  });
+
+  const addSearch = useCallback((query) => {
+    if (!query) return;
+    setRecentSearches(prev => {
+      const newSearches = [query, ...prev.filter(q => q !== query)].slice(0, 5);
+      localStorage.setItem('recentSearches', JSON.stringify(newSearches));
+      return newSearches;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (debouncedQuery) addSearch(debouncedQuery);
+  }, [debouncedQuery, addSearch]);
+
   const filters = {
     category:  filterState.category  || undefined,
     query:     debouncedQuery         || undefined,
@@ -147,6 +165,32 @@ export default function TaskFeedScreen() {
           </button>
         </div>
       </div>
+
+      {/* ── Search History Overlay ──────────────────── */}
+      {isFocused && !localQuery && recentSearches.length > 0 && (
+        <div className="absolute inset-0 top-[56px] z-20 bg-edu-bg border-t border-edu-border/50 animate-fade-in">
+          <div className="p-4">
+            <h3 className="text-xs font-semibold text-edu-muted mb-3 uppercase tracking-wider">
+              Oxirgi qidiruvlar
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {recentSearches.map(q => (
+                <button
+                  key={q}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    setLocalQuery(q);
+                  }}
+                  className="px-3 py-1.5 bg-edu-surface text-edu-text text-sm rounded-full border border-edu-border flex items-center gap-2 press-scale"
+                >
+                  <Search size={14} className="text-edu-muted" />
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Category filter chips ───────────────────── */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 py-3">

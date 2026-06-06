@@ -1,12 +1,13 @@
 // src/components/layout/BottomNav.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet } from 'lucide-react';
+import { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet, Bell } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
 import { useAuthStore } from '../../store/authStore';
 import { useChatStore } from '../../store/chatStore';
+import { useNotificationStore } from '../../store/notificationStore';
 
-const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet };
+const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet, Bell };
 
 export function BottomNav() {
   const location = useLocation();
@@ -14,6 +15,7 @@ export function BottomNav() {
   const user = useAuthStore((s) => s.user);
   const activeRole = useAuthStore((s) => s.activeRole);
   const totalUnread = useChatStore((s) => s.totalUnread);
+  const unreadNotifications = useNotificationStore((s) => s.unreadCount);
 
   const isFreelancerMode = activeRole === 'FREELANCER';
 
@@ -22,6 +24,7 @@ export function BottomNav() {
     { icon: 'ClipboardList', label: 'Mening ishim', route: '/my-tasks'  },
     { icon: 'Plus',          label: '',          route: '/tasks/create' },
     { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'Bell',          label: 'Bildirish', route: '/notifications', badge: unreadNotifications },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
 
@@ -29,6 +32,7 @@ export function BottomNav() {
     { icon: 'Home',          label: 'Asosiy',    route: '/home'         },
     { icon: 'ClipboardList', label: 'Vazifalar', route: '/tasks'        },
     { icon: 'MessageSquare', label: 'Chat',      route: '/chats',        badge: totalUnread },
+    { icon: 'Bell',          label: 'Bildirish', route: '/notifications', badge: unreadNotifications },
     { icon: 'Wallet',        label: 'Daromad',   route: '/earnings'     },
     { icon: 'User',          label: 'Profil',    route: '/profile'      },
   ];
@@ -89,7 +93,7 @@ export function BottomNav() {
               onClick={() => handleNav(route)}
               className={cn(
                 'flex flex-col items-center gap-1 py-1 rounded-2xl relative',
-                'transition-all duration-300 min-w-[64px]',
+                'transition-all duration-300 min-w-[50px] flex-1',
                 'active-spring',
                 isActive ? 'text-edu-primary scale-105' : 'text-edu-muted'
               )}

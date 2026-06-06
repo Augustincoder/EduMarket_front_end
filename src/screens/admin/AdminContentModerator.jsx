@@ -6,6 +6,7 @@ import { adminApi } from '../../services/admin.service';
 import { formatPrice } from '../../lib/constants';
 import { toast } from 'react-hot-toast';
 import { ShieldAlert, Trash2, Briefcase, Award } from 'lucide-react';
+import { showConfirm } from '../../lib/telegram';
 
 export default function AdminContentModerator() {
   const queryClient = useQueryClient();
@@ -48,15 +49,15 @@ export default function AdminContentModerator() {
   });
 
   const handleDeleteTask = (id) => {
-    if (window.confirm('Haqiqatdan ham ushbu vazifani o\'chirib bekor qilmoqchimisiz?')) {
-      deleteTaskMutation.mutate(id);
-    }
+    showConfirm("Haqiqatdan ham ushbu vazifani o'chirib bekor qilmoqchimisiz?", (ok) => {
+      if (ok) deleteTaskMutation.mutate(id);
+    });
   };
 
   const handleDeleteGig = (id) => {
-    if (window.confirm('Haqiqatdan ham ushbu xizmatni o\'chirib faolsizlantirmoqchimisiz?')) {
-      deleteGigMutation.mutate(id);
-    }
+    showConfirm("Haqiqatdan ham ushbu xizmatni o'chirib faolsizlantirmoqchimisiz?", (ok) => {
+      if (ok) deleteGigMutation.mutate(id);
+    });
   };
 
   return (

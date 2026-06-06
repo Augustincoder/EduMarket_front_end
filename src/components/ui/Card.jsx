@@ -11,7 +11,7 @@ const HAPTIC_MAP = {
   warning: hapticWarning,
 };
 
-export const Card = forwardRef(({ className, radius = 'xl', isPressable, onPress, haptic = 'light', ...props }, ref) => {
+export const Card = forwardRef(({ className, radius = 'xl', isPressable, onClick, haptic = 'light', ...props }, ref) => {
   const radiusClass = {
     sm: 'rounded-sm',
     md: 'rounded-md',
@@ -21,13 +21,13 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onPress
     none: 'rounded-none',
   }[radius] || 'rounded-2xl';
 
-  const Comp = isPressable || onPress ? 'button' : 'div';
+  const Comp = isPressable || onClick ? 'button' : 'div';
   
   const handleClick = (e) => {
-    if ((isPressable || onPress) && haptic && HAPTIC_MAP[haptic]) {
+    if ((isPressable || onClick) && haptic && HAPTIC_MAP[haptic]) {
       HAPTIC_MAP[haptic]();
     }
-    onPress?.(e);
+    onClick?.(e);
   };
 
   return (
@@ -37,7 +37,7 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onPress
       className={cn(
         "w-full block bg-edu-surface shadow-ios border border-edu-border/30 overflow-hidden text-left",
         radiusClass === 'rounded-2xl' ? 'squircle' : radiusClass,
-        (isPressable || onPress) && "transition-all active-spring cursor-pointer",
+        (isPressable || onClick) && "transition-all active-spring cursor-pointer",
         className
       )}
       {...props}

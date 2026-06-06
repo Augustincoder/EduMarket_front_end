@@ -32,6 +32,7 @@ import { TextInput } from '../../components/forms/TextInput';
 import { TextArea } from '../../components/forms/TextArea';
 import { FileUpload } from '../../components/forms/FileUpload';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
+import { VerificationStatusCard } from '../../components/cards/VerificationStatusCard';
 import { usersApi } from '../../services/users.service';
 import { portfolioApi, analyticsApi } from '../../services/other.service';
 import { copyToClipboard, formatPrice, cn } from '../../lib/utils';
@@ -218,8 +219,10 @@ export default function ProfileScreen() {
             </button>
             <button
               onClick={() => {
-                hapticSuccess();
-                logout();
+                hapticLight();
+                showConfirm("Tizimdan chiqishni xohlaysizmi?", (ok) => {
+                  if (ok) logout();
+                });
               }}
               className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center press-scale hover:bg-red-500/20 transition-colors"
             >
@@ -279,35 +282,10 @@ export default function ProfileScreen() {
           <div className="space-y-4 animate-fade-up">
 
             {/* Verification Status Card */}
-            <Card 
-              className={cn(
-                "border relative overflow-hidden press-scale",
-                me?.verificationStatus === 'APPROVED' ? "bg-edu-primary/5 border-edu-primary/20" : 
-                me?.verificationStatus === 'PENDING' ? "bg-amber-500/5 border-amber-500/20" : "bg-edu-surface border-edu-border/40"
-              )}
+            <VerificationStatusCard 
+              status={me?.verificationStatus}
               onClick={() => navigate('/verification')}
-              radius="xl"
-            >
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center",
-                    me?.verificationStatus === 'APPROVED' ? "bg-edu-primary text-white" : 
-                    me?.verificationStatus === 'PENDING' ? "bg-amber-500 text-white" : "bg-edu-bg text-edu-muted"
-                  )}>
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-edu-text">Profilingizni tasdiqlang</h4>
-                    <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider">
-                      {me?.verificationStatus === 'APPROVED' ? 'Tasdiqlangan' : 
-                       me?.verificationStatus === 'PENDING' ? 'Kutilmoqda...' : 'Hujjat topshirish'}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight size={16} className="text-edu-muted" />
-              </CardContent>
-            </Card>
+            />
 
             {/* Client Stats Grid */}
 
@@ -424,35 +402,10 @@ export default function ProfileScreen() {
           <div className="space-y-4 animate-fade-up">
 
             {/* Verification Status Card */}
-            <Card 
-              className={cn(
-                "border relative overflow-hidden press-scale",
-                me?.verificationStatus === 'APPROVED' ? "bg-edu-primary/5 border-edu-primary/20" : 
-                me?.verificationStatus === 'PENDING' ? "bg-amber-500/5 border-amber-500/20" : "bg-edu-surface border-edu-border/40"
-              )}
+            <VerificationStatusCard 
+              status={me?.verificationStatus}
               onClick={() => navigate('/verification')}
-              radius="xl"
-            >
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center",
-                    me?.verificationStatus === 'APPROVED' ? "bg-edu-primary text-white" : 
-                    me?.verificationStatus === 'PENDING' ? "bg-amber-500 text-white" : "bg-edu-bg text-edu-muted"
-                  )}>
-                    <ShieldCheck size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-edu-text">Profilingizni tasdiqlang</h4>
-                    <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider">
-                      {me?.verificationStatus === 'APPROVED' ? 'Tasdiqlangan' : 
-                       me?.verificationStatus === 'PENDING' ? 'Kutilmoqda...' : 'Hujjat topshirish'}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight size={16} className="text-edu-muted" />
-              </CardContent>
-            </Card>
+            />
 
             {/* Freelancer Header card */}
             <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">

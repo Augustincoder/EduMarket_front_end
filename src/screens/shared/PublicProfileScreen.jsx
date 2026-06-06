@@ -12,6 +12,7 @@ import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { usersApi } from '../../services/users.service';
 
 import { Heart } from 'lucide-react';
+import { hapticLight } from '../../lib/telegram';
 import { useFavorites } from '../../hooks/useFavorites';
 
 export default function PublicProfileScreen() {

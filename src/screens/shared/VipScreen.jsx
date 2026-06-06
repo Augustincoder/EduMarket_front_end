@@ -141,7 +141,7 @@ export default function VipScreen() {
               <Card
                 key={pkg.key}
                 isPressable
-                onPress={() => setSelected(pkg.key)}
+                onClick={() => setSelected(pkg.key)}
                 className={[
                   'border-2 transition-all duration-300 active-bounce relative overflow-hidden',
                   selected === pkg.key

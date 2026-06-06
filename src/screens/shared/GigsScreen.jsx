@@ -1,5 +1,5 @@
 // src/screens/GigsScreen.jsx
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { TextInput } from '../../components/forms/TextInput';
@@ -18,7 +18,6 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { GigCardSkeleton } from '../../components/ui/SkeletonCard';
 import { formatPrice } from '../../lib/utils';
-import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 export default function GigsScreen() {
@@ -50,7 +49,8 @@ export default function GigsScreen() {
       const data = lastPage.data.data;
       if (data.page < data.totalPages) return data.page + 1;
       return undefined;
-    }
+    },
+    initialPageParam: 1
   });
 
   const gigs = gigsRes?.pages.flatMap(p => p.data.data.gigs) || [];

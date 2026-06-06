@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FilterChip as Chip } from '../../components/ui/Chip';
-import { Circle } from 'lucide-react';
 import { Header } from '../../components/layout/Header';
-import { PageLayout } from '../../components/layout/PageLayout';
 import { cn } from '../../lib/utils';
+import { showConfirm } from '../../lib/telegram';
 import { MessageBubble } from '../../components/chat/MessageBubble';
 import { ChatInput } from '../../components/chat/ChatInput';
 import { Button } from '../../components/ui/Button';
@@ -211,7 +209,11 @@ export default function ChatScreen() {
             isMe={msg.senderId === user?.id} 
             onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
             onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
-            onDelete={(id) => { if (window.confirm("Rostdan ham o'chirmoqchimisiz?")) deleteMessage(id); }}
+            onDelete={(id) => { 
+              showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
+                if (ok) deleteMessage(id);
+              });
+            }}
           />
         )) : null}
         

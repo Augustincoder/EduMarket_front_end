@@ -9,7 +9,6 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 const BACKOFF_DELAYS = [1000, 2000, 4000, 8000, 16000];
 
 const typingTimers = new Map();
-let loadConversationsTimeout = null;
 
 export const useChatStore = create((set, get) => ({
   socket:      null,
@@ -20,6 +19,7 @@ export const useChatStore = create((set, get) => ({
   userPresence: {},      // Record<userId, boolean>
   totalUnread:  0,
   retryCount:  0,
+  loadConversationsTimeout: null,
 
   connect: (token) => {
     const existing = get().socket;
@@ -177,9 +177,10 @@ export const useChatStore = create((set, get) => ({
   },
 
   loadConversations: async () => {
-    if (loadConversationsTimeout) clearTimeout(loadConversationsTimeout);
+    const prev = get().loadConversationsTimeout;
+    if (prev) clearTimeout(prev);
     
-    loadConversationsTimeout = setTimeout(async () => {
+    const timeout = setTimeout(async () => {
       try {
         const res = await chatApi.getConversations();
         const allConversations = res.data.data || [];
@@ -197,11 +198,17 @@ export const useChatStore = create((set, get) => ({
         const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
         
         const presence = {};
+        const presenceIds = [];
         allConversations.forEach((c) => {
           if (c.otherUser) {
             presence[c.otherUser.id] = c.otherUser.isOnline;
+            presenceIds.push(c.otherUser.id);
           }
         });
+
+        if (presenceIds.length > 0) {
+          get().socket?.emit('subscribe_presence', presenceIds);
+        }
 
         set((s) => ({
           conversations,
@@ -215,6 +222,7 @@ export const useChatStore = create((set, get) => ({
         console.error('Failed to load conversations:', err);
       }
     }, 500);
+    set({ loadConversationsTimeout: timeout });
   },
 
   markConversationRead: (taskId) => {

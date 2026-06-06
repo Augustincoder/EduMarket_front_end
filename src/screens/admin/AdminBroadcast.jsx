@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { Select } from '../../components/ui/AdminComponents';
 import { Send, Users, ShieldAlert } from 'lucide-react';
 import DOMPurify from 'dompurify';
+import { showConfirm } from '../../lib/telegram';
 
 export default function AdminBroadcast() {
   const [targetType, setTargetType] = useState('ALL');
@@ -26,10 +27,12 @@ export default function AdminBroadcast() {
       return;
     }
 
-    if (window.confirm('Haqiqatdan ham ushbu xabarni barcha tanlangan foydalanuvchilarga yubormoqchimisiz?')) {
-      const sanitizedText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'code', 's', 'strike', 'del', 'pre', 'a'] });
-      broadcastMutation.mutate({ targetType, text: sanitizedText });
-    }
+    showConfirm('Haqiqatdan ham ushbu xabarni barcha tanlangan foydalanuvchilarga yubormoqchimisiz?', (ok) => {
+      if (ok) {
+        const sanitizedText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'code', 's', 'strike', 'del', 'pre', 'a'] });
+        broadcastMutation.mutate({ targetType, text: sanitizedText });
+      }
+    });
   };
 
   return (

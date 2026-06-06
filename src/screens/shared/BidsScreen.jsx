@@ -1,5 +1,5 @@
 // src/screens/BidsScreen.jsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -8,15 +8,28 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
-import { useTaskBids, useAcceptBid } from '../../hooks/useTasks';
+import { useTaskBids, useAcceptBid, useTask } from '../../hooks/useTasks';
+import { useAuthStore } from '../../store/authStore';
 import { hapticSuccess } from '../../lib/telegram';
 import { trackEvent } from '../../lib/observability';
 
 export default function BidsScreen() {
   const { id }  = useParams();
-  const { data: bids, isLoading } = useTaskBids(id);
+  const { data: bids, isLoading: isBidsLoading } = useTaskBids(id);
+  const { data: task, isLoading: isTaskLoading } = useTask(id);
   const acceptBid = useAcceptBid(id);
   const [confirming, setConfirming] = useState(null);
+  const user = useAuthStore((s) => s.user);
+
+  if (!isTaskLoading && task && user?.id !== task.clientId) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-edu-bg">
+        <p className="text-edu-text font-bold">Ushbu sahifaga kirish taqiqlangan</p>
+      </div>
+    );
+  }
+
+  const isLoading = isBidsLoading || isTaskLoading;
 
   const handleAccept = async () => {
     await acceptBid.mutateAsync(confirming.id);
@@ -29,6 +42,14 @@ export default function BidsScreen() {
     setConfirming(null);
   };
 
+  const [displayLimit, setDisplayLimit] = useState(10);
+  const displayedBids = useMemo(() => {
+    if (!bids) return [];
+    return bids.slice(0, displayLimit);
+  }, [bids, displayLimit]);
+
+  const hasMore = bids && bids.length > displayLimit;
+
   return (
     <PageLayout showNav={false}>
       <Header title={`Takliflar (${bids?.length ?? 0} ta)`} showBack />
@@ -39,15 +60,24 @@ export default function BidsScreen() {
         ) : !bids?.length ? (
           <EmptyState emoji="🤷" title="Hali hech kim taklif bermagan" subtitle="Biroz kuting..." />
         ) : (
-          bids.map((bid) => (
-            <BidCard
-              key={bid.id}
-              bid={bid}
-              isSelected={!!bid.isAccepted}
-              isDisabled={bids.some(b => b.isAccepted)}
-              onAccept={(bidId) => setConfirming(bid)}
-            />
-          ))
+          <>
+            {displayedBids.map((bid) => (
+              <BidCard
+                key={bid.id}
+                bid={bid}
+                isSelected={!!bid.isAccepted}
+                isDisabled={bids.some(b => b.isAccepted)}
+                onAccept={(bid) => setConfirming(bid)}
+              />
+            ))}
+            {hasMore && (
+              <div className="flex justify-center pt-4 pb-8">
+                <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)}>
+                  Ko'proq ko'rsatish
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

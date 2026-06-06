@@ -3,6 +3,9 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { FullPageSpinner } from '../components/ui/Spinner';
 import { useSocket } from '../hooks/useSocket';
+import { RoleGuard } from '../components/layout/RoleGuard';
+import { ProtectedRoute } from '../components/layout/ProtectedRoute';
+import { ErrorBoundary } from '../components/layout/ErrorBoundary';
 
 import SplashScreen from '../screens/auth/SplashScreen';
 import HomeScreen from '../screens/shared/HomeScreen';
@@ -27,6 +30,7 @@ const VipScreen         = lazy(() => import('../screens/shared/VipScreen'));
 const LeaderboardScreen = lazy(() => import('../screens/shared/LeaderboardScreen'));
 const ReferralsScreen   = lazy(() => import('../screens/shared/ReferralsScreen'));
 const NotificationSettingsScreen = lazy(() => import('../screens/shared/NotificationSettingsScreen'));
+const NotificationInboxScreen = lazy(() => import('../screens/shared/NotificationInboxScreen'));
 const VerificationScreen = lazy(() => import('../screens/shared/VerificationScreen'));
 
 // Lazy load Admin screens
@@ -48,10 +52,6 @@ function Screen({ element }) {
   return <Suspense fallback={<FullPageSpinner />}>{element}</Suspense>;
 }
 
-import { RoleGuard } from '../components/layout/RoleGuard';
-import { ProtectedRoute } from '../components/layout/ProtectedRoute';
-import { ErrorBoundary } from '../components/layout/ErrorBoundary';
-
 export function AppRouter() {
   useSocket(); // Automatically connects/disconnects websocket based on token state
   return (
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
   { path: '/my-tasks',          element: <ProtectedRoute><MyTasksScreen /></ProtectedRoute> },
   { path: '/tasks/create',      element: <Screen element={<ProtectedRoute><CreateTaskScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id',         element: <Screen element={<ProtectedRoute><TaskDetailScreen /></ProtectedRoute>} /> },
-  { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute require="client_only"><BidsScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute><BidsScreen /></ProtectedRoute>} /> },
   { path: '/chats',             element: <ProtectedRoute><ChatListScreen /></ProtectedRoute> },
   { path: '/tasks/:id/chat',    element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
   { path: '/earnings',          element: <Screen element={<RoleGuard require="FREELANCER"><EarningsScreen /></RoleGuard>} /> },
@@ -82,6 +82,7 @@ const router = createBrowserRouter([
   { path: '/vip',               element: <Screen element={<ProtectedRoute><VipScreen /></ProtectedRoute>} />             },
   { path: '/leaderboard',       element: <Screen element={<ProtectedRoute><LeaderboardScreen /></ProtectedRoute>} />     },
   { path: '/referrals',         element: <Screen element={<ProtectedRoute><ReferralsScreen /></ProtectedRoute>} />       },
+  { path: '/notifications',     element: <Screen element={<ProtectedRoute><NotificationInboxScreen /></ProtectedRoute>} /> },
   { path: '/settings/notifications', element: <Screen element={<ProtectedRoute><NotificationSettingsScreen /></ProtectedRoute>} /> },
   { path: '/verification',      element: <Screen element={<ProtectedRoute><VerificationScreen /></ProtectedRoute>} /> },
   

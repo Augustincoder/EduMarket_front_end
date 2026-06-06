@@ -10,6 +10,7 @@ import { UserBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
 import { MessageSquare, Plus, ArrowRight, ClipboardList, Clock, Eye } from 'lucide-react';
+import { ClientHomeSkeleton } from '../../components/ui/SkeletonCard';
 
 export default function ClientHomeScreen() {
   const navigate = useNavigate();
@@ -42,6 +43,12 @@ export default function ClientHomeScreen() {
     navigate('/tasks/create', { state: { category: catValue } });
   };
 
+  const isLoading = isLeaderboardLoading || !myTasks || !conversations;
+
+  if (isLoading) {
+    return <ClientHomeSkeleton />;
+  }
+
   return (
     <div className="flex flex-col h-full bg-edu-bg pb-24 p-4 overflow-y-auto scrollbar-hide">
       
@@ -65,7 +72,7 @@ export default function ClientHomeScreen() {
         <Card 
           isPressable
           haptic="success"
-          onPress={() => { navigate('/tasks/create'); }}
+          onClick={() => { navigate('/tasks/create'); }}
           className="bg-gradient-to-br from-edu-primary to-edu-primary-d squircle text-white shadow-btn relative overflow-hidden flex flex-col justify-between min-h-[150px] border border-white/20"
         >
           <CardContent className="p-5 flex flex-col justify-between h-full">
@@ -84,7 +91,7 @@ export default function ClientHomeScreen() {
         <Card 
           isPressable
           haptic="success"
-          onPress={() => { navigate('/gigs'); }}
+          onClick={() => { navigate('/gigs'); }}
           className="bg-gradient-to-br from-edu-accent to-[#7064E2] squircle text-white shadow-lg shadow-edu-accent/20 relative overflow-hidden flex flex-col justify-between min-h-[150px] border border-white/20"
         >
           <CardContent className="p-5 flex flex-col justify-between h-full">
@@ -133,7 +140,7 @@ export default function ClientHomeScreen() {
           <h3 className="text-sm font-bold text-edu-text uppercase tracking-wider mb-3">So'nggi chat</h3>
           <Card 
             isPressable
-            onPress={() => { navigate(`/tasks/${activeChats[0].taskId}/chat`); }}
+            onClick={() => { navigate(`/tasks/${activeChats[0].taskId}/chat`); }}
             className="bg-edu-surface border border-edu-border/40 hover:border-edu-border transition-colors active-bounce"
             radius="2xl"
           >
@@ -186,19 +193,13 @@ export default function ClientHomeScreen() {
           </Link>
         </div>
 
-        {isLeaderboardLoading ? (
-          <div className="space-y-2 animate-pulse">
-            {[1, 2].map(i => (
-              <div key={i} className="h-16 bg-edu-surface rounded-2xl border border-edu-border/20" />
-            ))}
-          </div>
-        ) : topFreelancers.length > 0 ? (
+        {topFreelancers.length > 0 ? (
           <div className="space-y-2.5">
             {topFreelancers.map((fl, idx) => (
               <Card
                 key={fl.id}
                 isPressable
-                onPress={() => { navigate(`/profile/${fl.id}`); }}
+                onClick={() => { navigate(`/profile/${fl.id}`); }}
                 className="bg-edu-surface border border-edu-border/40 active-bounce hover:border-edu-border"
                 radius="2xl"
               >

@@ -1,5 +1,4 @@
 // src/components/ui/ProgressStepper.jsx
-import { Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export function ProgressStepper({ steps, current }) {

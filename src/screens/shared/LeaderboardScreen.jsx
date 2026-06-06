@@ -38,7 +38,7 @@ export default function LeaderboardScreen() {
             {users[0] && (
               <Card
                 isPressable
-                onPress={() => { navigate(`/profile/${users[0].id}`); }}
+                onClick={() => { navigate(`/profile/${users[0].id}`); }}
                 className="bg-gradient-to-br from-[#FFD700] to-[#FDB931] border border-[#FFF8B0]/50 shadow-[0_8px_30px_rgba(255,215,0,0.4)] relative overflow-hidden active-bounce"
                 radius="2xl"
               >

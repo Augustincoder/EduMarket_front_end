@@ -42,7 +42,7 @@ export default function SplashScreen() {
           // If token exists but refreshUser failed, the token is likely invalid or stale.
           // Clear it and proceed to a fresh login.
           console.warn("Session stale, re-authenticating...");
-          localStorage.removeItem('edu_token');
+          localStorage.removeItem('edu_auth');
         }
       }
 

@@ -31,7 +31,7 @@ export function PromoteModal({
             <Card
               key={pkg.type}
               isPressable
-              onPress={() => onSubmit(pkg.type)}
+              onClick={() => onSubmit(pkg.type)}
               className="border border-edu-border/50 hover:border-edu-primary/50 transition-all active:scale-[0.98]"
             >
               <CardContent className="p-3 flex items-center gap-3">

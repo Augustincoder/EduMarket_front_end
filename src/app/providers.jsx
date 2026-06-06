@@ -69,7 +69,7 @@ export function Providers({ children }) {
     } else {
       root.classList.add(theme);
     }
-  }, [theme]);
+  }, [theme, activeRole]);
 
   return (
     <QueryClientProvider client={queryClient}>

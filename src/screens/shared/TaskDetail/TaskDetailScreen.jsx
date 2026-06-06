@@ -15,7 +15,7 @@ import { useTask } from '../../../hooks/useTasks';
 import { useAuthStore } from '../../../store/authStore';
 import { useChatStore } from '../../../store/chatStore';
 import { useMainButton } from '../../../hooks/useMainButton';
-import { formatPrice, formatPriceRange, formatDate, deadlineCountdown } from '../../../lib/utils';
+import { formatPrice, formatPriceRange, formatDate, deadlineCountdown, cn } from '../../../lib/utils';
 import { fireConfetti } from '../../../lib/gamification';
 import { showConfirm } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
@@ -292,7 +292,7 @@ export default function TaskDetailScreen() {
 
           <Card
             isPressable
-            onPress={() => navigate(`/profile/${task.client?.id}`)}
+            onClick={() => navigate(`/profile/${task.client?.id}`)}
             className="bg-edu-surface shadow-card border border-edu-border/40"
             radius="xl"
           >
@@ -309,7 +309,7 @@ export default function TaskDetailScreen() {
           {task.freelancer && (
             <Card
               isPressable
-              onPress={() => navigate(`/profile/${task.freelancer.id}`)}
+              onClick={() => navigate(`/profile/${task.freelancer.id}`)}
               className="bg-edu-surface shadow-card border border-edu-border/40"
               radius="xl"
             >

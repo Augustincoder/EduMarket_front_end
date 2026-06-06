@@ -12,7 +12,7 @@ export const useAuthStore = create(
       isLoading: false,
 
       setAuth: ({ user, token }) => {
-        localStorage.setItem('edu_token', token);
+
         set({ user, token, activeRole: user?.isFreelancer ? 'FREELANCER' : 'CLIENT', isLoading: false });
       },
 
@@ -20,7 +20,7 @@ export const useAuthStore = create(
         set((s) => ({ user: { ...s.user, ...data } })),
 
       logout: () => {
-        localStorage.removeItem('edu_token');
+
         set({ user: null, token: null, activeRole: 'CLIENT' });
       },
 
@@ -29,14 +29,9 @@ export const useAuthStore = create(
       setFreelancerMode: (val) => set((s) => ({ user: { ...s.user, isFreelancer: val }, activeRole: val ? 'FREELANCER' : 'CLIENT' })),
       
       toggleActiveRole: () => {
-        set({ isSwitching: true });
-        
-        setTimeout(() => {
-          set((s) => ({ 
-            activeRole: s.activeRole === 'CLIENT' ? (s.user?.isFreelancer ? 'FREELANCER' : 'CLIENT') : 'CLIENT',
-            isSwitching: false
-          }));
-        }, 800);
+        set((s) => ({ 
+          activeRole: s.activeRole === 'CLIENT' ? (s.user?.isFreelancer ? 'FREELANCER' : 'CLIENT') : 'CLIENT',
+        }));
       },
 
       completeOnboarding: () => set((s) => ({ user: { ...s.user, isOnboardingComplete: true } })),

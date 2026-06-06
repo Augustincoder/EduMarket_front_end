@@ -35,12 +35,12 @@ export default function AdminDashboard() {
   }
 
   const statCards = [
-    { label: 'Jami Users', value: statsData?.users || 0, icon: Users, color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20', path: '/admin/users' },
-    { label: 'Topshiriqlar', value: statsData?.tasks?.total || 0, icon: Briefcase, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20', path: '/admin/moderator' },
-    { label: 'VIP Arizalar', value: statsData?.pendingVipRequests || 0, icon: Crown, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', path: '/admin/vip', alert: statsData?.pendingVipRequests > 0 },
-    { label: 'Shikoyatlar', value: statsData?.pendingReports || 0, icon: AlertOctagon, color: 'text-rose-400 bg-rose-500/10 border-rose-500/20', path: '/admin/complaints', alert: statsData?.pendingReports > 0 },
-    { label: 'Ochiq Nizolar', value: statsData?.openDisputes || 0, icon: Gavel, color: 'text-purple-400 bg-purple-500/10 border-purple-500/20', path: '/admin/disputes', alert: statsData?.openDisputes > 0 },
-    { label: 'Talaba So\'rovlari', value: statsData?.pendingStudentVerifications || 0, icon: GraduationCap, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', path: '/admin/users', alert: statsData?.pendingStudentVerifications > 0 },
+    { label: 'Jami Users', value: statsData?.users || 0, icon: Users, textClass: 'text-indigo-400', bgClass: 'bg-indigo-500/10', borderClass: 'border-indigo-500/20', path: '/admin/users' },
+    { label: 'Topshiriqlar', value: statsData?.tasks?.total || 0, icon: Briefcase, textClass: 'text-blue-400', bgClass: 'bg-blue-500/10', borderClass: 'border-blue-500/20', path: '/admin/moderator' },
+    { label: 'VIP Arizalar', value: statsData?.pendingVipRequests || 0, icon: Crown, textClass: 'text-amber-400', bgClass: 'bg-amber-500/10', borderClass: 'border-amber-500/20', path: '/admin/vip', alert: statsData?.pendingVipRequests > 0 },
+    { label: 'Shikoyatlar', value: statsData?.pendingReports || 0, icon: AlertOctagon, textClass: 'text-rose-400', bgClass: 'bg-rose-500/10', borderClass: 'border-rose-500/20', path: '/admin/complaints', alert: statsData?.pendingReports > 0 },
+    { label: 'Ochiq Nizolar', value: statsData?.openDisputes || 0, icon: Gavel, textClass: 'text-purple-400', bgClass: 'bg-purple-500/10', borderClass: 'border-purple-500/20', path: '/admin/disputes', alert: statsData?.openDisputes > 0 },
+    { label: 'Talaba So\'rovlari', value: statsData?.pendingStudentVerifications || 0, icon: GraduationCap, textClass: 'text-emerald-400', bgClass: 'bg-emerald-500/10', borderClass: 'border-emerald-500/20', path: '/admin/users', alert: statsData?.pendingStudentVerifications > 0 },
   ];
 
   return (
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
             <div 
               key={idx}
               onClick={() => navigate(card.path)}
-              className={`p-6 bg-slate-950/40 border rounded-3xl flex flex-col justify-between h-36 cursor-pointer hover:border-slate-700 transition-all active:scale-[0.98] relative overflow-hidden group ${card.color.split(' ')[2]}`}
+              className={`p-6 bg-slate-950/40 border rounded-3xl flex flex-col justify-between h-36 cursor-pointer hover:border-slate-700 transition-all active:scale-[0.98] relative overflow-hidden group ${card.borderClass}`}
             >
               {card.alert && (
                 <span className="absolute top-3 right-3 flex h-2 w-2">
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
               )}
               
               <div className="flex justify-between items-start">
-                <span className={`w-10 h-10 rounded-2xl flex items-center justify-center border ${card.color.split(' ')[0]} ${card.color.split(' ')[1]} ${card.color.split(' ')[2]}`}>
+                <span className={`w-10 h-10 rounded-2xl flex items-center justify-center border ${card.textClass} ${card.bgClass} ${card.borderClass}`}>
                   <Icon size={20} />
                 </span>
                 <span className="text-slate-600 group-hover:text-slate-400 transition-colors">

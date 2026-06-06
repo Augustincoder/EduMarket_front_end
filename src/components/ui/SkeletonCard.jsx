@@ -130,4 +130,35 @@ export function TaskDetailSkeleton() {
   );
 }
 
+export function ClientHomeSkeleton() {
+  return (
+    <div className="flex flex-col h-full p-4 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center pt-4">
+        <div className="space-y-2">
+          <Bone className="w-20 h-3" />
+          <Bone className="w-32 h-8" />
+        </div>
+        <Bone className="w-12 h-12 rounded-full" />
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-4">
+        <Bone className="h-36 squircle" />
+        <Bone className="h-36 squircle" />
+      </div>
+
+      {/* Stats */}
+      <div className="space-y-3">
+        <Bone className="w-24 h-4" />
+        <div className="grid grid-cols-3 gap-3">
+          <Bone className="h-28 squircle" />
+          <Bone className="h-28 squircle" />
+          <Bone className="h-28 squircle" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default TaskCardSkeleton;

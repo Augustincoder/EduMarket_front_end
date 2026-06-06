@@ -13,7 +13,8 @@ export const api = axios.create({
 // ─── Request Interceptor (JWT token) ──────────────
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('edu_token');
+    const authStr = localStorage.getItem('edu_auth');
+    const token = authStr ? JSON.parse(authStr).state?.token : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +31,8 @@ api.interceptors.response.use(
     const code   = error.response?.data?.code;
 
     if (status === 401) {
-      localStorage.removeItem('edu_token');
+      // Do not clear localStorage manually here, the event triggers zustand logout
+      // which clears the store and persist storage.
       // Auth store logout handled by useAuth hook
       window.dispatchEvent(new CustomEvent('auth:logout'));
     }

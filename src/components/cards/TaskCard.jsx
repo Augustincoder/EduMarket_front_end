@@ -21,7 +21,7 @@ function TaskCard({ task, variant = 'full', className }) {
   return (
     <Card
       isPressable
-      onPress={handleClick}
+      onClick={handleClick}
       className={cn(
         'group bg-edu-surface p-5 active-spring cursor-pointer border-edu-border/40 hover:border-edu-primary/30 transition-all hover:shadow-lg hover:shadow-black/[0.02] dark:hover:shadow-white/[0.02]',
         className

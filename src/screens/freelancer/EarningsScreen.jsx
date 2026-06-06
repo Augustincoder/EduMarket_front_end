@@ -199,7 +199,7 @@ export default function EarningsScreen() {
                 <Card 
                   key={task.id}
                   isPressable
-                  onPress={() => { navigate(`/tasks/${task.id}`); }}
+                  onClick={() => { navigate(`/tasks/${task.id}`); }}
                   className="bg-edu-surface border border-edu-border/40 hover:border-edu-border active-bounce"
                   radius="2xl"
                 >
