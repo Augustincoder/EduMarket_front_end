@@ -1,6 +1,5 @@
 // src/components/forms/FileUpload.jsx
 import { useState, useRef } from 'react';
-import { Button } from '../ui/Button';
 import { Paperclip, X, Loader2, FileText, Image } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import { BLOCKED_EXTENSIONS, MAX_FILE_SIZE_MB, ACCEPTED_MIME_TYPES } from '../../lib/constants';

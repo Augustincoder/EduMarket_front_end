@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -6,7 +6,6 @@ import { Header } from '../../components/layout/Header';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import { FileUpload } from '../../components/forms/FileUpload';
-import { SelectInput } from '../../components/forms/SelectInput';
 import { verificationApi } from '../../services/verification.service';
 import { useAuth } from '../../hooks/useAuth';
 import { hapticSuccess, hapticError } from '../../lib/telegram';
@@ -23,6 +22,7 @@ const DOC_TYPES = [
 export default function VerificationScreen() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [docType, setDocType] = useState('STUDENT_ID');
   const [docFiles, setDocFiles] = useState([]);

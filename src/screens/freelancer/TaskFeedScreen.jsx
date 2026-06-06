@@ -1,19 +1,16 @@
 // src/screens/TaskFeedScreen.jsx
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+// Removed unused import
 import { TextInput } from '../../components/forms/TextInput';
 import { Button } from '../../components/ui/Button';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import TaskCard from '../../components/cards/TaskCard';
 import { FilterChip } from '../../components/ui/Chip';
 import { BottomSheet } from '../../components/ui/BottomSheet';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { ToggleSwitch } from '../../components/forms/ToggleSwitch';
 import { useTaskFeed } from '../../hooks/useTasks';
-import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { useUiStore } from '../../store/uiStore';
 import { useDebounce } from '../../hooks/useDebounce';
 import { CATEGORIES } from '../../lib/constants';
@@ -28,7 +25,6 @@ const SORT_OPTIONS = [
 ];
 
 export default function TaskFeedScreen() {
-  const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const filterState = useUiStore((s) => s.filterState);
@@ -53,6 +49,7 @@ export default function TaskFeedScreen() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (debouncedQuery) addSearch(debouncedQuery);
   }, [debouncedQuery, addSearch]);
 

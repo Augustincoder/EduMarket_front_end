@@ -5,7 +5,6 @@ import useOnboardingStore from '../../../store/onboardingStore';
 import OnboardingStep1 from './OnboardingStep1';
 import OnboardingStep2 from './OnboardingStep2';
 import OnboardingStep3 from './OnboardingStep3';
-import OnboardingStep4 from './OnboardingStep4';
 
 export default function OnboardingContainer() {
   const user = useAuthStore((s) => s.user);
@@ -31,7 +30,7 @@ export default function OnboardingContainer() {
       <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5">
         <div 
           className="bg-blue-600 h-1.5 transition-all duration-300 ease-out"
-          style={{ width: `${(step / 4) * 100}%` }}
+          style={{ width: `${(step / 3) * 100}%` }}
         />
       </div>
 
@@ -39,7 +38,6 @@ export default function OnboardingContainer() {
         {step === 1 && <OnboardingStep1 />}
         {step === 2 && <OnboardingStep2 />}
         {step === 3 && <OnboardingStep3 />}
-        {step === 4 && <OnboardingStep4 />}
       </div>
     </div>
   );

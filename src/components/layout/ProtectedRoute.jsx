@@ -1,5 +1,5 @@
 // src/components/layout/ProtectedRoute.jsx
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
 export function ProtectedRoute({ children, require: req = 'auth', task }) {

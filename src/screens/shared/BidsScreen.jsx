@@ -21,13 +21,7 @@ export default function BidsScreen() {
   const [confirming, setConfirming] = useState(null);
   const user = useAuthStore((s) => s.user);
 
-  if (!isTaskLoading && task && user?.id !== task.clientId) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-edu-bg">
-        <p className="text-edu-text font-bold">Ushbu sahifaga kirish taqiqlangan</p>
-      </div>
-    );
-  }
+  // Anyone can view the BidsScreen now (Client sees all, freelancers see redacted)
 
   const isLoading = isBidsLoading || isTaskLoading;
 
@@ -70,6 +64,7 @@ export default function BidsScreen() {
                   bid={bid}
                   isSelected={!!bid.isAccepted}
                   isDisabled={bids.some(b => b.isAccepted)}
+                  isClient={user?.id === task?.clientId}
                   onAccept={(bid) => setConfirming(bid)}
                 />
               ))}

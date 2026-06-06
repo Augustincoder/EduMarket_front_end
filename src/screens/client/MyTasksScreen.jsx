@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Header } from '../../components/layout/Header';
@@ -7,9 +6,7 @@ import { useAuthStore } from '../../store/authStore';
 import TaskCard from '../../components/cards/TaskCard';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
 import { FilterChip } from '../../components/ui/Chip';
-import { hapticLight } from '../../lib/telegram';
-import { Briefcase, User, SearchX } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { SearchX } from 'lucide-react';
 
 export default function MyTasksScreen() {
   const activeRole = useAuthStore((s) => s.activeRole);

@@ -6,11 +6,9 @@ import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
 import { UserBadge } from '../../components/ui/Badge';
-import { DisplayRating } from '../../components/ui/StarRating';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { useAuthStore } from '../../store/authStore';
 import { usersApi } from '../../services/users.service';
-import { hapticLight } from '../../lib/telegram';
 
 export default function LeaderboardScreen() {
   const navigate = useNavigate();

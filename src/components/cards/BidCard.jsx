@@ -6,9 +6,10 @@ import { formatPrice } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
 
-export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
+export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
   const { freelancer } = bid;
   const isVip = freelancer?.isVip;
+  const isRedacted = bid.proposedPrice === null;
 
   return (
     <div className={cn(
@@ -56,9 +57,20 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
       </div>
 
       {/* Message */}
-      <div className="bg-gray-50 dark:bg-black/20 rounded-2xl p-4 mb-5 border border-gray-100 dark:border-white/5 relative">
-        <MessageCircle size={14} className="absolute -top-1.5 -left-1.5 text-gray-300 dark:text-gray-600 bg-white dark:bg-[#1C1C1E] rounded-full p-0.5" />
-        <p className="text-[14px] text-gray-600 dark:text-gray-300 leading-relaxed font-medium line-clamp-3 italic">
+      <div className={cn(
+        "rounded-2xl p-4 mb-5 border relative",
+        isRedacted 
+          ? "bg-amber-50/50 dark:bg-amber-900/10 border-amber-200/50 dark:border-amber-500/10" 
+          : "bg-gray-50 dark:bg-black/20 border-gray-100 dark:border-white/5"
+      )}>
+        <MessageCircle size={14} className={cn(
+          "absolute -top-1.5 -left-1.5 rounded-full p-0.5",
+          isRedacted ? "text-amber-400 bg-white dark:bg-[#1C1C1E]" : "text-gray-300 dark:text-gray-600 bg-white dark:bg-[#1C1C1E]"
+        )} />
+        <p className={cn(
+          "text-[14px] leading-relaxed font-medium line-clamp-3 italic",
+          isRedacted ? "text-amber-600/80 dark:text-amber-500/80" : "text-gray-600 dark:text-gray-300"
+        )}>
           "{bid.message || 'Hech qanday xabar qoldirilmagan.'}"
         </p>
       </div>
@@ -67,8 +79,14 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
       <div className="flex items-center justify-between pt-1">
         <div className="space-y-0.5">
           <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-none">Taklif narxi</p>
-          <p className="text-[20px] font-black text-gray-900 dark:text-white tracking-tight">
-            {formatPrice(bid.proposedPrice)} <span className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase ml-0.5 tracking-wide">UZS</span>
+          <p className="text-[20px] font-black text-gray-900 dark:text-white tracking-tight flex items-baseline">
+            {isRedacted ? (
+              <span className="text-sm text-edu-muted blur-[4px] select-none">100 000 UZS</span>
+            ) : (
+              <>
+                {formatPrice(bid.proposedPrice)} <span className="text-[12px] font-bold text-gray-400 dark:text-gray-500 uppercase ml-0.5 tracking-wide">UZS</span>
+              </>
+            )}
           </p>
         </div>
 
@@ -76,7 +94,7 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 dark:text-[#30D158] rounded-full font-black text-[13px] uppercase tracking-wider border border-emerald-500/20">
             <Check size={16} strokeWidth={3} /> Tanlangan
           </div>
-        ) : (
+        ) : isClient ? (
           <Button
             size="md"
             className={cn(
@@ -88,7 +106,7 @@ export function BidCard({ bid, isSelected, isDisabled, onAccept }) {
           >
             Tanlash
           </Button>
-        )}
+        ) : null}
       </div>
     </div>
   );

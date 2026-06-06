@@ -8,8 +8,7 @@ import { CATEGORIES } from '../../lib/constants';
 import { Avatar } from '../../components/ui/Avatar';
 import { UserBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
-import { hapticLight, hapticSuccess } from '../../lib/telegram';
-import { MessageSquare, Plus, ArrowRight, ClipboardList, Clock, Eye } from 'lucide-react';
+import { Plus, ArrowRight, ClipboardList } from 'lucide-react';
 import { ClientHomeSkeleton } from '../../components/ui/SkeletonCard';
 
 export default function ClientHomeScreen() {

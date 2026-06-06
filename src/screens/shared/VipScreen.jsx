@@ -10,7 +10,7 @@ import { TextInput } from '../../components/forms/TextInput';
 import { FileUpload } from '../../components/forms/FileUpload';
 import { useAuthStore } from '../../store/authStore';
 import { useMainButton } from '../../hooks/useMainButton';
-import { vipApi, filesApi } from '../../services/other.service';
+import { vipApi } from '../../services/other.service';
 import { VIP_PACKAGES, VIP_BENEFITS } from '../../lib/constants';
 import { copyToClipboard, cn } from '../../lib/utils';
 import { hapticSuccess } from '../../lib/telegram';

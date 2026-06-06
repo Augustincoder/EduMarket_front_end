@@ -7,7 +7,7 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Modal } from '../../components/ui/Modal';
 import { TextArea } from '../../components/forms/TextArea';
 import { Avatar } from '../../components/ui/Avatar';
-import { ShieldCheck, XCircle, Eye, CheckCircle, Clock, Camera, Download, X } from 'lucide-react';
+import { ShieldCheck, XCircle, Eye, CheckCircle, Clock, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function ImagePreview({ fileId, label, icon: Icon }) {

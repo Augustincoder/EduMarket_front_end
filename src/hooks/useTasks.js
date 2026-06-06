@@ -90,9 +90,22 @@ export function useTaskTransition(taskId) {
     onSettled: invalidate 
   });
   
-  const submitReview    = useMutation({ 
-    mutationFn: () => tasksApi.submitReview(taskId),
+  const deliverPreview  = useMutation({ 
+    mutationFn: (data) => tasksApi.deliver(taskId, data),
+    onMutate: () => optimisticStatusUpdate('PREVIEW_PENDING'),
+    onError,
+    onSettled: invalidate 
+  });
+
+  const approvePreview  = useMutation({ 
+    mutationFn: () => tasksApi.approvePreview(taskId),
     onMutate: () => optimisticStatusUpdate('IN_REVIEW'),
+    onError,
+    onSettled: invalidate 
+  });
+
+  const revealFiles     = useMutation({ 
+    mutationFn: () => tasksApi.revealFiles(taskId),
     onError,
     onSettled: invalidate 
   });
@@ -134,7 +147,16 @@ export function useTaskTransition(taskId) {
     onError: (err) => toast.error(err.serverMsg || "Xatolik yuz berdi")
   });
 
-  return { startProgress, submitReview, accept, requestRevision, cancel, dispute, promote };
+  const flagTask        = useMutation({
+    mutationFn: (d) => tasksApi.flag(taskId, d),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Shikoyat qabul qilindi. Tez orada ma'muriyat tomonidan ko'rib chiqiladi.");
+    },
+    onError: (err) => toast.error(err.serverMsg || "Xatolik yuz berdi")
+  });
+
+  return { startProgress, deliverPreview, approvePreview, revealFiles, accept, requestRevision, cancel, dispute, promote, flagTask };
 }
 
 // ─── Bids ───────────────────────────────────────────

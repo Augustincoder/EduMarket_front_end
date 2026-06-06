@@ -72,6 +72,7 @@ export default {
         'shimmer':    'shimmer 2.5s infinite',
         'pulse-dot':  'pulseDot 1.2s ease-in-out infinite',
         'spin-slow':  'spin 3s linear infinite',
+        'ticker':     'ticker 15s linear infinite',
       },
       keyframes: {
         fadeUp: {
@@ -101,6 +102,10 @@ export default {
         bounceDot: {
           '0%, 80%, 100%': { transform: 'scale(0)' },
           '40%':           { transform: 'scale(1)' },
+        },
+        ticker: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' }
         },
       },
       spacing: {

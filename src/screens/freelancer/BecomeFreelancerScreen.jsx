@@ -5,7 +5,6 @@ import { onboardingApi } from '../../services/users.service';
 import { useAuthStore } from '../../store/authStore';
 import { useTelegram } from '../../hooks/useTelegram';
 import { useMainButton } from '../../hooks/useMainButton';
-import { Button } from '../../components/ui/Button';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = [

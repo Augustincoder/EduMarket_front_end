@@ -1,5 +1,4 @@
 // src/screens/admin/components/ActivityChart.jsx
-import React from 'react';
 import {
   AreaChart,
   Area,

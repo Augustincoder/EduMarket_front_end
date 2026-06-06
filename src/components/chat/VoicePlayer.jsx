@@ -1,6 +1,6 @@
 // src/components/chat/VoicePlayer.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2 } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { filesApi } from '../../services/other.service';
 

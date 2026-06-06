@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { filesApi } from '../../services/other.service';
@@ -10,7 +10,7 @@ import {
   DialogTitle, 
   DialogDescription 
 } from '../../components/ui/AdminComponents';
-import { Crown, Eye, Check, X } from 'lucide-react';
+import { Eye, Check } from 'lucide-react';
 
 export default function AdminVipRequests() {
   const queryClient = useQueryClient();

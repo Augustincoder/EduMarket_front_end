@@ -8,8 +8,6 @@ import * as zod from 'zod';
 import { Button } from '../../components/ui/Button';
 import { 
   ChevronLeft, 
-  Info, 
-  HelpCircle, 
   Lock, 
   Crown, 
   Briefcase, 

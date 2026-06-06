@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import useOnboardingStore from '../../../store/onboardingStore';
 import { useTelegram } from '../../../hooks/useTelegram';
 import { Button } from '../../../components/ui/Button';

@@ -9,6 +9,7 @@ import { UserBadge } from '../../components/ui/Badge';
 import { SkillChip } from '../../components/ui/Chip';
 import { DisplayRating } from '../../components/ui/StarRating';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
+import { ReputationPassportCard } from '../../components/cards/ReputationPassportCard';
 import { usersApi } from '../../services/users.service';
 
 import { Heart } from 'lucide-react';
@@ -86,6 +87,9 @@ export default function PublicProfileScreen() {
             </div>
           </div>
         </div>
+
+        {/* Phase 6: Reputation Passport */}
+        <ReputationPassportCard profile={profile} />
 
         {profile.bio && (
           <Card className="bg-edu-surface shadow-card border border-edu-border/40" radius="xl">

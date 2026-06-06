@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { filesApi } from '../../services/other.service';
@@ -10,7 +10,7 @@ import {
   DialogDescription,
   Select
 } from '../../components/ui/AdminComponents';
-import { Search, Ban, Crown, ShieldAlert, GraduationCap, Check, X, Shield, Eye, Download } from 'lucide-react';
+import { Search, Ban, Crown, ShieldAlert, GraduationCap, Check, Download } from 'lucide-react';
 import { exportToCSV } from '../../lib/export';
 
 export default function AdminUsers() {

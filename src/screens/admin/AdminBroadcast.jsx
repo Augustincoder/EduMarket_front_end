@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { toast } from 'react-hot-toast';
 import { Select } from '../../components/ui/AdminComponents';
-import { Send, Users, ShieldAlert } from 'lucide-react';
+import { Send, ShieldAlert } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { showConfirm } from '../../lib/telegram';
 

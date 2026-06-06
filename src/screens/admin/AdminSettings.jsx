@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { toast } from 'react-hot-toast';
-import { Settings, Save, Percent, ShieldAlert } from 'lucide-react';
+import { Save, Percent, ShieldAlert } from 'lucide-react';
 
 export default function AdminSettings() {
   const queryClient = useQueryClient();
@@ -19,8 +19,11 @@ export default function AdminSettings() {
 
   useEffect(() => {
     if (settingsData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVipPrice7(settingsData.vip_price_7_days || '15000');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVipPrice30(settingsData.vip_price_30_days || '45000');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCommission(settingsData.commission_percentage || '10');
     }
   }, [settingsData]);

@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { notificationApi } from '../../services/notification.service';
 import { useNotificationStore } from '../../store/notificationStore';
-import { Bell, Check, CheckCircle2, Circle } from 'lucide-react';
+import { Check, CheckCircle2, Circle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import toast from 'react-hot-toast';
 

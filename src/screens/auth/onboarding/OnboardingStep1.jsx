@@ -28,6 +28,7 @@ export default function OnboardingStep1() {
       }, 300);
       return () => clearTimeout(timer);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUsernameStatus(null);
     }
   }, [formData.username]);

@@ -2,7 +2,6 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as SwitchPrimitive from '@radix-ui/react-switch';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { X, ChevronDown, Check } from 'lucide-react';
-import React from 'react';
 
 // ─── Radix UI Dialog (Modal) ──────────────────────────
 export function Dialog({ children, open, onOpenChange }) {

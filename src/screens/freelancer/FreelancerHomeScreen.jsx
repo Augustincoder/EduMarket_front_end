@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { analyticsApi } from '../../services/other.service';
 import { tasksApi } from '../../services/tasks.service';
@@ -7,9 +8,7 @@ import { gigsApi } from '../../services/gigs.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { formatPrice } from '../../lib/utils';
 import { Avatar } from '../../components/ui/Avatar';
-import { UserBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
-import { hapticLight, hapticSuccess } from '../../lib/telegram';
 import { ArrowRight, Wallet, CheckCircle, Search, Clock, Star } from 'lucide-react';
 
 export default function FreelancerHomeScreen() {
@@ -27,12 +26,16 @@ export default function FreelancerHomeScreen() {
   const { data: activeTasks } = useMyTasks('FREELANCER', 'IN_PROGRESS');
 
   // 3. Filter near-deadline tasks (< 24 hours remaining)
-  const now = Date.now();
-  const nearDeadlineTasks = activeTasks?.filter(task => {
-    const deadlineTime = new Date(task.deadline).getTime();
-    const timeDiff = deadlineTime - now;
-    return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000;
-  }) || [];
+  const { nearDeadlineTasks, now } = useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
+    const tNow = Date.now();
+    const tasks = activeTasks?.filter(task => {
+      const deadlineTime = new Date(task.deadline).getTime();
+      const timeDiff = deadlineTime - tNow;
+      return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000;
+    }) || [];
+    return { nearDeadlineTasks: tasks, now: tNow };
+  }, [activeTasks]);
 
   // 4. Fetch personal gigs (services)
   const { data: gigsData } = useQuery({

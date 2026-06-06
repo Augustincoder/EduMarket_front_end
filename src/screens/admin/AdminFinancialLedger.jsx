@@ -1,8 +1,7 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { formatPrice } from '../../lib/constants';
-import { Coins, ArrowUpRight, ArrowDownLeft, Download } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Download } from 'lucide-react';
 import { exportToCSV } from '../../lib/export';
 import { toast } from 'react-hot-toast';
 

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronDown, Check, X } from 'lucide-react';
 import useOnboardingStore from '../../../store/onboardingStore';
@@ -6,15 +7,20 @@ import { useTelegram } from '../../../hooks/useTelegram';
 import { Button } from '../../../components/ui/Button';
 import { BottomSheet } from '../../../components/ui/BottomSheet';
 import { onboardingApi } from '../../../services/users.service';
+import { useAuthStore } from '../../../store/authStore';
 import Spinner from '../../../components/ui/Spinner';
+import toast from 'react-hot-toast';
 
 export default function OnboardingStep3() {
   const formData = useOnboardingStore((s) => s.formData);
   const setFormData = useOnboardingStore((s) => s.setFormData);
   const setStep = useOnboardingStore((s) => s.setStep);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
   const { HapticFeedback } = useTelegram();
+  const navigate = useNavigate();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Fetch universities list from backend
   const { data: universities = [], isLoading } = useQuery({
@@ -34,9 +40,21 @@ export default function OnboardingStep3() {
       .slice(0, 30); // Limit to top 30 matches for rendering performance
   }, [universities, searchQuery]);
 
-  const handleNext = () => {
-    HapticFeedback.impactOccurred('light');
-    setStep(4);
+  const handleFinish = async () => {
+    HapticFeedback.impactOccurred('medium');
+    setLoading(true);
+    try {
+      const res = await onboardingApi.complete(formData);
+      updateProfile({ ...res.data.data.user, isOnboardingComplete: true });
+      toast.success("Muvaffaqiyatli ro'yxatdan o'tdingiz!");
+      navigate('/home', { replace: true });
+    } catch (err) {
+      console.error(err);
+      toast.error(err.serverMsg || "Xatolik yuz berdi");
+      HapticFeedback.notificationOccurred('error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSelectUniversity = (unv) => {
@@ -132,8 +150,8 @@ export default function OnboardingStep3() {
       </div>
 
       <div className="pt-4 pb-6 flex gap-3">
-        <Button variant="outline" className="w-1/3" onClick={() => setStep(2)}>Orqaga</Button>
-        <Button variant="primary" className="w-2/3" onClick={handleNext}>Keyingisi</Button>
+        <Button variant="outline" className="w-1/3" onClick={() => setStep(2)} disabled={loading}>Orqaga</Button>
+        <Button variant="primary" className="w-2/3" onClick={handleFinish} loading={loading}>Yakunlash</Button>
       </div>
 
       {/* University Selection Bottom Sheet */}

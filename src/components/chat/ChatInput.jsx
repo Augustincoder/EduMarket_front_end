@@ -1,7 +1,6 @@
 // src/components/chat/ChatInput.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Button } from '../ui/Button';
-import { Paperclip, Send, X, Image, FileText, CornerDownRight, Edit2, Check, Mic } from 'lucide-react';
+import { Paperclip, Send, X, Image, FileText, Check, Mic } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';

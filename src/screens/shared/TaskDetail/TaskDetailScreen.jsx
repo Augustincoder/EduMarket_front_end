@@ -1,25 +1,25 @@
 // src/screens/shared/TaskDetail/TaskDetailScreen.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '../../../components/ui/Card';
 import {
-  Clock, DollarSign, Paperclip, ChevronDown, ChevronUp,
+  Clock, ChevronDown, ChevronUp,
   MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Sparkles, FileText
 } from 'lucide-react';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { Avatar } from '../../../components/ui/Avatar';
-import { StatusBadge, UrgentBadge, UserBadge } from '../../../components/ui/Badge';
+import { StatusBadge, UserBadge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
+import { Modal } from '../../../components/ui/Modal';
+import { TextArea } from '../../../components/forms/TextArea';
 import { TaskDetailSkeleton } from '../../../components/ui/SkeletonCard';
 import { useTask } from '../../../hooks/useTasks';
 import { useAuthStore } from '../../../store/authStore';
 import { useChatStore } from '../../../store/chatStore';
 import { useMainButton } from '../../../hooks/useMainButton';
-import { formatPrice, formatPriceRange, formatDate, deadlineCountdown, cn } from '../../../lib/utils';
-import { fireConfetti } from '../../../lib/gamification';
+import { formatPrice, formatPriceRange, deadlineCountdown, cn } from '../../../lib/utils';
 import { showConfirm } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
-import { filesApi, portfolioApi, analyticsApi } from '../../../services/other.service';
+import { filesApi } from '../../../services/other.service';
 
 // Decomposed Components
 import { TaskHeader } from './components/TaskHeader';
@@ -29,6 +29,8 @@ import { RatingModal } from './components/RatingModal';
 import { RevisionModal } from './components/RevisionModal';
 import { DisputeModal } from './components/DisputeModal';
 import { PromoteModal } from './components/PromoteModal';
+import { DeliveryPreviewCard } from './components/DeliveryPreviewCard';
+import { DeliverySubmitModal } from './components/DeliverySubmitModal';
 
 // Decomposed Hook
 import { useTaskActions } from './hooks/useTaskActions';
@@ -57,12 +59,18 @@ export default function TaskDetailScreen() {
     disputeReason, setDisputeReason,
     disputeErrors, setDisputeErrors,
     promoteOpen, setPromoteOpen,
+    deliverySubmitOpen, setDeliverySubmitOpen,
+    flagOpen, setFlagOpen,
+    flagReason, setFlagReason,
+    flagErrors, setFlagErrors,
     createBid,
     handleBidSubmit,
     handleRatingSubmit,
     handleRevisionSubmit,
     handleDisputeSubmit,
     handlePromoteSubmit,
+    handleDeliverySubmit,
+    handleFlagSubmit,
   } = useTaskActions(id);
 
   const joinRoom = useChatStore((s) => s.joinRoom);
@@ -99,19 +107,17 @@ export default function TaskDetailScreen() {
       mainBtnClick = () => transitions.startProgress.mutate();
       mainBtnLoading = transitions.startProgress.isPending;
     } else if (task.status === 'IN_PROGRESS' && isFreelancer) {
-      mainBtnText = 'Tekshirishga topshirish';
-      mainBtnClick = async () => {
-        await transitions.submitReview.mutateAsync();
-        fireConfetti();
-        toast.success("Tekshirishga yuborildi!");
-      };
-      mainBtnLoading = transitions.submitReview.isPending;
+      mainBtnText = 'Natijani yuborish';
+      mainBtnClick = () => setDeliverySubmitOpen(true);
+      mainBtnLoading = false;
+    } else if (task.status === 'PREVIEW_PENDING' && isClient) {
+      mainBtnText = 'Vazifani baholash';
+      mainBtnClick = () => setRatingOpen(true);
     } else if (task.status === 'IN_REVIEW' && isClient) {
-      mainBtnText = 'Vazifani qabul qilish';
+      mainBtnText = 'Vazifani qabul qilish va Baho qoldirish';
       mainBtnClick = async () => {
         await transitions.accept.mutateAsync();
-        fireConfetti();
-        toast.success("Vazifa qabul qilindi!");
+        setRatingOpen(true);
       };
       mainBtnLoading = transitions.accept.isPending;
     }
@@ -121,7 +127,7 @@ export default function TaskDetailScreen() {
     text: mainBtnText,
     onClick: mainBtnClick,
     isLoading: mainBtnLoading,
-  }, [task, user, transitions.startProgress.isPending, transitions.submitReview.isPending, transitions.accept.isPending]);
+  }, [task, user, transitions.startProgress.isPending, transitions.accept.isPending]);
 
   if (isLoading) {
     return (
@@ -138,6 +144,10 @@ export default function TaskDetailScreen() {
   if (!task) return null;
 
   const renderCTA = () => {
+    // Flag visibility: user exists, is not client/freelancer, task is open, user is VIP or high rated
+    const canFlag = user && !isMember && task.status === 'OPEN' && 
+                    (user.isVip || (user.ratingCount >= 5 && (user.ratingSum / user.ratingCount) >= 4.5));
+
     if (!user) {
       return (
         <div className="p-4">
@@ -145,6 +155,19 @@ export default function TaskDetailScreen() {
             Kirish va taklif bering
           </Button>
         </div>
+      );
+    }
+
+    if (canFlag) {
+      return (
+         <div className="p-4 space-y-2">
+            <Button fullWidth variant="primary" size="lg" onClick={mainBtnClick}>
+               Taklif berish
+            </Button>
+            <Button fullWidth variant="ghost" size="md" className="text-red-500 hover:bg-red-50" onClick={() => setFlagOpen(true)}>
+               🚩 Qoidabuzarlik haqida shikoyat
+            </Button>
+         </div>
       );
     }
 
@@ -259,6 +282,29 @@ export default function TaskDetailScreen() {
             <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 shadow-ios border border-black/5 dark:border-white/5">
               <TaskTimeline status={task.status} />
             </div>
+            
+            {/* Delivery Preview Card */}
+            {task.delivery && (isClient || isFreelancer) && (
+              <DeliveryPreviewCard 
+                delivery={task.delivery} 
+                task={task}
+                isClient={isClient}
+                isFreelancer={isFreelancer}
+                isApproving={transitions.approvePreview?.isPending}
+                onApprovePreview={async () => {
+                  try {
+                    await transitions.approvePreview.mutateAsync();
+                    toast.success("Muvaffaqiyatli tasdiqlandi!");
+                  } catch {
+                    // Handled in mutation
+                  }
+                }}
+                onRevealFull={async () => {
+                  await transitions.revealFiles.mutateAsync();
+                }}
+                onLeaveReview={() => setRatingOpen(true)}
+              />
+            )}
           </div>
 
           {/* Alerts */}
@@ -483,6 +529,39 @@ export default function TaskDetailScreen() {
         isLoading={transitions.promote.isPending}
         onSubmit={handlePromoteSubmit}
       />
+
+      <DeliverySubmitModal
+        isOpen={deliverySubmitOpen}
+        onClose={() => setDeliverySubmitOpen(false)}
+        onSubmit={handleDeliverySubmit}
+        isSubmitting={transitions.deliverPreview?.isPending}
+      />
+
+      <Modal
+        isOpen={flagOpen}
+        onClose={() => setFlagOpen(false)}
+        title="Qoidabuzarlik haqida shikoyat"
+        footer={
+          <Button fullWidth variant="danger" onClick={handleFlagSubmit} isLoading={transitions.flagTask?.isPending}>
+            Shikoyat qilish
+          </Button>
+        }
+      >
+        <div className="py-2">
+          <p className="text-sm text-edu-muted mb-4">
+            Agar bu vazifa platforma qoidalariga zid bo'lsa (masalan: firibgarlik, noo'rin kontent), iltimos sababini batafsil yozing.
+          </p>
+          <TextArea
+            label="Sabab *"
+            placeholder="Shikoyat sababi..."
+            value={flagReason}
+            onValueChange={(v) => { setFlagReason(v); setFlagErrors(e => ({ ...e, reason: null })); }}
+            maxLength={1000}
+            minRows={4}
+            error={flagErrors.reason?.[0]}
+          />
+        </div>
+      </Modal>
     </PageLayout>
   );
 }

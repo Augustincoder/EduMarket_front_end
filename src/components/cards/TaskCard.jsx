@@ -1,11 +1,10 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Users, ChevronRight, Bookmark } from 'lucide-react';
+import { Clock, Users, Bookmark } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
 import { deadlineCountdown, formatPriceRange } from '../../lib/utils';
 import { CATEGORIES } from '../../lib/constants';
 import { cn } from '../../lib/utils';
-import { Card, CardContent } from '../ui/Card';
 
 function TaskCard({ task, className }) {
   const navigate = useNavigate();
@@ -37,9 +36,16 @@ function TaskCard({ task, className }) {
               </span>
             )}
           </div>
-          <button className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-[#007AFF] hover:bg-[#007AFF]/5 transition-all">
-            <Bookmark size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-[#007AFF] hover:bg-[#007AFF]/5 transition-all">
+              <Bookmark size={18} />
+            </button>
+            {task.dnaScore && (
+              <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-500/10 to-indigo-500/10 border border-purple-500/20 text-[10px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 shadow-sm">
+                🧬 {task.dnaScore}% Moslik
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Body: Title */}

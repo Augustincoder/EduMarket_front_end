@@ -1,7 +1,6 @@
 // src/components/chat/VoiceRecorder.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Mic, X, Send, Square } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { Mic, X, Send } from 'lucide-react';
 import { hapticMedium, hapticSuccess } from '../../lib/telegram';
 
 export function VoiceRecorder({ onSend, onCancel }) {

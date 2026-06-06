@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
 import { useNavigate } from 'react-router-dom';

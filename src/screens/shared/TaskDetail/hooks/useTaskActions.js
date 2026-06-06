@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTaskTransition, useCreateBid } from '../../../../hooks/useTasks';
 import { tasksApi } from '../../../../services/tasks.service';
 import { hapticSuccess } from '../../../../lib/telegram';
-import { fireConfetti } from '../../../../lib/gamification';
 import { trackEvent } from '../../../../lib/observability';
 import toast from 'react-hot-toast';
 
@@ -16,6 +15,8 @@ export function useTaskActions(taskId) {
   const [revisionOpen, setRevisionOpen]   = useState(false);
   const [disputeOpen, setDisputeOpen]     = useState(false);
   const [promoteOpen, setPromoteOpen]     = useState(false);
+  const [deliverySubmitOpen, setDeliverySubmitOpen] = useState(false);
+  const [flagOpen, setFlagOpen]           = useState(false);
 
   const [bidPrice, setBidPrice]         = useState('');
   const [bidMsg, setBidMsg]             = useState('');
@@ -31,6 +32,9 @@ export function useTaskActions(taskId) {
 
   const [disputeReason, setDisputeReason] = useState('');
   const [disputeErrors, setDisputeErrors] = useState({});
+
+  const [flagReason, setFlagReason]       = useState('');
+  const [flagErrors, setFlagErrors]       = useState({});
 
   const handleBidSubmit = async () => {
     setBidErrors({});
@@ -88,7 +92,10 @@ export function useTaskActions(taskId) {
     try {
       await tasksApi.rate(taskId, { rating, comment: ratingComment });
       trackEvent('Rating Submitted', { taskId, rating });
-      toast.success("Baho qoldirildi. Rahmat!");
+      // Upon successful review, trigger revealFiles
+      await transitions.revealFiles.mutateAsync();
+      
+      toast.success("Baho qoldirildi. Fayllar ochildi!");
       hapticSuccess();
       setRatingOpen(false);
     } catch (err) {
@@ -100,6 +107,16 @@ export function useTaskActions(taskId) {
       }
     } finally {
       setIsRatingLoading(false);
+    }
+  };
+
+  const handleDeliverySubmit = async (data) => {
+    try {
+      await transitions.deliverPreview.mutateAsync(data);
+      setDeliverySubmitOpen(false);
+      toast.success("Natija muvaffaqiyatli yuklandi");
+    } catch (err) {
+      // Errors handled in mutation globally
     }
   };
 
@@ -132,8 +149,21 @@ export function useTaskActions(taskId) {
       await transitions.promote.mutateAsync({ packageType });
       trackEvent('Task Promoted', { taskId, packageType });
       setPromoteOpen(false);
-    } catch (err) {
+    } catch {
       // toast handled in mutation
+    }
+  };
+
+  const handleFlagSubmit = async () => {
+    setFlagErrors({});
+    if (!flagReason.trim()) return setFlagErrors({ reason: ['Sabab kiritish majburiy'] });
+    if (flagReason.trim().length < 10) return setFlagErrors({ reason: ['Kamida 10 ta belgi'] });
+    try {
+      await transitions.flagTask.mutateAsync({ reason: flagReason });
+      setFlagOpen(false);
+      setFlagReason('');
+    } catch (err) {
+      if (err.serverErrors) setFlagErrors(err.serverErrors);
     }
   };
 
@@ -144,6 +174,8 @@ export function useTaskActions(taskId) {
     revisionOpen, setRevisionOpen,
     disputeOpen, setDisputeOpen,
     promoteOpen, setPromoteOpen,
+    deliverySubmitOpen, setDeliverySubmitOpen,
+    flagOpen, setFlagOpen,
     bidPrice, setBidPrice,
     bidMsg, setBidMsg,
     bidErrors, setBidErrors,
@@ -155,11 +187,15 @@ export function useTaskActions(taskId) {
     revisionErrors, setRevisionErrors,
     disputeReason, setDisputeReason,
     disputeErrors, setDisputeErrors,
+    flagReason, setFlagReason,
+    flagErrors, setFlagErrors,
     createBid,
     handleBidSubmit,
     handleRatingSubmit,
     handleRevisionSubmit,
     handleDisputeSubmit,
     handlePromoteSubmit,
+    handleDeliverySubmit,
+    handleFlagSubmit,
   };
 }

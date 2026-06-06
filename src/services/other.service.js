@@ -72,3 +72,7 @@ export const reportsApi = {
 export const analyticsApi = {
   getMe: (params) => api.get('/analytics/me', { params }),
 };
+
+export const aiApi = {
+  getLearningCompass: () => api.get('/ai/learning-compass'),
+};

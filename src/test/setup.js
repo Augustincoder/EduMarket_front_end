@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // src/test/setup.js
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';

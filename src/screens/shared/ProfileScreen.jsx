@@ -1,24 +1,17 @@
 // src/screens/ProfileScreen.jsx
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '../../components/ui/Card';
 import { 
   Settings, 
-  Copy, 
   Plus, 
   Trash2, 
   LogOut, 
-  Briefcase, 
-  Crown, 
-  CheckCircle2, 
-  Star, 
-  Sparkles,
+  Briefcase,
   ArrowRight,
   User,
-  ShieldCheck,
   Moon, 
-  Sun, 
-  Monitor,
+  Sun,
   Bell
 } from 'lucide-react';
 import { Header } from '../../components/layout/Header';
@@ -35,11 +28,10 @@ import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { VerificationStatusCard } from '../../components/cards/VerificationStatusCard';
 import { usersApi } from '../../services/users.service';
 import { portfolioApi, analyticsApi } from '../../services/other.service';
-import { copyToClipboard, formatPrice, cn } from '../../lib/utils';
+import { formatPrice, cn } from '../../lib/utils';
 import { hapticSuccess, hapticLight, showConfirm } from '../../lib/telegram';
 import toast from 'react-hot-toast';
 import { useThemeStore } from '../../store/themeStore';
-import { useAuth } from '../../hooks/useAuth';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { calculateLevel, calculateStreak } from '../../lib/gamification';

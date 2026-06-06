@@ -15,6 +15,8 @@ import { useTask, useTaskTransition } from '../../hooks/useTasks';
 import { chatApi } from '../../services/chat.service';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
+import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
+import { Layout } from 'lucide-react';
 
 export default function ChatScreen() {
   const { id }    = useParams();
@@ -44,6 +46,7 @@ export default function ChatScreen() {
 
   const [replyingTo, setReplyingTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
 
   const handleRevisionSubmit = async () => {
     setRevisionErrors({});
@@ -108,6 +111,13 @@ export default function ChatScreen() {
         className="!border-b-0"
         right={
           <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsWorkspaceOpen(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
+              title="Ish maydoni (Milestones)"
+            >
+              <Layout className="w-4 h-4" />
+            </button>
             <div className={cn(
               "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
               isCounterpartOnline ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
@@ -260,6 +270,14 @@ export default function ChatScreen() {
           />
         </div>
       </Modal>
+
+      {/* ── Workspace Overlay ─────────────────────────── */}
+      <WorkspaceOverlay 
+        taskId={taskId}
+        isClient={isClient}
+        isOpen={isWorkspaceOpen}
+        onClose={() => setIsWorkspaceOpen(false)}
+      />
     </div>
   );
 }

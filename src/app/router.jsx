@@ -32,6 +32,7 @@ const ReferralsScreen   = lazy(() => import('../screens/shared/ReferralsScreen')
 const NotificationSettingsScreen = lazy(() => import('../screens/shared/NotificationSettingsScreen'));
 const NotificationInboxScreen = lazy(() => import('../screens/shared/NotificationInboxScreen'));
 const VerificationScreen = lazy(() => import('../screens/shared/VerificationScreen'));
+const LearningCompassScreen = lazy(() => import('../screens/freelancer/LearningCompassScreen'));
 
 // Lazy load Admin screens
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
@@ -85,6 +86,7 @@ const router = createBrowserRouter([
   { path: '/notifications',     element: <Screen element={<ProtectedRoute><NotificationInboxScreen /></ProtectedRoute>} /> },
   { path: '/settings/notifications', element: <Screen element={<ProtectedRoute><NotificationSettingsScreen /></ProtectedRoute>} /> },
   { path: '/verification',      element: <Screen element={<ProtectedRoute><VerificationScreen /></ProtectedRoute>} /> },
+  { path: '/learning-compass',  element: <Screen element={<ProtectedRoute><LearningCompassScreen /></ProtectedRoute>} /> },
   
   // Admin Routes
   { path: '/adminlog',          element: <Screen element={<AdminLoginScreen />} />       },

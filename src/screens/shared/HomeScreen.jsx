@@ -7,6 +7,7 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { requestNotificationPermission } from '../../lib/notifications';
 
 import { useAuthStore } from '../../store/authStore';
+import { LivePulseFeed } from '../../components/layout/LivePulseFeed';
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ export default function HomeScreen() {
 
   return (
     <PageLayout bgClass="bg-mesh-aurora">
+      <LivePulseFeed />
       {activeRole === 'FREELANCER' ? <FreelancerHomeScreen /> : <ClientHomeScreen />}
     </PageLayout>
   );

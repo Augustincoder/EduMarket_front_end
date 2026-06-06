@@ -20,19 +20,19 @@ export default function NotificationSettingsScreen() {
     taskStatusChanged: true,
   });
 
-  const { data: me, isLoading } = useQuery({
+  const { data: me } = useQuery({
     queryKey: ['users', 'me'],
     queryFn: () => usersApi.getMe().then(r => r.data.data),
   });
 
   useEffect(() => {
     if (me?.notifPrefs) {
-      setPrefs({
-        ...prefs,
+      setPrefs(p => ({
+        ...p,
         ...me.notifPrefs
-      });
+      }));
     }
-  }, [me]);
+  }, [me?.notifPrefs]);
 
   const updatePrefs = useMutation({
     mutationFn: (data) => usersApi.updateMe({ notifPrefs: data }),

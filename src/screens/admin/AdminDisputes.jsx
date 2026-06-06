@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
+import { filesApi } from '../../services/files.service';
 import { formatPrice } from '../../lib/constants';
 import { toast } from 'react-hot-toast';
 import { 
@@ -10,7 +11,7 @@ import {
   DialogDescription,
   Select
 } from '../../components/ui/AdminComponents';
-import { Gavel, MessageSquare, Eye, ShieldAlert, Award } from 'lucide-react';
+import { Gavel, MessageSquare, ShieldAlert, Award } from 'lucide-react';
 
 export default function AdminDisputes() {
   const queryClient = useQueryClient();

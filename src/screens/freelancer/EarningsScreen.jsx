@@ -8,7 +8,6 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { analyticsApi } from '../../services/other.service';
 import { formatPrice } from '../../lib/constants';
 import { Wallet, Info, Calendar, Snowflake, ArrowUpRight, DollarSign } from 'lucide-react';
-import { hapticLight } from '../../lib/telegram';
 
 export default function EarningsScreen() {
   const navigate = useNavigate();

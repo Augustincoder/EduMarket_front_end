@@ -11,7 +11,6 @@ import { BottomNav } from '../../components/layout/BottomNav';
 import { GigCard } from '../../components/cards/GigCard';
 import { Modal } from '../../components/ui/Modal';
 import { Spinner } from '../../components/ui/Spinner';
-import { EmptyState } from '../../components/ui/EmptyState';
 import { gigsApi } from '../../services/gigs.service';
 import { useAuthStore } from '../../store/authStore';
 import { useDebounce } from '../../hooks/useDebounce';

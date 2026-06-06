@@ -1,5 +1,5 @@
 // src/screens/CreateTaskScreen.jsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Header } from '../../components/layout/Header';
@@ -37,6 +37,11 @@ export default function CreateTaskScreen() {
   const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: null })); };
 
   const nlpSeverity = useNLPCheck(form.title + ' ' + form.description);
+
+  const minDate = useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
+    return new Date(Date.now() - new Date().getTimezoneOffset() * 60000 + 10 * 60 * 1000).toISOString().slice(0, 16);
+  }, []);
 
   const handleNext = () => {
     setErrors({});
@@ -215,7 +220,7 @@ export default function CreateTaskScreen() {
               type="datetime-local"
               value={form.deadline}
               onValueChange={(v) => set('deadline', v)}
-              min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000 + 10 * 60 * 1000).toISOString().slice(0, 16)}
+              min={minDate}
               error={errors.deadline?.[0]}
             />
 
