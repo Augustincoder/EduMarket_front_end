@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../services/admin.service';
-import { filesApi } from '../../services/files.service';
+import { filesApi } from '../../services/other.service';
 import { formatPrice } from '../../lib/constants';
 import { toast } from 'react-hot-toast';
 import { 
