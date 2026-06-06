@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-06
+
+### Added
+- **Enterprise Features**: Implemented Phase 1-8 of the Enterprise Plan.
+- **Reputation Passport**: Added unified verifiable freelancer metrics.
+- **Peer Quality Shield & Disputes**: Fair and transparent dispute resolution UI.
+- **Live Task Pulse**: Real-time ticker for ecosystem activity and demand.
+- **Task DNA Matching**: AI-driven task recommendations.
+- **Stealth Mode**: Privacy-first task exploration for high-profile clients.
+- **Learning Compass**: Goal-oriented milestone and path tracking for freelancers.
+
+### Changed
+- **Task Feed & Details**: Complete redesign with enterprise features integration.
+- **Code Quality**: Extensive ESLint fixes including React purity checks and effect state synchronizations to ensure zero-bug performance.
+
 ## [1.1.0] - 2026-06-05
 
 ### Added
