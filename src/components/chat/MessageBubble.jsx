@@ -14,6 +14,16 @@ function ImageAttachment({ fileId, onClick }) {
 
   useEffect(() => {
     let isMounted = true;
+
+    // Images from R2: try direct CDN URL first (instant, no API call)
+    const publicUrl = filesApi.getPublicUrl(fileId);
+    if (publicUrl) {
+      setUrl(publicUrl);
+      setLoading(false);
+      return;
+    }
+
+    // Fallback: use presigned URL for non-CDN or unknown image types
     filesApi.getUrl(fileId).then(res => {
       if (isMounted) {
         setUrl(res.data.data.url);
