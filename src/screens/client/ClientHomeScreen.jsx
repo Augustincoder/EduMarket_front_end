@@ -8,7 +8,7 @@ import { CATEGORIES } from '../../lib/constants';
 import { Avatar } from '../../components/ui/Avatar';
 import { UserBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
-import { Plus, ArrowRight, ClipboardList } from 'lucide-react';
+import { Plus, ArrowRight, ClipboardList, ChevronRight } from 'lucide-react';
 import { ClientHomeSkeleton } from '../../components/ui/SkeletonCard';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
 
