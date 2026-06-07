@@ -191,7 +191,8 @@ body {
 }
 
 #root {
-  max-width: 430px;
+  width: 100%;
+  max-width: 768px;
   margin: 0 auto;
   min-height: 100dvh;
   position: relative;

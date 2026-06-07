@@ -237,8 +237,8 @@ export default function PublicProfileScreen() {
       </div>
 
       {/* ── STICKY CALL TO ACTION ── */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50 animate-slide-up">
-        <div className="max-w-[430px] mx-auto flex gap-3">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50 animate-slide-up">
+        <div className="flex gap-3">
           <button
             onClick={() => { hapticLight(); navigate(`/tasks/${userId}/chat`); }}
             className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center justify-center shrink-0 active:scale-90 transition-all border border-black/[0.02] dark:border-white/[0.05]"

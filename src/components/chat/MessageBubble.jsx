@@ -53,7 +53,7 @@ function ImageAttachment({ fileId, onClick }) {
     <img 
       src={url} 
       alt="Attachment" 
-      onClick={() => onClick(url)}
+      onClick={(e) => { e.stopPropagation(); onClick(url); }}
       className="max-w-[200px] sm:max-w-[250px] rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity" 
     />
   );
@@ -86,48 +86,62 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
   return (
     <>
-      <div className={cn('group flex items-end gap-2 max-w-[80%] my-0.5 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
-        
-        {/* Actions Menu Trigger */}
-        <div className={cn("opacity-0 group-hover:opacity-100 transition-opacity flex items-center relative", isMe ? "mr-1" : "ml-1")}>
-          <button 
-            onClick={() => setShowMenu(!showMenu)}
-            className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 text-edu-muted"
-          >
-            <MoreVertical size={16} />
-          </button>
-          
+      {showMenu && (
+        <div 
+          className="fixed inset-0 z-20 cursor-default" 
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowMenu(false);
+          }}
+        />
+      )}
+
+      <div className={cn('group flex items-end gap-2 max-w-[75%] my-2 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
+        <div
+          className={cn(
+            'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
+            isMe
+              ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
+              : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
+            hasFile && !isImage && message.fileType !== 'voice' && 'hover:opacity-90 active:scale-[0.98]'
+          )}
+          onClick={(e) => {
+            const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('audio') || e.target.closest('img') || e.target.closest('.voice-player-wrap');
+            if (isInteractive) return;
+
+            if (hasFile && !isImage && message.fileType !== 'voice') {
+              handleFileClick();
+            } else {
+              setShowMenu(!showMenu);
+            }
+          }}
+          onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
+        >
           {/* Actions Menu */}
           {showMenu && (
-            <div className={cn("absolute bottom-8 z-20 w-36 bg-edu-surface border border-edu-border rounded-xl shadow-sheet py-1 animate-fade-in", isMe ? "right-0" : "left-0")}>
-              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { setShowMenu(false); onReply?.(message); }}>
+            <div 
+              className={cn(
+                "absolute bottom-full mb-2 z-30 w-36 bg-edu-surface dark:bg-[#2C2C2E] border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
+                isMe ? "right-2" : "left-2"
+              )} 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
                 <CornerDownRight size={14} /> Javob berish
               </button>
               {isMe && !hasFile && (
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-black/5 dark:hover:bg-white/5" onClick={() => { setShowMenu(false); onEdit?.(message); }}>
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
                   <Edit2 size={14} /> Tahrirlash
                 </button>
               )}
               {isMe && (
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10" onClick={() => { setShowMenu(false); onDelete?.(message.id); }}>
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
                   <Trash2 size={14} /> O'chirish
                 </button>
               )}
             </div>
           )}
-        </div>
 
-        <div
-          className={cn(
-            'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm',
-            isMe
-              ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
-              : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
-            hasFile && !isImage && message.fileType !== 'voice' && 'cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all'
-          )}
-          onClick={handleFileClick}
-          onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
-        >
           {/* Reply Preview */}
           {message.replyTo && !message.replyTo.isDeleted && (
             <div 
@@ -145,7 +159,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             isImage ? (
               <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName)} />
             ) : message.fileType === 'voice' ? (
-              <VoicePlayer fileId={message.fileId} isMe={isMe} />
+              <div className="voice-player-wrap" onClick={(e) => e.stopPropagation()}>
+                <VoicePlayer fileId={message.fileId} isMe={isMe} />
+              </div>
             ) : (
               <div className="flex items-center gap-2.5 min-w-[160px] p-1">
                 <div className={cn(

@@ -554,7 +554,7 @@ export default function ProfileScreen() {
                   <Card 
                     key={item.id} 
                     className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden cursor-pointer active:scale-[0.98] transition-all" 
-                    radius="xl"
+                    radius="lg"
                     onClick={() => handleViewFile(item.fileId, item.title)}
                   >
                     <CardContent className="p-3 flex flex-col h-full justify-between">

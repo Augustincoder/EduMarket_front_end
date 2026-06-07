@@ -115,7 +115,7 @@ export default function ChatScreen() {
   const isCounterpartOnline = useChatStore((s) => s.userPresence[counterpart?.id]) ?? counterpart?.isOnline ?? false;
 
   return (
-    <div className="flex flex-col h-dvh bg-edu-bg max-w-[430px] mx-auto">
+    <div className="flex flex-col h-dvh bg-edu-bg max-w-[768px] mx-auto">
       {/* Header */}
       <Header
         title={counterpart?.fullname || 'Chat'}

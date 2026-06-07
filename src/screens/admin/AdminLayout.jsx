@@ -31,7 +31,7 @@ export default function AdminLayout() {
       document.getElementById('root').style.maxWidth = '100%';
     }
     return () => {
-      document.getElementById('root').style.maxWidth = '430px';
+      document.getElementById('root').style.maxWidth = '768px';
     };
   }, [token, user, navigate]);
 

@@ -38,51 +38,47 @@ export default function ChatListScreen() {
               <p className="text-[15px] font-bold text-gray-400">Xabarlar yuklanmoqda...</p>
             </div>
           ) : conversations?.length > 0 ? (
-            <div className="space-y-1">
+            <div className="w-[94%] mx-auto bg-white dark:bg-[#1C1C1E] rounded-[24px] border border-black/[0.03] dark:border-white/[0.03] overflow-hidden shadow-ios">
               {conversations.map((conv) => (
                 <div 
                   key={conv.taskId}
                   onClick={() => handleOpenChat(conv.taskId)}
-                  className="relative group active:scale-[0.98] transition-all duration-200"
+                  className="flex items-center gap-3.5 py-3 px-4 cursor-pointer hover:bg-gray-50/70 dark:hover:bg-white/[0.02] active:bg-gray-100/50 dark:active:bg-white/[0.04] transition-all border-b border-black/[0.03] dark:border-white/[0.05] last:border-b-0"
                 >
-                  <div className="flex items-center gap-4 p-4 mx-2 rounded-[24px] group-active:bg-gray-50 dark:group-active:bg-white/5 transition-colors">
-                    <div className="relative shrink-0">
-                      <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="lg" />
-                      {conv.unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 w-6 h-6 bg-[#007AFF] text-white text-[11px] font-black rounded-full flex items-center justify-center border-4 border-white dark:border-black shadow-sm">
-                          {conv.unreadCount}
+                  <div className="relative shrink-0">
+                    <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="md" />
+                    {conv.unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#007AFF] text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-[#1C1C1E] shadow-sm">
+                        {conv.unreadCount}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline mb-0.5">
+                      <h3 className="text-[14.5px] font-black text-gray-900 dark:text-white truncate tracking-tight">
+                        {conv.otherUser.fullname}
+                      </h3>
+                      {conv.lastMessage && (
+                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase whitespace-nowrap ml-2">
+                          {timeAgo(conv.lastMessage.createdAt)}
                         </span>
                       )}
                     </div>
-                    
-                    <div className="flex-1 min-w-0 py-1">
-                      <div className="flex justify-between items-baseline mb-0.5">
-                        <h3 className="text-[16px] font-black text-gray-900 dark:text-white truncate tracking-tight">
-                          {conv.otherUser.fullname}
-                        </h3>
-                        {conv.lastMessage && (
-                          <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase whitespace-nowrap ml-2">
-                            {timeAgo(conv.lastMessage.createdAt)}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[13px] font-black text-[#007AFF] truncate mb-0.5 opacity-90">
-                        {conv.taskTitle}
-                      </p>
-                      <p className={cn(
-                        "text-[14px] truncate font-medium",
-                        conv.unreadCount > 0 ? "text-gray-900 dark:text-white font-bold" : "text-gray-500 dark:text-gray-400"
-                      )}>
-                        {conv.lastMessage ? (
-                          conv.lastMessage.content || '📁 Fayl yuborildi'
-                        ) : (
-                          'Hali xabar yo\'q'
-                        )}
-                      </p>
-                    </div>
+                    <p className="text-[12px] font-bold text-edu-primary truncate mb-0.5">
+                      {conv.taskTitle}
+                    </p>
+                    <p className={cn(
+                      "text-[13px] truncate font-medium",
+                      conv.unreadCount > 0 ? "text-gray-900 dark:text-white font-bold" : "text-gray-400 dark:text-gray-500"
+                    )}>
+                      {conv.lastMessage ? (
+                        conv.lastMessage.content || '📁 Fayl yuborildi'
+                      ) : (
+                        'Hali xabar yo\'q'
+                      )}
+                    </p>
                   </div>
-                  {/* Divider line */}
-                  <div className="absolute bottom-0 left-[84px] right-6 h-[1px] bg-black/[0.03] dark:bg-white/[0.05]" />
                 </div>
               ))}
             </div>

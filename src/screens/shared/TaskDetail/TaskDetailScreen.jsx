@@ -611,7 +611,7 @@ export default function TaskDetailScreen() {
           "border-t border-gray-200/50 dark:border-white/5 bg-white/90 dark:bg-black/90 backdrop-blur-2xl pb-safe shadow-ios-lg relative z-20 transition-all duration-500",
           bidOpen ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
         )}>
-          <div className="p-4 max-w-[430px] mx-auto">
+          <div className="p-4 max-w-[768px] mx-auto">
             {renderCTA()}
           </div>
         </div>

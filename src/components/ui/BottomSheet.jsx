@@ -15,7 +15,7 @@ export function BottomSheet({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 animate-fade-in" />
         <Dialog.Content 
-          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-edu-surface rounded-t-[32px] shadow-sheet z-50 focus:outline-none flex flex-col animate-slide-up ${fullHeight ? 'h-[95vh]' : 'max-h-[90vh]'}`}
+          className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] bg-edu-surface rounded-t-[32px] shadow-sheet z-50 focus:outline-none flex flex-col animate-slide-up ${fullHeight ? 'h-[95vh]' : 'max-h-[90vh]'}`}
         >
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1">

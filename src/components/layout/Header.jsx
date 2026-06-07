@@ -23,7 +23,7 @@ export function Header({
 
   return (
     <header className={cn(
-      'sticky top-0 z-30 w-full max-w-[430px]',
+      'sticky top-0 z-30 w-full max-w-[768px]',
       !transparent && 'ios-glass border-b border-edu-border',
       transparent && 'bg-transparent',
       className
