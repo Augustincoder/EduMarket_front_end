@@ -14,13 +14,13 @@ export function FilterChip({ label, active, onClick }) {
     <button
       onClick={handleClick}
       className={cn(
-        'cursor-pointer active-bounce h-8 px-4 rounded-[12px] flex items-center justify-center transition-all flex-shrink-0 font-medium',
+        'cursor-pointer active-spring h-9 px-5 rounded-[16px] flex items-center justify-center transition-all flex-shrink-0 border',
         active
-          ? 'bg-gradient-to-r from-edu-primary to-edu-primary-d text-white border-transparent shadow-md shadow-edu-primary/20'
-          : 'bg-edu-surface text-edu-text border border-edu-border hover:border-edu-primary/40 shadow-sm'
+          ? 'bg-[#007AFF] text-white border-transparent shadow-lg shadow-[#007AFF]/25'
+          : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-300 border-black/[0.03] dark:border-white/[0.05] shadow-premium-sm hover:border-[#007AFF]/30'
       )}
     >
-      <span className="text-xs font-semibold">{label}</span>
+      <span className="text-[12px] font-black tracking-tight">{label}</span>
     </button>
   );
 }
@@ -32,14 +32,14 @@ export function SkillChip({ label, onRemove }) {
   };
 
   return (
-    <div className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-edu-bg border border-edu-border text-edu-text flex-shrink-0">
-      <span className="text-xs font-medium">{label}</span>
+    <div className="inline-flex items-center gap-2 h-8 px-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-black/[0.03] dark:border-white/[0.03] text-gray-700 dark:text-gray-200 flex-shrink-0">
+      <span className="text-[11px] font-bold">{label}</span>
       {onRemove && (
         <button
           onClick={handleRemove}
-          className="w-4 h-4 rounded-full bg-edu-border/50 hover:bg-edu-border flex items-center justify-center press-scale"
+          className="w-4.5 h-4.5 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center transition-colors"
         >
-          <X size={10} className="text-edu-muted" />
+          <X size={10} strokeWidth={3} className="text-gray-500" />
         </button>
       )}
     </div>

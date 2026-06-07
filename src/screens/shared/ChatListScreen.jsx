@@ -8,7 +8,6 @@ import { timeAgo } from '../../lib/utils';
 
 export default function ChatListScreen() {
   const navigate = useNavigate();
-  const { HapticFeedback } = useTelegram();
   const conversations = useChatStore((s) => s.conversations);
   const loadConversations = useChatStore((s) => s.loadConversations);
   const [loading, setLoading] = useState(true);
@@ -20,63 +19,82 @@ export default function ChatListScreen() {
   }, [loadConversations]);
 
   const handleOpenChat = (taskId) => {
-    HapticFeedback.impactOccurred('light');
+    hapticLight();
     navigate(`/tasks/${taskId}/chat`);
   };
 
   return (
-    <PageLayout>
-      <div className="pt-4 pb-24 px-4 h-full flex flex-col">
-        <h1 className="text-2xl font-bold text-edu-text mb-4">Xabarlar</h1>
+    <PageLayout className="bg-white dark:bg-black">
+      <div className="pt-6 pb-24 h-full flex flex-col">
+        <div className="px-6 mb-6">
+          <h1 className="text-[32px] font-black text-gray-900 dark:text-white tracking-tight">Xabarlar</h1>
+          <p className="text-[13px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Sizning muloqotlaringiz</p>
+        </div>
         
-        <div className="flex-1 overflow-y-auto space-y-2">
+        <div className="flex-1 overflow-y-auto scrollbar-hide px-2">
           {loading ? (
-            <p className="text-edu-muted text-center py-10 font-medium">Yuklanmoqda...</p>
+            <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
+              <div className="w-8 h-8 border-3 border-[#007AFF]/30 border-t-[#007AFF] rounded-full animate-spin" />
+              <p className="text-[15px] font-bold text-gray-400">Xabarlar yuklanmoqda...</p>
+            </div>
           ) : conversations?.length > 0 ? (
-            conversations.map((conv) => (
-              <div 
-                key={conv.taskId}
-                onClick={() => handleOpenChat(conv.taskId)}
-                className="bg-edu-surface p-4 rounded-2xl border border-edu-border/40 shadow-card flex items-center gap-4 cursor-pointer press-scale"
-              >
-                <div className="relative">
-                  <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="md" />
-                  {conv.unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-edu-primary text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-edu-surface shadow-sm">
-                      {conv.unreadCount}
-                    </span>
-                  )}
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="font-bold text-edu-text truncate">
-                      {conv.otherUser.fullname}
-                    </h3>
-                    {conv.lastMessage && (
-                      <span className="text-xs text-edu-muted whitespace-nowrap ml-2">
-                        {timeAgo(conv.lastMessage.createdAt)}
-                      </span>
-                    )}
+            <div className="space-y-1">
+              {conversations.map((conv) => (
+                <div 
+                  key={conv.taskId}
+                  onClick={() => handleOpenChat(conv.taskId)}
+                  className="relative group active:scale-[0.98] transition-all duration-200"
+                >
+                  <div className="flex items-center gap-4 p-4 mx-2 rounded-[24px] group-active:bg-gray-50 dark:group-active:bg-white/5 transition-colors">
+                    <div className="relative shrink-0">
+                      <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="lg" />
+                      {conv.unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 w-6 h-6 bg-[#007AFF] text-white text-[11px] font-black rounded-full flex items-center justify-center border-4 border-white dark:border-black shadow-sm">
+                          {conv.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0 py-1">
+                      <div className="flex justify-between items-baseline mb-0.5">
+                        <h3 className="text-[16px] font-black text-gray-900 dark:text-white truncate tracking-tight">
+                          {conv.otherUser.fullname}
+                        </h3>
+                        {conv.lastMessage && (
+                          <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase whitespace-nowrap ml-2">
+                            {timeAgo(conv.lastMessage.createdAt)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[13px] font-black text-[#007AFF] truncate mb-0.5 opacity-90">
+                        {conv.taskTitle}
+                      </p>
+                      <p className={cn(
+                        "text-[14px] truncate font-medium",
+                        conv.unreadCount > 0 ? "text-gray-900 dark:text-white font-bold" : "text-gray-500 dark:text-gray-400"
+                      )}>
+                        {conv.lastMessage ? (
+                          conv.lastMessage.content || '📁 Fayl yuborildi'
+                        ) : (
+                          'Hali xabar yo\'q'
+                        )}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm font-bold text-edu-primary truncate mb-1">
-                    {conv.taskTitle}
-                  </p>
-                  <p className="text-sm text-edu-muted truncate">
-                    {conv.lastMessage ? (
-                      conv.lastMessage.content || 'Fayl yuborildi'
-                    ) : (
-                      'Hali xabar yo\'q'
-                    )}
-                  </p>
+                  {/* Divider line */}
+                  <div className="absolute bottom-0 left-[84px] right-6 h-[1px] bg-black/[0.03] dark:bg-white/[0.05]" />
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-edu-muted py-20">
-              <span className="text-5xl mb-4">💬</span>
-              <p className="font-bold">Chatlar topilmadi</p>
-              <p className="text-sm mt-1 opacity-70">Suhbatlaringiz shu yerda ko'rinadi</p>
+            <div className="h-full flex flex-col items-center justify-center text-center py-24 px-10">
+              <div className="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-[32px] flex items-center justify-center text-4xl mb-6 shadow-inner border border-black/[0.03] dark:border-white/5">
+                💬
+              </div>
+              <h2 className="text-[19px] font-black text-gray-900 dark:text-white mb-2">Chatlar topilmadi</h2>
+              <p className="text-[14px] text-gray-400 dark:text-gray-500 font-medium leading-relaxed">
+                Hozircha hech qanday suhbat mavjud emas. Vazifalarga taklif berish orqali muloqotni boshlang.
+              </p>
             </div>
           )}
         </div>

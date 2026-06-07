@@ -16,7 +16,10 @@ import { chatApi } from '../../services/chat.service';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
+import { EduViewer } from '../../components/ui/EduViewer';
 import { Layout } from 'lucide-react';
+import { filesApi } from '../../services/other.service';
+import toast from 'react-hot-toast';
 
 export default function ChatScreen() {
   const { id }    = useParams();
@@ -47,6 +50,16 @@ export default function ChatScreen() {
   const [replyingTo, setReplyingTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+  const [viewerFile, setViewerFile] = useState(null);
+
+  const handleViewFile = async (fileId, fileName) => {
+    try {
+      const res = await filesApi.getUrl(fileId);
+      setViewerFile({ url: res.data.data.url, name: fileName || fileId.split('/').pop() });
+    } catch {
+      toast.error('Faylni ochishda xatolik');
+    }
+  };
 
   const handleRevisionSubmit = async () => {
     setRevisionErrors({});
@@ -224,6 +237,7 @@ export default function ChatScreen() {
                 if (ok) deleteMessage(id);
               });
             }}
+            onViewFile={handleViewFile}
           />
         )) : null}
         
@@ -277,6 +291,12 @@ export default function ChatScreen() {
         isClient={isClient}
         isOpen={isWorkspaceOpen}
         onClose={() => setIsWorkspaceOpen(false)}
+      />
+
+      <EduViewer
+        isOpen={!!viewerFile}
+        onClose={() => setViewerFile(null)}
+        file={viewerFile}
       />
     </div>
   );

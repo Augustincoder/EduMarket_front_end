@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-07
+
+### Added
+- **Senior Premium Overhaul**: Complete migration to iOS 17+ Design Language, featuring 32px squircle geometry and multi-layered ambient shadows.
+- **Interactive Workspace ("Ish maydoni")**: Collaborative task management overlay in chat with real-time milestone tracking and progress visualization.
+- **Conversational UX**: Fluid, step-by-step task creation journey with smart budget visualizers and task 'Digital Twin' previews.
+- **Haptic Feedback Engine**: Integrated physical confirmation for all critical UI interactions using the Telegram SDK.
+- **Advanced Micro-Interactions**: Premium spring-based damping for all transitions and iOS-style 'Pop' modal animations.
+- **Enhanced Loading Systems**: Replaced pulse loaders with sophisticated shimmer-based skeletons across all high-traffic views.
+
+### Changed
+- **Client Home 2.0**: Redesigned as a widget-based dashboard with glassmorphism and "Mesh Aurora" animated backgrounds.
+- **Core Atomic Components**: All inputs, buttons, chips, and badges upgraded to industrial-grade premium standards.
+- **Foundation Upgrade**: Rebuilt the design token system in Tailwind CSS for world-class visual consistency.
+
+### Fixed
+- **Zero-Error State**: Completed a comprehensive ESLint audit resolving all critical hook violations and unused variable issues.
+- **Legacy Typos**: Fixed logical bugs in `TaskCard` and `chatStore` that affected local persistence and message synchronization.
+
 ## [1.2.0] - 2026-06-06
 
 ### Added

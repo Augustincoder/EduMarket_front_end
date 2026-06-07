@@ -1,132 +1,120 @@
-<div align="center">
-  <br />
-  <h1>EduMarket Frontend 📱</h1>
-  <p><strong>The Enterprise-Grade Freelancer Marketplace for Telegram Mini Apps</strong></p>
-  <p>
-    <img src="https://img.shields.io/badge/React-18-blue.svg?style=flat-square&logo=react" alt="React" />
-    <img src="https://img.shields.io/badge/Vite-5-646CFF.svg?style=flat-square&logo=vite" alt="Vite" />
-    <img src="https://img.shields.io/badge/TailwindCSS-3-38B2AC.svg?style=flat-square&logo=tailwind-css" alt="Tailwind" />
-    <img src="https://img.shields.io/badge/Zustand-4-brown.svg?style=flat-square" alt="Zustand" />
-    <img src="https://img.shields.io/badge/TanStack_Query-5-FF4154.svg?style=flat-square&logo=react-query" alt="TanStack Query" />
-  </p>
-</div>
+# EduMarket Frontend 📱 — Premium TMA Freelance Experience
 
-<br />
+[![React](https://img.shields.io/badge/React-19-61DAFB.svg?style=for-the-badge&logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF.svg?style=for-the-badge&logo=vite)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38B2AC.svg?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Zustand](https://img.shields.io/badge/Zustand-5-443E38.svg?style=for-the-badge)](https://zustand-demo.pmnd.rs/)
+[![TanStack_Query](https://img.shields.io/badge/TanStack_Query-5-FF4154.svg?style=for-the-badge&logo=react-query)](https://tanstack.com/query)
 
-## 📖 Table of Contents
-- [Overview](#-overview)
-- [Enterprise Features](#-enterprise-features)
-- [System Architecture](#-system-architecture)
-- [Directory Structure](#-directory-structure)
-- [Environment Variables](#-environment-variables)
-- [Development Setup](#-development-setup)
-- [State Management Strategy](#-state-management-strategy)
+> **A World-Class Student Micro-Task Marketplace explicitly optimized for the Telegram Mini App (TMA) Ecosystem.**
+
+EduMarket Frontend is a high-performance Web Application designed with a **Senior Premium Minimalist** philosophy. It bridges the gap between web and native by leveraging advanced iOS-native design patterns, real-time synchronization, and deep Telegram API integration.
 
 ---
 
-## 🌟 Overview
-EduMarket Frontend is a high-performance, mobile-first Web Application explicitly designed to run seamlessly inside **Telegram Mini Apps**. It adopts a sleek **iOS 17+ design language** leveraging glassmorphism, dynamic micro-interactions, and spring-based animations to deliver a truly native feel. 
+## 🎨 Design Philosophy: The "Senior Premium" Edge
 
-The application connects freelancers with high-end clients through a secure, feature-rich environment built around trust, reputation, and verified milestones.
+EduMarket isn't just an app; it's a **Tactile Interface**. We follow the **iOS 17+ Design Language** strictly:
 
----
-
-## 🚀 Enterprise Features
-- **Reputation Passport**: A unified, cryptographic-like verifiable profile for freelancers containing success rates, milestone accuracy, and dispute ratios.
-- **Task DNA Matching**: Smart task recommendations using AI NLP vectors (via backend) rendered in a highly engaging, Tinder-like feed.
-- **Live Task Pulse**: A real-time, WebSocket-powered ticker tape showing active ecosystem transactions and demand spikes.
-- **Stealth Mode**: Privacy-first exploration for high-profile clients; browse without altering online status or read receipts.
-- **Peer Quality Shield**: Advanced reporting and admin-moderated dispute resolution flows directly embedded into the task lifecycle.
-- **Learning Compass**: Goal-oriented skill tracking and visual milestone maps for freelancers.
+-   **32px Squircle Corners**: Every card and modal uses Apple's G2 curvature proxy for a softer, organic feel.
+-   **Glassmorphism & Depth**: Multi-layered backgrounds (`backdrop-blur-xl`) and ambient "Aurora Mesh" gradients create a sense of physical space.
+-   **Haptic Interaction Engine**: Integrated with Telegram's `HapticFeedback` API to provide physical confirmation for every critical action (submit, toggle, error).
+-   **Physics-Based Motion**: Animations use spring-damping constants (Stiffness: 400, Damping: 25) instead of linear transitions, making the UI feel responsive and weightful.
 
 ---
 
-## 📐 System Architecture
+## 🚀 Key Marketplace Capabilities
 
-The frontend leverages a modular architecture separating UI components, server state, and global client state.
+### 🪪 Reputation Passport (Verifiable Profile)
+A next-gen freelancer profile that visualizes trust. It cryptographic-style badges, completion velocity charts, and student verification status directly from the university system.
+
+### 🧬 Task DNA Discovery
+A personalized "Discovery Feed" that uses AI-driven compatability scores. Tasks are rendered in a high-density, minimalist layout optimized for quick scanning and decision making.
+
+### 💬 Unified Collaborative Rooms
+Every task has a dedicated **Collaboration Room**.
+- **Real-time Chat**: Optimistic UI with Socket.io.
+- **Workspace Overlay**: Shared milestones and task progress tracking.
+- **EduDrive Integration**: Seamless file previewing for documents and media.
+
+### 🛡️ Peer Quality Shield (E-Sign & Escrow)
+Built-in protection for both parties. Deliveries include a "Watermarked Preview" before funds are released, ensuring quality control before final delivery.
+
+---
+
+## 📐 Advanced State Management Architecture
+
+We strictly separate ephemeral UI state from persistent server state to maintain **60FPS performance**.
 
 ```mermaid
 graph TD;
-    UI[React UI Components] -->|Read/Write| Z[Zustand Store]
-    UI -->|Query/Mutate| RQ[TanStack Query]
+    UI[React 19 Components] -->|Select/Mutate| Z[Zustand Store]
+    UI -->|Query/Prefetch| RQ[TanStack Query]
     
-    Z -->|Client State| Auth[Auth Session]
-    Z -->|Client State| UIState[Filters & Theme]
-    Z -->|Client State| Chat[Optimistic Chat]
+    SubGraph ClientState [Zustand: Synchronous]
+        Z --> Auth[Auth Session & Role]
+        Z --> Nav[TMA BackButton History]
+        Z --> Opt[Optimistic Chat Engine]
+    End
     
-    RQ -->|Server State| API[Axios Instance]
-    API -->|HTTP REST| Backend[(EduMarket API)]
+    SubGraph ServerState [TanStack Query: Async]
+        RQ --> Feed[Task & Gig Feed]
+        RQ --> Prof[User Reputation Stats]
+        RQ --> Milestone[Shared Workspaces]
+    End
     
-    Socket[Socket.io Client] -.->|Real-time Events| Z
-    Socket -.->|Invalidation| RQ
+    Socket[Socket.io Client] -.->|Invalidation| RQ
+    Socket -.->|Immediate Updates| Z
 ```
 
 ---
 
-## 📁 Directory Structure
+## ⚡ Performance Engineering
 
-```text
-src/
-├── app/                  # Application initialization and routing logic
-├── components/           # Shared, reusable UI components
-│   ├── ui/               # Base primitives (Buttons, Inputs, BottomSheets)
-│   ├── forms/            # Complex forms and validation
-│   └── cards/            # Reusable cards (TaskCard, BidCard)
-├── hooks/                # Custom React hooks (useTasks, useDebounce)
-├── lib/                  # Utilities, constants, and API helpers
-├── screens/              # Route-level Page components (Features)
-│   ├── admin/            # CRM and moderation screens
-│   ├── auth/             # Onboarding and login flow
-│   ├── client/           # Client-specific views (Create Task)
-│   ├── freelancer/       # Freelancer-specific views (Feed, Earnings)
-│   └── shared/           # Shared views (Profile, Chat, Task Detail)
-├── services/             # API wrappers (Axios integration)
-└── store/                # Zustand global state slices
+-   **Atomic Renders**: Leveraging memoized components and Zustand selectors to prevent unnecessary re-renders in high-frequency views (like chat).
+-   **SWR (Stale-While-Revalidate)**: Ultra-fast loading states using TanStack Query's background synchronization.
+-   **Virtualized Tasmasi**: High-performance infinite scrolling for task feeds and messaging history.
+-   **Edge-Optimized Assets**: Dynamic image resizing and CDN-aware caching headers for freelancer portfolios.
+
+---
+
+## 📱 Deep Telegram Integration
+
+-   **Native Navigation**: Orchestrates Telegram's `MainButton` and `BackButton` for a truly native navigation flow.
+-   **Biometric-Ready Auth**: HMCA-based validation of Telegram's `initData` ensuring zero fake user accounts.
+-   **Cloud Storage**: Persisting user-specific theme preferences (Glass vs Solid) directly in Telegram's secure cloud.
+
+---
+
+## 🛠️ Installation & Tech Stack
+
+### Requirements
+- **Node.js**: v20+
+- **Vite**: v6 (Next-gen build tool)
+- **Styling**: Tailwind CSS v4 (Modern utility-first)
+
+### 1. Setup
+```bash
+git clone https://github.com/your-username/edumarket-frontend.git
+cd edumarket-frontend
+npm install
+```
+
+### 2. Environment
+Create `.env` in root:
+```env
+VITE_API_URL="https://your-api.com/v1"
+VITE_SOCKET_URL="https://your-api.com"
+VITE_TELEGRAM_BOT_TOKEN="xxx"
+```
+
+### 3. Execution
+```bash
+npm run dev   # Local development with TMA simulator
+npm run build # Production-optimized bundle
 ```
 
 ---
 
-## 🔐 Environment Variables
-
-Create a `.env` file in the root directory. The following variables are required:
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `VITE_API_URL` | Base URL for the Backend API | `http://localhost:5000/api/v1` |
-| `VITE_SOCKET_URL` | Base URL for the WebSocket Server | `http://localhost:5000` |
-| `VITE_SENTRY_DSN` | Sentry Error Tracking DSN | `https://example@sentry.io/123` |
-| `VITE_ENV` | Current environment (`development`/`production`) | `development` |
-
----
-
-## 🛠 Development Setup
-
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Run the Development Server**
-   ```bash
-   npm run dev
-   ```
-   *Note: To test Telegram specific features locally, you may need to expose your localhost using `ngrok` or `localtunnel` and set it as your Telegram Bot's Web App URL.*
-
-3. **Code Quality Checks**
-   ```bash
-   npm run lint
-   ```
-
-4. **Production Build**
-   ```bash
-   npm run build
-   ```
-
----
-
-## 🧠 State Management Strategy
-
-To ensure high performance and avoid unnecessary re-renders, the application strictly separates state concerns:
-- **Server State (TanStack Query)**: Handles all asynchronous data fetching, caching, and background synchronization (e.g., fetching task feeds, user profiles).
-- **Client Global State (Zustand)**: Manages synchronous global state such as UI toggles, active filters, and the optimistic chat engine.
-- **Component State (useState/useReducer)**: Used strictly for ephemeral, localized component logic (e.g., form inputs before submission, toggle animations).
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

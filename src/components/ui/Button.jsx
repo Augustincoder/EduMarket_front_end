@@ -31,23 +31,23 @@ export function Button({
   onClick,
   ...props
 }) {
-  const baseClass = "inline-flex items-center justify-center gap-2 font-bold transition-all rounded-2xl focus:outline-none disabled:opacity-40 disabled:pointer-events-none active-spring";
+  const baseClass = "inline-flex items-center justify-center gap-2.5 font-bold transition-all rounded-[20px] focus:outline-none disabled:opacity-30 disabled:grayscale disabled:pointer-events-none active-spring";
 
   const sizeClass = {
-    sm: 'h-9 px-4 text-[13px] tracking-ios-text',
-    md: 'h-12 px-6 text-[15px] tracking-ios-text',
-    lg: 'h-14 px-8 text-[17px] tracking-ios-display font-black',
-  }[size] || 'h-12 px-6 text-[15px]';
+    sm: 'h-10 px-5 text-[13px] tracking-ios-text rounded-xl',
+    md: 'h-13 px-7 text-[15px] tracking-ios-text',
+    lg: 'h-15 px-10 text-[17px] tracking-ios-display font-black rounded-[22px]',
+  }[size] || 'h-13 px-7 text-[15px]';
 
   const variantClass = {
-    primary:   'bg-edu-primary text-white shadow-btn border border-white/10',
-    secondary: 'bg-edu-surface-2 text-edu-text border border-edu-border/50',
-    outline:   'border-2 border-edu-primary text-edu-primary bg-transparent',
-    ghost:     'bg-transparent text-edu-text',
-    danger:    'bg-edu-urgent text-white shadow-lg shadow-red-500/20',
-    vip:       'bg-gradient-to-br from-edu-vip to-[#D4AF37] text-white shadow-vip border border-white/20',
-    accent:    'bg-edu-accent text-white shadow-lg shadow-indigo-500/20',
-  }[variant] || 'bg-edu-primary text-white shadow-btn';
+    primary:   'bg-edu-primary text-white shadow-premium-btn border-t border-white/20 active:shadow-none',
+    secondary: 'bg-gray-100 dark:bg-white/5 text-edu-text border border-transparent hover:bg-gray-200 dark:hover:bg-white/10',
+    outline:   'border-2 border-gray-200 dark:border-white/10 text-edu-text bg-transparent hover:bg-gray-50 dark:hover:bg-white/5',
+    ghost:     'bg-transparent text-edu-text hover:bg-black/5 dark:hover:bg-white/5',
+    danger:    'bg-edu-urgent text-white shadow-lg shadow-red-500/20 active:shadow-none',
+    vip:       'bg-gradient-to-br from-[#AF8B3B] to-[#D4AF37] text-white shadow-vip border-t border-white/30',
+    accent:    'bg-edu-accent text-white shadow-lg shadow-indigo-500/20 active:shadow-none',
+  }[variant] || 'bg-edu-primary text-white shadow-premium-btn';
 
   const handleClick = (e) => {
     if (haptic && HAPTIC_MAP[haptic]) {

@@ -57,6 +57,7 @@ export default function CreateTaskScreen() {
       if (!form.deadline) return setErrors({ deadline: ['Muddatni tanlang'] });
       if (Number(form.priceMin) >= Number(form.priceMax)) return setErrors({ priceMin: ['Min narx maxdan kichik bo\'lishi kerak'] });
     }
+    hapticLight();
     setStep((s) => s + 1);
   };
 
@@ -72,7 +73,7 @@ export default function CreateTaskScreen() {
       priceMax:             Math.floor(Number(form.priceMax)),
       isUrgent:             form.isUrgent,
       deadline:             new Date(form.deadline).toISOString(),
-      attachmentFileIds:    files.map((f) => f.id),
+      attachmentFileIds:    files.map((f) => f.fileId || f.id),
     };
     try {
       const res = await createTask.mutateAsync(payload);
@@ -102,7 +103,7 @@ export default function CreateTaskScreen() {
   };
 
   // MainButton Logic
-  let mainBtnText = step === 3 ? 'E\'lon qilish ✓' : 'Keyingisi →';
+  let mainBtnText = step === 3 ? 'TASDIQLASH ✓' : 'KEYINGISI →';
   let mainBtnClick = step === 3 ? handleSubmit : handleNext;
   
   if (step === 1 && nlpSeverity === 'block') {
@@ -113,28 +114,28 @@ export default function CreateTaskScreen() {
     text: mainBtnText,
     onClick: mainBtnClick,
     isLoading: createTask.isPending,
-  }, [step, form, nlpSeverity, createTask.isPending]);
+  }, [step, form, nlpSeverity, createTask.isPending, files]);
 
   return (
-    <PageLayout showNav={false}>
-      <Header title="Yangi vazifa" showBack />
+    <PageLayout showNav={false} className="bg-white dark:bg-black">
+      <Header title="Yangi vazifa" showBack className="!border-none" />
 
-      <div className="px-4 pt-3 pb-6 space-y-5">
+      <div className="px-6 pt-2 pb-10 space-y-8">
         <ProgressStepper steps={STEPS} current={step} />
 
         {targetFreelancerId && (
-          <div className="bg-edu-accent/10 text-edu-accent p-3 rounded-xl text-xs font-bold flex items-center gap-2 border border-edu-accent/20">
-            <span className="text-lg">🎯</span>
-            Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.
+          <div className="bg-[#007AFF]/5 text-[#007AFF] p-4 rounded-[22px] text-[12px] font-bold flex items-center gap-3 border border-[#007AFF]/10">
+            <div className="w-10 h-10 rounded-full bg-[#007AFF]/10 flex items-center justify-center shrink-0">🎯</div>
+            <p>Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.</p>
           </div>
         )}
 
         {/* ── Step 1 ─────────────────────────────────── */}
         {step === 1 && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <SelectInput
               label="Kategoriya *"
-              placeholder="Tanlang"
+              placeholder="Yo'nalishni tanlang"
               options={CATEGORIES}
               value={form.category}
               onChange={(v) => set('category', v)}
@@ -142,7 +143,7 @@ export default function CreateTaskScreen() {
             />
             <TextInput
               label="Sarlavha *"
-              placeholder="Qisqacha aniq sarlavha"
+              placeholder="Masalan: Logotip chizib berish kerak"
               value={form.title}
               onValueChange={(v) => set('title', v)}
               maxLength={200}
@@ -150,12 +151,12 @@ export default function CreateTaskScreen() {
               error={errors.title?.[0]}
             />
             <TextArea
-              label="Tavsif *"
-              placeholder="Nima kerakligini batafsil yozing (min 20 harf)..."
+              label="Batafsil tavsif *"
+              placeholder="Vazifa haqida barcha ma'lumotlarni yozing..."
               value={form.description}
               onValueChange={(v) => set('description', v)}
               maxLength={2000}
-              minRows={4}
+              minRows={6}
               error={errors.description?.[0]}
             />
             <NLPWarning text={form.title + ' ' + form.description} />
@@ -164,22 +165,22 @@ export default function CreateTaskScreen() {
 
         {/* ── Step 2 ─────────────────────────────────── */}
         {step === 2 && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
-              <p className="text-sm font-semibold text-edu-text mb-2">Narx oralig'i (so'm) *</p>
+              <p className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1 mb-3">Byudjet oralig'i (UZS) *</p>
               <div className="flex items-center gap-3">
                 <TextInput
                   className="flex-1"
-                  placeholder="15000"
+                  placeholder="Min"
                   type="number"
                   value={form.priceMin}
                   onValueChange={(v) => set('priceMin', v)}
                   error={errors.priceMin?.[0]}
                 />
-                <span className="text-edu-muted font-bold">—</span>
+                <div className="w-4 h-[1px] bg-gray-200 dark:bg-white/10" />
                 <TextInput
                   className="flex-1"
-                  placeholder="30000"
+                  placeholder="Max"
                   type="number"
                   value={form.priceMax}
                   onValueChange={(v) => set('priceMax', v)}
@@ -187,36 +188,40 @@ export default function CreateTaskScreen() {
                 />
               </div>
               {Number(form.priceMin) >= Number(form.priceMax) && form.priceMin && form.priceMax && (
-                <p className="text-xs text-red-500 mt-1">Min narx maxdan kichik bo'lishi kerak</p>
+                <p className="text-[11px] font-bold text-red-500 mt-2 px-1">Min narx maxdan kichik bo'lishi kerak</p>
               )}
             </div>
 
-            <ToggleSwitch
-              label="⚡ Shoshilinch?"
-              description="Ha: +20% ustama avtomatik qo'shiladi"
-              checked={form.isUrgent}
-              onChange={(v) => set('isUrgent', v)}
-            />
+            <div className="bg-gray-50 dark:bg-white/5 rounded-[28px] p-6 border border-black/[0.02] dark:border-white/[0.05]">
+              <ToggleSwitch
+                label="⚡ Shoshilinch?"
+                description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
+                checked={form.isUrgent}
+                onChange={(v) => { hapticLight(); set('isUrgent', v); }}
+              />
 
-            {form.priceMin && form.priceMax && Number(form.priceMin) < Number(form.priceMax) && (
-              <div className="bg-edu-primary/5 border border-edu-primary/20 p-3 rounded-xl mt-2 text-xs">
-                <p className="flex justify-between mb-1 text-edu-muted">
-                  Asosiy narx: <span>{formatPriceRange(Number(form.priceMin), Number(form.priceMax))}</span>
-                </p>
-                {form.isUrgent && (
-                  <p className="flex justify-between mb-1 text-orange-500 font-medium">
-                    Shoshilinch ustama (+20%): <span>{formatPriceRange(Number(form.priceMin) * 0.2, Number(form.priceMax) * 0.2)}</span>
-                  </p>
-                )}
-                <div className="h-px w-full bg-edu-border/50 my-1.5" />
-                <p className="flex justify-between font-bold text-edu-text text-sm">
-                  Umumiy byudjet: <span>{formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}</span>
-                </p>
-              </div>
-            )}
+              {form.priceMin && form.priceMax && Number(form.priceMin) < Number(form.priceMax) && (
+                <div className="mt-6 pt-6 border-t border-black/[0.05] dark:border-white/10 space-y-2">
+                  <div className="flex justify-between text-[13px] font-bold text-gray-400">
+                    <span>Asosiy narx</span>
+                    <span>{formatPriceRange(Number(form.priceMin), Number(form.priceMax))}</span>
+                  </div>
+                  {form.isUrgent && (
+                    <div className="flex justify-between text-[13px] font-black text-orange-500">
+                      <span>Shoshilinch ustama</span>
+                      <span>+20%</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-[16px] font-black text-gray-900 dark:text-white pt-2">
+                    <span>Umumiy byudjet</span>
+                    <span className="text-[#007AFF]">{formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}</span>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <TextInput
-              label="Muddat (deadline) *"
+              label="Tugash muddati (Deadline) *"
               type="datetime-local"
               value={form.deadline}
               onValueChange={(v) => set('deadline', v)}
@@ -224,47 +229,48 @@ export default function CreateTaskScreen() {
               error={errors.deadline?.[0]}
             />
 
-            <div className="flex gap-3">
-              <Button variant="secondary" fullWidth onClick={() => setStep(1)}>← Orqaga</Button>
-            </div>
+            <Button variant="secondary" fullWidth onClick={() => { hapticLight(); setStep(1); }} className="h-14">
+              ← Orqaga
+            </Button>
           </div>
         )}
 
         {/* ── Step 3 ─────────────────────────────────── */}
         {step === 3 && (
-          <div className="space-y-4 animate-fade-in">
-            <FileUpload value={files} onChange={setFiles} maxFiles={5} label="Biriktirmalar" />
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <FileUpload value={files} onChange={setFiles} maxFiles={5} label="Fayllarni biriktirish" />
 
-            {/* Preview */}
-            <Card className="bg-edu-bg border border-edu-border" radius="xl">
-              <CardContent className="p-4 space-y-2">
-                <p className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-1">📋 Shartnoma preview</p>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-edu-muted">Kategoriya:</span>
-                    <span className="font-semibold text-edu-text">{CATEGORIES.find(c=>c.value===form.category)?.label}</span>
+            {/* Premium Preview Card */}
+            <div className="space-y-4">
+              <p className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">Vazifa namunasi</p>
+              <Card className="border-none shadow-premium-lg bg-gray-50 dark:bg-white/5 overflow-hidden">
+                <CardContent className="p-6 space-y-6">
+                  <div>
+                    <h3 className="text-[19px] font-black text-gray-900 dark:text-white leading-tight mb-2">{form.title}</h3>
+                    <p className="text-[14px] text-gray-500 dark:text-gray-400 line-clamp-3 font-medium">{form.description}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-edu-muted">Narx:</span>
-                    <span className="font-semibold text-edu-text">
-                      {form.priceMin && form.priceMax ? formatPriceRange(Number(form.priceMin), Number(form.priceMax)) : '—'}
-                    </span>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Byudjet</p>
+                      <p className="text-[15px] font-black text-[#007AFF]">
+                        {formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Muddati</p>
+                      <p className="text-[15px] font-black text-gray-800 dark:text-gray-200">
+                        {form.deadline ? new Date(form.deadline).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long' }) : '—'}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-edu-muted">Shoshilinch:</span>
-                    <span className="font-semibold text-edu-text">{form.isUrgent ? '✅ Ha (+20%)' : '❌ Yo\'q'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-edu-muted">Deadline:</span>
-                    <span className="font-semibold text-edu-text">{form.deadline ? new Date(form.deadline).toLocaleDateString('uz-UZ') : '—'}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-3">
-              <Button variant="secondary" fullWidth onClick={() => setStep(2)}>← Orqaga</Button>
+                </CardContent>
+              </Card>
             </div>
+
+            <Button variant="secondary" fullWidth onClick={() => { hapticLight(); setStep(2); }} className="h-14">
+              ← Orqaga
+            </Button>
           </div>
         )}
       </div>

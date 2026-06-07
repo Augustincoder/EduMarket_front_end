@@ -6,8 +6,6 @@ import { useAuthStore } from './authStore';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
-const BACKOFF_DELAYS = [1000, 2000, 4000, 8000, 16000];
-
 const typingTimers = new Map();
 
 export const useChatStore = create((set, get) => ({

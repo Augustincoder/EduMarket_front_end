@@ -1,62 +1,42 @@
 // src/components/forms/FileUpload.jsx
-import { useState, useRef } from 'react';
-import { Paperclip, X, Loader2, FileText, Image } from 'lucide-react';
-import { filesApi } from '../../services/other.service';
-import { BLOCKED_EXTENSIONS, MAX_FILE_SIZE_MB, ACCEPTED_MIME_TYPES } from '../../lib/constants';
-import toast from 'react-hot-toast';
+import { useRef } from 'react';
+import { Paperclip, X, Loader2, FileText, Image, CheckCircle2 } from 'lucide-react';
+import { useFileUpload } from '../../hooks/useFileUpload';
+import { ACCEPTED_MIME_TYPES, MAX_FILE_SIZE_MB } from '../../lib/constants';
+import { cn } from '../../lib/utils';
 
 function FileIcon({ type }) {
   if (type?.startsWith('image/')) return <Image size={14} className="text-blue-500" />;
   return <FileText size={14} className="text-edu-accent" />;
 }
 
-export function FileUpload({ value = [], onChange, maxFiles = 5, label }) {
-  const [uploading, setUploading] = useState({});
+export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, label }) {
   const inputRef = useRef(null);
 
-  const handleFiles = async (files) => {
-    const arr = Array.from(files);
-
-    if (value.length + arr.length > maxFiles) {
-      toast.error(`Maksimal ${maxFiles} ta fayl yuklash mumkin`);
-      return;
+  const {
+    isUploading,
+    progress,
+    upload,
+    removeFile
+  } = useFileUpload({
+    maxFiles,
+    onSuccess: (uploadedFiles, allFiles) => {
+      // value is managed by the parent, but we use the hook to perform the action
+      onChange?.([...value, ...uploadedFiles]);
     }
+  });
 
-    for (const file of arr) {
-      const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-      if (BLOCKED_EXTENSIONS.includes(ext)) {
-        toast.error(`${ext} kengaytmali fayllar taqiqlangan`);
-        continue;
-      }
-      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-        toast.error(`Fayl hajmi ${MAX_FILE_SIZE_MB}MB dan oshmasligi kerak`);
-        continue;
-      }
-
-      const tempId = `${file.name}_${Date.now()}`;
-      setUploading((u) => ({ ...u, [tempId]: 0 }));
-
-      try {
-        const fd = new FormData();
-        fd.append('files', file);
-
-        const res = await filesApi.upload(fd, (pct) => {
-          setUploading((u) => ({ ...u, [tempId]: pct }));
-        });
-
-        const fileId = res.data.data.fileIds[0];
-        onChange?.([...value, { id: fileId, name: file.name, type: file.type, size: file.size }]);
-      } catch (err) {
-        toast.error(err.serverMsg || 'Fayl yuklashda xato');
-      } finally {
-        setUploading((u) => { const n = { ...u }; delete n[tempId]; return n; });
-      }
-    }
+  const handleFiles = (e) => {
+    const rawFiles = Array.from(e.target.files);
+    upload(rawFiles);
   };
 
-  const remove = (id) => onChange?.(value.filter((f) => f.id !== id));
-
-  const isUploading = Object.keys(uploading).length > 0;
+  const remove = (e, id) => {
+    e.stopPropagation();
+    // Attempt to cleanup via hook if we have the ID tracking, 
+    // but parent manages the state so we just filter
+    onChange?.(value.filter((f) => (f.fileId || f.id) !== id));
+  };
 
   return (
     <div className="space-y-3">
@@ -64,25 +44,32 @@ export function FileUpload({ value = [], onChange, maxFiles = 5, label }) {
 
       {/* Drop zone */}
       <div
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !isUploading && inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); }}
-        className={[
+        onDrop={(e) => { e.preventDefault(); !isUploading && upload(Array.from(e.dataTransfer.files)); }}
+        className={cn(
           'border-2 border-dashed border-edu-border rounded-2xl p-6',
           'flex flex-col items-center gap-2 cursor-pointer',
-          'transition-all duration-200',
+          'transition-all duration-200 relative overflow-hidden',
           'hover:border-edu-primary/50 hover:bg-edu-primary/5',
-          isUploading && 'opacity-60 pointer-events-none',
-        ].filter(Boolean).join(' ')}
+          isUploading && 'bg-edu-primary/5 cursor-wait'
+        )}
       >
+        {isUploading && (
+          <div 
+            className="absolute bottom-0 left-0 h-1 bg-edu-primary transition-all duration-300 ease-out" 
+            style={{ width: `${progress}%` }} 
+          />
+        )}
+
         <div className="w-12 h-12 rounded-2xl bg-edu-primary/10 flex items-center justify-center">
           {isUploading
             ? <Loader2 size={22} className="text-edu-primary animate-spin" />
             : <Paperclip size={22} className="text-edu-primary" />
           }
         </div>
-        <p className="text-sm font-semibold text-edu-text">
-          {isUploading ? 'Yuklanmoqda...' : 'Fayl qo\'shing'}
+        <p className="text-sm font-semibold text-edu-text text-center">
+          {isUploading ? `Yuklanmoqda... ${progress}%` : 'Fayl qo\'shing'}
         </p>
         <p className="text-xs text-edu-muted text-center">
           Bosing yoki sudrab tashlang · Maks {maxFiles} ta · {MAX_FILE_SIZE_MB}MB
@@ -93,7 +80,7 @@ export function FileUpload({ value = [], onChange, maxFiles = 5, label }) {
           accept={ACCEPTED_MIME_TYPES}
           multiple
           className="hidden"
-          onChange={(e) => handleFiles(e.target.files)}
+          onChange={handleFiles}
         />
       </div>
 
@@ -102,19 +89,33 @@ export function FileUpload({ value = [], onChange, maxFiles = 5, label }) {
         <div className="space-y-2">
           {value.map((file) => (
             <div
-              key={file.id}
-              className="flex items-center gap-3 bg-edu-surface rounded-xl px-3 py-2.5 border border-edu-border/60"
+              key={file.fileId || file.id}
+              onClick={() => onPreview?.(file)}
+              className={cn(
+                "flex items-center gap-3 bg-edu-surface rounded-xl px-3 py-2.5 border border-edu-border/60 animate-in fade-in slide-in-from-left-2 transition-all",
+                onPreview && "cursor-pointer hover:border-edu-primary/30 hover:bg-edu-primary/5 active:scale-[0.98]"
+              )}
             >
               <FileIcon type={file.type} />
-              <span className="flex-1 text-xs font-medium text-edu-text truncate">
-                {file.name}
-              </span>
-              <button
-                onClick={() => remove(file.id)}
-                className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 press-scale"
-              >
-                <X size={10} className="text-red-500" />
-              </button>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-bold text-edu-text truncate">
+                  {file.name}
+                </p>
+                {file.size && (
+                  <p className="text-[9px] text-edu-muted">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-emerald-500" />
+                <button
+                  onClick={(e) => remove(e, file.fileId || file.id)}
+                  className="w-6 h-6 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
+                >
+                  <X size={12} className="text-red-500" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

@@ -1,6 +1,6 @@
 // src/screens/TaskFeedScreen.jsx
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, SlidersHorizontal, X, CheckCircle2 } from 'lucide-react';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import TaskCard from '../../components/cards/TaskCard';
 import { FilterChip } from '../../components/ui/Chip';
@@ -46,6 +46,7 @@ export default function TaskFeedScreen() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (debouncedQuery) addSearch(debouncedQuery);
   }, [debouncedQuery, addSearch]);
 
@@ -211,78 +212,95 @@ export default function TaskFeedScreen() {
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
         title="Filtrlash va Saralash"
+        footer={
+          <div className="flex gap-3">
+            <Button 
+              variant="secondary" 
+              fullWidth 
+              onClick={() => { resetFilters(); setFilterOpen(false); }} 
+              className="rounded-2xl h-13 font-black uppercase tracking-widest text-[12px] bg-gray-100 dark:bg-white/5 border-none"
+            >
+              Tozalash
+            </Button>
+            <Button 
+              variant="primary" 
+              fullWidth 
+              onClick={() => { setFilterOpen(false); hapticLight(); }} 
+              className="rounded-2xl h-13 font-black uppercase tracking-widest text-[12px] bg-[#007AFF] shadow-ios-primary"
+            >
+              Qo'llash
+            </Button>
+          </div>
+        }
       >
-        <div className="space-y-8 py-4">
-          {/* Sorting Section */}
+        <div className="space-y-8 pb-4">
+          {/* Sorting Section: Horizontal Segmented Control */}
           <div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Saralash</p>
-            <div className="grid grid-cols-1 gap-2">
+            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-4 px-1">Saralash</p>
+            <div className="flex p-1 bg-gray-100 dark:bg-white/5 rounded-2xl">
               {SORT_OPTIONS.map((s) => (
                 <button
                   key={s.value}
                   onClick={() => { setFilter('sort', s.value); hapticLight(); }}
                   className={cn(
-                    'flex items-center justify-between px-5 py-4 rounded-[22px] border transition-all active:scale-[0.98]',
+                    'flex-1 py-2.5 rounded-xl text-[13px] font-black transition-all duration-300 active:scale-95',
                     filterState.sort === s.value
-                      ? 'bg-[#007AFF]/5 border-[#007AFF] text-[#007AFF] shadow-sm'
-                      : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-700 dark:text-gray-300'
+                      ? 'bg-white dark:bg-white/10 text-[#007AFF] shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
                   )}
                 >
-                  <span className="text-[15px] font-bold">{s.label}</span>
-                  {filterState.sort === s.value && <div className="w-5 h-5 rounded-full bg-[#007AFF] flex items-center justify-center"><CheckCircle2 size={14} className="text-white" /></div>}
+                  {s.label}
                 </button>
               ))}
             </div>
           </div>
 
+          {/* Categories: Improved Grid */}
           <div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Kategoriya</p>
-            <div className="flex flex-wrap gap-2">
-              <FilterChip label="Barchasi" active={!filterState.category} onClick={() => setFilter('category', '')} className="rounded-xl h-10 px-5" />
+            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-4 px-1">Kategoriya</p>
+            <div className="grid grid-cols-2 gap-2">
+              <FilterChip 
+                label="Barchasi" 
+                active={!filterState.category} 
+                onClick={() => setFilter('category', '')} 
+                className="rounded-xl h-11 px-4 text-[13px] font-bold border-transparent bg-gray-50 dark:bg-white/5" 
+              />
               {CATEGORIES.map((cat) => (
                 <FilterChip
                   key={cat.value}
                   label={`${cat.emoji} ${cat.label}`}
                   active={filterState.category === cat.value}
                   onClick={() => setFilter('category', cat.value)}
-                  className="rounded-xl h-10 px-5"
+                  className="rounded-xl h-11 px-4 text-[13px] font-bold border-transparent bg-gray-50 dark:bg-white/5"
                 />
               ))}
             </div>
           </div>
 
+          {/* Pricing: Clean Inputs */}
           <div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Narx oralig'i (UZS)</p>
-            <div className="flex items-center gap-4">
-              <div className="flex-1 bg-gray-100/80 dark:bg-white/5 rounded-2xl px-5 py-4 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
+            <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-4 px-1">Narx oralig'i (UZS)</p>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 bg-gray-50 dark:bg-white/5 rounded-2xl px-5 py-4 border border-black/[0.03] dark:border-white/[0.05] focus-within:border-[#007AFF]/30 transition-all">
                 <input
                   type="number"
                   placeholder="Min"
                   value={filterState.minPrice || ''}
                   onChange={(e) => setFilter('minPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[16px] font-bold outline-none placeholder:text-gray-400"
+                  className="bg-transparent w-full text-[15px] font-black outline-none placeholder:text-gray-400"
                 />
               </div>
-              <div className="w-4 h-[2px] bg-gray-300 dark:bg-white/10" />
-              <div className="flex-1 bg-gray-100/80 dark:bg-white/5 rounded-2xl px-5 py-4 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
+              <div className="w-4 h-[1px] bg-gray-300 dark:bg-white/10" />
+              <div className="flex-1 bg-gray-50 dark:bg-white/5 rounded-2xl px-5 py-4 border border-black/[0.03] dark:border-white/[0.05] focus-within:border-[#007AFF]/30 transition-all">
                 <input
                   type="number"
                   placeholder="Max"
                   value={filterState.maxPrice < 200000 ? filterState.maxPrice : ''}
                   onChange={(e) => setFilter('maxPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[16px] font-bold outline-none placeholder:text-gray-400"
+                  className="bg-transparent w-full text-[15px] font-black outline-none placeholder:text-gray-400"
                 />
               </div>
             </div>
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <Button variant="secondary" fullWidth onClick={() => { resetFilters(); setFilterOpen(false); }} className="rounded-[22px] h-14 font-black uppercase tracking-widest text-[13px] border-none bg-gray-100 dark:bg-white/5">
-              Tozalash
-            </Button>
-            <Button variant="primary" fullWidth onClick={() => { setFilterOpen(false); hapticLight(); }} className="rounded-[22px] h-14 font-black uppercase tracking-widest text-[13px] bg-[#007AFF] shadow-lg shadow-[#007AFF]/20">
-              Qo'llash
-            </Button>
           </div>
         </div>
       </BottomSheet>

@@ -13,13 +13,13 @@ const HAPTIC_MAP = {
 
 export const Card = forwardRef(({ className, radius = 'xl', isPressable, onClick, haptic = 'light', ...props }, ref) => {
   const radiusClass = {
-    sm: 'rounded-sm',
-    md: 'rounded-md',
-    lg: 'rounded-lg',
-    xl: 'rounded-2xl',
-    '2xl': 'rounded-3xl',
+    sm: 'rounded-lg',
+    md: 'rounded-xl',
+    lg: 'rounded-2xl',
+    xl: 'squircle',
+    '2xl': 'rounded-[40px]',
     none: 'rounded-none',
-  }[radius] || 'rounded-2xl';
+  }[radius] || 'squircle';
 
   const Comp = isPressable || onClick ? 'button' : 'div';
   
@@ -35,9 +35,9 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onClick
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "w-full block bg-edu-surface shadow-ios border border-edu-border/30 overflow-hidden text-left",
-        radiusClass === 'rounded-2xl' ? 'squircle' : radiusClass,
-        (isPressable || onClick) && "transition-all active-spring cursor-pointer",
+        "w-full block bg-edu-surface overflow-hidden text-left transition-all",
+        radiusClass === 'squircle' ? 'premium-card' : cn(radiusClass, "shadow-premium-sm border border-edu-border/30"),
+        (isPressable || onClick) && "active-spring cursor-pointer active:opacity-90",
         className
       )}
       {...props}

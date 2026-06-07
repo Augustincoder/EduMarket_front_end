@@ -13,11 +13,19 @@ function TaskCard({ task, className }) {
   const catInfo = CATEGORIES.find((c) => c.value === task.category);
 
   // Local favorite state for tasks
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(() => {
+    try {
+      const savedTasks = JSON.parse(localStorage.getItem('edu_saved_tasks') || '[]');
+      return savedTasks.includes(task.id);
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
       const savedTasks = JSON.parse(localStorage.getItem('edu_saved_tasks') || '[]');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSaved(savedTasks.includes(task.id));
     } catch {
       setIsSaved(false);
@@ -40,10 +48,11 @@ function TaskCard({ task, className }) {
       }
       localStorage.setItem('edu_saved_tasks', JSON.stringify(newSaved));
       setIsSaved(!isSaved);
-    } catch (err) {
+      } catch {
       toast.error("Xatolik yuz berdi");
-    }
-  };
+      }
+      };
+
 
   const handleClick = () => {
     navigate(`/tasks/${task.id}`);

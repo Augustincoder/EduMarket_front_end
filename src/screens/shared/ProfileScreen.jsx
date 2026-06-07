@@ -27,7 +27,7 @@ import { FileUpload } from '../../components/forms/FileUpload';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { VerificationStatusCard } from '../../components/cards/VerificationStatusCard';
 import { usersApi } from '../../services/users.service';
-import { portfolioApi, analyticsApi } from '../../services/other.service';
+import { portfolioApi, analyticsApi, filesApi } from '../../services/other.service';
 import { formatPrice, cn } from '../../lib/utils';
 import { hapticSuccess, hapticLight, showConfirm } from '../../lib/telegram';
 import toast from 'react-hot-toast';
@@ -35,6 +35,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { calculateLevel, calculateStreak } from '../../lib/gamification';
+import { EduViewer } from '../../components/ui/EduViewer';
 
 const CATEGORIES = [
   'Dasturlash', 'Dizayn', 'Tarjima', 'SMM', 'Kopirayterlik',
@@ -57,6 +58,17 @@ export default function ProfileScreen() {
   const [portfolioTitle, setPortfolioTitle]     = useState('');
   const [portfolioFiles, setPortfolioFiles]     = useState([]);
   const [portfolioError, setPortfolioError]     = useState('');
+
+  const [viewerFile, setViewerFile] = useState(null);
+
+  const handleViewFile = async (fileId, fileName) => {
+    try {
+      const res = await filesApi.getUrl(fileId);
+      setViewerFile({ url: res.data.data.url, name: fileName || fileId.split('/').pop() });
+    } catch {
+      toast.error('Faylni ochishda xatolik');
+    }
+  };
 
   // Fetch Me Profile
   const { data: me, isLoading } = useQuery({
@@ -539,7 +551,12 @@ export default function ProfileScreen() {
               
               <div className="grid grid-cols-2 gap-3">
                 {me?.portfolioItems?.map((item) => (
-                  <Card key={item.id} className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden" radius="xl">
+                  <Card 
+                    key={item.id} 
+                    className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden cursor-pointer active:scale-[0.98] transition-all" 
+                    radius="xl"
+                    onClick={() => handleViewFile(item.fileId, item.title)}
+                  >
                     <CardContent className="p-3 flex flex-col h-full justify-between">
                       <div className="w-full h-20 bg-gradient-to-br from-edu-primary/5 to-edu-accent/5 rounded-xl flex items-center justify-center mb-2 border border-edu-border/30 relative">
                         <div className="w-10 h-10 rounded-full bg-white dark:bg-edu-bg flex items-center justify-center shadow-sm">
@@ -549,8 +566,9 @@ export default function ProfileScreen() {
                       <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
                       
                       <button
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors border border-red-500/10"
-                        onClick={() => {
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors border border-red-500/10 z-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {
                             delPortfolio.mutate(item.id);
                           }
@@ -798,6 +816,12 @@ export default function ProfileScreen() {
           </Button>
         </div>
       </BottomSheet>
+
+      <EduViewer
+        isOpen={!!viewerFile}
+        onClose={() => setViewerFile(null)}
+        file={viewerFile}
+      />
     </PageLayout>
   );
 }

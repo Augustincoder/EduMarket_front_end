@@ -12,7 +12,7 @@ const sizeClass = {
 };
 
 const COLORS = [
-  '#1D9E75','#534AB7','#185FA5','#BA7517','#3B6D11','#A32D2D','#D85A30',
+  '#007AFF', '#5856D6', '#AF8B3B', '#34C759', '#FF9500', '#FF3B30', '#5AC8FA',
 ];
 
 function getColor(name = '') {
@@ -27,9 +27,9 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
     <div
       onClick={onClick}
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full overflow-hidden shrink-0 font-bold select-none",
+        "relative inline-flex items-center justify-center rounded-full overflow-hidden shrink-0 font-black select-none ring-1 ring-black/[0.03] dark:ring-white/10 shadow-sm",
         sizeClass[size] || sizeClass.md,
-        onClick && "cursor-pointer active:scale-95 transition-transform",
+        onClick && "cursor-pointer active-spring",
         className
       )}
       style={{ backgroundColor: fallbackColor }}
@@ -41,10 +41,11 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
           className="w-full h-full object-cover"
         />
       ) : (
-        <span className="text-white">
+        <span className="text-white drop-shadow-sm">
           {initials}
         </span>
       )}
+      <div className="absolute inset-0 rounded-full border border-black/5 pointer-events-none" />
     </div>
   );
 }

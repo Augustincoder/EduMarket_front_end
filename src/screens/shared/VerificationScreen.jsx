@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -7,10 +7,12 @@ import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
 import { FileUpload } from '../../components/forms/FileUpload';
 import { verificationApi } from '../../services/verification.service';
+import { filesApi } from '../../services/other.service';
 import { useAuth } from '../../hooks/useAuth';
-import { hapticSuccess, hapticError } from '../../lib/telegram';
+import { hapticSuccess, hapticError, hapticLight } from '../../lib/telegram';
 import { CheckCircle2, ShieldCheck, AlertCircle, Info, Camera, FileText, ChevronRight, RefreshCcw } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { EduViewer } from '../../components/ui/EduViewer';
 import toast from 'react-hot-toast';
 
 const DOC_TYPES = [
@@ -28,6 +30,7 @@ export default function VerificationScreen() {
   const [docFiles, setDocFiles] = useState([]);
   const [selfieFiles, setSelfieFiles] = useState([]);
   const [error, setError] = useState('');
+  const [viewerFile, setViewerFile] = useState(null);
 
   const { data: status, isLoading: statusLoading, isError: statusError, error: queryError, refetch } = useQuery({
     queryKey: ['verification-status'],
@@ -41,6 +44,25 @@ export default function VerificationScreen() {
       refreshUser();
     }
   }, [status, user, refreshUser]);
+
+  const handleViewFile = (file) => {
+    if (!file) return;
+    hapticLight();
+    // For local preview before submit, we might not have a signed URL yet, 
+    // but the file object should have a local URL from the upload hook or we can create one.
+    // Actually our useFileUpload hook returns { fileId, name, size, type } and the file.controller returns objectKey.
+    // We need a URL to view. If it's just uploaded, we can get a public URL if it's an image.
+    // For simplicity, let's assume we fetch a temporary URL if needed, but for images we can use getPublicUrl.
+    const publicUrl = filesApi.getPublicUrl(file.fileId || file.id);
+    if (publicUrl) {
+      setViewerFile({ url: publicUrl, name: file.name, type: file.type });
+    } else {
+      // Fetch signed URL
+      filesApi.getUrl(file.fileId || file.id).then(res => {
+        setViewerFile({ url: res.data.data.url, name: file.name, type: file.type });
+      });
+    }
+  };
 
   const currentStatus = status?.status || user?.verificationStatus;
 
@@ -227,6 +249,7 @@ export default function VerificationScreen() {
                 label={`${DOC_TYPES.find(d=>d.value===docType)?.label} rasmi`}
                 value={docFiles}
                 onChange={setDocFiles}
+                onPreview={handleViewFile}
                 maxFiles={1}
               />
             </div>
@@ -253,6 +276,7 @@ export default function VerificationScreen() {
                 label="Selfie rasmini yuklang"
                 value={selfieFiles}
                 onChange={setSelfieFiles}
+                onPreview={handleViewFile}
                 maxFiles={1}
               />
             </div>
@@ -287,6 +311,12 @@ export default function VerificationScreen() {
         )}
 
       </div>
+
+      <EduViewer
+        isOpen={!!viewerFile}
+        onClose={() => setViewerFile(null)}
+        file={viewerFile}
+      />
     </PageLayout>
   );
 }

@@ -1,9 +1,8 @@
 // src/components/chat/MessageBubble.jsx
 import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
-import { Check, CheckCheck, FileText, Download, Image as ImageIcon, X, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle } from 'lucide-react';
+import { Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle, FileType } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
-import toast from 'react-hot-toast';
 import { Spinner } from '../ui/Spinner';
 import DOMPurify from 'dompurify';
 import { VoicePlayer } from './VoicePlayer';
@@ -60,19 +59,15 @@ function ImageAttachment({ fileId, onClick }) {
   );
 }
 
-export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
+export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onViewFile }) {
   const hasFile = !!message.fileId;
   const isImage = message.fileType === 'photo' || (message.fileName && /\.(jpg|jpeg|png|gif|webp)$/i.test(message.fileName));
 
-  const [viewerUrl, setViewerUrl] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
 
-  const downloadFile = async () => {
-    try {
-      const res = await filesApi.getUrl(message.fileId);
-      window.open(res.data.data.url, '_blank');
-    } catch {
-      toast.error('Faylni yuklashda xato');
+  const handleFileClick = () => {
+    if (hasFile && !isImage && message.fileType !== 'voice') {
+      onViewFile?.(message.fileId, message.fileName);
     }
   };
 
@@ -128,9 +123,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
             isMe
               ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
               : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
-            hasFile && !isImage && 'cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all'
+            hasFile && !isImage && message.fileType !== 'voice' && 'cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all'
           )}
-          onClick={(hasFile && !isImage) ? downloadFile : undefined}
+          onClick={handleFileClick}
           onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
         >
           {/* Reply Preview */}
@@ -148,7 +143,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
 
           {hasFile ? (
             isImage ? (
-              <ImageAttachment fileId={message.fileId} onClick={(url) => setViewerUrl(url)} />
+              <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName)} />
             ) : message.fileType === 'voice' ? (
               <VoicePlayer fileId={message.fileId} isMe={isMe} />
             ) : (
@@ -162,10 +157,10 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold truncate">{message.fileName || 'Biriktirma'}</p>
                   <p className={cn('text-[10px] mt-0.5', isMe ? 'text-white/70' : 'text-edu-muted')}>
-                    Yuklab olish
+                    Ko'rish uchun bosing
                   </p>
                 </div>
-                <Download size={14} className={isMe ? 'text-white/70' : 'text-edu-muted'} />
+                <FileType size={14} className={isMe ? 'text-white/70' : 'text-edu-muted'} />
               </div>
             )
           ) : (
@@ -199,31 +194,6 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete }) {
           </div>
         </div>
       </div>
-
-      {/* Full Screen Image Viewer Modal */}
-      {viewerUrl && (
-        <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center animate-fade-in backdrop-blur-sm">
-          <button 
-            onClick={() => setViewerUrl(null)}
-            className="absolute top-4 right-4 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
-          >
-            <X size={24} />
-          </button>
-          <img 
-            src={viewerUrl} 
-            alt="Full screen preview" 
-            className="max-w-[95vw] max-h-[85vh] object-contain rounded-xl"
-          />
-          <a 
-            href={viewerUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="mt-6 flex items-center gap-2 px-6 py-2.5 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors"
-          >
-            <Download size={18} /> Yuklab olish
-          </a>
-        </div>
-      )}
     </>
   );
 }
