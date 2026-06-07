@@ -62,7 +62,7 @@ function TaskCard({ task, className }) {
     <div
       onClick={handleClick}
       className={cn(
-        'group relative bg-white dark:bg-[#1C1C1E] rounded-[32px] p-5 active:scale-[0.98] transition-all duration-500 cursor-pointer border border-black/[0.03] dark:border-white/[0.03] shadow-ios hover:shadow-ios-lg hover:border-[#007AFF]/20 dark:hover:border-[#007AFF]/30',
+        'group relative bg-white dark:bg-[#1C1C1E] rounded-[24px] p-5 active:scale-[0.98] transition-all duration-500 cursor-pointer border border-black/[0.03] dark:border-white/[0.03] shadow-ios hover:shadow-ios-lg hover:border-[#007AFF]/20 dark:hover:border-[#007AFF]/30',
         className
       )}
     >
@@ -151,7 +151,7 @@ function TaskCard({ task, className }) {
 
         {/* Assigned Status Indicator */}
         {task.status === 'ASSIGNED' && (
-          <div className="absolute inset-x-0 bottom-0 h-1 bg-[#007AFF] rounded-b-[32px] overflow-hidden">
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-[#007AFF] rounded-b-[24px] overflow-hidden">
             <div className="w-full h-full bg-[#007AFF] animate-pulse" />
           </div>
         )}

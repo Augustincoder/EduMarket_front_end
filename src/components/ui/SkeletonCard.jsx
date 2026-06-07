@@ -7,7 +7,7 @@ function Bone({ className }) {
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-[#1C1C1E] rounded-[32px] p-6 shadow-premium-md space-y-5 animate-in fade-in duration-500">
+    <div className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-6 shadow-premium-md space-y-5 animate-in fade-in duration-500">
       <div className="flex items-start justify-between gap-2">
         <div className="flex gap-2">
           <Bone className="w-16 h-7 rounded-xl" />
@@ -46,7 +46,7 @@ export function ProfileSkeleton() {
           <Bone className="w-32 h-4 rounded-full opacity-60" />
         </div>
       </div>
-      <Bone className="w-full h-32 rounded-[32px]" />
+      <Bone className="w-full h-32 rounded-[24px]" />
       <div className="grid grid-cols-2 gap-4">
         {[...Array(4)].map((_, i) => <Bone key={i} className="h-28 rounded-[28px]" />)}
       </div>
@@ -69,7 +69,7 @@ export function ChatBubbleSkeleton() {
 
 export function GigCardSkeleton() {
   return (
-    <div className="bg-white dark:bg-[#1C1C1E] rounded-[32px] p-6 shadow-premium-md space-y-4 animate-in fade-in duration-500">
+    <div className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-6 shadow-premium-md space-y-4 animate-in fade-in duration-500">
       <div className="flex items-center gap-3">
         <Bone className="w-12 h-12 rounded-full" />
         <div className="space-y-2 flex-1">
@@ -100,7 +100,7 @@ export function TaskDetailSkeleton() {
         <Bone className="w-full h-10 rounded-2xl" />
         <Bone className="w-[60%] h-10 rounded-2xl" />
       </div>
-      <div className="bg-gray-50 dark:bg-white/5 rounded-[32px] p-6 flex items-center gap-4 border border-black/[0.02] dark:border-white/5">
+      <div className="bg-gray-50 dark:bg-white/5 rounded-[24px] p-6 flex items-center gap-4 border border-black/[0.02] dark:border-white/5">
         <Bone className="w-16 h-16 rounded-full" />
         <div className="space-y-2 flex-1">
           <Bone className="w-48 h-5 rounded-full" />
@@ -131,7 +131,7 @@ export function ClientHomeSkeleton() {
       </div>
 
       {/* Stats Widget */}
-      <div className="bg-white/50 dark:bg-white/5 rounded-[32px] p-6 space-y-6">
+      <div className="bg-white/50 dark:bg-white/5 rounded-[24px] p-6 space-y-6">
         <div className="flex justify-between">
           <Bone className="w-24 h-4 rounded-full" />
           <Bone className="w-16 h-4 rounded-full opacity-50" />

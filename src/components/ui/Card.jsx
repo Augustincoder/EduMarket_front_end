@@ -17,7 +17,7 @@ export const Card = forwardRef(({ className, radius = 'xl', isPressable, onClick
     md: 'rounded-xl',
     lg: 'rounded-2xl',
     xl: 'squircle',
-    '2xl': 'rounded-[40px]',
+    '2xl': 'rounded-[24px]',
     none: 'rounded-none',
   }[radius] || 'squircle';
 

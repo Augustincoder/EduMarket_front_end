@@ -67,7 +67,7 @@ export default function SplashScreen() {
       {/* Logo */}
       <div className="flex flex-col items-center gap-6 animate-ios-pop relative z-10">
         {/* Logo mark */}
-        <div className="w-24 h-24 rounded-[32px] bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
+        <div className="w-24 h-24 rounded-[20px] bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
           <span className="text-5xl drop-shadow-lg">📚</span>
         </div>
 

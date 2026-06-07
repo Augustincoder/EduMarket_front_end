@@ -137,7 +137,7 @@ export default function VerificationScreen() {
         <Header title="Tasdiqlash" showBack />
         <div className="px-4 py-10 flex flex-col items-center text-center space-y-6">
           <div className={cn(
-            "w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl",
+            "w-24 h-24 rounded-2xl flex items-center justify-center shadow-2xl",
             currentStatus === 'APPROVED' ? "bg-edu-primary text-white" : "bg-amber-500 text-white"
           )}>
             {currentStatus === 'APPROVED' ? <ShieldCheck size={48} /> : <AlertCircle size={48} />}

@@ -95,7 +95,7 @@ export default function ClientHomeScreen() {
       </div>
 
       {/* ── My Tasks Status Widget ─────────────────────── */}
-      <div className="mb-10 bg-white dark:bg-[#1C1C1E] rounded-[32px] p-6 shadow-premium-md border border-black/[0.02] dark:border-white/[0.03]">
+      <div className="mb-10 bg-white dark:bg-[#1C1C1E] rounded-[24px] p-6 shadow-premium-md border border-black/[0.02] dark:border-white/[0.03]">
         <div className="flex justify-between items-center mb-6 px-1">
           <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em]">Loyiha holati</h3>
           <button onClick={() => navigate('/my-tasks')} className="text-[12px] font-black text-[#007AFF] flex items-center gap-1">
@@ -223,7 +223,7 @@ export default function ClientHomeScreen() {
             ))}
           </div>
         ) : (
-          <div className="bg-white/50 dark:bg-white/5 rounded-[32px] p-8 text-center border border-dashed border-gray-200 dark:border-white/10">
+          <div className="bg-white/50 dark:bg-white/5 rounded-[24px] p-8 text-center border border-dashed border-gray-200 dark:border-white/10">
             <p className="text-[13px] font-bold text-gray-400 uppercase tracking-widest">Hozircha mutaxassislar yo'q</p>
           </div>
         )}

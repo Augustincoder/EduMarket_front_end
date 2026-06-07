@@ -130,7 +130,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
             </div>
           ) : milestones.length === 0 ? (
             /* empty state with guide */
-            <div className="bg-white dark:bg-[#1C1C1E] rounded-[32px] p-8 border border-dashed border-gray-200 dark:border-white/10 text-center space-y-6">
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-8 border border-dashed border-gray-200 dark:border-white/10 text-center space-y-6">
               <div className="w-16 h-16 bg-blue-50 dark:bg-blue-500/10 rounded-3xl flex items-center justify-center text-blue-500 mx-auto">
                 <Rocket size={32} />
               </div>

@@ -88,7 +88,7 @@ export default function ChatListScreen() {
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center py-24 px-10">
-              <div className="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-[32px] flex items-center justify-center text-4xl mb-6 shadow-inner border border-black/[0.03] dark:border-white/5">
+              <div className="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-inner border border-black/[0.03] dark:border-white/5">
                 💬
               </div>
               <h2 className="text-[19px] font-black text-gray-900 dark:text-white mb-2">Chatlar topilmadi</h2>
