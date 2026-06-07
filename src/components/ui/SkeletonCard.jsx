@@ -7,26 +7,30 @@ function Bone({ className }) {
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-[24px] p-4 shadow-ios space-y-4">
+    <div className="bg-white dark:bg-[#1C1C1E] rounded-[32px] p-5 shadow-ios space-y-4 border border-black/[0.03] dark:border-white/[0.03]">
       <div className="flex items-start justify-between gap-2">
-        <div className="flex gap-2">
-          <Bone className="w-16 h-5 rounded-full" />
-          <Bone className="w-24 h-5 rounded-full" />
+        <div className="flex gap-1.5">
+          <Bone className="w-16 h-6 rounded-lg" />
+          <Bone className="w-20 h-6 rounded-lg" />
         </div>
-        <Bone className="w-20 h-6" />
+        <Bone className="w-9 h-9 rounded-2xl" />
       </div>
-      <div className="space-y-2">
-        <Bone className="w-full h-4" />
-        <Bone className="w-[85%] h-4" />
+      <div className="space-y-3">
+        <Bone className="w-full h-5 rounded-lg" />
+        <Bone className="w-[70%] h-5 rounded-lg" />
+        <Bone className="w-32 h-6 rounded-lg" />
       </div>
-      <div className="flex items-center justify-between pt-2 border-t border-edu-border/10">
-        <div className="flex items-center gap-2">
-          <Bone className="w-6 h-6 rounded-lg" />
-          <Bone className="w-24 h-3" />
+      <div className="flex items-center justify-between pt-4 border-t border-black/[0.03] dark:border-white/[0.05]">
+        <div className="flex items-center gap-2.5">
+          <Bone className="w-8 h-8 rounded-2xl" />
+          <div className="space-y-1.5">
+            <Bone className="w-20 h-3" />
+            <Bone className="w-12 h-2" />
+          </div>
         </div>
-        <div className="flex gap-3">
-          <Bone className="w-12 h-3" />
-          <Bone className="w-10 h-3" />
+        <div className="flex flex-col items-end gap-1.5">
+          <Bone className="w-16 h-5 rounded-lg" />
+          <Bone className="w-24 h-3 rounded-lg" />
         </div>
       </div>
     </div>

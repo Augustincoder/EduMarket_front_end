@@ -60,9 +60,6 @@ export default function TaskDetailScreen() {
     disputeErrors, setDisputeErrors,
     promoteOpen, setPromoteOpen,
     deliverySubmitOpen, setDeliverySubmitOpen,
-    flagOpen, setFlagOpen,
-    flagReason, setFlagReason,
-    flagErrors, setFlagErrors,
     createBid,
     handleBidSubmit,
     handleRatingSubmit,
@@ -70,7 +67,6 @@ export default function TaskDetailScreen() {
     handleDisputeSubmit,
     handlePromoteSubmit,
     handleDeliverySubmit,
-    handleFlagSubmit,
   } = useTaskActions(id);
 
   const joinRoom = useChatStore((s) => s.joinRoom);
@@ -144,10 +140,6 @@ export default function TaskDetailScreen() {
   if (!task) return null;
 
   const renderCTA = () => {
-    // Flag visibility: user exists, is not client/freelancer, task is open, user is VIP or high rated
-    const canFlag = user && !isMember && task.status === 'OPEN' && 
-                    (user.isVip || (user.ratingCount >= 5 && (user.ratingSum / user.ratingCount) >= 4.5));
-
     if (!user) {
       return (
         <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')}>
@@ -160,48 +152,34 @@ export default function TaskDetailScreen() {
     if (task.status === 'OPEN') {
       if (isClient) {
         return (
-          <div className="flex flex-col gap-2.5 w-full">
-            <div className="flex gap-2">
-              <Button
-                size="md" variant="vip" className="flex-1"
-                icon={<Sparkles size={14} />}
-                onClick={() => setPromoteOpen(true)}
-              >
-                Ko'tarish
-              </Button>
-              <Button
-                size="md" variant="outline" className="flex-1 text-[#FF3B30] border-[#FF3B30]/20 hover:bg-[#FF3B30]/5"
-                isLoading={transitions.cancel.isPending}
-                onClick={() => {
-                  showConfirm("Haqiqatan ham bu vazifani bekor qilmoqchimisiz?", async () => {
-                    try {
-                      await transitions.cancel.mutateAsync();
-                      toast.success("Vazifa bekor qilindi");
-                    } catch (err) {
-                      toast.error(err.serverMsg || "Bekor qilishda xato");
-                    }
-                  });
-                }}
-              >
-                Bekor qilish
-              </Button>
-            </div>
-            <Button fullWidth size="lg" variant="primary" onClick={() => navigate(`/tasks/${id}/bids`)}>
+          <div className="flex flex-col gap-3 w-full animate-fade-in">
+            <Button 
+              fullWidth size="lg" variant="primary" 
+              onClick={() => navigate(`/tasks/${id}/bids`)}
+              className="rounded-[22px] shadow-lg shadow-[#007AFF]/20 h-[56px] text-[16px] font-black"
+            >
               Takliflarni ko'rish {task._count?.bids > 0 && `(${task._count.bids})`}
+            </Button>
+            <Button
+              fullWidth size="md" variant="vip"
+              icon={<Sparkles size={16} />}
+              onClick={() => setPromoteOpen(true)}
+              className="rounded-[18px] h-[48px] text-[14px] font-bold"
+            >
+              Vazifani ko'tarish
             </Button>
           </div>
         );
       } else {
         return (
           <div className="flex flex-col gap-2 w-full">
-            <Button fullWidth variant="primary" size="lg" onClick={() => setBidOpen(true)}>
+            <Button 
+              fullWidth variant="primary" size="lg" 
+              onClick={() => setBidOpen(true)}
+              className="rounded-[22px] h-[56px] text-[16px] font-black"
+            >
               Taklif berish
             </Button>
-            {canFlag && (
-              <Button fullWidth variant="ghost" size="sm" className="text-red-500 hover:bg-red-50" onClick={() => setFlagOpen(true)}>
-                🚩 Qoidabuzarlik haqida shikoyat
-              </Button>
-            )}
           </div>
         );
       }
@@ -211,11 +189,12 @@ export default function TaskDetailScreen() {
     if (task.status === 'ASSIGNED') {
       if (isFreelancer) {
         return (
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-3 w-full">
             <Button
               fullWidth size="lg" variant="primary"
               isLoading={transitions.startProgress.isPending}
               onClick={() => transitions.startProgress.mutate()}
+              className="rounded-[22px] h-[56px] text-[16px] font-black"
             >
               Ishni boshlash 🚀
             </Button>
@@ -223,6 +202,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -230,14 +210,15 @@ export default function TaskDetailScreen() {
         );
       } else if (isClient) {
         return (
-          <div className="flex flex-col gap-2 w-full">
-            <div className="text-xs text-center text-edu-muted bg-edu-border/10 p-3 rounded-2xl border border-edu-border/30 font-medium animate-pulse">
+          <div className="flex flex-col gap-3 w-full">
+            <div className="text-[13px] text-center text-gray-500 bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-black/[0.03] font-bold animate-pulse">
               ⏳ Ijrochi ishni boshlashini kutilmoqda...
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -250,10 +231,11 @@ export default function TaskDetailScreen() {
     if (task.status === 'IN_PROGRESS') {
       if (isFreelancer) {
         return (
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-3 w-full">
             <Button
               fullWidth size="lg" variant="primary"
               onClick={() => setDeliverySubmitOpen(true)}
+              className="rounded-[22px] h-[56px] text-[16px] font-black"
             >
               Natijani yuborish 📤
             </Button>
@@ -261,6 +243,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -268,14 +251,15 @@ export default function TaskDetailScreen() {
         );
       } else if (isClient) {
         return (
-          <div className="flex flex-col gap-2 w-full">
-            <div className="text-xs text-center text-[#007AFF] bg-[#007AFF]/5 p-3 rounded-2xl border border-[#007AFF]/10 font-bold">
+          <div className="flex flex-col gap-3 w-full">
+            <div className="text-[13px] text-center text-[#007AFF] bg-[#007AFF]/5 p-4 rounded-2xl border border-[#007AFF]/10 font-bold">
               ⚙️ Ijrochi vazifa ustida ishlamoqda
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -288,17 +272,19 @@ export default function TaskDetailScreen() {
     if (task.status === 'PREVIEW_PENDING') {
       if (isClient) {
         return (
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-3 w-full">
             <Button
               fullWidth size="lg" variant="primary"
               onClick={() => setRatingOpen(true)}
+              className="rounded-[22px] h-[56px] text-[16px] font-black"
             >
-              Vazifani baholash va qabul qilish ⭐
+              Vazifani baholash ⭐
             </Button>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -306,14 +292,15 @@ export default function TaskDetailScreen() {
         );
       } else if (isFreelancer) {
         return (
-          <div className="flex flex-col gap-2 w-full">
-            <div className="text-xs text-center text-amber-600 bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10 font-bold">
+          <div className="flex flex-col gap-3 w-full">
+            <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10 font-bold">
               ⏳ Mijoz yuborilgan fayllarni tekshirmoqda
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -326,7 +313,7 @@ export default function TaskDetailScreen() {
     if (task.status === 'IN_REVIEW') {
       if (isClient) {
         return (
-          <div className="flex flex-col gap-2.5 w-full">
+          <div className="flex flex-col gap-3 w-full">
             <Button
               fullWidth size="lg" variant="primary"
               isLoading={transitions.accept.isPending}
@@ -334,18 +321,19 @@ export default function TaskDetailScreen() {
                 await transitions.accept.mutateAsync();
                 setRatingOpen(true);
               }}
+              className="rounded-[22px] h-[56px] text-[16px] font-black"
             >
               Vazifani yakuniy qabul qilish ✅
             </Button>
             <div className="flex gap-2">
               <Button
-                size="md" variant="secondary" className="flex-1"
+                size="md" variant="secondary" className="flex-1 rounded-[18px] h-[48px]"
                 onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}
               >
                 <RotateCcw size={14} /> Qayta ishlash
               </Button>
               <Button
-                size="md" variant="danger" className="flex-1"
+                size="md" variant="danger" className="flex-1 rounded-[18px] h-[48px]"
                 onClick={() => { setDisputeReason(''); setDisputeErrors({}); setDisputeOpen(true); }}
               >
                 <AlertTriangle size={14} /> Nizo
@@ -355,6 +343,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -362,14 +351,15 @@ export default function TaskDetailScreen() {
         );
       } else if (isFreelancer) {
         return (
-          <div className="flex flex-col gap-2 w-full">
-            <div className="text-xs text-center text-amber-600 bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10 font-bold animate-pulse">
+          <div className="flex flex-col gap-3 w-full">
+            <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10 font-bold animate-pulse">
               ⏳ Mijoz yakuniy qabul qilishini kutilmoqda...
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
+              className="rounded-[18px] h-[48px]"
             >
               Chatga o'tish
             </Button>
@@ -381,20 +371,20 @@ export default function TaskDetailScreen() {
     // 6. Task is COMPLETED
     if (task.status === 'COMPLETED' && isMember) {
       return (
-        <div className="flex flex-col gap-2 w-full">
-          <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold text-sm bg-emerald-500/5 py-2.5 rounded-2xl border border-emerald-500/10">
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold text-[15px] bg-emerald-500/5 py-4 rounded-2xl border border-emerald-500/10">
             <CheckCircle size={18} /> Muvaffaqiyatli yakunlandi
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline" className="flex-1"
+              variant="outline" className="flex-1 rounded-[18px] h-[48px]"
               icon={<Star size={14} />}
               onClick={() => setRatingOpen(true)}
             >
               Baholash
             </Button>
             <Button
-              variant="outline" className="flex-1"
+              variant="outline" className="flex-1 rounded-[18px] h-[48px]"
               icon={<MessageSquare size={14} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
             >
@@ -411,7 +401,12 @@ export default function TaskDetailScreen() {
   return (
     <PageLayout showNav={false} scrollable={false} bgClass="bg-[#F2F2F7] dark:bg-black">
       <div className="flex flex-col h-dvh">
-        <TaskHeader task={task} user={user} isMember={isMember} />
+        <TaskHeader 
+          task={task} 
+          user={user} 
+          isMember={isMember} 
+          onCancel={() => transitions.cancel.mutateAsync()}
+        />
 
         <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-6 space-y-5">
           {/* Status & Timeline Section */}
@@ -682,32 +677,6 @@ export default function TaskDetailScreen() {
         onSubmit={handleDeliverySubmit}
         isSubmitting={transitions.deliverPreview?.isPending}
       />
-
-      <Modal
-        isOpen={flagOpen}
-        onClose={() => setFlagOpen(false)}
-        title="Qoidabuzarlik haqida shikoyat"
-        footer={
-          <Button fullWidth variant="danger" onClick={handleFlagSubmit} isLoading={transitions.flagTask?.isPending}>
-            Shikoyat qilish
-          </Button>
-        }
-      >
-        <div className="py-2">
-          <p className="text-sm text-edu-muted mb-4">
-            Agar bu vazifa platforma qoidalariga zid bo'lsa (masalan: firibgarlik, noo'rin kontent), iltimos sababini batafsil yozing.
-          </p>
-          <TextArea
-            label="Sabab *"
-            placeholder="Shikoyat sababi..."
-            value={flagReason}
-            onValueChange={(v) => { setFlagReason(v); setFlagErrors(e => ({ ...e, reason: null })); }}
-            maxLength={1000}
-            minRows={4}
-            error={flagErrors.reason?.[0]}
-          />
-        </div>
-      </Modal>
     </PageLayout>
   );
 }

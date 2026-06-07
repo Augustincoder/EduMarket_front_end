@@ -22,7 +22,7 @@ const DOC_TYPES = [
 export default function VerificationScreen() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [step, setStep] = useState(1);
   const [docType, setDocType] = useState('STUDENT_ID');
   const [docFiles, setDocFiles] = useState([]);
@@ -34,6 +34,13 @@ export default function VerificationScreen() {
     queryFn: () => verificationApi.getMyStatus().then(res => res.data.data),
     retry: 1,
   });
+
+  // Sync global user state if status changed to APPROVED
+  useEffect(() => {
+    if (status?.status === 'APPROVED' && user?.verificationStatus !== 'APPROVED') {
+      refreshUser();
+    }
+  }, [status, user, refreshUser]);
 
   const currentStatus = status?.status || user?.verificationStatus;
 

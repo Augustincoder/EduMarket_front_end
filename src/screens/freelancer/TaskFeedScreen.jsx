@@ -1,27 +1,24 @@
 // src/screens/TaskFeedScreen.jsx
-import { useState, useCallback } from 'react';
-// Removed unused import
-import { TextInput } from '../../components/forms/TextInput';
-import { Button } from '../../components/ui/Button';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { Search, SlidersHorizontal, X, CheckCircle2 } from 'lucide-react';
 import { PageLayout } from '../../components/layout/PageLayout';
 import TaskCard from '../../components/cards/TaskCard';
 import { FilterChip } from '../../components/ui/Chip';
 import { BottomSheet } from '../../components/ui/BottomSheet';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { Button } from '../../components/ui/Button';
 import { useTaskFeed } from '../../hooks/useTasks';
 import { useUiStore } from '../../store/uiStore';
 import { useDebounce } from '../../hooks/useDebounce';
 import { CATEGORIES } from '../../lib/constants';
 import { hapticLight } from '../../lib/telegram';
 import { cn } from '../../lib/utils';
-import { useRef, useEffect } from 'react';
 
 const SORT_OPTIONS = [
   { value: 'newest',   label: 'Eng yangi' },
   { value: 'priceAsc', label: 'Narxi ↑' },
-  { value: 'priceDesc','label': 'Narxi ↓' },
+  { value: 'priceDesc', label: 'Narxi ↓' },
 ];
 
 export default function TaskFeedScreen() {
@@ -49,7 +46,6 @@ export default function TaskFeedScreen() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (debouncedQuery) addSearch(debouncedQuery);
   }, [debouncedQuery, addSearch]);
 
@@ -70,8 +66,6 @@ export default function TaskFeedScreen() {
 
   const parentRef = useRef(null);
 
-  // We keep simple mapping for now to avoid virtualization bugs reported by user
-  // Infinite scroll is handled by manual check
   useEffect(() => {
     const handleScroll = () => {
       if (!parentRef.current) return;
@@ -86,90 +80,62 @@ export default function TaskFeedScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <PageLayout className="flex flex-col h-full overflow-hidden" scrollable={false}>
-      {/* ── Fixed Header Block (Search + Chips + Sort) ── */}
-      <div className="z-30 bg-edu-bg/95 backdrop-blur-xl border-b border-edu-border/40 shadow-sm shrink-0">
+    <PageLayout className="h-dvh flex flex-col overflow-hidden" scrollable={false}>
+      {/* ── Fixed Header (Search + Category) ── */}
+      <div className="z-30 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-black/[0.03] dark:border-white/[0.05] shadow-sm shrink-0">
         
-        {/* Navigation Bar */}
-        <div className="h-[60px] flex items-center justify-between px-4">
-          <div className={cn(
-            "flex-1 flex items-center transition-all duration-300",
-            (isFocused || localQuery) ? "mr-2" : ""
-          )}>
-            {(isFocused || localQuery) ? (
-              <div className="flex-1 relative animate-fade-in">
-                <TextInput
-                  id="taskSearchInput"
-                  placeholder="Vazifa qidirish..."
-                  value={localQuery}
-                  onValueChange={setLocalQuery}
-                  onFocus={() => setIsFocused(true)}
-                  startContent={<Search size={16} className="text-gray-400" />}
-                  className="bg-gray-100 dark:bg-white/5 border-none h-10 rounded-2xl pl-10 pr-10 text-[15px]"
-                  containerClassName="shadow-none border-none ring-0 focus-within:ring-2 focus-within:ring-[#007AFF]/20"
-                />
-                {localQuery && (
-                  <button 
-                    onClick={() => setLocalQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 bg-gray-300 dark:bg-white/20 rounded-full flex items-center justify-center text-white"
-                  >
-                    <X size={12} strokeWidth={3} />
-                  </button>
-                )}
-              </div>
-            ) : (
-              <h1 className="text-2xl font-black font-display text-gray-900 dark:text-white tracking-tight animate-fade-in">
-                Vazifalar
-              </h1>
+        {/* Top Row: Title & Filter */}
+        <div className="px-4 pt-5 pb-2 flex items-center justify-between">
+          <h1 className="text-[26px] font-black font-display text-gray-900 dark:text-white tracking-tight">
+            Vazifalar
+          </h1>
+          <button
+            onClick={() => { setFilterOpen(true); hapticLight(); }}
+            className={cn(
+              "w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 border",
+              (filterState.category || filterState.minPrice || filterState.maxPrice < 200000 || filterState.sort !== 'newest')
+                ? "bg-[#007AFF]/10 border-[#007AFF]/20 text-[#007AFF] shadow-sm"
+                : "bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 dark:text-gray-500 hover:text-gray-600"
             )}
-          </div>
+          >
+            <SlidersHorizontal size={20} />
+          </button>
+        </div>
 
-          <div className="flex items-center gap-2.5">
-            {!(isFocused || localQuery) && (
-              <button
-                onClick={() => {
-                  setIsFocused(true);
-                  setTimeout(() => document.getElementById('taskSearchInput')?.focus(), 50);
-                }}
-                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center active:scale-90 transition-all"
+        {/* Search Bar Row */}
+        <div className="px-4 pb-3 pt-1">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#007AFF] transition-colors">
+              <Search size={18} />
+            </div>
+            <input
+              id="taskSearchInput"
+              type="text"
+              placeholder="Vazifa yoki ko'nikma qidirish..."
+              value={localQuery}
+              onChange={(e) => setLocalQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+              className="w-full h-11 bg-gray-100/80 dark:bg-white/5 border-none rounded-2xl pl-11 pr-11 text-[15px] font-medium outline-none focus:ring-2 focus:ring-[#007AFF]/10 focus:bg-white dark:focus:bg-white/10 transition-all"
+            />
+            {localQuery && (
+              <button 
+                onClick={() => { setLocalQuery(''); hapticLight(); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-gray-300 dark:bg-white/20 rounded-full flex items-center justify-center text-white active:scale-90 transition-all"
               >
-                <Search size={20} className="text-gray-700 dark:text-gray-300" />
-              </button>
-            )}
-            
-            {(isFocused || localQuery) ? (
-               <button 
-                onClick={() => {
-                  setLocalQuery('');
-                  setIsFocused(false);
-                }}
-                className="text-[15px] font-bold text-[#007AFF] px-2"
-               >
-                 Bekor qilish
-               </button>
-            ) : (
-              <button
-                onClick={() => setFilterOpen(true)}
-                className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition-all border",
-                  (filterState.category || filterState.minPrice || filterState.maxPrice < 200000)
-                    ? "bg-[#007AFF]/10 border-[#007AFF]/20 text-[#007AFF]"
-                    : "bg-gray-100 dark:bg-white/5 border-transparent text-gray-700 dark:text-gray-300"
-                )}
-              >
-                <SlidersHorizontal size={20} />
+                <X size={14} strokeWidth={3} />
               </button>
             )}
           </div>
         </div>
 
-        {/* Category Chips */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-3">
+        {/* Categories Row (Minimalist) */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-4">
           <FilterChip
             label="Barchasi"
             active={!filterState.category}
             onClick={() => { setFilter('category', ''); hapticLight(); }}
-            className="rounded-xl px-4 h-8 text-[13px] font-bold"
+            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
           />
           {CATEGORIES.map((cat) => (
             <FilterChip
@@ -177,26 +143,8 @@ export default function TaskFeedScreen() {
               label={`${cat.emoji} ${cat.label}`}
               active={filterState.category === cat.value}
               onClick={() => { setFilter('category', cat.value); hapticLight(); }}
-              className="rounded-xl px-4 h-8 text-[13px] font-bold"
+              className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
             />
-          ))}
-        </div>
-
-        {/* Sort Bar */}
-        <div className="flex gap-2 px-4 pb-4 overflow-x-auto scrollbar-hide">
-          {SORT_OPTIONS.map((s) => (
-            <button
-              key={s.value}
-              onClick={() => { setFilter('sort', s.value); hapticLight(); }}
-              className={cn(
-                'text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-full border transition-all whitespace-nowrap active:scale-95',
-                filterState.sort === s.value
-                  ? 'bg-gray-900 dark:bg-white text-white dark:text-black border-transparent shadow-md'
-                  : 'bg-white dark:bg-[#1C1C1E] text-gray-500 border-gray-100 dark:border-white/5'
-              )}
-            >
-              {s.label}
-            </button>
           ))}
         </div>
       </div>
@@ -204,8 +152,31 @@ export default function TaskFeedScreen() {
       {/* ── Task List Container ── */}
       <div 
         ref={parentRef}
-        className="flex-1 overflow-y-auto px-4 pt-4 pb-nav bg-[#F2F2F7] dark:bg-black scrollbar-hide"
+        className="flex-1 overflow-y-auto px-4 pt-4 pb-nav bg-[#F2F2F7] dark:bg-black scrollbar-hide relative"
       >
+        {/* Recent Searches Overlay */}
+        {isFocused && !localQuery && recentSearches.length > 0 && (
+          <div className="absolute inset-0 z-40 bg-white/60 dark:bg-black/60 backdrop-blur-md animate-fade-in px-4 py-4">
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-6 shadow-2xl border border-black/5 dark:border-white/5">
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">
+                Oxirgi qidiruvlar
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {recentSearches.map(q => (
+                  <button
+                    key={q}
+                    onClick={() => { setLocalQuery(q); hapticLight(); }}
+                    className="px-4 py-2 bg-gray-50 dark:bg-white/5 text-gray-800 dark:text-gray-200 text-[14px] font-bold rounded-2xl flex items-center gap-2 active:scale-95 transition-all border border-gray-100 dark:border-white/5 hover:border-[#007AFF]/30"
+                  >
+                    <Search size={14} className="text-gray-400" />
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 5 }).map((_, i) => <TaskCardSkeleton key={i} />)}
@@ -233,82 +204,83 @@ export default function TaskFeedScreen() {
             )}
           </div>
         )}
-        
-        {/* Recent Searches Overlay */}
-        {isFocused && !localQuery && recentSearches.length > 0 && (
-          <div className="absolute inset-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md animate-fade-in p-6">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
-              Oxirgi qidiruvlar
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {recentSearches.map(q => (
-                <button
-                  key={q}
-                  onClick={() => { setLocalQuery(q); hapticLight(); }}
-                  className="px-4 py-2 bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200 text-[14px] font-bold rounded-2xl flex items-center gap-2 active:scale-95 transition-all"
-                >
-                  <Search size={14} className="text-gray-400" />
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ── Filter BottomSheet ── */}
       <BottomSheet
         isOpen={filterOpen}
         onClose={() => setFilterOpen(false)}
-        title="Filtrlash"
+        title="Filtrlash va Saralash"
       >
-        <div className="space-y-6 py-4">
+        <div className="space-y-8 py-4">
+          {/* Sorting Section */}
           <div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-3">Kategoriya</p>
+            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Saralash</p>
+            <div className="grid grid-cols-1 gap-2">
+              {SORT_OPTIONS.map((s) => (
+                <button
+                  key={s.value}
+                  onClick={() => { setFilter('sort', s.value); hapticLight(); }}
+                  className={cn(
+                    'flex items-center justify-between px-5 py-4 rounded-[22px] border transition-all active:scale-[0.98]',
+                    filterState.sort === s.value
+                      ? 'bg-[#007AFF]/5 border-[#007AFF] text-[#007AFF] shadow-sm'
+                      : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-700 dark:text-gray-300'
+                  )}
+                >
+                  <span className="text-[15px] font-bold">{s.label}</span>
+                  {filterState.sort === s.value && <div className="w-5 h-5 rounded-full bg-[#007AFF] flex items-center justify-center"><CheckCircle2 size={14} className="text-white" /></div>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Kategoriya</p>
             <div className="flex flex-wrap gap-2">
-              <FilterChip label="Barchasi" active={!filterState.category} onClick={() => setFilter('category', '')} className="rounded-xl h-9" />
+              <FilterChip label="Barchasi" active={!filterState.category} onClick={() => setFilter('category', '')} className="rounded-xl h-10 px-5" />
               {CATEGORIES.map((cat) => (
                 <FilterChip
                   key={cat.value}
                   label={`${cat.emoji} ${cat.label}`}
                   active={filterState.category === cat.value}
                   onClick={() => setFilter('category', cat.value)}
-                  className="rounded-xl h-9"
+                  className="rounded-xl h-10 px-5"
                 />
               ))}
             </div>
           </div>
 
           <div>
-            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-3">Narx oralig'i (UZS)</p>
+            <p className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-4 px-1">Narx oralig'i (UZS)</p>
             <div className="flex items-center gap-4">
-              <div className="flex-1 bg-gray-100 dark:bg-white/5 rounded-2xl px-4 py-3 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
+              <div className="flex-1 bg-gray-100/80 dark:bg-white/5 rounded-2xl px-5 py-4 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
                 <input
                   type="number"
                   placeholder="Min"
                   value={filterState.minPrice || ''}
                   onChange={(e) => setFilter('minPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[15px] font-bold outline-none"
+                  className="bg-transparent w-full text-[16px] font-bold outline-none placeholder:text-gray-400"
                 />
               </div>
               <div className="w-4 h-[2px] bg-gray-300 dark:bg-white/10" />
-              <div className="flex-1 bg-gray-100 dark:bg-white/5 rounded-2xl px-4 py-3 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
+              <div className="flex-1 bg-gray-100/80 dark:bg-white/5 rounded-2xl px-5 py-4 border border-transparent focus-within:border-[#007AFF]/30 transition-all">
                 <input
                   type="number"
                   placeholder="Max"
                   value={filterState.maxPrice < 200000 ? filterState.maxPrice : ''}
                   onChange={(e) => setFilter('maxPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[15px] font-bold outline-none"
+                  className="bg-transparent w-full text-[16px] font-bold outline-none placeholder:text-gray-400"
                 />
               </div>
             </div>
           </div>
 
           <div className="flex gap-4 pt-4">
-            <Button variant="secondary" fullWidth onClick={() => { resetFilters(); setFilterOpen(false); }} className="rounded-2xl h-12 font-black uppercase tracking-widest text-[13px]">
+            <Button variant="secondary" fullWidth onClick={() => { resetFilters(); setFilterOpen(false); }} className="rounded-[22px] h-14 font-black uppercase tracking-widest text-[13px] border-none bg-gray-100 dark:bg-white/5">
               Tozalash
             </Button>
-            <Button variant="primary" fullWidth onClick={() => { setFilterOpen(false); hapticLight(); }} className="rounded-2xl h-12 font-black uppercase tracking-widest text-[13px] bg-[#007AFF]">
+            <Button variant="primary" fullWidth onClick={() => { setFilterOpen(false); hapticLight(); }} className="rounded-[22px] h-14 font-black uppercase tracking-widest text-[13px] bg-[#007AFF] shadow-lg shadow-[#007AFF]/20">
               Qo'llash
             </Button>
           </div>
