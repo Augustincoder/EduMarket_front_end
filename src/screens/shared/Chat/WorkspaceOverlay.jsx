@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Target, Plus, CheckCircle, Circle, Trash2, LayoutDashboard, X, Info, Rocket, ShieldCheck, ListTodo } from 'lucide-react';
+import { Target, Plus, CheckCircle, Trash2, LayoutDashboard, X, Info, Rocket, ShieldCheck, ListTodo } from 'lucide-react';
 import { useMilestones, useMilestoneMutations } from '../../../hooks/useMilestones';
 import { useSocket } from '../../../hooks/useSocket';
-import { Button } from '../../../components/ui/Button';
 import { hapticLight, hapticSuccess } from '../../../lib/telegram';
 import { cn } from '../../../lib/utils';
 

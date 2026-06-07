@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
-import { useTelegram } from '../../hooks/useTelegram';
 import { useChatStore } from '../../store/chatStore';
 import { timeAgo, cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';

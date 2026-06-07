@@ -1,21 +1,19 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '../../store/authStore';
 import { usersApi } from '../../services/users.service';
 import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { CATEGORIES } from '../../lib/constants';
 import { Avatar } from '../../components/ui/Avatar';
-import { UserBadge } from '../../components/ui/Badge';
+import { VerifiedBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
-import { Plus, ArrowRight, ClipboardList, ChevronRight } from 'lucide-react';
+import { Plus, ClipboardList, ChevronRight } from 'lucide-react';
 import { ClientHomeSkeleton } from '../../components/ui/SkeletonCard';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
 import { cn } from '../../lib/utils';
 
 export default function ClientHomeScreen() {
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
 
   // 1. Fetch my tasks to compute counts
   const { data: myTasks } = useMyTasks('CLIENT');
