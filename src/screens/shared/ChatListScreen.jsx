@@ -4,7 +4,8 @@ import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
 import { useTelegram } from '../../hooks/useTelegram';
 import { useChatStore } from '../../store/chatStore';
-import { timeAgo } from '../../lib/utils';
+import { timeAgo, cn } from '../../lib/utils';
+import { hapticLight } from '../../lib/telegram';
 
 export default function ChatListScreen() {
   const navigate = useNavigate();

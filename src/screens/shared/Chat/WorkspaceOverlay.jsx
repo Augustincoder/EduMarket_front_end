@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Target, Plus, CheckCircle, Circle, Trash2, Layout, X, Info, Rocket, ShieldCheck, ListTodo } from 'lucide-react';
+import { Target, Plus, CheckCircle, Circle, Trash2, LayoutDashboard, X, Info, Rocket, ShieldCheck, ListTodo } from 'lucide-react';
 import { useMilestones, useMilestoneMutations } from '../../../hooks/useMilestones';
 import { useSocket } from '../../../hooks/useSocket';
 import { Button } from '../../../components/ui/Button';
@@ -69,7 +69,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
       <div className="h-16 border-b border-black/[0.03] dark:border-white/[0.05] px-6 flex items-center justify-between bg-white/80 dark:bg-black/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#007AFF]/10 flex items-center justify-center">
-            <Layout className="w-5 h-5 text-[#007AFF]" />
+            <LayoutDashboard className="w-5 h-5 text-[#007AFF]" />
           </div>
           <div>
             <h2 className="font-black text-gray-900 dark:text-white leading-tight tracking-tight">Ish maydoni</h2>

@@ -29,7 +29,7 @@ import { DisputeModal } from './components/DisputeModal';
 import { PromoteModal } from './components/PromoteModal';
 import { DeliveryPreviewCard } from './components/DeliveryPreviewCard';
 import { DeliverySubmitModal } from './components/DeliverySubmitModal';
-import { EduViewer } from '../../../components/ui/EduViewer';
+import EduViewer from '../../../components/ui/EduViewer';
 
 // Decomposed Hook
 import { useTaskActions } from './hooks/useTaskActions';

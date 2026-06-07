@@ -12,7 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { hapticSuccess, hapticError, hapticLight } from '../../lib/telegram';
 import { CheckCircle2, ShieldCheck, AlertCircle, Info, Camera, FileText, ChevronRight, RefreshCcw } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { EduViewer } from '../../components/ui/EduViewer';
+import EduViewer from '../../components/ui/EduViewer';
 import toast from 'react-hot-toast';
 
 const DOC_TYPES = [

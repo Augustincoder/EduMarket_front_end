@@ -11,6 +11,7 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Plus, ArrowRight, ClipboardList, ChevronRight } from 'lucide-react';
 import { ClientHomeSkeleton } from '../../components/ui/SkeletonCard';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
+import { cn } from '../../lib/utils';
 
 export default function ClientHomeScreen() {
   const navigate = useNavigate();

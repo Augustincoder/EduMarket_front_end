@@ -16,8 +16,8 @@ import { chatApi } from '../../services/chat.service';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
-import { EduViewer } from '../../components/ui/EduViewer';
-import { Layout } from 'lucide-react';
+import EduViewer from '../../components/ui/EduViewer';
+import { LayoutDashboard } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 
@@ -129,7 +129,7 @@ export default function ChatScreen() {
               className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
               title="Ish maydoni (Milestones)"
             >
-              <Layout className="w-4 h-4" />
+              <LayoutDashboard className="w-4 h-4" />
             </button>
             <div className={cn(
               "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",

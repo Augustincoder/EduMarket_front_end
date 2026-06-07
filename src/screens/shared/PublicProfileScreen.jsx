@@ -15,7 +15,7 @@ import { tasksApi } from '../../services/tasks.service';
 import { Heart, Zap, Trophy, Star, Clock, ChevronRight, FileText, MessageCircle } from 'lucide-react';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
 import { useFavorites } from '../../hooks/useFavorites';
-import { EduViewer } from '../../components/ui/EduViewer';
+import EduViewer from '../../components/ui/EduViewer';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { formatPrice, cn } from '../../lib/utils';

@@ -35,7 +35,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { calculateLevel, calculateStreak } from '../../lib/gamification';
-import { EduViewer } from '../../components/ui/EduViewer';
+import EduViewer from '../../components/ui/EduViewer';
 
 const CATEGORIES = [
   'Dasturlash', 'Dizayn', 'Tarjima', 'SMM', 'Kopirayterlik',
