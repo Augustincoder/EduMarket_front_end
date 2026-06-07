@@ -1,5 +1,5 @@
 import { useState, useMemo, memo } from 'react';
-import { Download, FileText, Code2, FileType, SearchPlus, SearchMinus, RotateCw } from 'lucide-react';
+import { Download, FileText, Code2, FileType, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
 import { Modal } from './Modal';
 import { Button } from './Button';
 import { hapticLight } from '../../lib/telegram';
@@ -71,8 +71,8 @@ export const EduViewer = ({
           <div className="flex items-center gap-1">
             {isImage && (
               <>
-                <button onClick={handleZoomOut} className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-colors"><SearchMinus size={18} /></button>
-                <button onClick={handleZoomIn} className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-colors"><SearchPlus size={18} /></button>
+                <button onClick={handleZoomOut} className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-colors"><ZoomOut size={18} /></button>
+                <button onClick={handleZoomIn} className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-colors"><ZoomIn size={18} /></button>
                 <button onClick={handleRotate} className="p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-colors"><RotateCw size={18} /></button>
               </>
             )}
