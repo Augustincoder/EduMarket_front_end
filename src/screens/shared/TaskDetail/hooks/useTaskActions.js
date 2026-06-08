@@ -115,7 +115,7 @@ export function useTaskActions(taskId) {
       await transitions.deliverPreview.mutateAsync(data);
       setDeliverySubmitOpen(false);
       toast.success("Natija muvaffaqiyatli yuklandi");
-    } catch (err) {
+    } catch {
       // Errors handled in mutation globally
     }
   };

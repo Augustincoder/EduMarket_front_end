@@ -8,7 +8,6 @@ export const TextArea = forwardRef(({
   error,
   maxLength,
   minRows = 3,
-  maxRows = 6,
   className,
   onValueChange,
   onChange,

@@ -19,7 +19,7 @@ function ImageAttachment({ fileId, onClick }) {
     if (publicUrl) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setUrl(publicUrl);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setLoading(false);
       return;
     }

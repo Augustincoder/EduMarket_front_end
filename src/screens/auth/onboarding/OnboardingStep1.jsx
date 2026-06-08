@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import useOnboardingStore from '../../../store/onboardingStore';
 import { onboardingApi } from '../../../services/users.service';
 import { useTelegram } from '../../../hooks/useTelegram';
@@ -9,10 +8,8 @@ export default function OnboardingStep1() {
   const formData = useOnboardingStore((s) => s.formData);
   const setFormData = useOnboardingStore((s) => s.setFormData);
   const setStep = useOnboardingStore((s) => s.setStep);
-  const [loading, setLoading] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState(null); // 'checking', 'available', 'taken'
   const { HapticFeedback } = useTelegram();
-  const navigate = useNavigate();
 
   // Debounce username check
   useEffect(() => {
@@ -22,7 +19,7 @@ export default function OnboardingStep1() {
         try {
           const res = await onboardingApi.checkUsername(formData.username);
           setUsernameStatus(res.data.data.available ? 'available' : 'taken');
-        } catch (err) {
+        } catch {
           setUsernameStatus(null);
         }
       }, 300);

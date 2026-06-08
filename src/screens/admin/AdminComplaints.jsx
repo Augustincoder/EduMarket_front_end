@@ -33,7 +33,7 @@ export default function AdminComplaints() {
   // 2. Resolve Report Mutation
   const resolveMutation = useMutation({
     mutationFn: ({ id, status, adminNotes }) => reportsApi.resolve(id, { status, adminNotes }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('Shikoyat holati yangilandi');
       queryClient.invalidateQueries(['admin', 'reports']);
       queryClient.invalidateQueries(['admin', 'stats']);

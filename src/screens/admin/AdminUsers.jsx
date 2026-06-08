@@ -60,7 +60,7 @@ export default function AdminUsers() {
 
   const vipMutation = useMutation({
     mutationFn: ({ userId, isVip, durationDays }) => adminApi.setUserVip(userId, { isVip, durationDays }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('VIP statusi o\'zgartirildi');
       queryClient.invalidateQueries(['admin', 'users']);
       closeModal();
@@ -111,7 +111,7 @@ export default function AdminUsers() {
       try {
         const res = await filesApi.getUrl(user.studentCardFileId);
         setStudentCardUrl(res.data.data.url);
-      } catch (err) {
+      } catch {
         toast.error('Guvohnoma faylini yuklab bo\'lmadi');
       }
     }

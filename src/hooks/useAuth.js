@@ -51,7 +51,7 @@ export function useAuth() {
       updateProfile(u);
       identifyUser(u);
       return u;
-    } catch (_) { 
+    } catch { 
       return null;
     }
   }, [updateProfile]);
@@ -71,7 +71,7 @@ export function useAuth() {
 
   // Logout
   const logout = useCallback(async () => {
-    try { await authApi.logout(); } catch (_) { /* ignore */ }
+    try { await authApi.logout(); } catch { /* ignore */ }
     resetAllCachesAndStores();
     navigate('/', { replace: true });
   }, [resetAllCachesAndStores, navigate]);

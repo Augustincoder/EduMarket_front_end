@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { milestonesApi } from '../services/tasks.service';
 
 export function useMilestones(taskId) {
@@ -10,8 +10,6 @@ export function useMilestones(taskId) {
 }
 
 export function useMilestoneMutations(taskId) {
-  const queryClient = useQueryClient();
-
   const create = useMutation({
     mutationFn: (data) => milestonesApi.create(taskId, data),
   });

@@ -56,6 +56,7 @@ export function useMainButton({
       mb.offClick(handler);
       mb.hide();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, onClick, disabled, isLoading, color, textColor, ...deps]);
 }
 

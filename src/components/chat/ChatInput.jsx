@@ -19,7 +19,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setText(editingMessage.content || '');
     } else if (!replyingTo) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setText('');
     }
   }, [editingMessage, replyingTo]);

@@ -1,4 +1,5 @@
 // src/screens/CreateGigScreen.jsx
+/* eslint-disable react-hooks/incompatible-library */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

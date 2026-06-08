@@ -37,7 +37,7 @@ export default function AdminDisputes() {
   // 3. Resolve Dispute Mutation
   const resolveMutation = useMutation({
     mutationFn: ({ id, winner, adminNotes }) => adminApi.resolveDispute(id, { winner, adminNotes }),
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success('Nizo muvaffaqiyatli hal qilindi');
       queryClient.invalidateQueries(['admin', 'disputes']);
       queryClient.invalidateQueries(['admin', 'stats']);

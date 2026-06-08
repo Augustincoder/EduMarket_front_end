@@ -12,7 +12,15 @@ import {
   User,
   Moon, 
   Sun,
-  Bell
+  Bell,
+  Flame,
+  Zap,
+  ClipboardList,
+  Wallet,
+  Trophy,
+  Star,
+  TrendingUp,
+  Gift
 } from 'lucide-react';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -321,10 +329,10 @@ export default function ProfileScreen() {
                   {/* Gamification Stats */}
                   <div className="flex items-center justify-center gap-4 mt-4">
                     <div className="flex items-center gap-2 text-xs font-black text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
-                      <span>🔥</span> {me?.streakCount || 0} KUN
+                      <Flame size={14} /> {me?.streakCount || 0} KUN
                     </div>
                     <div className="flex items-center gap-2 text-xs font-black text-blue-500 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
-                      <span>⚡</span> {me?.xp || 0} XP
+                      <Zap size={14} /> {me?.xp || 0} XP
                     </div>
                   </div>
                 </div>
@@ -357,21 +365,21 @@ export default function ProfileScreen() {
             {/* Client stats */}
             <div className="grid grid-cols-3 gap-2.5">
               <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
-                <span className="text-lg">📝</span>
+                <ClipboardList size={22} className="text-edu-primary" />
                 <div className="mt-2">
                   <p className="text-lg font-black font-display text-edu-text leading-none">{clientStats?.createdTasks ?? 0}</p>
                   <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">E'lon qilingan</p>
                 </div>
               </div>
               <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
-                <span className="text-lg">💰</span>
+                <Wallet size={22} className="text-indigo-500" />
                 <div className="mt-2">
                   <p className="text-lg font-black font-display text-edu-text leading-none truncate">{formatPrice(clientStats?.totalSpent ?? 0)}</p>
                   <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">Sarflandi</p>
                 </div>
               </div>
               <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
-                <span className="text-lg">⚡</span>
+                <Zap size={22} className="text-orange-500" />
                 <div className="mt-2">
                   <p className="text-lg font-black font-display text-edu-text leading-none">
                     {(clientStats?.openTasks ?? 0) + (clientStats?.inProgressTasks ?? 0) + (clientStats?.inReviewTasks ?? 0)}
@@ -454,7 +462,7 @@ export default function ProfileScreen() {
                   {/* Experience */}
                   {me?.freelancerExperience !== null && (
                     <p className="text-xs text-edu-muted mt-1.5 font-bold flex items-center justify-center gap-1">
-                      <span>💼</span> {me.freelancerExperience} yillik tajriba
+                      <Briefcase size={14} className="opacity-70" /> {me.freelancerExperience} yillik tajriba
                     </p>
                   )}
                 </div>
@@ -477,7 +485,7 @@ export default function ProfileScreen() {
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black uppercase tracking-wider text-edu-muted">Davomiylik</span>
                   <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 px-2 py-0.5 rounded-full border border-orange-200 dark:border-orange-900/50">
-                    <span className="text-orange-500 font-black text-sm">🔥</span>
+                    <Flame size={16} className="text-orange-500" />
                     <span className="text-orange-600 dark:text-orange-400 font-bold text-xs">{calculateStreak(me)} kun</span>
                   </div>
                 </div>
@@ -517,13 +525,13 @@ export default function ProfileScreen() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Bajarilgan ishlar', value: me?.completedTasksCount ?? 0, icon: '🏆', color: 'from-green-500/5 to-transparent border-green-500/20' },
-                { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: '⭐', color: 'from-amber-500/5 to-transparent border-amber-500/20' },
-                { label: 'Muvaffaqiyat', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: '📈', color: 'from-blue-500/5 to-transparent border-blue-500/20' },
-                { label: 'Javob tezligi', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: '⚡', color: 'from-orange-500/5 to-transparent border-orange-500/20' },
+                { label: 'Bajarilgan ishlar', value: me?.completedTasksCount ?? 0, icon: <Trophy size={24} className="text-green-500" />, color: 'from-green-500/5 to-transparent border-green-500/20' },
+                { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: <Star size={24} className="text-amber-500" />, color: 'from-amber-500/5 to-transparent border-amber-500/20' },
+                { label: 'Muvaffaqiyat', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: <TrendingUp size={24} className="text-blue-500" />, color: 'from-blue-500/5 to-transparent border-blue-500/20' },
+                { label: 'Javob tezligi', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: <Zap size={24} className="text-orange-500" />, color: 'from-orange-500/5 to-transparent border-orange-500/20' },
               ].map((item, i) => (
                 <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-premium-sm transition-all hover:border-edu-text/10`}>
-                  <span className="text-xl">{item.icon}</span>
+                  <span>{item.icon}</span>
                   <div className="mt-4">
                     <p className="text-[22px] font-black font-display text-edu-text leading-none">{item.value}</p>
                     <p className="text-[9px] font-black text-edu-muted uppercase tracking-wider mt-2 leading-snug opacity-70">{item.label}</p>
@@ -607,8 +615,9 @@ export default function ProfileScreen() {
           <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 blur-xl rounded-full pointer-events-none" />
           <CardContent className="p-4 flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <p className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">🎁 Taklif va Bonuslar</p>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Gift size={14} className="text-purple-700 dark:text-purple-400" />
+                <p className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">Taklif va Bonuslar</p>
               </div>
               <p className="text-[11px] text-edu-muted leading-relaxed max-w-[200px]">
                 Do'stlaringizni taklif qiling va ularning har bir buyurtmasidan 5% foyda ko'ring!

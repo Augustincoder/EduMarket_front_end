@@ -16,11 +16,10 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
   const {
     isUploading,
     progress,
-    upload,
-    removeFile
+    upload
   } = useFileUpload({
     maxFiles,
-    onSuccess: (uploadedFiles, allFiles) => {
+    onSuccess: (uploadedFiles) => {
       // value is managed by the parent, but we use the hook to perform the action
       onChange?.([...value, ...uploadedFiles]);
     }

@@ -29,8 +29,8 @@ export default function AdminVipRequests() {
   const processMutation = useMutation({
     mutationFn: ({ id, isApproved, rejectReason }) => 
       adminApi.processVipRequest(id, { isApproved, rejectReason }),
-    onSuccess: (data) => {
-      toast.success(data.data.message);
+    onSuccess: (res) => {
+      toast.success(res.data.message);
       queryClient.invalidateQueries(['admin', 'vip-requests']);
       queryClient.invalidateQueries(['admin', 'stats']);
       closeModal();
@@ -53,7 +53,7 @@ export default function AdminVipRequests() {
     try {
       const res = await filesApi.getUrl(req.screenshotFileId);
       setScreenshotUrl(res.data.data.url);
-    } catch (err) {
+    } catch {
       toast.error('Chek rasmini yuklab bo\'lmadi');
     }
   };

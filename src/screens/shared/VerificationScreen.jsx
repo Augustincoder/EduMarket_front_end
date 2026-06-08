@@ -68,14 +68,14 @@ export default function VerificationScreen() {
 
   const submit = useMutation({
     mutationFn: (data) => verificationApi.submit(data),
-    onMutate: async (newData) => {
+    onMutate: async () => {
       // Optimistic update
       await queryClient.cancelQueries({ queryKey: ['verification-status'] });
       const previousStatus = queryClient.getQueryData(['verification-status']);
       queryClient.setQueryData(['verification-status'], { status: 'PENDING' });
       return { previousStatus };
     },
-    onError: (err, newData, context) => {
+    onError: (err, _newData, context) => {
       hapticError();
       // Rollback to previous state if error occurs
       queryClient.setQueryData(['verification-status'], context.previousStatus);

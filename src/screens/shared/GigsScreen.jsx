@@ -1,10 +1,10 @@
 // src/screens/GigsScreen.jsx
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { TextInput } from '../../components/forms/TextInput';
 import { Button } from '../../components/ui/Button';
-import { Search, Plus, Clock, TrendingUp } from 'lucide-react';
+import { Search, Plus, Clock, TrendingUp, Briefcase, Rocket, AlertTriangle } from 'lucide-react';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { BottomNav } from '../../components/layout/BottomNav';
@@ -21,7 +21,6 @@ import toast from 'react-hot-toast';
 
 export default function GigsScreen() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
   const activeRole = useAuthStore((s) => s.activeRole);
   
@@ -194,7 +193,7 @@ export default function GigsScreen() {
         ) : gigs.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center py-16 px-4 text-center mt-4">
             <div className="w-24 h-24 mb-5 rounded-full bg-edu-surface flex items-center justify-center shadow-ios border border-edu-border/30">
-              <span className="text-5xl animate-bounce">💼</span>
+              <Briefcase size={40} className="text-edu-muted animate-bounce" />
             </div>
             <h3 className="text-xl font-black text-edu-text mb-2 font-display">Xizmatlar topilmadi</h3>
             <p className="text-sm text-edu-muted max-w-[260px] leading-relaxed mb-6 font-medium">
@@ -203,8 +202,8 @@ export default function GigsScreen() {
                 : (activeTab === 'MARKET' ? "Hozircha hech qanday xizmat joylashtirilmagan." : "Siz hali hech qanday xizmat yaratmadingiz.")}
             </p>
             {activeTab === 'MY_GIGS' && (
-              <Button variant="primary" size="lg" onClick={handleCreateGigClick} className="shadow-btn px-10">
-                Xizmat yaratish 🚀
+              <Button variant="primary" size="lg" onClick={handleCreateGigClick} className="shadow-btn px-10 gap-2 flex items-center">
+                Xizmat yaratish <Rocket size={16} />
               </Button>
             )}
           </div>
@@ -270,7 +269,7 @@ export default function GigsScreen() {
             </div>
             {selectedGig.freelancerId === currentUser?.id && (
               <div className="p-3 bg-red-500/10 text-red-600 text-xs rounded-xl border border-red-500/20 font-bold flex items-center gap-2">
-                <span>⚠️</span> Siz o'z xizmatingizni buyurtma qila olmaysiz.
+                <AlertTriangle size={14} className="shrink-0" /> Siz o'z xizmatingizni buyurtma qila olmaysiz.
               </div>
             )}
           </div>

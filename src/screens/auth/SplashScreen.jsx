@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ready, expand, getStartParam } from '../../lib/telegram';
+import { GraduationCap } from 'lucide-react';
 
 export default function SplashScreen() {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ export default function SplashScreen() {
     };
 
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -68,7 +70,7 @@ export default function SplashScreen() {
       <div className="flex flex-col items-center gap-6 animate-ios-pop relative z-10">
         {/* Logo mark */}
         <div className="w-24 h-24 rounded-[20px] bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
-          <span className="text-5xl drop-shadow-lg">📚</span>
+          <GraduationCap size={48} className="text-white drop-shadow-lg" />
         </div>
 
         {/* Brand name */}

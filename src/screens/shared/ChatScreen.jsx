@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { cn } from '../../lib/utils';
@@ -17,7 +17,7 @@ import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
-import { LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, ClipboardList, Hand } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 
@@ -73,7 +73,7 @@ export default function ChatScreen() {
     }
   };
 
-  const roomMessages = messages[taskId] || [];
+  const roomMessages = useMemo(() => messages[taskId] || [], [messages, taskId]);
   const lastMessageId = roomMessages[roomMessages.length - 1]?.id;
   const typingCount = typingUsers?.[taskId]?.length || 0;
 
@@ -147,7 +147,7 @@ export default function ChatScreen() {
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-urgent/10 text-edu-urgent hover:bg-edu-urgent/20 transition-colors"
                 title="Shikoyat qilish"
               >
-                <span className="text-sm">🚩</span>
+                <Flag size={14} />
               </button>
             )}
           </div>
@@ -162,15 +162,15 @@ export default function ChatScreen() {
         <div className="bg-edu-surface/90 backdrop-blur-xl border-b border-edu-border/50 px-4 py-3 shadow-sm z-10 relative">
           <p className="text-sm font-bold text-edu-text mb-3 flex items-center gap-2">
             <span className="flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500/20 text-yellow-600 text-[10px]">
-              ⚡
+              <Zap size={10} />
             </span>
             Ish topshirildi, tekshiring
           </p>
           <div className="flex gap-2">
             <Button size="sm" variant="primary" fullWidth isLoading={transitions.accept.isPending}
-              onClick={() => transitions.accept.mutate()}>✅ Qabul</Button>
+              onClick={() => transitions.accept.mutate()}><CheckCircle size={14} className="mr-1" /> Qabul</Button>
             <Button size="sm" variant="secondary" fullWidth
-              onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}>↺ Qaytarish</Button>
+              onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}><RefreshCw size={14} className="mr-1" /> Qaytarish</Button>
           </div>
         </div>
       )}
@@ -181,7 +181,9 @@ export default function ChatScreen() {
         {task && (
           <div className="bg-edu-surface/60 backdrop-blur-sm border border-edu-border/30 rounded-lg p-5 shadow-premium-sm mb-6 mx-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center text-xl shadow-sm">📋</div>
+              <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center shadow-sm">
+                <ClipboardList size={20} className="text-edu-primary" />
+              </div>
               <h3 className="font-black text-[15px] text-edu-text line-clamp-1 tracking-tight">{task.title}</h3>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs text-edu-muted mb-3">
@@ -201,7 +203,7 @@ export default function ChatScreen() {
             )}
             {task.status === 'ASSIGNED' && !isClient && (
               <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
-                Vazifani boshlash 🚀
+                Vazifani boshlash
               </Button>
             )}
           </div>
@@ -219,7 +221,9 @@ export default function ChatScreen() {
         
         {!isLoading && roomMessages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 opacity-40">
-            <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center text-5xl mb-4">👋</div>
+            <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center mb-4">
+              <Hand size={40} className="text-edu-primary opacity-50" />
+            </div>
             <p className="text-[15px] font-black text-edu-text tracking-tight">Suhbatni boshlang!</p>
             <p className="text-xs mt-1 text-center max-w-[200px] font-medium leading-relaxed">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
           </div>
