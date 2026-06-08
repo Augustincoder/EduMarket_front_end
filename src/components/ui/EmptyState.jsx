@@ -5,17 +5,18 @@ import Button from './Button';
 export function EmptyState({ emoji = '📋', title, subtitle, action, actionLabel, className }) {
   return (
     <div className={cn(
-      'flex flex-col items-center justify-center text-center py-20 px-8 animate-in fade-in duration-700',
+      'flex flex-col items-center justify-center text-center py-24 px-10 animate-ios-pop',
       className
     )}>
-      <div className="w-24 h-24 bg-gray-50 dark:bg-white/5 rounded-[32px] flex items-center justify-center text-5xl mb-8 shadow-inner border border-black/[0.03] dark:border-white/5">
+      <div className="w-28 h-28 bg-edu-surface-2 rounded-lg flex items-center justify-center text-5xl mb-10 shadow-premium-sm border border-edu-border/30 relative">
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-edu-primary/5 to-transparent pointer-events-none" />
         {emoji}
       </div>
-      <h3 className="text-[20px] font-black text-gray-900 dark:text-white tracking-tight leading-tight mb-3">
+      <h3 className="text-[22px] font-black text-edu-text tracking-tight leading-tight mb-4 font-display">
         {title}
       </h3>
       {subtitle && (
-        <p className="text-[14px] text-gray-400 dark:text-gray-500 max-w-[260px] font-medium leading-relaxed">
+        <p className="text-[15px] text-edu-muted max-w-[280px] font-medium leading-relaxed opacity-80">
           {subtitle}
         </p>
       )}
@@ -23,7 +24,7 @@ export function EmptyState({ emoji = '📋', title, subtitle, action, actionLabe
         <Button 
           variant="primary" 
           size="lg" 
-          className="mt-10 w-full max-w-[240px]" 
+          className="mt-10 w-full max-w-[260px] shadow-premium-lg" 
           onClick={action}
         >
           {actionLabel}

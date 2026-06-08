@@ -295,38 +295,35 @@ export default function ProfileScreen() {
 
             {/* Client Stats Grid */}
 
-            <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/15 blur-3xl rounded-full pointer-events-none" />
-              <CardContent className="p-6 flex flex-col items-center text-center gap-3.5 relative z-10">
+            <Card className="bg-gradient-to-br from-edu-primary/5 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="lg">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 blur-3xl rounded-full pointer-events-none" />
+              <CardContent className="p-8 flex flex-col items-center text-center gap-4 relative z-10">
                 <div className="relative">
-                  <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/20 shadow-md animate-fade-in" />
+                  <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/10 shadow-premium-lg animate-fade-in" />
                   {me?.isVip && (
-                    <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-edu-surface shadow-sm">
-                      <span className="text-white text-[11px] block leading-none">👑</span>
+                    <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 border-2 border-edu-surface shadow-premium-sm">
+                      <span className="text-white text-[12px] block leading-none">👑</span>
                     </div>
                   )}
                 </div>
                 
-                <div className="space-y-2">
-                  <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
-                  <p className="text-xs font-semibold text-edu-muted tracking-wide">@{me?.username || 'username'}</p>
+                <div className="space-y-1.5">
+                  <h1 className="text-[24px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
+                  <p className="text-sm font-semibold text-edu-muted tracking-wide opacity-80">@{me?.username || 'username'}</p>
                   
                   {/* Badges Container */}
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
+                  <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
                     <UserBadge badge={me?.badge} size="xs" />
                     {me?.isVip && <VipBadge size="xs" />}
                     {me?.verificationStatus === 'APPROVED' && <VerifiedBadge size="xs" />}
                   </div>
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-edu-primary/10 text-edu-primary px-2.5 py-0.5 rounded-full mt-1.5 border border-edu-primary/20">
-                    Buyurtmachi profili
-                  </span>
                   
                   {/* Gamification Stats */}
-                  <div className="flex items-center justify-center gap-4 mt-3">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">
-                      <span>🔥</span> {me?.streakCount || 0} Kun
+                  <div className="flex items-center justify-center gap-4 mt-4">
+                    <div className="flex items-center gap-2 text-xs font-black text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
+                      <span>🔥</span> {me?.streakCount || 0} KUN
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20">
+                    <div className="flex items-center gap-2 text-xs font-black text-blue-500 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
                       <span>⚡</span> {me?.xp || 0} XP
                     </div>
                   </div>
@@ -520,22 +517,18 @@ export default function ProfileScreen() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: 'Bajarilgan vazifalar', value: me?.completedTasksCount ?? 0, icon: '🏆', color: 'from-green-500/10 to-emerald-500/5 border-green-500/20' },
-                { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: '⭐', color: 'from-amber-500/10 to-yellow-500/5 border-amber-500/20' },
-                { label: 'Muvaffaqiyat darajasi', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: '📈', color: 'from-blue-500/10 to-indigo-500/5 border-blue-500/20' },
-                { label: 'Javob tezligi (soat)', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: '⚡', color: 'from-orange-500/10 to-red-500/5 border-orange-500/20' },
+                { label: 'Bajarilgan ishlar', value: me?.completedTasksCount ?? 0, icon: '🏆', color: 'from-green-500/5 to-transparent border-green-500/20' },
+                { label: 'O\'rtacha reyting', value: avgRating !== '—' ? avgRating : '—', icon: '⭐', color: 'from-amber-500/5 to-transparent border-amber-500/20' },
+                { label: 'Muvaffaqiyat', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: '📈', color: 'from-blue-500/5 to-transparent border-blue-500/20' },
+                { label: 'Javob tezligi', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: '⚡', color: 'from-orange-500/5 to-transparent border-orange-500/20' },
               ].map((item, i) => (
-                <Card key={i} className={`bg-gradient-to-br ${item.color} border relative overflow-hidden`} radius="xl">
-                  <CardContent className="p-4 flex flex-col justify-between h-full min-h-[92px]">
-                    <div className="flex justify-between items-start">
-                      <span className="text-lg">{item.icon}</span>
-                    </div>
-                    <div className="mt-3">
-                      <p className="text-2xl font-black font-display text-edu-text leading-none">{item.value}</p>
-                      <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1.5 leading-snug">{item.label}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-premium-sm transition-all hover:border-edu-text/10`}>
+                  <span className="text-xl">{item.icon}</span>
+                  <div className="mt-4">
+                    <p className="text-[22px] font-black font-display text-edu-text leading-none">{item.value}</p>
+                    <p className="text-[9px] font-black text-edu-muted uppercase tracking-wider mt-2 leading-snug opacity-70">{item.label}</p>
+                  </div>
+                </div>
               ))}
             </div>
 

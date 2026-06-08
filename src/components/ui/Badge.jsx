@@ -3,19 +3,23 @@ import { STATUS_CONFIG, BADGE_CONFIG } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 
 // Standardized base classes for all badges to ensure pixel-perfect consistency
-const baseBadgeClass = "inline-flex items-center justify-center gap-1.5 font-black rounded-full h-[20px] px-2 text-[9px] tracking-[0.05em] uppercase transition-all select-none";
+const baseBadgeClass = "inline-flex items-center justify-center gap-1.5 font-bold rounded-full h-[22px] px-2.5 text-[10px] tracking-wide uppercase transition-all select-none border";
 
-export function StatusBadge({ status, size = 'sm' }) {
+export function StatusBadge({ status }) {
   const cfg = STATUS_CONFIG[status];
   if (!cfg) return null;
 
   return (
     <span
-      className={cn(baseBadgeClass, "shadow-premium-sm border border-black/[0.03] dark:border-white/5")}
-      style={{ backgroundColor: `${cfg.bg}15`, color: cfg.dot }}
+      className={cn(baseBadgeClass)}
+      style={{ 
+        backgroundColor: `color-mix(in srgb, ${cfg.dot} 12%, transparent)`, 
+        borderColor: `color-mix(in srgb, ${cfg.dot} 20%, transparent)`,
+        color: cfg.dot 
+      }}
     >
       <span
-        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+        className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_4px_rgba(0,0,0,0.1)]"
         style={{ backgroundColor: cfg.dot }}
       />
       {cfg.label}
@@ -23,54 +27,54 @@ export function StatusBadge({ status, size = 'sm' }) {
   );
 }
 
-export function UserBadge({ badge, size = 'sm' }) {
+export function UserBadge({ badge }) {
   const cfg = BADGE_CONFIG[badge] || BADGE_CONFIG.YANGI;
   return (
     <span
-      className={cn(baseBadgeClass, "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 border border-black/[0.03] dark:border-white/[0.05]")}
+      className={cn(baseBadgeClass, "bg-edu-surface-2 text-edu-muted border-edu-border/50 font-bold")}
     >
       {cfg.label}
     </span>
   );
 }
 
-export function VipBadge({ size = 'sm' }) {
+export function VipBadge() {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        "bg-[#AF8B3B]/10 text-[#AF8B3B] border border-[#AF8B3B]/20"
+        "bg-gradient-to-r from-[#AF8B3B]/15 to-[#AF8B3B]/5 text-[#AF8B3B] border-[#AF8B3B]/30 font-black"
       )}
     >
-      <span className="text-[11px] -mt-0.5">👑</span>
+      <span className="text-[12px] -mt-0.5">👑</span>
       VIP
     </span>
   );
 }
 
-export function VerifiedBadge({ size = 'sm' }) {
+export function VerifiedBadge() {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        "bg-[#007AFF]/10 text-[#007AFF] border border-[#007AFF]/20"
+        "bg-edu-primary/10 text-edu-primary border-edu-primary/30 font-black"
       )}
     >
-      <span className="text-[10px] font-black">✓</span>
-      VERIFIED
+      <span className="text-[11px] font-black -mt-0.5">✓</span>
+      TASDIQLANGAN
     </span>
   );
 }
 
-export function UrgentBadge({ size = 'sm' }) {
+export function UrgentBadge() {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        'bg-red-500/10 text-red-500 animate-pulse'
+        'bg-edu-urgent/10 text-edu-urgent border-edu-urgent/30 animate-pulse font-black'
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+      <span className="w-1.5 h-1.5 rounded-full bg-edu-urgent flex-shrink-0 shadow-[0_0_6px_rgba(255,59,48,0.4)]" />
       SHOSHILINCH
     </span>
   );

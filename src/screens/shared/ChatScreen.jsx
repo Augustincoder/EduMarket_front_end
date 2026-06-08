@@ -176,31 +176,31 @@ export default function ChatScreen() {
       )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
         {/* Task Details Card (Sticky at top of scroll or always visible first message) */}
         {task && (
-          <div className="bg-edu-surface/80 border border-edu-border/50 rounded-2xl p-4 shadow-card mb-4 mx-2">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">📋</span>
-              <h3 className="font-bold text-sm text-edu-text line-clamp-1">{task.title}</h3>
+          <div className="bg-edu-surface/60 backdrop-blur-sm border border-edu-border/30 rounded-lg p-5 shadow-premium-sm mb-6 mx-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center text-xl shadow-sm">📋</div>
+              <h3 className="font-black text-[15px] text-edu-text line-clamp-1 tracking-tight">{task.title}</h3>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-xs text-edu-muted mb-2">
-              <div className="bg-edu-bg p-2 rounded-lg border border-edu-border/20">
-                <span className="block opacity-70 mb-0.5">Narxi</span>
-                <strong className="text-edu-primary">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
+            <div className="grid grid-cols-2 gap-3 text-xs text-edu-muted mb-3">
+              <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
+                <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Narxi</span>
+                <strong className="text-edu-primary text-[14px] font-black">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
               </div>
-              <div className="bg-edu-bg p-2 rounded-lg border border-edu-border/20">
-                <span className="block opacity-70 mb-0.5">Muddat</span>
-                <strong className="text-edu-text">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
+              <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
+                <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Muddat</span>
+                <strong className="text-edu-text text-[14px] font-black">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
               </div>
             </div>
             {task.status === 'ASSIGNED' && isClient && (
-              <p className="text-[11px] text-edu-accent mt-2 bg-edu-accent/10 p-2 rounded-lg text-center font-medium">
-                Freelancer ushbu ishni "Boshlash"ini kuting.
+              <p className="text-[11px] text-edu-accent mt-3 bg-edu-accent/5 p-3 rounded-md text-center font-black uppercase tracking-wide border border-edu-accent/10">
+                Freelancer ishni "Boshlash"ini kuting
               </p>
             )}
             {task.status === 'ASSIGNED' && !isClient && (
-              <Button size="sm" color="primary" fullWidth className="mt-2" onClick={() => navigate(`/tasks/${task.id}`)}>
+              <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
                 Vazifani boshlash 🚀
               </Button>
             )}
@@ -210,46 +210,50 @@ export default function ChatScreen() {
         {isLoading ? <ChatBubbleSkeleton /> : null}
         
         {hasMore && !isLoading && (
-          <div className="flex justify-center my-2">
-            <Button size="sm" variant="secondary" onClick={loadMore} isLoading={isLoadingMore}>
+          <div className="flex justify-center my-4">
+            <Button size="sm" variant="secondary" onClick={loadMore} isLoading={isLoadingMore} className="bg-edu-surface/50 border-edu-border/50">
               Eski xabarlarni yuklash
             </Button>
           </div>
         )}
         
         {!isLoading && roomMessages.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-10 opacity-60">
-            <span className="text-4xl mb-2">👋</span>
-            <p className="text-sm font-medium">Suhbatni boshlang!</p>
-            <p className="text-xs mt-1 text-center max-w-[200px]">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
+          <div className="flex flex-col items-center justify-center py-16 opacity-40">
+            <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center text-5xl mb-4">👋</div>
+            <p className="text-[15px] font-black text-edu-text tracking-tight">Suhbatni boshlang!</p>
+            <p className="text-xs mt-1 text-center max-w-[200px] font-medium leading-relaxed">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
           </div>
         )}
 
-        {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
-          <MessageBubble 
-            key={msg.id} 
-            message={msg} 
-            isMe={msg.senderId === user?.id} 
-            onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
-            onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
-            onDelete={(id) => { 
-              showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
-                if (ok) deleteMessage(id);
-              });
-            }}
-            onViewFile={handleViewFile}
-          />
-        )) : null}
+        <div className="flex flex-col gap-1">
+          {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
+            <MessageBubble 
+              key={msg.id} 
+              message={msg} 
+              isMe={msg.senderId === user?.id} 
+              onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
+              onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
+              onDelete={(id) => { 
+                showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
+                  if (ok) deleteMessage(id);
+                });
+              }}
+              onViewFile={handleViewFile}
+            />
+          )) : null}
+        </div>
         
         {typingUsers?.[taskId]?.length > 0 && (
-          <div className="flex items-center gap-1 text-edu-muted text-xs animate-pulse px-2 py-1">
-            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
-            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
-            <span className="w-1.5 h-1.5 bg-edu-muted rounded-full"></span>
-            <span className="ml-2">Suhbatdosh yozmoqda...</span>
+          <div className="flex items-center gap-1.5 text-edu-muted text-[11px] font-bold animate-pulse px-3 py-1 opacity-70">
+            <div className="flex gap-0.5">
+              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+            </div>
+            <span className="ml-1 uppercase tracking-wider">Yozmoqda...</span>
           </div>
         )}
-        <div ref={bottomRef} />
+        <div ref={bottomRef} className="h-2" />
       </div>
 
       {/* Input */}

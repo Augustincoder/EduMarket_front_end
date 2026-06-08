@@ -27,25 +27,31 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
     <div
       onClick={onClick}
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full overflow-hidden shrink-0 font-black select-none ring-1 ring-black/[0.03] dark:ring-white/10 shadow-sm",
+        "relative inline-flex items-center justify-center rounded-full shrink-0 font-black select-none shadow-premium-sm ring-1 ring-edu-text/[0.05]",
         sizeClass[size] || sizeClass.md,
         onClick && "cursor-pointer active-spring",
         className
       )}
       style={{ backgroundColor: fallbackColor }}
     >
-      {avatarUrl ? (
-        <img
-          src={avatarUrl}
-          alt={name || "Avatar"}
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <span className="text-white drop-shadow-sm">
-          {initials}
-        </span>
-      )}
-      <div className="absolute inset-0 rounded-full border border-black/5 pointer-events-none" />
+      <div className="absolute inset-0 rounded-full overflow-hidden">
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={name || "Avatar"}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/10 to-transparent">
+            <span className="text-white drop-shadow-sm">
+              {initials}
+            </span>
+          </div>
+        )}
+      </div>
+      {/* Premium Inner Glow & Border */}
+      <div className="absolute inset-0 rounded-full border border-edu-text/[0.08] pointer-events-none" />
+      <div className="absolute inset-[0.5px] rounded-full border border-white/10 pointer-events-none opacity-50" />
     </div>
   );
 }

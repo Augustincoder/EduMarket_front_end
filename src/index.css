@@ -27,6 +27,16 @@
 
   --nav-height:    64px;
   --header-height: 56px;
+
+  /* 💎 Premium Radius Tokens */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-full: 9999px;
+
+  /* High-fidelity Spring Timings */
+  --spring-duration: 0.4s;
+  --spring-easing: cubic-bezier(0.17, 0.67, 0.12, 1);
 }
 
 /* Workspace Overrides */
@@ -79,6 +89,12 @@
   --color-status-canceled: var(--status-canceled);
   --color-status-disputed: var(--status-disputed);
 
+  /* Radius mapping */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-lg); /* Alias for consistency */
+
   /* Apple Native System Fonts with corrected tracking */
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
   --font-body:    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
@@ -110,21 +126,21 @@
 
 /* ─── Premium Utilities ──────────────────────────────────── */
 
-/* iOS Vibrancy (Glassmorphism) */
+/* iOS Vibrancy (Glassmorphism) v2 */
 .ios-glass {
-  background: rgba(255, 255, 255, 0.75);
+  background: color-mix(in srgb, var(--edu-surface) 75%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
   -webkit-backdrop-filter: saturate(180%) blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid color-mix(in srgb, var(--edu-text) 5%, transparent);
 }
 .dark .ios-glass {
-  background: rgba(28, 28, 30, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--edu-surface) 60%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Smooth Curved Surfaces (Apple G2 Curvature Proxy) */
 .squircle {
-  border-radius: 32px;
+  border-radius: var(--radius-lg);
 }
 
 /* Multi-layered Ambient Shadows */
@@ -135,26 +151,43 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-/* Premium Card Style */
+/* Premium Card Style v2 */
 .premium-card {
   background: var(--edu-surface);
   box-shadow: var(--shadow-premium-md);
-  border-radius: 32px;
-  border: 1px solid color-mix(in srgb, var(--edu-text) 3%, transparent);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-lg);
+  border: 0.5px solid color-mix(in srgb, var(--edu-text) 8%, transparent);
+  transition: all var(--spring-duration) var(--spring-easing);
+  position: relative;
+  overflow: hidden;
 }
+
+.premium-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, #FFFFFF 10%, transparent);
+  opacity: 0.5;
+}
+
 .dark .premium-card {
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+.dark .premium-card::after {
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 /* Bouncy buttons with Refined Spring physics */
 .active-spring {
-  transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+  transition: transform var(--spring-duration) var(--spring-easing), opacity 0.2s ease;
 }
 .active-spring:active {
-  transform: scale(0.96);
-  opacity: 0.9;
+  transform: scale(0.95);
+  opacity: 0.85;
 }
 
 /* Beautiful Animated Mesh/Aurora Background for Home Screen */

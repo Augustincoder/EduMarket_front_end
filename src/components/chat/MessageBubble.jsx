@@ -88,7 +88,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
     <>
       {showMenu && (
         <div 
-          className="fixed inset-0 z-20 cursor-default" 
+          className="fixed inset-0 z-[60] cursor-default bg-black/5" 
           onClick={(e) => {
             e.stopPropagation();
             setShowMenu(false);
@@ -96,119 +96,132 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
         />
       )}
 
-      <div className={cn('group flex items-end gap-2 max-w-[75%] my-2 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
-        <div
-          className={cn(
-            'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
-            isMe
-              ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
-              : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
-            hasFile && !isImage && message.fileType !== 'voice' && 'hover:opacity-90 active:scale-[0.98]'
-          )}
-          onClick={(e) => {
-            const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('audio') || e.target.closest('img') || e.target.closest('.voice-player-wrap');
-            if (isInteractive) return;
-
-            if (hasFile && !isImage && message.fileType !== 'voice') {
-              handleFileClick();
-            } else {
-              setShowMenu(!showMenu);
-            }
-          }}
-          onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
-        >
-          {/* Actions Menu */}
-          {showMenu && (
-            <div 
-              className={cn(
-                "absolute bottom-full mb-2 z-30 w-36 bg-edu-surface dark:bg-[#2C2C2E] border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
-                isMe ? "right-2" : "left-2"
-              )} 
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
-                <CornerDownRight size={14} /> Javob berish
-              </button>
-              {isMe && !hasFile && (
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
-                  <Edit2 size={14} /> Tahrirlash
-                </button>
-              )}
-              {isMe && (
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
-                  <Trash2 size={14} /> O'chirish
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Reply Preview */}
-          {message.replyTo && !message.replyTo.isDeleted && (
-            <div 
-              className={cn(
-                "mb-2 p-1.5 px-2.5 rounded-lg text-xs border-l-2",
-                isMe ? "bg-black/10 border-white/40" : "bg-black/5 dark:bg-white/5 border-edu-primary"
-              )}
-            >
-              <div className={cn("font-bold mb-0.5", isMe ? "text-white/90" : "text-edu-primary")}>{message.replyTo.sender?.fullname || 'Foydalanuvchi'}</div>
-              <div className={cn("truncate opacity-80", isMe ? "text-white" : "text-edu-text")}>{message.replyTo.content || "Biriktirma"}</div>
-            </div>
-          )}
-
-          {hasFile ? (
-            isImage ? (
-              <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName)} />
-            ) : message.fileType === 'voice' ? (
-              <div className="voice-player-wrap" onClick={(e) => e.stopPropagation()}>
-                <VoicePlayer fileId={message.fileId} isMe={isMe} />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2.5 min-w-[160px] p-1">
-                <div className={cn(
-                  'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0',
-                  isMe ? 'bg-white/20' : 'bg-edu-primary/10'
-                )}>
-                  <FileText size={18} className={isMe ? 'text-white' : 'text-edu-primary'} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold truncate">{message.fileName || 'Biriktirma'}</p>
-                  <p className={cn('text-[10px] mt-0.5', isMe ? 'text-white/70' : 'text-edu-muted')}>
-                    Ko'rish uchun bosing
-                  </p>
-                </div>
-                <FileType size={14} className={isMe ? 'text-white/70' : 'text-edu-muted'} />
-              </div>
-            )
-          ) : (
-            <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content, { ALLOWED_TAGS: ['b', 'i', 'a', 'code', 'pre'] }) }} />
-          )}
-
-          {/* Timestamp + read receipt */}
-          <div className={cn(
-            'flex items-center gap-1 mt-1.5',
-            isMe ? 'justify-end' : 'justify-start'
-          )}>
-            {message.isEdited && (
-              <span className={cn('text-[10px] italic mr-1', isMe ? 'text-white/60' : 'text-edu-muted')}>
-                (tahrirlangan)
-              </span>
+      <div className={cn('group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-2 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto', showMenu && 'z-[70]')}>
+        <div className="flex flex-col gap-1">
+          <div
+            className={cn(
+              'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
+              isMe
+                ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
+                : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
+              hasFile && !isImage && message.fileType !== 'voice' && 'hover:opacity-90 active:scale-[0.98]'
             )}
-            <span className={cn('text-[10px]', isMe ? 'text-white/60' : 'text-edu-muted')}>
-              {formatDatetime(message.createdAt)}
-            </span>
-            {isMe && (
-              message.isError ? (
-                <AlertCircle size={12} className="text-red-300" title="Xatolik" />
-              ) : message.isSending ? (
-                <Clock size={12} className="text-white/50 animate-pulse" title="Yuborilmoqda..." />
-              ) : message.isRead ? (
-                <CheckCheck size={14} className="text-blue-300 drop-shadow-md" />
+            onClick={(e) => {
+              const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('audio') || e.target.closest('img') || e.target.closest('.voice-player-wrap');
+              if (isInteractive) return;
+
+              if (hasFile && !isImage && message.fileType !== 'voice') {
+                handleFileClick();
+              } else {
+                setShowMenu(!showMenu);
+              }
+            }}
+            onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
+          >
+            {/* Actions Menu */}
+            {showMenu && (
+              <div 
+                className={cn(
+                  "absolute bottom-full mb-2 z-[80] w-36 bg-edu-surface dark:bg-[#2C2C2E] border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
+                  isMe ? "right-0" : "left-0"
+                )} 
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
+                  <CornerDownRight size={14} /> Javob berish
+                </button>
+                {isMe && !hasFile && (
+                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
+                    <Edit2 size={14} /> Tahrirlash
+                  </button>
+                )}
+                {isMe && (
+                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
+                    <Trash2 size={14} /> O'chirish
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Reply Preview */}
+            {message.replyTo && !message.replyTo.isDeleted && (
+              <div 
+                className={cn(
+                  "mb-2 p-1.5 px-2.5 rounded-lg text-xs border-l-2",
+                  isMe ? "bg-black/10 border-white/40" : "bg-black/5 dark:bg-white/5 border-edu-primary"
+                )}
+              >
+                <div className={cn("font-bold mb-0.5", isMe ? "text-white/90" : "text-edu-primary")}>{message.replyTo.sender?.fullname || 'Foydalanuvchi'}</div>
+                <div className={cn("truncate opacity-80", isMe ? "text-white" : "text-edu-text")}>{message.replyTo.content || "Biriktirma"}</div>
+              </div>
+            )}
+
+            {hasFile ? (
+              isImage ? (
+                <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName)} />
+              ) : message.fileType === 'voice' ? (
+                <div className="voice-player-wrap" onClick={(e) => e.stopPropagation()}>
+                  <VoicePlayer fileId={message.fileId} isMe={isMe} />
+                </div>
               ) : (
-                <Check size={12} className="text-white/50" />
+                <div className="flex items-center gap-2.5 min-w-[160px] p-1">
+                  <div className={cn(
+                    'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0',
+                    isMe ? 'bg-white/20' : 'bg-edu-primary/10'
+                  )}>
+                    <FileText size={18} className={isMe ? 'text-white' : 'text-edu-primary'} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate">{message.fileName || 'Biriktirma'}</p>
+                    <p className={cn('text-[10px] mt-0.5', isMe ? 'text-white/70' : 'text-edu-muted')}>
+                      Ko'rish uchun bosing
+                    </p>
+                  </div>
+                  <FileType size={14} className={isMe ? 'text-white/70' : 'text-edu-muted'} />
+                </div>
               )
+            ) : (
+              <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content, { ALLOWED_TAGS: ['b', 'i', 'a', 'code', 'pre'] }) }} />
             )}
+
+            {/* Timestamp + read receipt */}
+            <div className={cn(
+              'flex items-center gap-1 mt-1.5',
+              isMe ? 'justify-end' : 'justify-start'
+            )}>
+              {message.isEdited && (
+                <span className={cn('text-[10px] italic mr-1', isMe ? 'text-white/60' : 'text-edu-muted')}>
+                  (tahrirlangan)
+                </span>
+              )}
+              <span className={cn('text-[10px]', isMe ? 'text-white/60' : 'text-edu-muted')}>
+                {formatDatetime(message.createdAt)}
+              </span>
+              {isMe && (
+                message.isError ? (
+                  <AlertCircle size={12} className="text-red-300" title="Xatolik" />
+                ) : message.isSending ? (
+                  <Clock size={12} className="text-white/50 animate-pulse" title="Yuborilmoqda..." />
+                ) : message.isRead ? (
+                  <CheckCheck size={14} className="text-blue-300 drop-shadow-md" />
+                ) : (
+                  <Check size={12} className="text-white/50" />
+                )
+              )}
+            </div>
           </div>
         </div>
+
+        {/* External action trigger for better visibility */}
+        <button 
+          onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+          className={cn(
+            "p-1 rounded-full text-edu-muted opacity-0 group-hover:opacity-100 transition-opacity self-center hover:bg-black/5 dark:hover:bg-white/5",
+            showMenu && "opacity-100 bg-black/5"
+          )}
+        >
+          <MoreVertical size={16} />
+        </button>
       </div>
     </>
   );

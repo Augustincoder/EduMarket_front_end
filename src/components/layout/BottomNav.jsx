@@ -5,17 +5,14 @@ import { cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
 import { useAuthStore } from '../../store/authStore';
 import { useChatStore } from '../../store/chatStore';
-import { useNotificationStore } from '../../store/notificationStore';
 
 const ICONS = { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet, Bell };
 
 export function BottomNav() {
   const location = useLocation();
   const navigate  = useNavigate();
-  const user = useAuthStore((s) => s.user);
   const activeRole = useAuthStore((s) => s.activeRole);
   const totalUnread = useChatStore((s) => s.totalUnread);
-  const unreadNotifications = useNotificationStore((s) => s.unreadCount);
 
   const isFreelancerMode = activeRole === 'FREELANCER';
 
@@ -45,7 +42,7 @@ export function BottomNav() {
   return (
     <nav className={cn(
       'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px]',
-      'bg-edu-surface/95 dark:bg-[#1C1C1E]/95 backdrop-blur-xl border-t border-edu-border shadow-nav',
+      'ios-glass border-t border-edu-border shadow-nav',
       'pb-safe z-40'
     )}>
       <div className="flex items-center justify-around h-[64px] px-3">
@@ -64,17 +61,17 @@ export function BottomNav() {
                 key={route}
                 onClick={() => handleNav(route)}
                 className={cn(
-                  'relative -top-5 w-[58px] h-[58px] rounded-full',
-                  'shadow-btn flex items-center justify-center',
+                  'relative -top-5 w-[60px] h-[60px] rounded-full',
+                  'shadow-premium-btn flex items-center justify-center',
                   'active-spring transition-all duration-300',
-                  'border-[4px] border-white dark:border-[#1C1C1E]',
+                  'border-[4px] border-edu-surface shadow-premium-lg',
                   isActive 
-                    ? 'bg-gradient-to-tr from-edu-primary to-edu-accent scale-105 shadow-xl' 
+                    ? 'bg-gradient-to-tr from-edu-primary to-edu-accent scale-105' 
                     : 'bg-edu-primary'
                 )}
               >
                 <Plus 
-                  size={30} 
+                  size={32} 
                   className={cn(
                     'text-white transition-transform duration-300',
                     isActive && 'rotate-90'
@@ -90,26 +87,26 @@ export function BottomNav() {
               key={route}
               onClick={() => handleNav(route)}
               className={cn(
-                'flex flex-col items-center gap-1 py-1 rounded-2xl relative',
+                'flex flex-col items-center gap-1 py-1 rounded-md relative',
                 'transition-all duration-300 min-w-[50px] flex-1',
                 'active-spring',
-                isActive ? 'text-edu-primary scale-105' : 'text-edu-muted'
+                isActive ? 'text-edu-primary scale-105' : 'text-edu-muted hover:text-edu-text/60'
               )}
             >
               <div className="relative">
                 <Icon 
-                  size={22} 
+                  size={23} 
                   className="transition-transform duration-300"
                   strokeWidth={isActive ? 2.5 : 2} 
                 />
                 {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-edu-primary text-white text-[10px] font-black min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center border-2 border-edu-surface shadow-sm">
-                    {badge}
+                  <span className="absolute -top-1.5 -right-2.5 bg-edu-urgent text-white text-[10px] font-black min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center border-2 border-edu-surface shadow-premium-sm">
+                    {badge > 99 ? '99+' : badge}
                   </span>
                 )}
               </div>
               <span className={cn(
-                'text-[10px] font-bold tracking-ios-text transition-all duration-300',
+                'text-[10px] font-bold tracking-tight transition-all duration-300',
                 isActive ? 'opacity-100' : 'opacity-60'
               )}>
                 {label}
