@@ -76,6 +76,8 @@ export const hideBackButton  = (cb) => { getTg().BackButton.hide(); if (cb) getT
 
 export const hapticLight   = () => getTg().HapticFeedback.impactOccurred('light');
 export const hapticMedium  = () => getTg().HapticFeedback.impactOccurred('medium');
+export const hapticHeavy   = () => getTg().HapticFeedback.impactOccurred('heavy');
+export const hapticImpact  = (style = 'medium') => getTg().HapticFeedback.impactOccurred(style);
 export const hapticSuccess = () => getTg().HapticFeedback.notificationOccurred('success');
 export const hapticError   = () => getTg().HapticFeedback.notificationOccurred('error');
 export const hapticWarning = () => getTg().HapticFeedback.notificationOccurred('warning');

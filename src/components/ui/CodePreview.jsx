@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { hapticLight } from '../../lib/telegram';
 
-export const CodePreview = ({ file }) => {
+export const CodePreview = ({ file, allowDownload = true }) => {
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -72,26 +72,29 @@ export const CodePreview = ({ file }) => {
           <Code2 size={16} className="text-edu-primary" />
           <span className="text-xs font-mono text-white/80">{file.name}</span>
         </div>
-        <button 
-          onClick={handleCopy}
-          className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-white/60 hover:text-white flex items-center gap-2"
-        >
-          {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
-          <span className="text-[10px] font-bold uppercase">{copied ? 'Nusxa olindi' : 'Nusxa olish'}</span>
-        </button>
+        {allowDownload && (
+          <button
+            onClick={handleCopy}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-white/60 hover:text-white"
+          >
+            {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
+            <span className="text-xs font-medium">{copied ? 'Nusxalandi' : "Nusxa ko'chirish"}</span>
+          </button>
+        )}
       </div>
 
       {/* Code Content */}
-      <div className="flex-1 overflow-auto custom-scrollbar">
+      <div className={`flex-1 overflow-auto rounded-b-xl ${!allowDownload ? 'select-none pointer-events-none' : ''}`}>
         <SyntaxHighlighter
-          language={getLanguage(file.name)}
+          language={getLanguage(file?.name)}
           style={vscDarkPlus}
           customStyle={{
             margin: 0,
             padding: '1.5rem',
             background: 'transparent',
-            fontSize: '13px',
-            lineHeight: '1.6',
+            fontSize: '14px',
+            lineHeight: '1.5',
+            fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
           }}
           showLineNumbers={true}
           wrapLines={true}

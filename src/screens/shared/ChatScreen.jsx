@@ -17,7 +17,8 @@ import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
-import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, ClipboardList, Hand } from 'lucide-react';
+import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert } from 'lucide-react';
+import { AcceptDeliveryModal } from './TaskDetail/components/AcceptDeliveryModal';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 
@@ -46,6 +47,7 @@ export default function ChatScreen() {
   const [revisionOpen, setRevisionOpen] = useState(false);
   const [revisionNote, setRevisionNote] = useState('');
   const [revisionErrors, setRevisionErrors] = useState({});
+  const [acceptDeliveryOpen, setAcceptDeliveryOpen] = useState(false);
 
   const [replyingTo, setReplyingTo] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
@@ -167,8 +169,8 @@ export default function ChatScreen() {
             Ish topshirildi, tekshiring
           </p>
           <div className="flex gap-2">
-            <Button size="sm" variant="primary" fullWidth isLoading={transitions.accept.isPending}
-              onClick={() => transitions.accept.mutate()}><CheckCircle size={14} className="mr-1" /> Qabul</Button>
+            <Button size="sm" variant="primary" fullWidth
+              onClick={() => setAcceptDeliveryOpen(true)}><CheckCircle size={14} className="mr-1" /> Qabul</Button>
             <Button size="sm" variant="secondary" fullWidth
               onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}><RefreshCw size={14} className="mr-1" /> Qaytarish</Button>
           </div>
@@ -177,36 +179,42 @@ export default function ChatScreen() {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
-        {/* Task Details Card (Sticky at top of scroll or always visible first message) */}
-        {task && (
-          <div className="bg-edu-surface/60 backdrop-blur-sm border border-edu-border/30 rounded-lg p-5 shadow-premium-sm mb-6 mx-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center shadow-sm">
-                <ClipboardList size={20} className="text-edu-primary" />
+        {/* System Message Card (Auto-Chat Initialization) */}
+        {task && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
+          <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-[20px] p-4 shadow-sm mb-6 mt-2 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                <CheckCircle size={16} />
               </div>
-              <h3 className="font-bold text-[15px] text-edu-text line-clamp-1 tracking-tight">{task.title}</h3>
+              <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-xs text-edu-muted mb-3">
-              <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
-                <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Narxi</span>
-                <strong className="text-edu-primary text-[14px] font-bold">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
+            
+            <div className="bg-white/60 dark:bg-black/20 rounded-xl p-3 mb-3 border border-blue-100/50 dark:border-blue-800/20 grid grid-cols-2 gap-3">
+              <div>
+                <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Kelishilgan narx</span>
+                <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
+                  {task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} UZS` : 'Kelishilmagan'}
+                </strong>
               </div>
-              <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
-                <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Muddat</span>
-                <strong className="text-edu-text text-[14px] font-bold">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
+              <div>
+                <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Muddat</span>
+                <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
+                  {new Date(task.deadline).toLocaleDateString('uz-UZ')}
+                </strong>
               </div>
             </div>
-            {task.status === 'ASSIGNED' && isClient && (
-              <p className="text-[11px] text-edu-accent mt-3 bg-edu-accent/5 p-3 rounded-md text-center font-bold uppercase tracking-wide border border-edu-accent/10">
-                Freelancer ishni "Boshlash"ini kuting
-              </p>
-            )}
-            {task.status === 'ASSIGNED' && !isClient && (
-              <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
-                Vazifani boshlash
-              </Button>
-            )}
+
+            <p className="text-[11px] leading-relaxed text-blue-800/70 dark:text-blue-200/70 font-medium bg-blue-500/5 p-2 rounded-lg">
+              <ShieldAlert size={12} className="inline mr-1 -mt-0.5" />
+              Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring. Tashqi platformalardagi kelishuvlar himoyalanmaydi.
+            </p>
           </div>
+        )}
+        {task && task.status === 'ASSIGNED' && !isClient && (
+          <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
+            Vazifani boshlash
+          </Button>
         )}
 
         {isLoading ? <ChatBubbleSkeleton /> : null}
@@ -299,6 +307,20 @@ export default function ChatScreen() {
         isClient={isClient}
         isOpen={isWorkspaceOpen}
         onClose={() => setIsWorkspaceOpen(false)}
+      />
+
+      <AcceptDeliveryModal
+        isOpen={acceptDeliveryOpen}
+        onClose={() => setAcceptDeliveryOpen(false)}
+        isLoading={transitions.accept.isPending}
+        onConfirm={async () => {
+          try {
+            await transitions.accept.mutateAsync();
+            setAcceptDeliveryOpen(false);
+          } catch {
+            // Handled
+          }
+        }}
       />
 
       <EduViewer

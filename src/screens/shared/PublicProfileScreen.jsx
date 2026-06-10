@@ -57,7 +57,7 @@ export default function PublicProfileScreen() {
   const isFav = isFavorite(userId);
 
   return (
-    <PageLayout showNav={false} bgClass="bg-edu-bg dark:bg-black">
+    <PageLayout showNav={false} bgClass="bg-edu-bg">
       <Header
         title="Mutaxassis profili"
         showBack

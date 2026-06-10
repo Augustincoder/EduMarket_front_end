@@ -1,8 +1,9 @@
-import { memo, useState, useEffect } from 'react';
+import { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Users, Bookmark, Sparkles, ArrowRight } from 'lucide-react';
+import { Clock, Users, Bookmark, Sparkles } from 'lucide-react';
+import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
 import { Avatar } from '../ui/Avatar';
-import { deadlineCountdown, formatPriceRange, formatPrice, formatDate } from '../../lib/utils';
+import { deadlineCountdown, formatPriceRange } from '../../lib/utils';
 import { CATEGORIES } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
@@ -22,25 +23,16 @@ function TaskCard({ task, className }) {
     }
   });
 
-  useEffect(() => {
-    try {
-      const savedTasks = JSON.parse(localStorage.getItem('edu_saved_tasks') || '[]');
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsSaved(savedTasks.includes(task.id));
-    } catch {
-      setIsSaved(false);
-    }
-  }, [task.id]);
 
-  const handleToggleSave = (e) => {
-    e.stopPropagation();
+
+  const toggleSave = () => {
     hapticLight();
     try {
       const savedTasks = JSON.parse(localStorage.getItem('edu_saved_tasks') || '[]');
       let newSaved;
       if (isSaved) {
         newSaved = savedTasks.filter(id => id !== task.id);
-        toast.success("Vazifa saqlanganlardan o'chirildi");
+        toast.success("Saqlanganlardan o'chirildi");
       } else {
         newSaved = [...savedTasks, task.id];
         toast.success("Vazifa saqlandi! ✨");
@@ -53,19 +45,54 @@ function TaskCard({ task, className }) {
     }
   };
 
+  const handleToggleSave = (e) => {
+    e.stopPropagation();
+    toggleSave();
+  };
+
   const handleClick = () => {
     navigate(`/tasks/${task.id}`);
   };
 
+  // Framer Motion Swipe Logic
+  const controls = useAnimation();
+  const x = useMotionValue(0);
+  const swipeOpacity = useTransform(x, [0, 80], [0, 1]);
+  const swipeScale = useTransform(x, [0, 80], [0.8, 1.2]);
+
+  const handleDragEnd = (e, info) => {
+    if (info.offset.x > 80) {
+      toggleSave();
+    }
+    controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 20 } });
+  };
+
   return (
-    <div
-      onClick={handleClick}
-      className={cn(
-        'group relative bg-edu-surface rounded-[24px] p-5 active:scale-[0.98] transition-all duration-500 cursor-pointer border border-edu-border shadow-ios hover:shadow-ios-lg hover:border-edu-primary/30',
-        className
-      )}
-    >
-      <div className="flex flex-col h-full space-y-4">
+    <div className="relative overflow-hidden rounded-[24px] mb-4">
+      {/* Background layer revealed during swipe */}
+      <div className="absolute inset-0 bg-edu-primary/10 flex items-center px-6 border border-edu-primary/20 rounded-[24px]">
+        <motion.div 
+          style={{ opacity: swipeOpacity, scale: swipeScale }}
+          className="w-12 h-12 bg-edu-primary text-white rounded-full flex items-center justify-center shadow-lg"
+        >
+          <Bookmark size={24} fill="currentColor" />
+        </motion.div>
+      </div>
+
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={{ left: 0, right: 0.5 }}
+        onDragEnd={handleDragEnd}
+        animate={controls}
+        style={{ x }}
+        onClick={handleClick}
+        className={cn(
+          'relative z-10 bg-edu-surface rounded-[24px] p-5 active:scale-[0.98] transition-transform duration-300 cursor-pointer border border-edu-border shadow-ios hover:shadow-ios-lg',
+          className
+        )}
+      >
+        <div className="flex flex-col h-full space-y-4 pointer-events-none">
         {/* Header: Status Labels & Actions */}
         <div className="flex items-start justify-between">
           <div className="flex flex-wrap items-center gap-1.5 max-w-[75%]">
@@ -159,6 +186,7 @@ function TaskCard({ task, className }) {
           </div>
         )}
       </div>
+      </motion.div>
     </div>
   );
 }

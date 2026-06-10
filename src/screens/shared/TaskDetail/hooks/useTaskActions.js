@@ -1,5 +1,6 @@
 // src/screens/shared/TaskDetail/hooks/useTaskActions.js
 import { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { useTaskTransition, useCreateBid } from '../../../../hooks/useTasks';
 import { tasksApi } from '../../../../services/tasks.service';
 import { hapticSuccess } from '../../../../lib/telegram';
@@ -17,6 +18,8 @@ export function useTaskActions(taskId) {
   const [promoteOpen, setPromoteOpen]     = useState(false);
   const [deliverySubmitOpen, setDeliverySubmitOpen] = useState(false);
   const [flagOpen, setFlagOpen]           = useState(false);
+  const [startWorkOpen, setStartWorkOpen] = useState(false);
+  const [acceptDeliveryOpen, setAcceptDeliveryOpen] = useState(false);
 
   const [bidPrice, setBidPrice]         = useState('');
   const [bidMsg, setBidMsg]             = useState('');
@@ -31,6 +34,8 @@ export function useTaskActions(taskId) {
   const [revisionErrors, setRevisionErrors] = useState({});
 
   const [disputeReason, setDisputeReason] = useState('');
+  const [disputeDescription, setDisputeDescription] = useState('');
+  const [disputeFiles, setDisputeFiles]   = useState([]);
   const [disputeErrors, setDisputeErrors] = useState({});
 
   const [flagReason, setFlagReason]       = useState('');
@@ -114,6 +119,7 @@ export function useTaskActions(taskId) {
     try {
       await transitions.deliverPreview.mutateAsync(data);
       setDeliverySubmitOpen(false);
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       toast.success("Natija muvaffaqiyatli yuklandi");
     } catch {
       // Errors handled in mutation globally
@@ -134,11 +140,26 @@ export function useTaskActions(taskId) {
 
   const handleDisputeSubmit = async () => {
     setDisputeErrors({});
-    if (!disputeReason.trim()) return setDisputeErrors({ reason: ['Sabab kiritish majburiy'] });
+    let hasError = false;
+    const errors = {};
+    if (!disputeReason) { errors.reason = ['Sabab kiritish majburiy']; hasError = true; }
+    if (!disputeDescription || disputeDescription.trim().length < 50) { 
+      errors.description = ['Kamida 50 ta belgi yozing']; 
+      hasError = true; 
+    }
+    if (hasError) return setDisputeErrors(errors);
+
     try {
-      await transitions.dispute.mutateAsync({ reason: disputeReason });
+      const fileIds = disputeFiles.map(f => f.fileId || f.id).filter(Boolean); // Assuming pre-uploaded or we just pass them if they are objects
+      await transitions.dispute.mutateAsync({ 
+        reason: disputeReason, 
+        description: disputeDescription,
+        evidenceFileIds: fileIds
+      });
       setDisputeOpen(false);
       setDisputeReason('');
+      setDisputeDescription('');
+      setDisputeFiles([]);
     } catch (err) {
       if (err.serverErrors) setDisputeErrors(err.serverErrors);
     }
@@ -167,6 +188,25 @@ export function useTaskActions(taskId) {
     }
   };
 
+  const handleStartWork = async () => {
+    try {
+      await transitions.startWork.mutateAsync();
+      setStartWorkOpen(false);
+    } catch {
+      // toast handled
+    }
+  };
+
+  const handleAcceptDelivery = async () => {
+    try {
+      await transitions.accept.mutateAsync();
+      setAcceptDeliveryOpen(false);
+      setRatingOpen(true);
+    } catch {
+      // toast handled
+    }
+  };
+
   return {
     transitions,
     bidOpen, setBidOpen,
@@ -176,26 +216,22 @@ export function useTaskActions(taskId) {
     promoteOpen, setPromoteOpen,
     deliverySubmitOpen, setDeliverySubmitOpen,
     flagOpen, setFlagOpen,
+    startWorkOpen, setStartWorkOpen,
+    acceptDeliveryOpen, setAcceptDeliveryOpen,
     bidPrice, setBidPrice,
     bidMsg, setBidMsg,
     bidErrors, setBidErrors,
     rating, setRating,
     ratingComment, setRatingComment,
-    ratingErrors, setRatingErrors,
-    isRatingLoading,
-    revisionNote, setRevisionNote,
-    revisionErrors, setRevisionErrors,
-    disputeReason, setDisputeReason,
-    disputeErrors, setDisputeErrors,
-    flagReason, setFlagReason,
-    flagErrors, setFlagErrors,
+    ratingErrors, setRatingErrors, isRatingLoading,
+    revisionNote, setRevisionNote, revisionErrors, setRevisionErrors,
+    disputeReason, setDisputeReason, disputeDescription, setDisputeDescription,
+    disputeFiles, setDisputeFiles, disputeErrors, setDisputeErrors,
+    flagReason, setFlagReason, flagErrors, setFlagErrors,
     createBid,
-    handleBidSubmit,
-    handleRatingSubmit,
-    handleRevisionSubmit,
-    handleDisputeSubmit,
-    handlePromoteSubmit,
-    handleDeliverySubmit,
-    handleFlagSubmit,
+    handleBidSubmit, handleRatingSubmit, handleRevisionSubmit,
+    handleDisputeSubmit, handleFlagSubmit, handleDeliverySubmit,
+    handleStartWork, handleAcceptDelivery, handlePromoteSubmit
   };
 }
+

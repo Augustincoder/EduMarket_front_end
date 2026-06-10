@@ -83,7 +83,7 @@ export default function TaskFeedScreen() {
   return (
     <PageLayout className="h-dvh flex flex-col overflow-hidden" scrollable={false}>
       {/* ── Fixed Header (Search + Category) ── */}
-      <div className="z-30 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-black/[0.03] dark:border-white/[0.05] shadow-sm shrink-0">
+      <div className="z-30 bg-edu-surface/95 backdrop-blur-xl border-b border-edu-border shadow-sm shrink-0">
         
         {/* Top Row: Title & Filter */}
         <div className="px-4 pt-5 pb-2 flex items-center justify-between">
@@ -153,7 +153,7 @@ export default function TaskFeedScreen() {
       {/* ── Task List Container ── */}
       <div 
         ref={parentRef}
-        className="flex-1 overflow-y-auto px-4 pt-4 pb-nav bg-edu-bg dark:bg-black scrollbar-hide relative"
+        className="flex-1 overflow-y-auto px-4 pt-4 pb-nav bg-edu-bg scrollbar-hide relative"
       >
         {/* Recent Searches Overlay */}
         {isFocused && !localQuery && recentSearches.length > 0 && (

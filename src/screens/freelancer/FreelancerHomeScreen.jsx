@@ -1,18 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { analyticsApi } from '../../services/other.service';
 import { tasksApi } from '../../services/tasks.service';
 import { gigsApi } from '../../services/gigs.service';
-import { useMyTasks } from '../../hooks/useTasks';
 import { formatPrice } from '../../lib/utils';
 import { Card, CardContent } from '../../components/ui/Card';
 import { ArrowRight, Wallet, CheckCircle, Search, Clock, Star } from 'lucide-react';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
 import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
 import { TaskStatusSkeleton } from '../../components/ui/SkeletonCard'; // Example skeleton, you might have specific ones
-import { cn } from '../../lib/utils';
 
 // --- Extracted Widgets for Error Boundaries ---
 
@@ -102,15 +100,12 @@ function ActiveTasksWidget() {
     throwOnError: true,
   });
 
-  const { nearDeadlineTasks, now } = useMemo(() => {
-    const tNow = Date.now();
-    const tasks = activeTasks?.filter(task => {
-      const deadlineTime = new Date(task.deadline).getTime();
-      const timeDiff = deadlineTime - tNow;
-      return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000;
-    }) || [];
-    return { nearDeadlineTasks: tasks, now: tNow };
-  }, [activeTasks]);
+  const [now] = useState(() => Date.now());
+  const nearDeadlineTasks = activeTasks?.filter(task => {
+    const deadlineTime = new Date(task.deadline).getTime();
+    const timeDiff = deadlineTime - now;
+    return timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000;
+  }) || [];
 
   if (isLoading) return <TaskStatusSkeleton />;
 

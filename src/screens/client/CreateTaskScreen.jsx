@@ -1,278 +1,196 @@
-// src/screens/CreateTaskScreen.jsx
-import { useState, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Header } from '../../components/layout/Header';
+import { AnimatePresence, motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import confetti from 'canvas-confetti';
+
 import { PageLayout } from '../../components/layout/PageLayout';
+import { Header } from '../../components/layout/Header';
 import { ProgressStepper } from '../../components/ui/ProgressStepper';
-import { Button } from '../../components/ui/Button';
-import { TextInput } from '../../components/forms/TextInput';
-import { TextArea } from '../../components/forms/TextArea';
-import { SelectInput } from '../../components/forms/SelectInput';
-import { ToggleSwitch } from '../../components/forms/ToggleSwitch';
-import { FileUpload } from '../../components/forms/FileUpload';
-import { NLPWarning, useNLPCheck } from '../../components/forms/NLPWarning';
+import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
+
+import { useCreateTaskStore } from '../../store/useCreateTaskStore';
 import { useCreateTask } from '../../hooks/useTasks';
 import { useMainButton } from '../../hooks/useMainButton';
-import { CATEGORIES, formatPriceRange } from '../../lib/constants';
-import { hapticSuccess, hapticLight } from '../../lib/telegram';
+import { hapticSuccess, hapticLight, hapticError } from '../../lib/telegram';
 import { trackEvent } from '../../lib/observability';
-import toast from 'react-hot-toast';
 
-const STEPS = ['Asosiy', 'Narx', 'Fayllar'];
+import { Step0Category } from './CreateTask/Step0Category';
+import { Step1Details } from './CreateTask/Step1Details';
+import { Step2Budget } from './CreateTask/Step2Budget';
+import { Step3Files } from './CreateTask/Step3Files';
+import { Step4Targeting } from './CreateTask/Step4Targeting';
+import { Step5Review } from './CreateTask/Step5Review';
+
+const STEPS = ['Tur', 'Tafsilot', 'Narx', 'Fayllar', 'Kimga', 'Tasdiq'];
+
+const variants = {
+  initial: { opacity: 0, x: 20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -20 },
+};
 
 export default function CreateTaskScreen() {
-  const navigate   = useNavigate();
-  const location   = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const createTask = useCreateTask();
-  const [step, setStep]   = useState(1);
-  const [form, setForm]   = useState({
-    category: location.state?.category || '', title: '', description: '',
-    priceMin: '', priceMax: '', isUrgent: false,
-    deadline: '', attachmentFileIds: [],
-  });
-  const [files, setFiles]  = useState([]);
-  const [errors, setErrors] = useState({});
-
-  const set = (k, v) => { setForm((f) => ({ ...f, [k]: v })); setErrors((e) => ({ ...e, [k]: null })); };
-
-  const nlpSeverity = useNLPCheck(form.title + ' ' + form.description);
-
-  const minDate = useMemo(() => {
-    // eslint-disable-next-line react-hooks/purity
-    return new Date(Date.now() - new Date().getTimezoneOffset() * 60000 + 10 * 60 * 1000).toISOString().slice(0, 16);
-  }, []);
-
-  const handleNext = () => {
-    setErrors({});
-    if (step === 1) {
-      if (!form.category) return setErrors({ category: ['Kategoriya tanlash majburiy'] });
-      if (form.title.trim().length < 10) return setErrors({ title: ['Kamida 10 ta belgi kiritish shart'] });
-      if (form.description.trim().length < 20) return setErrors({ description: ['Kamida 20 ta belgi kiritish shart'] });
-      if (nlpSeverity === 'block') return;
-    }
-    if (step === 2) {
-      if (!form.priceMin) return setErrors({ priceMin: ['Min narxni kiriting'] });
-      if (!form.priceMax) return setErrors({ priceMax: ['Max narxni kiriting'] });
-      if (!form.deadline) return setErrors({ deadline: ['Muddatni tanlang'] });
-      if (Number(form.priceMin) >= Number(form.priceMax)) return setErrors({ priceMin: ['Min narx maxdan kichik bo\'lishi kerak'] });
-    }
-    hapticLight();
-    setStep((s) => s + 1);
-  };
+  
+  const { 
+    step, nextStep, prevStep, resetStore,
+    category, title, description, priceMin, priceMax, deadline, 
+    files, targeting, isUrgent, nlpSeverity, setErrors, updateField, meta 
+  } = useCreateTaskStore();
 
   const targetFreelancerId = new URLSearchParams(location.search).get('freelancerId');
 
-  const handleSubmit = async () => {
-    setErrors({});
-    const payload = {
-      category:             form.category,
-      title:                form.title,
-      description:          form.description,
-      priceMin:             Math.floor(Number(form.priceMin)),
-      priceMax:             Math.floor(Number(form.priceMax)),
-      isUrgent:             form.isUrgent,
-      deadline:             new Date(form.deadline).toISOString(),
-      attachmentFileIds:    files.map((f) => f.fileId || f.id),
-    };
-    try {
-      const res = await createTask.mutateAsync(payload);
-      hapticSuccess();
-      trackEvent('Task Created', {
-        category: form.category,
-        isUrgent: form.isUrgent,
-        priceMin: payload.priceMin,
-        priceMax: payload.priceMax,
-      });
-      if (targetFreelancerId) {
-        toast.success("Vazifa yaratildi! Uni havolasini jo'nating.");
-        navigator.clipboard.writeText(`${window.location.origin}/tasks/${res.data?.data?.id || ''}`);
+  useEffect(() => {
+    resetStore();
+    if (location.state?.category) updateField('category', location.state.category);
+    if (targetFreelancerId) updateField('targetFreelancerId', targetFreelancerId);
+  }, [location, resetStore, updateField, targetFreelancerId]);
+
+  const validateStep = () => {
+    let errs = {};
+    if (step === 1) {
+      if (!title || title.trim().length < 10) errs.title = ['Kamida 10 ta belgi shart'];
+      if (!description || description.trim().length < 20) errs.description = ['Kamida 20 ta belgi shart'];
+      if (nlpSeverity === 'block') {
+        hapticError();
+        return false;
       }
-      navigate('/tasks', { replace: true });
-    } catch (error) {
-      if (error.serverErrors) {
-        setErrors(error.serverErrors);
-        if (error.serverErrors.category || error.serverErrors.title || error.serverErrors.description) {
-          setStep(1);
-        } else if (error.serverErrors.priceMin || error.serverErrors.priceMax || error.serverErrors.deadline) {
-          setStep(2);
-        }
-      }
-      console.error("Task creation failed", error);
+    }
+    if (step === 2) {
+      if (!priceMin) errs.priceMin = ['Majburiy'];
+      if (!priceMax) errs.priceMax = ['Majburiy'];
+      if (!deadline) errs.deadline = ['Muddat tanlang'];
+      if (Number(priceMin) >= Number(priceMax) && priceMin && priceMax) errs.priceMin = ["Max dan kichik bo'lishi shart"];
+    }
+    
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      hapticError();
+      return false;
+    }
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateStep()) {
+      hapticLight();
+      nextStep();
     }
   };
 
-  // MainButton Logic
-  let mainBtnText = step === 3 ? 'TASDIQLASH ✓' : 'KEYINGISI →';
-  let mainBtnClick = step === 3 ? handleSubmit : handleNext;
-  
-  if (step === 1 && nlpSeverity === 'block') {
-    mainBtnText = '';
+  const handleSubmit = async () => {
+    if (!validateStep()) return;
+    
+    const payload = {
+      category,
+      title,
+      description,
+      priceMin: Math.floor(Number(priceMin)),
+      priceMax: Math.floor(Number(priceMax)),
+      isUrgent,
+      deadline: new Date(deadline).toISOString(),
+      attachmentFileIds: files.map((f) => f.fileId || f.id),
+      targetType: targeting,
+      targetFreelancerId,
+      metadata: meta,
+    };
+
+    try {
+      const res = await createTask.mutateAsync(payload);
+      hapticSuccess();
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      toast.success("Vazifangiz muvaffaqiyatli e'lon qilindi!");
+      
+      trackEvent('Task Created', { category, isUrgent, priceMin, target: targeting });
+      
+      if (targetFreelancerId) {
+        navigator.clipboard.writeText(`${window.location.origin}/tasks/${res.data?.data?.id || ''}`);
+        toast.success("Vazifa havolasi nusxalandi!");
+      }
+      navigate('/tasks', { replace: true });
+    } catch (error) {
+      hapticError();
+      if (error.serverErrors) {
+        setErrors(error.serverErrors);
+        toast.error("Ma'lumotlarda xatolik bor");
+      } else {
+        toast.error("Tizimda xatolik yuz berdi");
+      }
+    }
+  };
+
+  // Setup Telegram Main Button
+  let mainBtnText = '';
+  let mainBtnClick = handleNext;
+  let isVisible = true;
+
+  if (step === 0) {
+    isVisible = false; // user clicks on category card to advance
+  } else if (step === 5) {
+    mainBtnText = "🚀 E'LON QILISH";
+    mainBtnClick = handleSubmit;
+  } else {
+    mainBtnText = "DAVOM ETISH →";
   }
+
+  if (step === 1 && nlpSeverity === 'block') isVisible = false;
 
   useMainButton({
     text: mainBtnText,
     onClick: mainBtnClick,
+    isVisible,
     isLoading: createTask.isPending,
-  }, [step, form, nlpSeverity, createTask.isPending, files]);
+  }, [step, nlpSeverity, createTask.isPending, handleNext, handleSubmit]);
+
+  const handleBack = () => {
+    if (step > 0) {
+      hapticLight();
+      prevStep();
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
-    <PageLayout showNav={false} className="bg-white dark:bg-black">
-      <Header title="Yangi vazifa" showBack className="!border-none" />
+    <PageLayout showNav={false} className="bg-edu-bg overflow-hidden">
+      <Header 
+        title={step === 0 ? "Yangi vazifa" : "Topshiriq yaratish"} 
+        onBack={handleBack} 
+        className="!border-none" 
+      />
 
-      <div className="px-6 pt-2 pb-10 space-y-8">
-        <ProgressStepper steps={STEPS} current={step} />
-
-        {targetFreelancerId && (
-          <div className="bg-edu-primary/5 text-edu-primary p-4 rounded-[22px] text-[12px] font-bold flex items-center gap-3 border border-edu-primary/10">
-            <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">🎯</div>
-            <p>Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.</p>
+      <div className="px-6 pt-2 pb-24 h-full flex flex-col">
+        {step > 0 && (
+          <div className="mb-6">
+            <ProgressStepper steps={STEPS} current={step} />
           </div>
         )}
 
-        {/* ── Step 1 ─────────────────────────────────── */}
-        {step === 1 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <SelectInput
-              label="Kategoriya *"
-              placeholder="Yo'nalishni tanlang"
-              options={CATEGORIES}
-              value={form.category}
-              onChange={(v) => set('category', v)}
-              error={errors.category?.[0]}
-            />
-            <TextInput
-              label="Sarlavha *"
-              placeholder="Masalan: Logotip chizib berish kerak"
-              value={form.title}
-              onValueChange={(v) => set('title', v)}
-              maxLength={200}
-              currentLength={form.title.length}
-              error={errors.title?.[0]}
-            />
-            <TextArea
-              label="Batafsil tavsif *"
-              placeholder="Vazifa haqida barcha ma'lumotlarni yozing..."
-              value={form.description}
-              onValueChange={(v) => set('description', v)}
-              maxLength={2000}
-              minRows={6}
-              error={errors.description?.[0]}
-            />
-            <NLPWarning text={form.title + ' ' + form.description} />
-          </div>
-        )}
-
-        {/* ── Step 2 ─────────────────────────────────── */}
-        {step === 2 && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div>
-              <p className="text-[11px] font-bold text-edu-muted uppercase tracking-widest px-1 mb-3">Byudjet oralig'i (UZS) *</p>
-              <div className="flex items-center gap-3">
-                <TextInput
-                  className="flex-1"
-                  placeholder="Min"
-                  type="number"
-                  value={form.priceMin}
-                  onValueChange={(v) => set('priceMin', v)}
-                  error={errors.priceMin?.[0]}
-                />
-                <div className="w-4 h-[1px] bg-gray-200 dark:bg-white/10" />
-                <TextInput
-                  className="flex-1"
-                  placeholder="Max"
-                  type="number"
-                  value={form.priceMax}
-                  onValueChange={(v) => set('priceMax', v)}
-                  error={errors.priceMax?.[0]}
-                />
-              </div>
-              {Number(form.priceMin) >= Number(form.priceMax) && form.priceMin && form.priceMax && (
-                <p className="text-[11px] font-bold text-red-500 mt-2 px-1">Min narx maxdan kichik bo'lishi kerak</p>
-              )}
-            </div>
-
-            <div className="bg-edu-bg rounded-[28px] p-6 border border-black/[0.02] dark:border-white/[0.05]">
-              <ToggleSwitch
-                label="⚡ Shoshilinch?"
-                description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
-                checked={form.isUrgent}
-                onChange={(v) => { hapticLight(); set('isUrgent', v); }}
-              />
-
-              {form.priceMin && form.priceMax && Number(form.priceMin) < Number(form.priceMax) && (
-                <div className="mt-6 pt-6 border-t border-black/[0.05] dark:border-white/10 space-y-2">
-                  <div className="flex justify-between text-[13px] font-bold text-gray-400">
-                    <span>Asosiy narx</span>
-                    <span>{formatPriceRange(Number(form.priceMin), Number(form.priceMax))}</span>
-                  </div>
-                  {form.isUrgent && (
-                    <div className="flex justify-between text-[13px] font-bold text-orange-500">
-                      <span>Shoshilinch ustama</span>
-                      <span>+20%</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-[16px] font-bold text-edu-text pt-2">
-                    <span>Umumiy byudjet</span>
-                    <span className="text-edu-primary">{formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <TextInput
-              label="Tugash muddati (Deadline) *"
-              type="datetime-local"
-              value={form.deadline}
-              onValueChange={(v) => set('deadline', v)}
-              min={minDate}
-              error={errors.deadline?.[0]}
-            />
-
-            <Button variant="secondary" fullWidth onClick={() => { hapticLight(); setStep(1); }} className="h-14">
-              ← Orqaga
-            </Button>
-          </div>
-        )}
-
-        {/* ── Step 3 ─────────────────────────────────── */}
-        {step === 3 && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <FileUpload value={files} onChange={setFiles} maxFiles={5} label="Fayllarni biriktirish" />
-
-            {/* Premium Preview Card */}
-            <div className="space-y-4">
-              <p className="text-[11px] font-bold text-edu-muted uppercase tracking-widest px-1">Vazifa namunasi</p>
-              <Card className="border-none shadow-premium-lg bg-edu-bg overflow-hidden">
-                <CardContent className="p-6 space-y-6">
-                  <div>
-                    <h3 className="text-[19px] font-bold text-edu-text leading-tight mb-2">{form.title}</h3>
-                    <p className="text-[14px] text-gray-500 dark:text-gray-400 line-clamp-3 font-medium">{form.description}</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Byudjet</p>
-                      <p className="text-[15px] font-bold text-edu-primary">
-                        {formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Muddati</p>
-                      <p className="text-[15px] font-bold text-gray-800 dark:text-gray-200">
-                        {form.deadline ? new Date(form.deadline).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long' }) : '—'}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Button variant="secondary" fullWidth onClick={() => { hapticLight(); setStep(2); }} className="h-14">
-              ← Orqaga
-            </Button>
-          </div>
-        )}
+        <div className="flex-1 relative">
+          <SectionErrorBoundary>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                variants={variants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="absolute inset-0 overflow-y-auto pb-10"
+              >
+                {step === 0 && <Step0Category />}
+                {step === 1 && <Step1Details />}
+                {step === 2 && <Step2Budget />}
+                {step === 3 && <Step3Files />}
+                {step === 4 && <Step4Targeting />}
+                {step === 5 && <Step5Review />}
+              </motion.div>
+            </AnimatePresence>
+          </SectionErrorBoundary>
+        </div>
       </div>
     </PageLayout>
   );

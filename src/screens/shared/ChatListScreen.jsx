@@ -108,7 +108,7 @@ function ChatListWidget() {
 
 export default function ChatListScreen() {
   return (
-    <PageLayout className="bg-white dark:bg-black">
+    <PageLayout className="bg-edu-bg">
       <div className="pt-6 pb-24 h-full flex flex-col">
         <div className="px-6 mb-6">
           <h1 className="text-[32px] font-bold text-edu-text tracking-tight">Xabarlar</h1>

@@ -1,15 +1,33 @@
 // src/components/cards/BidCard.jsx
-import { Check, Star, Crown, MessageCircle } from 'lucide-react';
+import { Check, Star, Crown, MessageCircle, ArrowRightLeft } from 'lucide-react';
 import { Avatar } from '../ui/Avatar';
 import { UserBadge } from '../ui/Badge';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
+import { useMemo } from 'react';
 
-export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
+export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept, onCounter }) {
   const { freelancer } = bid;
   const isVip = freelancer?.isVip;
   const isRedacted = bid.proposedPrice === null;
+
+  // Calculate percentage diff vs budget
+  const priceDiffInfo = useMemo(() => {
+    if (isRedacted || !task?.priceMax) return null;
+    const proposed = bid.proposedPrice;
+    const maxBudget = task.priceMax;
+    
+    if (proposed > maxBudget) {
+      const percent = Math.round(((proposed - maxBudget) / maxBudget) * 100);
+      return { type: 'over', text: `+${percent}% byudjetdan yuqori`, color: 'text-red-500 bg-red-500/10 border-red-500/20' };
+    }
+    if (proposed < task.priceMin) {
+      const percent = Math.round(((task.priceMin - proposed) / task.priceMin) * 100);
+      return { type: 'under', text: `-${percent}% arzonroq`, color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' };
+    }
+    return { type: 'within', text: `Byudjet ichida`, color: 'text-blue-500 bg-blue-500/10 border-blue-500/20' };
+  }, [bid.proposedPrice, task, isRedacted]);
 
   return (
     <div className={cn(
@@ -18,7 +36,7 @@ export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
     )}>
       {/* VIP Badge Overlay */}
       {isVip && (
-        <div className="absolute -top-3 left-6 px-3 py-1 bg-gradient-to-r from-edu-vip to-amber-500 rounded-full shadow-ios flex items-center gap-1.5 border border-white/20">
+        <div className="absolute -top-3 left-6 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full shadow-ios flex items-center gap-1.5 border border-white/20">
           <Crown size={12} className="text-white fill-white" />
           <span className="text-white text-[10px] font-bold uppercase tracking-widest">VIP PRO</span>
         </div>
@@ -75,9 +93,19 @@ export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
         </p>
       </div>
 
+      {/* Counter Offer Status if any */}
+      {bid.counterPrice && (
+        <div className="mb-4 p-3 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 rounded-xl">
+          <div className="flex items-center gap-1.5 text-indigo-600 font-bold text-xs mb-1">
+            <ArrowRightLeft size={14} /> Karshi taklif yuborildi
+          </div>
+          <p className="text-indigo-800 text-sm">{formatPrice(bid.counterPrice)} UZS</p>
+        </div>
+      )}
+
       {/* Footer */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="space-y-0.5">
+      <div className="flex items-end justify-between pt-1">
+        <div className="space-y-1">
           <p className="text-[10px] font-bold text-edu-muted uppercase tracking-widest leading-none">Taklif narxi</p>
           <p className="text-[20px] font-bold text-edu-text tracking-tight flex items-baseline">
             {isRedacted ? (
@@ -88,6 +116,11 @@ export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
               </>
             )}
           </p>
+          {priceDiffInfo && (
+            <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9px] font-bold uppercase ${priceDiffInfo.color}`}>
+              {priceDiffInfo.text}
+            </div>
+          )}
         </div>
 
         {isSelected ? (
@@ -95,17 +128,26 @@ export function BidCard({ bid, isSelected, isDisabled, isClient, onAccept }) {
             <Check size={16} strokeWidth={3} /> Tanlangan
           </div>
         ) : isClient ? (
-          <Button
-            size="md"
-            className={cn(
-              "rounded-2xl px-6 font-bold uppercase tracking-widest text-[12px] active:scale-95 transition-all shadow-btn",
-              isVip ? "bg-gray-900 dark:bg-white text-white dark:text-black" : "bg-edu-primary text-white"
-            )}
-            disabled={isDisabled}
-            onClick={() => onAccept(bid)}
-          >
-            Tanlash
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              size="md"
+              className={cn(
+                "rounded-2xl px-6 font-bold uppercase tracking-widest text-[12px] active:scale-95 transition-all shadow-btn",
+                isVip ? "bg-gray-900 dark:bg-white text-white dark:text-black" : "bg-edu-primary text-white"
+              )}
+              disabled={isDisabled}
+              onClick={() => onAccept(bid)}
+            >
+              Tanlash
+            </Button>
+            <button
+              disabled={isDisabled}
+              onClick={() => onCounter?.(bid)}
+              className="text-[11px] font-bold text-edu-muted hover:text-edu-primary uppercase tracking-widest text-center py-1 transition-colors disabled:opacity-50"
+            >
+              Savdolashish
+            </button>
+          </div>
         ) : null}
       </div>
     </div>
