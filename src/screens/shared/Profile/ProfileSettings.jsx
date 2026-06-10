@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BottomSheet } from '../../../../components/ui/BottomSheet';
+import { BottomSheet } from '../../../components/ui/BottomSheet';
 import { User, Bell, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';

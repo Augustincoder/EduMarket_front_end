@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { BottomSheet } from '../../../../components/ui/BottomSheet';
-import { Button } from '../../../../components/ui/Button';
-import { TextInput } from '../../../../components/forms/TextInput';
-import { TextArea } from '../../../../components/forms/TextArea';
-import { cn } from '../../../../lib/utils';
-import { hapticLight, hapticSuccess } from '../../../../lib/telegram';
+import { BottomSheet } from '../../../components/ui/BottomSheet';
+import { Button } from '../../../components/ui/Button';
+import { TextInput } from '../../../components/forms/TextInput';
+import { TextArea } from '../../../components/forms/TextArea';
+import { cn } from '../../../lib/utils';
+import { hapticLight, hapticSuccess } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = [

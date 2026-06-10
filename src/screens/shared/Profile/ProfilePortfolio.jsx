@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Card, CardContent } from '../../../../components/ui/Card';
-import { Button } from '../../../../components/ui/Button';
-import { BottomSheet } from '../../../../components/ui/BottomSheet';
-import { TextInput } from '../../../../components/forms/TextInput';
-import { FileUpload } from '../../../../components/forms/FileUpload';
+import { Card, CardContent } from '../../../components/ui/Card';
+import { Button } from '../../../components/ui/Button';
+import { BottomSheet } from '../../../components/ui/BottomSheet';
+import { TextInput } from '../../../components/forms/TextInput';
+import { FileUpload } from '../../../components/forms/FileUpload';
 import { Briefcase, Trash2, Plus } from 'lucide-react';
-import { hapticSuccess } from '../../../../lib/telegram';
+import { hapticSuccess } from '../../../lib/telegram';
 
 export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFile }) {
   const [addPortfolioOpen, setAddPortfolioOpen] = useState(false);

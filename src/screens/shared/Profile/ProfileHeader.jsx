@@ -1,7 +1,7 @@
-import { Avatar } from '../../../../components/ui/Avatar';
-import { UserBadge, VipBadge, VerifiedBadge } from '../../../../components/ui/Badge';
-import { SkillChip } from '../../../../components/ui/Chip';
-import { Card, CardContent } from '../../../../components/ui/Card';
+import { Avatar } from '../../../components/ui/Avatar';
+import { UserBadge, VipBadge, VerifiedBadge } from '../../../components/ui/Badge';
+import { SkillChip } from '../../../components/ui/Chip';
+import { Card, CardContent } from '../../../components/ui/Card';
 import { Briefcase, Flame, Zap } from 'lucide-react';
 
 export function ProfileHeader({ me, activeRole }) {

@@ -1,6 +1,6 @@
 import { Trophy, Star, TrendingUp, Zap, Flame, ClipboardList, Wallet } from 'lucide-react';
-import { calculateLevel, calculateStreak } from '../../../../lib/gamification';
-import { formatPrice } from '../../../../lib/utils';
+import { calculateLevel, calculateStreak } from '../../../lib/gamification';
+import { formatPrice } from '../../../lib/utils';
 
 export function ProfileStats({ me, activeRole, clientStats }) {
   if (activeRole === 'CLIENT') {
