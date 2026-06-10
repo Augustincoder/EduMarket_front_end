@@ -7,7 +7,7 @@ export function ProgressStepper({ steps, current }) {
     <div className="w-full flex flex-col items-center">
       {/* Current Step Label */}
       <div className="mb-4 text-center">
-        <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">
+        <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.2em]">
           {steps[current - 1]} — {current} / {steps.length}
         </p>
       </div>
@@ -24,8 +24,8 @@ export function ProgressStepper({ steps, current }) {
               key={i}
               className={cn(
                 'h-1.5 rounded-full transition-all duration-700 ease-in-out',
-                isActive ? 'w-12 bg-[#007AFF] shadow-lg shadow-[#007AFF]/30' : 
-                isDone ? 'w-6 bg-[#007AFF]/40' : 'w-6 bg-black/[0.05] dark:bg-white/10'
+                isActive ? 'w-12 bg-edu-primary shadow-lg shadow-edu-primary/30' : 
+                isDone ? 'w-6 bg-edu-primary/40' : 'w-6 bg-black/[0.05] dark:bg-white/10'
               )}
             />
           );

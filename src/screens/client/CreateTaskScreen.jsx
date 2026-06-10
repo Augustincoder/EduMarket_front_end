@@ -124,8 +124,8 @@ export default function CreateTaskScreen() {
         <ProgressStepper steps={STEPS} current={step} />
 
         {targetFreelancerId && (
-          <div className="bg-[#007AFF]/5 text-[#007AFF] p-4 rounded-[22px] text-[12px] font-bold flex items-center gap-3 border border-[#007AFF]/10">
-            <div className="w-10 h-10 rounded-full bg-[#007AFF]/10 flex items-center justify-center shrink-0">🎯</div>
+          <div className="bg-edu-primary/5 text-edu-primary p-4 rounded-[22px] text-[12px] font-bold flex items-center gap-3 border border-edu-primary/10">
+            <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">🎯</div>
             <p>Shaxsiy yollash: Vazifa yaratilgach havola nusxalanadi, uni ushbu mutaxassisga jo'nating.</p>
           </div>
         )}
@@ -167,7 +167,7 @@ export default function CreateTaskScreen() {
         {step === 2 && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
-              <p className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1 mb-3">Byudjet oralig'i (UZS) *</p>
+              <p className="text-[11px] font-bold text-edu-muted uppercase tracking-widest px-1 mb-3">Byudjet oralig'i (UZS) *</p>
               <div className="flex items-center gap-3">
                 <TextInput
                   className="flex-1"
@@ -192,7 +192,7 @@ export default function CreateTaskScreen() {
               )}
             </div>
 
-            <div className="bg-gray-50 dark:bg-white/5 rounded-[28px] p-6 border border-black/[0.02] dark:border-white/[0.05]">
+            <div className="bg-edu-bg rounded-[28px] p-6 border border-black/[0.02] dark:border-white/[0.05]">
               <ToggleSwitch
                 label="⚡ Shoshilinch?"
                 description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
@@ -207,14 +207,14 @@ export default function CreateTaskScreen() {
                     <span>{formatPriceRange(Number(form.priceMin), Number(form.priceMax))}</span>
                   </div>
                   {form.isUrgent && (
-                    <div className="flex justify-between text-[13px] font-black text-orange-500">
+                    <div className="flex justify-between text-[13px] font-bold text-orange-500">
                       <span>Shoshilinch ustama</span>
                       <span>+20%</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-[16px] font-black text-gray-900 dark:text-white pt-2">
+                  <div className="flex justify-between text-[16px] font-bold text-edu-text pt-2">
                     <span>Umumiy byudjet</span>
-                    <span className="text-[#007AFF]">{formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}</span>
+                    <span className="text-edu-primary">{formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}</span>
                   </div>
                 </div>
               )}
@@ -242,24 +242,24 @@ export default function CreateTaskScreen() {
 
             {/* Premium Preview Card */}
             <div className="space-y-4">
-              <p className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-1">Vazifa namunasi</p>
-              <Card className="border-none shadow-premium-lg bg-gray-50 dark:bg-white/5 overflow-hidden">
+              <p className="text-[11px] font-bold text-edu-muted uppercase tracking-widest px-1">Vazifa namunasi</p>
+              <Card className="border-none shadow-premium-lg bg-edu-bg overflow-hidden">
                 <CardContent className="p-6 space-y-6">
                   <div>
-                    <h3 className="text-[19px] font-black text-gray-900 dark:text-white leading-tight mb-2">{form.title}</h3>
+                    <h3 className="text-[19px] font-bold text-edu-text leading-tight mb-2">{form.title}</h3>
                     <p className="text-[14px] text-gray-500 dark:text-gray-400 line-clamp-3 font-medium">{form.description}</p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Byudjet</p>
-                      <p className="text-[15px] font-black text-[#007AFF]">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Byudjet</p>
+                      <p className="text-[15px] font-bold text-edu-primary">
                         {formatPriceRange(Number(form.priceMin) * (form.isUrgent ? 1.2 : 1), Number(form.priceMax) * (form.isUrgent ? 1.2 : 1))}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Muddati</p>
-                      <p className="text-[15px] font-black text-gray-800 dark:text-gray-200">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Muddati</p>
+                      <p className="text-[15px] font-bold text-gray-800 dark:text-gray-200">
                         {form.deadline ? new Date(form.deadline).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long' }) : '—'}
                       </p>
                     </div>

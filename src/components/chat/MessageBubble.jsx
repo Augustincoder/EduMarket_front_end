@@ -103,7 +103,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
               'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
               isMe
                 ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
-                : 'bg-edu-surface dark:bg-[#1C1C1E] text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
+                : 'bg-edu-surface dark:bg-edu-surface text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
               hasFile && !isImage && message.fileType !== 'voice' && 'hover:opacity-90 active:scale-[0.98]'
             )}
             onClick={(e) => {
@@ -122,7 +122,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             {showMenu && (
               <div 
                 className={cn(
-                  "absolute bottom-full mb-2 z-[80] w-36 bg-edu-surface dark:bg-[#2C2C2E] border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
+                  "absolute bottom-full mb-2 z-[80] w-36 bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
                   isMe ? "right-0" : "left-0"
                 )} 
                 onClick={(e) => e.stopPropagation()}

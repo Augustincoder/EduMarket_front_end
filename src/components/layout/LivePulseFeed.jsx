@@ -39,7 +39,7 @@ export function LivePulseFeed() {
       
       <div className="flex items-center gap-2 px-4 animate-ticker whitespace-nowrap">
         <Activity className="w-4 h-4 text-emerald-500 animate-pulse flex-shrink-0" />
-        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 flex-shrink-0">JONLI EFIR:</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500 flex-shrink-0">JONLI EFIR:</span>
         
         {pulseEvents.map((ev, idx) => (
           <div key={ev.id} className="flex items-center gap-3">

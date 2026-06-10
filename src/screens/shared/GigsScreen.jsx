@@ -141,7 +141,7 @@ export default function GigsScreen() {
           <div className="relative overflow-hidden squircle bg-gradient-to-br from-edu-primary to-edu-primary-d text-white p-6 shadow-btn border border-white/10">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
             <div className="relative z-10 max-w-[85%]">
-              <h2 className="text-xl font-black font-display mb-1 tracking-ios-display">
+              <h2 className="text-xl font-bold font-display mb-1 tracking-ios-display">
                 {activeRole === 'FREELANCER' ? 'Bozor tahlili' : 'Tayyor Xizmatlar'}
               </h2>
               <p className="text-[13px] text-white/90 leading-relaxed font-medium tracking-ios-text">
@@ -159,15 +159,15 @@ export default function GigsScreen() {
             <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
               <TrendingUp className="w-5 h-5 text-edu-accent" />
               <div>
-                <p className="text-[10px] text-edu-muted font-black uppercase tracking-widest">Trenddagi toifa</p>
-                <p className="text-[15px] font-black text-edu-text tracking-ios-display">Dasturlash</p>
+                <p className="text-[10px] text-edu-muted font-bold uppercase tracking-widest">Trenddagi toifa</p>
+                <p className="text-[15px] font-bold text-edu-text tracking-ios-display">Dasturlash</p>
               </div>
             </div>
             <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
               <Clock className="w-5 h-5 text-orange-500" />
               <div>
-                <p className="text-[10px] text-edu-muted font-black uppercase tracking-widest">Eng ko'p qidirilgan</p>
-                <p className="text-[15px] font-black text-edu-text tracking-ios-display">Botlar</p>
+                <p className="text-[10px] text-edu-muted font-bold uppercase tracking-widest">Eng ko'p qidirilgan</p>
+                <p className="text-[15px] font-bold text-edu-text tracking-ios-display">Botlar</p>
               </div>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function GigsScreen() {
             <div className="w-24 h-24 mb-5 rounded-full bg-edu-surface flex items-center justify-center shadow-ios border border-edu-border/30">
               <Briefcase size={40} className="text-edu-muted animate-bounce" />
             </div>
-            <h3 className="text-xl font-black text-edu-text mb-2 font-display">Xizmatlar topilmadi</h3>
+            <h3 className="text-xl font-bold text-edu-text mb-2 font-display">Xizmatlar topilmadi</h3>
             <p className="text-sm text-edu-muted max-w-[260px] leading-relaxed mb-6 font-medium">
               {localSearch
                 ? "Siz kiritgan so'rov bo'yicha hech qanday xizmat topilmadi."
@@ -262,7 +262,7 @@ export default function GigsScreen() {
                   <Clock className="w-4 h-4 text-edu-primary" />
                   <span>{selectedGig.deliveryDays} kun yetkazib berish</span>
                 </div>
-                <span className="font-black text-lg text-edu-primary tracking-ios-display">
+                <span className="font-bold text-lg text-edu-primary tracking-ios-display">
                   {formatPrice(selectedGig.price)} so'm
                 </span>
               </div>

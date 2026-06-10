@@ -73,7 +73,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">{card.label}</p>
-                <p className="text-2xl font-black text-white mt-1.5">{card.value}</p>
+                <p className="text-2xl font-bold text-white mt-1.5">{card.value}</p>
               </div>
             </div>
           );

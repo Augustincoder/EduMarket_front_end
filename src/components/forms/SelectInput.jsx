@@ -16,11 +16,14 @@ export const SelectInput = forwardRef(({
 }, ref) => {
   return (
     <div className={cn("w-full flex flex-col gap-1.5", className)}>
-      {label && <label className="text-edu-muted text-sm font-medium">{label}</label>}
+      {label && <label htmlFor={props.id || props.name} className="text-edu-muted text-sm font-medium">{label}</label>}
       
       <Select.Root value={value} onValueChange={onChange} {...props}>
         <Select.Trigger 
           ref={ref}
+          id={props.id || props.name}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${props.id || props.name}-error` : undefined}
           className={cn(
             "relative flex items-center justify-between bg-edu-surface border border-edu-border rounded-xl px-3 h-12 shadow-none focus-within:border-edu-primary focus:border-edu-primary outline-none transition-all text-sm text-edu-text w-full cursor-pointer",
             error && "border-red-500 focus-within:border-red-500 focus:border-red-500",
@@ -69,7 +72,7 @@ export const SelectInput = forwardRef(({
         </Select.Portal>
       </Select.Root>
       
-      {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
+      {error && <span id={`${props.id || props.name}-error`} className="text-red-500 text-xs mt-1" role="alert">{error}</span>}
     </div>
   );
 });

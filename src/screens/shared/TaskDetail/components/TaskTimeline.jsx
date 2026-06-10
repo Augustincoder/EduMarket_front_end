@@ -26,7 +26,7 @@ export function TaskTimeline({ status }) {
       <ProgressStepper steps={STEPS} current={getStepNum(status)} />
       {isPending && (
         <div className="flex items-center justify-center gap-2 bg-amber-500/5 py-2 rounded-xl border border-amber-500/10">
-          <p className="text-[10px] text-amber-600 font-black uppercase tracking-widest animate-pulse">
+          <p className="text-[10px] text-amber-600 font-bold uppercase tracking-widest animate-pulse">
             ⏳ Tekshiruv kutilmoqda
           </p>
         </div>

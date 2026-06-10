@@ -116,7 +116,7 @@ export default function VerificationScreen() {
             <AlertCircle size={40} />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-black">Bog'lanib bo'lmadi</h2>
+            <h2 className="text-xl font-bold">Bog'lanib bo'lmadi</h2>
             <p className="text-sm text-edu-muted max-w-[280px]">
               Tizim bilan bog'lanishda xatolik yuz berdi. Bu server yangilanayotganligi yoki manzil o'zgarganligi sababli bo'lishi mumkin.
             </p>
@@ -144,7 +144,7 @@ export default function VerificationScreen() {
           </div>
           
           <div className="space-y-2">
-            <h2 className="text-2xl font-black text-edu-text">
+            <h2 className="text-2xl font-bold text-edu-text">
               {currentStatus === 'APPROVED' ? 'Profil tasdiqlangan' : 'So\'rov kutilmoqda'}
             </h2>
             <p className="text-sm text-edu-muted max-w-[280px]">
@@ -156,7 +156,7 @@ export default function VerificationScreen() {
 
           {status?.adminNote && (
             <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/50 text-left w-full">
-              <p className="text-[10px] font-black text-edu-muted uppercase tracking-wider mb-1">Admin izohi:</p>
+              <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider mb-1">Admin izohi:</p>
               <p className="text-xs text-edu-text italic leading-relaxed">{status.adminNote}</p>
             </div>
           )}
@@ -178,7 +178,7 @@ export default function VerificationScreen() {
           {[1, 2, 3, 4, 5].map((s) => (
             <div key={s} className="flex items-center">
               <div className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300",
+                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300",
                 step === s ? "bg-edu-primary text-white scale-110 shadow-lg" : 
                 step > s ? "bg-edu-primary/20 text-edu-primary" : "bg-edu-surface text-edu-muted border border-edu-border"
               )}>
@@ -194,7 +194,7 @@ export default function VerificationScreen() {
           <div className="space-y-5 animate-fade-in">
             <div className="bg-edu-primary/5 border border-edu-primary/10 rounded-3xl p-6 text-center">
               <ShieldCheck size={48} className="mx-auto text-edu-primary mb-4" />
-              <h3 className="text-xl font-black text-edu-text mb-2">Nega tasdiqlash kerak?</h3>
+              <h3 className="text-xl font-bold text-edu-text mb-2">Nega tasdiqlash kerak?</h3>
               <ul className="text-sm text-edu-muted text-left space-y-3 mt-4">
                 <li className="flex gap-3"><ChevronRight size={18} className="text-edu-primary shrink-0" /> Buyurtmachilar ishonchini 3 barobar oshiradi</li>
                 <li className="flex gap-3"><ChevronRight size={18} className="text-edu-primary shrink-0" /> To'lovlarni yechib olishda ustuvorlik</li>
@@ -210,7 +210,7 @@ export default function VerificationScreen() {
         {step === 2 && (
           <div className="space-y-5 animate-fade-in">
             <div className="space-y-4">
-              <h3 className="text-lg font-black text-edu-text px-1">Hujjat turini tanlang</h3>
+              <h3 className="text-lg font-bold text-edu-text px-1">Hujjat turini tanlang</h3>
               <div className="grid gap-3">
                 {DOC_TYPES.map((t) => (
                   <Card 
@@ -266,7 +266,7 @@ export default function VerificationScreen() {
               <div className="w-20 h-20 bg-edu-surface rounded-full mx-auto flex items-center justify-center border-2 border-dashed border-edu-border">
                 <Camera size={32} className="text-edu-muted" />
               </div>
-              <h3 className="text-lg font-black text-edu-text">Selfie (Hujjat bilan)</h3>
+              <h3 className="text-lg font-bold text-edu-text">Selfie (Hujjat bilan)</h3>
               <p className="text-xs text-edu-muted leading-relaxed">
                 Hujjatni yuzingiz yonida ushlab rasmga tushing. Ham yuzingiz, ham hujjat aniq ko'rinishi shart.
               </p>
@@ -292,7 +292,7 @@ export default function VerificationScreen() {
             <Card className="bg-edu-primary/5 border border-edu-primary/20" radius="2xl">
               <CardContent className="p-6 text-center space-y-4">
                 <ShieldCheck size={48} className="mx-auto text-edu-primary" />
-                <h3 className="text-xl font-black text-edu-text">Ma'lumotlarni tasdiqlaysizmi?</h3>
+                <h3 className="text-xl font-bold text-edu-text">Ma'lumotlarni tasdiqlaysizmi?</h3>
                 <p className="text-sm text-edu-muted">
                   Barcha ma'lumotlar to'g'ri ekanligini qayta tekshiring. Noto'g'ri ma'lumotlar profilning cheklanishiga olib kelishi mumkin.
                 </p>

@@ -57,7 +57,7 @@ export default function PublicProfileScreen() {
   const isFav = isFavorite(userId);
 
   return (
-    <PageLayout showNav={false} bgClass="bg-[#F2F2F7] dark:bg-black">
+    <PageLayout showNav={false} bgClass="bg-edu-bg dark:bg-black">
       <Header
         title="Mutaxassis profili"
         showBack
@@ -84,16 +84,16 @@ export default function PublicProfileScreen() {
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="relative">
             <div className="absolute inset-0 bg-edu-primary/20 blur-3xl rounded-full scale-150 animate-pulse-subtle" />
-            <Avatar name={profile.fullname} avatarUrl={profile.avatarUrl} size="2xl" className="ring-4 ring-white dark:ring-[#1C1C1E] shadow-xl relative z-10" />
+            <Avatar name={profile.fullname} avatarUrl={profile.avatarUrl} size="2xl" className="ring-4 ring-edu-surface shadow-xl relative z-10" />
             {profile.isVip && (
-              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-white dark:border-[#1C1C1E] shadow-sm z-20">
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-edu-surface shadow-sm z-20">
                 <span className="text-white text-[11px] block leading-none">👑</span>
               </div>
             )}
           </div>
 
           <div className="space-y-1 relative z-10">
-            <h1 className="text-[24px] font-black font-display text-gray-900 dark:text-white leading-tight tracking-tight">
+            <h1 className="text-[24px] font-bold font-display text-edu-text leading-tight tracking-tight">
               {profile.fullname}
             </h1>
             <p className="text-[13px] font-bold text-gray-400 tracking-wide uppercase">@{profile.username || 'username'}</p>
@@ -112,12 +112,12 @@ export default function PublicProfileScreen() {
             { label: 'Reyting', value: avgRating ? avgRating : '—', icon: <Star size={18} className="text-amber-500" /> },
             { label: 'Streak', value: profile.streakCount || 0, icon: <Zap size={18} className="text-orange-500" />, suffix: ' kun' },
           ].map((stat, i) => (
-            <div key={i} className="bg-white dark:bg-[#1C1C1E] border border-black/[0.03] dark:border-white/[0.03] rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+            <div key={i} className="bg-edu-surface border border-edu-border rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
                <div className="w-8 h-8 rounded-xl bg-gray-50 dark:bg-black/20 flex items-center justify-center">
                 {stat.icon}
               </div>
               <div className="mt-2">
-                <p className="text-[17px] font-black font-display text-gray-900 dark:text-white leading-none truncate">
+                <p className="text-[17px] font-bold font-display text-edu-text leading-none truncate">
                   {stat.value}{stat.suffix}
                 </p>
                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1 leading-snug">{stat.label}</p>
@@ -130,18 +130,18 @@ export default function PublicProfileScreen() {
         <ReputationPassportCard profile={profile} />
 
         {/* ── ABOUT & SKILLS (CV STYLE) ── */}
-        <Card className="bg-white dark:bg-[#1C1C1E] shadow-ios border border-black/[0.03] dark:border-white/[0.03]" radius="2xl">
+        <Card className="bg-edu-surface shadow-ios border border-edu-border" radius="2xl">
           <CardContent className="p-6 space-y-6">
             {profile.bio && (
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Mavjud ma'lumotlar (Bio)</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Mavjud ma'lumotlar (Bio)</p>
                 <p className="text-[14px] text-gray-700 dark:text-gray-300 leading-relaxed font-medium">{profile.bio}</p>
               </div>
             )}
 
             {profile.skills?.length > 0 && (
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Ko'nikmalar (Skills)</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Ko'nikmalar (Skills)</p>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.skills.map((s) => (
                     <SkillChip key={s} label={s} />
@@ -152,7 +152,7 @@ export default function PublicProfileScreen() {
 
             {profile.achievements?.length > 0 && (
               <div className="space-y-3 pt-2">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Yutuqlar</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Yutuqlar</p>
                 <div className="grid grid-cols-1 gap-2">
                   {profile.achievements.map((ach, idx) => (
                     <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100/50 dark:border-indigo-500/10">
@@ -172,7 +172,7 @@ export default function PublicProfileScreen() {
         {profile.portfolioItems?.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
-              <h3 className="text-[16px] font-black text-gray-900 dark:text-white tracking-tight">Portfolio ishlari</h3>
+              <h3 className="text-[16px] font-bold text-edu-text tracking-tight">Portfolio ishlari</h3>
               <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{profile.portfolioItems.length} ta loyiha</span>
             </div>
             
@@ -181,7 +181,7 @@ export default function PublicProfileScreen() {
                 <button 
                   key={item.id} 
                   onClick={() => { hapticLight(); handleViewFile(item.fileId, item.title); }}
-                  className="bg-white dark:bg-[#1C1C1E] border border-black/[0.03] dark:border-white/[0.03] rounded-[24px] p-3 flex flex-col gap-3 active:scale-[0.98] transition-all text-left shadow-ios"
+                  className="bg-edu-surface border border-edu-border rounded-[24px] p-3 flex flex-col gap-3 active:scale-[0.98] transition-all text-left shadow-ios"
                 >
                   <div className="aspect-square w-full rounded-2xl bg-gray-50 dark:bg-black/20 flex flex-col items-center justify-center relative overflow-hidden group">
                     <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
@@ -191,7 +191,7 @@ export default function PublicProfileScreen() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
                   </div>
                   <div className="px-1 space-y-0.5">
-                    <p className="text-[13px] font-black text-gray-900 dark:text-white truncate">{item.title}</p>
+                    <p className="text-[13px] font-bold text-edu-text truncate">{item.title}</p>
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
                       Ko'rish <ChevronRight size={10} />
                     </p>
@@ -206,7 +206,7 @@ export default function PublicProfileScreen() {
         {gigs?.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
-              <h3 className="text-[16px] font-black text-gray-900 dark:text-white tracking-tight">Xizmatlar (Gigs)</h3>
+              <h3 className="text-[16px] font-bold text-edu-text tracking-tight">Xizmatlar (Gigs)</h3>
             </div>
             
             <div className="space-y-3">
@@ -214,11 +214,11 @@ export default function PublicProfileScreen() {
                 <div 
                   key={gig.id}
                   onClick={() => navigate(`/gigs/${gig.id}`)}
-                  className="bg-white dark:bg-[#1C1C1E] border border-black/[0.03] dark:border-white/[0.03] rounded-[28px] p-5 shadow-ios active:scale-[0.98] transition-all cursor-pointer group"
+                  className="bg-edu-surface border border-edu-border rounded-[28px] p-5 shadow-ios active:scale-[0.98] transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start gap-4 mb-3">
                     <div className="space-y-1">
-                      <h4 className="text-[15px] font-black text-gray-900 dark:text-white leading-tight line-clamp-1 group-hover:text-edu-primary transition-colors">
+                      <h4 className="text-[15px] font-bold text-edu-text leading-tight line-clamp-1 group-hover:text-edu-primary transition-colors">
                         {gig.title}
                       </h4>
                       <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
@@ -226,8 +226,8 @@ export default function PublicProfileScreen() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[15px] font-black text-emerald-600 dark:text-[#30D158]">{formatPrice(gig.price)}</p>
-                      <p className="text-[9px] font-black text-gray-400 uppercase">UZS</p>
+                      <p className="text-[15px] font-bold text-emerald-600 dark:text-emerald-500">{formatPrice(gig.price)}</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase">UZS</p>
                     </div>
                   </div>
                   <p className="text-[13px] text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed font-medium">
@@ -254,7 +254,7 @@ export default function PublicProfileScreen() {
               hapticSuccess();
               navigate(`/tasks/create?freelancerId=${userId}`);
             }}
-            className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-black text-[15px] shadow-lg shadow-edu-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all uppercase tracking-widest"
+            className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-[15px] shadow-lg shadow-edu-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all uppercase tracking-widest"
           >
             <span>Menga ishlash taklif qiling</span>
             <ChevronRight size={18} />

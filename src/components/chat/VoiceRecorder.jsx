@@ -112,7 +112,7 @@ export function VoiceRecorder({ onSend, onCancel }) {
         <X size={18} />
       </button>
       
-      <button onClick={stopAndSend} className="w-8 h-8 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-sm transition-all active:scale-90">
+      <button onClick={stopAndSend} className="w-8 h-8 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-sm transition-all active:scale-90 relative after:absolute after:-inset-2 after:content-['']">
         <Send size={14} />
       </button>
     </div>

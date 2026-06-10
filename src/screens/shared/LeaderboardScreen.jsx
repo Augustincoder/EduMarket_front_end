@@ -46,7 +46,7 @@ export default function LeaderboardScreen() {
                   <span className="text-4xl">🥇</span>
                   <Avatar name={users[0].fullname} avatarUrl={users[0].avatarUrl} size="xl" />
                   <div className="text-center">
-                    <p className="text-xl font-black font-display">{users[0].fullname}</p>
+                    <p className="text-xl font-bold font-display">{users[0].fullname}</p>
                     <div className="flex items-center justify-center gap-3 mt-1.5 text-white/90">
                       <span className="text-sm font-bold">
                         {users[0].ratingCount ? `⭐ ${(users[0].ratingSum/users[0].ratingCount).toFixed(1)}` : '—'}
@@ -75,7 +75,7 @@ export default function LeaderboardScreen() {
                       ].filter(Boolean).join(' ')}
                       onClick={() => { navigate(`/profile/${u.id}`); }}
                     >
-                      <span className="w-7 text-center text-sm font-black text-edu-muted flex-shrink-0">
+                      <span className="w-7 text-center text-sm font-bold text-edu-muted flex-shrink-0">
                         {rank <= 3 ? MEDALS[rank - 1] : `#${rank}`}
                       </span>
                       <Avatar name={u.fullname} avatarUrl={u.avatarUrl} size="sm" />
@@ -100,7 +100,7 @@ export default function LeaderboardScreen() {
             {myRank > 9 && user && (
               <Card className="bg-edu-primary border-0 shadow-btn" radius="xl">
                 <CardContent className="flex flex-row items-center gap-3 px-4 py-3 text-white">
-                  <span className="text-sm font-black">#{myRank + 1}</span>
+                  <span className="text-sm font-bold">#{myRank + 1}</span>
                   <Avatar name={user.fullname} size="sm" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold truncate">{user.fullname}</p>

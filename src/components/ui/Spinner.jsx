@@ -33,7 +33,7 @@ export function FullPageSpinner() {
           <div className="absolute inset-0 border-4 border-t-edu-primary rounded-full animate-spin" />
         </div>
         <div className="flex flex-col items-center gap-1.5">
-          <p className="text-[12px] font-black uppercase tracking-[0.2em] text-edu-primary drop-shadow-sm">EduMarket</p>
+          <p className="text-[12px] font-bold uppercase tracking-[0.2em] text-edu-primary drop-shadow-sm">EduMarket</p>
           <p className="text-[10px] font-bold text-edu-muted/80 uppercase tracking-widest animate-pulse">Yuklanmoqda</p>
         </div>
       </div>

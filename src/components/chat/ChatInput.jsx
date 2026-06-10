@@ -124,7 +124,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className="w-1 h-8 bg-edu-primary rounded-full mt-0.5" />
             <div className="flex-1 min-w-0">
-              <div className={cn("text-[11px] font-black uppercase tracking-wider", replyingTo ? "text-edu-primary" : "text-blue-500")}>
+              <div className={cn("text-[11px] font-bold uppercase tracking-wider", replyingTo ? "text-edu-primary" : "text-blue-500")}>
                 {replyingTo ? `Javob: ${replyingTo.sender?.fullname || 'Foydalanuvchi'}` : 'Tahrirlash'}
               </div>
               <div className="text-[13px] truncate font-medium text-edu-text opacity-70">
@@ -132,8 +132,8 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
               </div>
             </div>
           </div>
-          <button onClick={onCancelAction} className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active-spring">
-            <X size={16} />
+          <button aria-label="Bekor qilish" onClick={onCancelAction} className="w-11 h-11 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active-spring">
+            <X size={18} />
           </button>
         </div>
       )}
@@ -142,9 +142,10 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         {/* Attach button */}
         {!isVoiceMode && (
           <button
+            aria-label="Biriktirish"
             onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all',
+              'w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all',
               showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-black/5 dark:bg-white/5 text-edu-muted'
             )}
             disabled={!!editingMessage || uploading}
@@ -172,24 +173,26 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                 placeholder="Xabar..."
                 disabled={disabled || uploading}
                 rows={1}
-                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary transition-all max-h-32 overflow-y-auto resize-none"
+                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary focus:ring-[3px] focus:ring-edu-primary/20 transition-all max-h-32 overflow-y-auto resize-none"
               />
             </div>
 
             {/* Send or Mic button */}
             {text.trim() || editingMessage ? (
               <button
+                aria-label={editingMessage ? "Saqlash" : "Yuborish"}
                 disabled={uploading}
                 onClick={() => { hapticSuccess(); handleSend(); }}
-                className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring flex-shrink-0"
+                className="w-11 h-11 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring flex-shrink-0"
               >
-                {editingMessage ? <Check size={18} /> : <Send size={18} className="ml-0.5" />}
+                {editingMessage ? <Check size={20} /> : <Send size={20} className="ml-0.5" />}
               </button>
             ) : (
               <button
+                aria-label="Ovozli xabar"
                 onClick={() => { hapticLight(); setIsVoiceMode(true); }}
                 disabled={uploading}
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 text-edu-text hover:text-edu-primary active-spring transition-colors flex-shrink-0"
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 text-edu-text hover:text-edu-primary active-spring transition-colors flex-shrink-0"
               >
                 <Mic size={20} />
               </button>

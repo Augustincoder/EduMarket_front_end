@@ -16,11 +16,11 @@ export function FilterChip({ label, active, onClick }) {
       className={cn(
         'cursor-pointer active-spring h-9 px-5 rounded-[16px] flex items-center justify-center transition-all flex-shrink-0 border',
         active
-          ? 'bg-[#007AFF] text-white border-transparent shadow-lg shadow-[#007AFF]/25'
-          : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-300 border-black/[0.03] dark:border-white/[0.05] shadow-premium-sm hover:border-[#007AFF]/30'
+          ? 'bg-edu-primary text-white border-transparent shadow-lg shadow-edu-primary/25'
+          : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-300 border-black/[0.03] dark:border-white/[0.05] shadow-premium-sm hover:border-edu-primary/30'
       )}
     >
-      <span className="text-[12px] font-black tracking-tight">{label}</span>
+      <span className="text-[12px] font-bold tracking-tight">{label}</span>
     </button>
   );
 }
@@ -32,7 +32,7 @@ export function SkillChip({ label, onRemove }) {
   };
 
   return (
-    <div className="inline-flex items-center gap-2 h-8 px-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-black/[0.03] dark:border-white/[0.03] text-gray-700 dark:text-gray-200 flex-shrink-0">
+    <div className="inline-flex items-center gap-2 h-8 px-3 rounded-xl bg-gray-100 dark:bg-white/5 border border-edu-border text-gray-700 dark:text-gray-200 flex-shrink-0">
       <span className="text-[11px] font-bold">{label}</span>
       {onRemove && (
         <button

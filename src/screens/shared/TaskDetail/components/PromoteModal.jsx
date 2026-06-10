@@ -49,7 +49,7 @@ export function PromoteModal({
               key={pkg.type}
               disabled={isLoading}
               onClick={() => { hapticLight(); onSubmit(pkg.type); }}
-              className="w-full text-left p-4 rounded-3xl bg-gray-50 dark:bg-white/5 border border-black/[0.03] dark:border-white/[0.05] transition-all active:scale-[0.98] flex items-center gap-4 group hover:border-edu-primary/30"
+              className="w-full text-left p-4 rounded-3xl bg-edu-bg border border-black/[0.03] dark:border-white/[0.05] transition-all active:scale-[0.98] flex items-center gap-4 group hover:border-edu-primary/30"
             >
               <div className={cn(
                 "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm",
@@ -58,11 +58,11 @@ export function PromoteModal({
                 {pkg.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-black text-gray-900 dark:text-gray-100">{pkg.label}</p>
+                <p className="text-[14px] font-bold text-gray-900 dark:text-gray-100">{pkg.label}</p>
                 <p className="text-[11px] text-gray-400 font-medium">{pkg.description}</p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-[14px] font-black text-edu-primary">{pkg.price} so'm</p>
+                <p className="text-[14px] font-bold text-edu-primary">{pkg.price} so'm</p>
               </div>
             </button>
           ))}

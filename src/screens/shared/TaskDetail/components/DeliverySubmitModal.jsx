@@ -48,7 +48,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
               <ShieldCheck className="w-5 h-5 text-edu-primary" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-edu-text leading-tight">Natijani yuborish</h2>
+              <h2 className="text-lg font-bold text-edu-text leading-tight">Natijani yuborish</h2>
               <p className="text-[11px] text-edu-muted font-medium">Himoyalangan yetkazib berish</p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
 
           {/* Preview Files Upload */}
           <div className="space-y-2">
-            <label className="text-xs font-black text-edu-text uppercase tracking-wider flex items-center justify-between">
+            <label className="text-xs font-bold text-edu-text uppercase tracking-wider flex items-center justify-between">
               <span>👁️ Ko'rish uchun (Watermarked / Low-res)</span>
               {previewUpload.isUploading && <span className="text-[10px] text-edu-primary animate-pulse">Yuklanmoqda {previewUpload.progress}%</span>}
             </label>
@@ -110,7 +110,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
 
           {/* Full Files Upload */}
           <div className="space-y-2">
-            <label className="text-xs font-black text-edu-text uppercase tracking-wider flex items-center justify-between">
+            <label className="text-xs font-bold text-edu-text uppercase tracking-wider flex items-center justify-between">
               <span>🔒 To'liq fayllar (Source / High-res)</span>
               {fullUpload.isUploading && <span className="text-[10px] text-edu-primary animate-pulse">Yuklanmoqda {fullUpload.progress}%</span>}
             </label>
@@ -147,7 +147,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
 
           {/* Note Input */}
           <div className="space-y-2">
-            <label className="text-xs font-black text-edu-text uppercase tracking-wider">
+            <label className="text-xs font-bold text-edu-text uppercase tracking-wider">
               Mijozga izoh (Ixtiyoriy)
             </label>
             <textarea

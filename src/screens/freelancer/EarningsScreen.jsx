@@ -44,9 +44,9 @@ export default function EarningsScreen() {
           <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none" />
           <div className="flex items-center gap-2 mb-2 text-white/80">
             <Wallet size={16} />
-            <span className="text-[10px] font-black uppercase tracking-wider">Umumiy daromad</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Umumiy daromad</span>
           </div>
-          <p className="text-3xl font-black font-display mb-5">
+          <p className="text-3xl font-bold font-display mb-5">
             {isLoading ? '...' : formatPrice(stats?.totalEarned || 0)} <span className="text-lg font-medium">UZS</span>
           </p>
           
@@ -55,14 +55,14 @@ export default function EarningsScreen() {
               <span className="flex items-center gap-1 text-[9px] font-bold text-white/70 uppercase tracking-wider">
                 <Calendar size={10} /> Joriy oy
               </span>
-              <p className="text-sm font-black">{isLoading ? '...' : formatPrice(stats?.thisMonthEarned || 0)} UZS</p>
+              <p className="text-sm font-bold">{isLoading ? '...' : formatPrice(stats?.thisMonthEarned || 0)} UZS</p>
             </div>
             <div className="w-[1px] bg-white/20" />
             <div className="flex-1 space-y-0.5 pl-2">
               <span className="flex items-center gap-1 text-[9px] font-bold text-white/70 uppercase tracking-wider">
                 <Snowflake size={10} className="text-blue-200 animate-spin-slow" /> Muzlatilgan
               </span>
-              <p className="text-sm font-black">{isLoading ? '...' : formatPrice(stats?.frozenEarned || 0)} UZS</p>
+              <p className="text-sm font-bold">{isLoading ? '...' : formatPrice(stats?.frozenEarned || 0)} UZS</p>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function EarningsScreen() {
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">👑</span>
-                <h3 className="text-xs font-black uppercase tracking-wider">VIP Status faol</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider">VIP Status faol</h3>
               </div>
               <p className="text-[10px] text-white/80 font-medium">Muddati: {new Date(user?.vipExpiresAt).toLocaleDateString('uz-UZ')}</p>
             </div>
@@ -86,11 +86,11 @@ export default function EarningsScreen() {
             <div className="space-y-1 pr-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">👑</span>
-                <h3 className="text-xs font-black text-edu-text uppercase tracking-wider font-display">VIP rejimga o'ting</h3>
+                <h3 className="text-xs font-bold text-edu-text uppercase tracking-wider font-display">VIP rejimga o'ting</h3>
               </div>
               <p className="text-[10px] text-edu-muted font-medium">Buyurtmalarga birinchi bo'lib taklif bering va daromadni 2 barobar oshiring!</p>
             </div>
-            <span className="text-amber-500 font-black text-xs shrink-0 flex items-center gap-0.5 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-xl">
+            <span className="text-amber-500 font-bold text-xs shrink-0 flex items-center gap-0.5 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-xl">
               Sotib olish →
             </span>
           </div>
@@ -106,7 +106,7 @@ export default function EarningsScreen() {
                 const percent = Math.min((day.amount / maxAmount) * 100, 100);
                 return (
                   <div key={idx} className="flex flex-col items-center gap-1.5 flex-1">
-                    <div className="text-[8px] font-black text-edu-primary h-3">
+                    <div className="text-[8px] font-bold text-edu-primary h-3">
                       {day.amount > 0 ? `${Math.round(day.amount / 1000)}k` : ''}
                     </div>
                     <div className="w-5 bg-edu-bg rounded-lg h-16 relative overflow-hidden flex items-end border border-edu-border/10">
@@ -215,7 +215,7 @@ export default function EarningsScreen() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <span className="text-xs font-black text-edu-primary">
+                      <span className="text-xs font-bold text-edu-primary">
                         +{formatPrice(task.agreedPrice || 0)} so'm
                       </span>
                       <ArrowUpRight size={12} className="text-edu-primary" />

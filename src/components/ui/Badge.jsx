@@ -43,7 +43,7 @@ export function VipBadge() {
     <span
       className={cn(
         baseBadgeClass,
-        "bg-gradient-to-r from-[#AF8B3B]/15 to-[#AF8B3B]/5 text-[#AF8B3B] border-[#AF8B3B]/30 font-black"
+        "bg-gradient-to-r from-edu-vip/15 to-edu-vip/5 text-edu-vip border-edu-vip/30 font-bold"
       )}
     >
       <span className="text-[12px] -mt-0.5">👑</span>
@@ -57,10 +57,10 @@ export function VerifiedBadge() {
     <span
       className={cn(
         baseBadgeClass,
-        "bg-edu-primary/10 text-edu-primary border-edu-primary/30 font-black"
+        "bg-edu-primary/10 text-edu-primary border-edu-primary/30 font-bold"
       )}
     >
-      <span className="text-[11px] font-black -mt-0.5">✓</span>
+      <span className="text-[11px] font-bold -mt-0.5">✓</span>
       TASDIQLANGAN
     </span>
   );
@@ -71,7 +71,7 @@ export function UrgentBadge() {
     <span
       className={cn(
         baseBadgeClass,
-        'bg-edu-urgent/10 text-edu-urgent border-edu-urgent/30 animate-pulse font-black'
+        'bg-edu-urgent/10 text-edu-urgent border-edu-urgent/30 animate-pulse font-bold'
       )}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-edu-urgent flex-shrink-0 shadow-[0_0_6px_rgba(255,59,48,0.4)]" />

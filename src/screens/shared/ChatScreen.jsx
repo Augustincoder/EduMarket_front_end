@@ -184,20 +184,20 @@ export default function ChatScreen() {
               <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center shadow-sm">
                 <ClipboardList size={20} className="text-edu-primary" />
               </div>
-              <h3 className="font-black text-[15px] text-edu-text line-clamp-1 tracking-tight">{task.title}</h3>
+              <h3 className="font-bold text-[15px] text-edu-text line-clamp-1 tracking-tight">{task.title}</h3>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs text-edu-muted mb-3">
               <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
                 <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Narxi</span>
-                <strong className="text-edu-primary text-[14px] font-black">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
+                <strong className="text-edu-primary text-[14px] font-bold">{task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} so'm` : 'Kelishilgan'}</strong>
               </div>
               <div className="bg-edu-bg/50 p-3 rounded-md border border-edu-border/20">
                 <span className="block opacity-60 font-bold uppercase tracking-widest text-[9px] mb-1">Muddat</span>
-                <strong className="text-edu-text text-[14px] font-black">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
+                <strong className="text-edu-text text-[14px] font-bold">{new Date(task.deadline).toLocaleDateString('uz-UZ')}</strong>
               </div>
             </div>
             {task.status === 'ASSIGNED' && isClient && (
-              <p className="text-[11px] text-edu-accent mt-3 bg-edu-accent/5 p-3 rounded-md text-center font-black uppercase tracking-wide border border-edu-accent/10">
+              <p className="text-[11px] text-edu-accent mt-3 bg-edu-accent/5 p-3 rounded-md text-center font-bold uppercase tracking-wide border border-edu-accent/10">
                 Freelancer ishni "Boshlash"ini kuting
               </p>
             )}
@@ -224,7 +224,7 @@ export default function ChatScreen() {
             <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center mb-4">
               <Hand size={40} className="text-edu-primary opacity-50" />
             </div>
-            <p className="text-[15px] font-black text-edu-text tracking-tight">Suhbatni boshlang!</p>
+            <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang!</p>
             <p className="text-xs mt-1 text-center max-w-[200px] font-medium leading-relaxed">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
           </div>
         )}

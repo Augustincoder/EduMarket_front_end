@@ -23,7 +23,7 @@ export function VerificationStatusCard({ status, onClick }) {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <h4 className="text-sm font-black text-edu-text">Profilingizni tasdiqlang</h4>
+            <h4 className="text-sm font-bold text-edu-text">Profilingizni tasdiqlang</h4>
             <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider">
               {status === 'APPROVED' ? 'Tasdiqlangan' : 
                status === 'PENDING' ? 'Kutilmoqda...' : 'Hujjat topshirish'}

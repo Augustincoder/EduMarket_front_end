@@ -38,7 +38,7 @@ export default function TaskDetailScreen() {
   const navigate  = useNavigate();
   const user = useAuthStore((s) => s.user);
 
-  const { data: task, isLoading } = useTask(id);
+  const { data: task, isLoading, error } = useTask(id);
   const {
     transitions,
     bidOpen, setBidOpen,
@@ -110,12 +110,35 @@ export default function TaskDetailScreen() {
       </PageLayout>
     );
   }
+
+  if (error) {
+    return (
+      <PageLayout showNav={false} scrollable={false}>
+        <div className="flex flex-col h-dvh bg-edu-bg">
+          <TaskHeader title="Xatolik" showBack />
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
+            <div className="w-full bg-edu-surface border border-red-500/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-3">
+                <AlertTriangle size={24} className="text-red-500" />
+              </div>
+              <h3 className="text-sm font-bold text-edu-text mb-1">Vazifani yuklashda xatolik</h3>
+              <p className="text-[11px] text-edu-muted font-medium mb-4 max-w-[200px]">Server bilan ulanishda xatolik yoki vazifa mavjud emas. Iltimos qayta urinib ko'ring.</p>
+              <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="rounded-xl h-9 text-xs font-bold border-edu-border">
+                Qayta yuklash
+              </Button>
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
+
   if (!task) return null;
 
   const renderCTA = () => {
     if (!user) {
       return (
-        <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')} className="rounded-2xl h-14 font-black shadow-ios-primary">
+        <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')} className="rounded-2xl h-14 font-bold shadow-ios-primary">
           Kirish va taklif bering
         </Button>
       );
@@ -129,7 +152,7 @@ export default function TaskDetailScreen() {
             <Button 
               fullWidth size="lg" variant="primary" 
               onClick={() => navigate(`/tasks/${id}/bids`)}
-              className="flex-1 rounded-[22px] shadow-ios-primary h-14 text-[15px] font-black"
+              className="flex-1 rounded-[22px] shadow-ios-primary h-14 text-[15px] font-bold"
             >
               Takliflarni ko'rish {task._count?.bids > 0 && `(${task._count.bids})`}
             </Button>
@@ -148,7 +171,7 @@ export default function TaskDetailScreen() {
             <Button 
               fullWidth variant="primary" size="lg" 
               onClick={() => setBidOpen(true)}
-              className="rounded-[22px] h-14 text-[15px] font-black shadow-ios-primary"
+              className="rounded-[22px] h-14 text-[15px] font-bold shadow-ios-primary"
             >
               Taklif berish
             </Button>
@@ -166,7 +189,7 @@ export default function TaskDetailScreen() {
               fullWidth size="lg" variant="primary"
               isLoading={transitions.startProgress.isPending}
               onClick={() => transitions.startProgress.mutate()}
-              className="rounded-2xl h-14 text-[15px] font-black shadow-ios-primary"
+              className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
             >
               Ishni boshlash 🚀
             </Button>
@@ -174,7 +197,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="ghost"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-xl h-12 text-[#007AFF] font-bold"
+              className="rounded-xl h-12 text-edu-primary font-bold"
             >
               Chatga o'tish
             </Button>
@@ -183,14 +206,14 @@ export default function TaskDetailScreen() {
       } else if (isClient) {
         return (
           <div className="flex flex-col gap-3 w-full">
-            <div className="text-[13px] text-center text-gray-400 bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-black/[0.03] font-bold">
+            <div className="text-[13px] text-center text-gray-400 bg-edu-bg p-4 rounded-2xl border border-black/[0.03] font-bold">
               ⏳ Ijrochi ishni boshlashini kutilmoqda...
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-2xl h-12 border-black/5 dark:border-white/5 font-bold"
+              className="rounded-2xl h-12 border-edu-border font-bold"
             >
               Chatga o'tish
             </Button>
@@ -207,7 +230,7 @@ export default function TaskDetailScreen() {
             <Button
               fullWidth size="lg" variant="primary"
               onClick={() => setDeliverySubmitOpen(true)}
-              className="rounded-2xl h-14 text-[15px] font-black shadow-ios-primary"
+              className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
             >
               Natijani yuborish 📤
             </Button>
@@ -215,7 +238,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="ghost"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-xl h-12 text-[#007AFF] font-bold"
+              className="rounded-xl h-12 text-edu-primary font-bold"
             >
               Chatga o'tish
             </Button>
@@ -224,14 +247,14 @@ export default function TaskDetailScreen() {
       } else if (isClient) {
         return (
           <div className="flex flex-col gap-3 w-full">
-            <div className="text-[13px] text-center text-[#007AFF] bg-[#007AFF]/5 p-4 rounded-2xl border border-[#007AFF]/10 font-bold">
+            <div className="text-[13px] text-center text-edu-primary bg-edu-primary/5 p-4 rounded-2xl border border-edu-primary/10 font-bold">
               ⚙️ Ijrochi vazifa ustida ishlamoqda
             </div>
             <Button
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-2xl h-12 border-black/5 dark:border-white/5 font-bold"
+              className="rounded-2xl h-12 border-edu-border font-bold"
             >
               Chatga o'tish
             </Button>
@@ -248,7 +271,7 @@ export default function TaskDetailScreen() {
             <Button
               fullWidth size="lg" variant="primary"
               onClick={() => setRatingOpen(true)}
-              className="rounded-2xl h-14 text-[15px] font-black shadow-ios-primary"
+              className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
             >
               Vazifani baholash ⭐
             </Button>
@@ -256,7 +279,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-2xl h-12 border-black/5 dark:border-white/5 font-bold"
+              className="rounded-2xl h-12 border-edu-border font-bold"
             >
               Chatga o'tish
             </Button>
@@ -272,7 +295,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-2xl h-12 border-black/5 dark:border-white/5 font-bold"
+              className="rounded-2xl h-12 border-edu-border font-bold"
             >
               Chatga o'tish
             </Button>
@@ -293,7 +316,7 @@ export default function TaskDetailScreen() {
                 await transitions.accept.mutateAsync();
                 setRatingOpen(true);
               }}
-              className="rounded-2xl h-14 text-[15px] font-black shadow-ios-primary"
+              className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
             >
               Vazifani qabul qilish ✅
             </Button>
@@ -323,7 +346,7 @@ export default function TaskDetailScreen() {
               fullWidth size="md" variant="outline"
               icon={<MessageSquare size={16} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
-              className="rounded-2xl h-12 border-black/5 dark:border-white/5 font-bold"
+              className="rounded-2xl h-12 border-edu-border font-bold"
             >
               Chatga o'tish
             </Button>
@@ -341,14 +364,14 @@ export default function TaskDetailScreen() {
           </div>
           <div className="flex gap-2">
             <Button
-              variant="outline" className="flex-1 rounded-xl h-11 text-[13px] font-bold border-black/5 dark:border-white/5"
+              variant="outline" className="flex-1 rounded-xl h-11 text-[13px] font-bold border-edu-border"
               icon={<Star size={14} />}
               onClick={() => setRatingOpen(true)}
             >
               Baholash
             </Button>
             <Button
-              variant="outline" className="flex-1 rounded-xl h-11 text-[13px] font-bold border-black/5 dark:border-white/5"
+              variant="outline" className="flex-1 rounded-xl h-11 text-[13px] font-bold border-edu-border"
               icon={<MessageSquare size={14} />}
               onClick={() => navigate(`/tasks/${id}/chat`)}
             >
@@ -374,7 +397,7 @@ export default function TaskDetailScreen() {
   };
 
   return (
-    <PageLayout showNav={false} scrollable={false} bgClass="bg-[#F2F2F7] dark:bg-black">
+    <PageLayout showNav={false} scrollable={false} bgClass="bg-edu-bg dark:bg-black">
       <div className="flex flex-col h-dvh">
         <TaskHeader 
           task={task} 
@@ -388,9 +411,9 @@ export default function TaskDetailScreen() {
           <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
-                <StatusBadge status={task.status} className="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest" />
+                <StatusBadge status={task.status} className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest" />
                 {task.isUrgent && (
-                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest border border-red-500/10">
+                  <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 text-red-500 text-[9px] font-bold uppercase tracking-widest border border-red-500/10">
                     <Clock size={10} strokeWidth={3} /> Tezkor
                   </span>
                 )}
@@ -401,7 +424,7 @@ export default function TaskDetailScreen() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-5 shadow-ios border border-black/[0.03] dark:border-white/[0.03]">
+            <div className="bg-edu-surface rounded-[28px] p-5 shadow-ios border border-edu-border">
               <TaskTimeline status={task.status} />
             </div>
             
@@ -432,11 +455,11 @@ export default function TaskDetailScreen() {
           {/* Title & Description */}
           <div className="space-y-4">
             <div className="px-1 space-y-1">
-               <h1 className="text-[22px] font-black font-display text-gray-900 dark:text-white leading-[1.3] tracking-tight">
+               <h1 className="text-[22px] font-bold font-display text-edu-text leading-[1.3] tracking-tight">
                 {task.title}
               </h1>
               <div className="flex items-center gap-2">
-                <span className="text-[14px] font-black text-emerald-600 dark:text-[#30D158]">
+                <span className="text-[14px] font-bold text-emerald-600 dark:text-emerald-500">
                   {formatPriceRange(task.priceMin, task.priceMax)}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-700" />
@@ -444,9 +467,9 @@ export default function TaskDetailScreen() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#1C1C1E] rounded-[28px] p-6 shadow-ios border border-black/[0.03] dark:border-white/[0.03] space-y-5">
+            <div className="bg-edu-surface rounded-[28px] p-6 shadow-ios border border-edu-border space-y-5">
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em]">Vazifa tavsifi</p>
+                <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Vazifa tavsifi</p>
                 <div className="relative">
                   <p className={cn(
                     'text-[14px] text-gray-700 dark:text-gray-300 leading-[1.6] font-medium transition-all duration-300',
@@ -456,7 +479,7 @@ export default function TaskDetailScreen() {
                   </p>
                   {task.description?.length > 250 && (
                     <button
-                      className="text-[12px] text-[#007AFF] font-bold mt-2 flex items-center gap-1 active:scale-95 bg-white dark:bg-[#1C1C1E] pr-2"
+                      className="text-[12px] text-edu-primary font-bold mt-2 flex items-center gap-1 active:scale-95 bg-edu-surface pr-2"
                       onClick={() => setDescExpanded((v) => !v)}
                     >
                       {descExpanded ? 'Yopish' : 'To\'liq oqish'}
@@ -468,7 +491,7 @@ export default function TaskDetailScreen() {
 
               {task.attachmentFileIds?.length > 0 && isMember && (
                 <div className="pt-5 border-t border-gray-100 dark:border-white/5 space-y-3">
-                  <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em]">Hujjatlar</p>
+                  <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Hujjatlar</p>
                   <div className="grid grid-cols-1 gap-2">
                     {task.attachmentFileIds.map((fileId, idx) => (
                       <button
@@ -476,7 +499,7 @@ export default function TaskDetailScreen() {
                         onClick={() => handleViewFile(fileId)}
                         className="flex items-center gap-3 p-3.5 rounded-2xl bg-gray-50 dark:bg-black/20 border border-black/[0.02] dark:border-white/[0.02] text-[12px] font-bold text-gray-700 dark:text-gray-300 active:scale-[0.98] transition-all"
                       >
-                        <div className="w-8 h-8 rounded-xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF] shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-edu-primary/10 flex items-center justify-center text-edu-primary shrink-0">
                           <FileText size={16} />
                         </div>
                         <span className="truncate flex-1 text-left">Fayl #{idx + 1} ni ko'rish</span>
@@ -492,11 +515,11 @@ export default function TaskDetailScreen() {
           <div className="grid grid-cols-1 gap-3">
              <div 
                 onClick={() => navigate(`/profile/${task.client?.id}`)}
-                className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-4 shadow-ios border border-black/[0.03] dark:border-white/[0.03] flex items-center gap-3 active:scale-[0.98] transition-all"
+                className="bg-edu-surface rounded-[24px] p-4 shadow-ios border border-edu-border flex items-center gap-3 active:scale-[0.98] transition-all"
               >
                 <Avatar name={task.client?.fullname} avatarUrl={task.client?.avatarUrl} size="sm" className="rounded-xl" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-bold text-gray-900 dark:text-white truncate">{task.client?.fullname}</p>
+                  <p className="text-[14px] font-bold text-edu-text truncate">{task.client?.fullname}</p>
                   <p className="text-[11px] text-gray-400 font-medium">Buyurtmachi</p>
                 </div>
                 <UserBadge badge={task.client?.badge} isVip={task.client?.isVip} size="xs" />
@@ -505,16 +528,16 @@ export default function TaskDetailScreen() {
               {task.freelancer && (
                 <div 
                   onClick={() => navigate(`/profile/${task.freelancer.id}`)}
-                  className="bg-white dark:bg-[#1C1C1E] rounded-[24px] p-4 shadow-ios border border-black/[0.03] dark:border-white/[0.03] flex items-center gap-3 active:scale-[0.98] transition-all"
+                  className="bg-edu-surface rounded-[24px] p-4 shadow-ios border border-edu-border flex items-center gap-3 active:scale-[0.98] transition-all"
                 >
                   <Avatar name={task.freelancer.fullname} avatarUrl={task.freelancer.avatarUrl} size="sm" className="rounded-xl" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-gray-900 dark:text-white truncate">{task.freelancer.fullname}</p>
+                    <p className="text-[14px] font-bold text-edu-text truncate">{task.freelancer.fullname}</p>
                     <p className="text-[11px] text-gray-400 font-medium">Ijrochi</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {task.freelancer.ratingCount > 0 && (
-                      <div className="flex items-center gap-0.5 text-[11px] text-[#FF9500] font-black">
+                      <div className="flex items-center gap-0.5 text-[11px] text-amber-500 font-bold">
                         <Star size={10} fill="currentColor" />
                         <span>{(task.freelancer.ratingSum / task.freelancer.ratingCount).toFixed(1)}</span>
                       </div>
@@ -531,7 +554,7 @@ export default function TaskDetailScreen() {
               <div className="bg-red-500/5 text-red-500 p-5 rounded-[24px] flex items-start gap-3 border border-red-500/10">
                 <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <p className="font-black text-[14px]">Vazifa bekor qilingan</p>
+                  <p className="font-bold text-[14px]">Vazifa bekor qilingan</p>
                   <p className="text-[12px] opacity-70 font-medium">Ushbu vazifa buyurtmachi tomonidan bekor qilingan.</p>
                 </div>
               </div>
@@ -541,7 +564,7 @@ export default function TaskDetailScreen() {
               <div className="bg-amber-500/5 text-amber-600 p-5 rounded-[24px] flex items-start gap-3 border border-amber-500/10">
                 <AlertTriangle size={18} className="shrink-0 mt-0.5" />
                 <div className="space-y-2">
-                  <p className="font-black text-[14px]">Nizo (Dispute) jarayonida</p>
+                  <p className="font-bold text-[14px]">Nizo (Dispute) jarayonida</p>
                   <p className="text-[12px] opacity-70 font-medium">Hozirda ma'muriyat vaziyatni o'rganmoqda.</p>
                   {task.dispute?.reason && (
                     <div className="bg-black/5 dark:bg-white/5 p-3 rounded-xl italic text-[11px] font-medium text-gray-500">
@@ -553,12 +576,12 @@ export default function TaskDetailScreen() {
             )}
 
             {task.bids?.[0] && task.status !== 'OPEN' && (
-              <div className="bg-[#007AFF]/5 rounded-[24px] p-5 border border-[#007AFF]/10 flex items-center justify-between">
+              <div className="bg-edu-primary/5 rounded-[24px] p-5 border border-edu-primary/10 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <p className="text-[10px] font-black text-[#007AFF] uppercase tracking-widest">Kelishilgan narx</p>
-                  <p className="text-[16px] font-black text-[#007AFF]">{formatPrice(task.agreedPrice || task.bids[0].proposedPrice)} UZS</p>
+                  <p className="text-[10px] font-bold text-edu-primary uppercase tracking-widest">Kelishilgan narx</p>
+                  <p className="text-[16px] font-bold text-edu-primary">{formatPrice(task.agreedPrice || task.bids[0].proposedPrice)} UZS</p>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-[#007AFF]/10 flex items-center justify-center text-[#007AFF]">
+                <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center text-edu-primary">
                   <CheckCircle size={20} />
                 </div>
               </div>

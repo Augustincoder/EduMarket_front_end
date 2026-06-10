@@ -51,7 +51,7 @@ export default function AdminLoginScreen() {
           <div className="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 mb-4 animate-pulse">
             <Terminal size={28} />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white font-display">EduMarket</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white font-display">EduMarket</h1>
           <p className="text-slate-400 text-xs mt-1 uppercase font-bold tracking-wider">Admin Control Portal</p>
         </div>
 

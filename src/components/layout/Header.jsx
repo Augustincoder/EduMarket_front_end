@@ -32,8 +32,9 @@ export function Header({
         {showBack && (
           <button
             onClick={handleBack}
+            aria-label="Orqaga"
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+              'w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0',
               'bg-black/5 dark:bg-white/5 active-spring transition-all'
             )}
           >

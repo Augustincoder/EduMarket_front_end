@@ -7,6 +7,54 @@ import TaskCard from '../../components/cards/TaskCard';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
 import { FilterChip } from '../../components/ui/Chip';
 import { SearchX } from 'lucide-react';
+import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
+
+// Extracted List component to allow Error Boundary to catch its errors
+function TaskListWidget({ activeRole, statusFilter }) {
+  const { data: tasks, isLoading, error } = useMyTasks(activeRole, statusFilter);
+
+  // Manually throw error so SectionErrorBoundary catches it
+  if (error) {
+    throw error;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-3 animate-fade-up">
+        <TaskCardSkeleton />
+        <TaskCardSkeleton />
+        <TaskCardSkeleton />
+      </div>
+    );
+  }
+
+  if (tasks?.length > 0) {
+    return (
+      <div className="space-y-3 animate-slide-up">
+        {tasks.map((task) => (
+          <TaskCard key={task.id} task={task} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
+      <div className="w-24 h-24 mb-5 rounded-2xl bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-tr from-edu-primary/10 to-transparent" />
+        <SearchX size={40} className="text-edu-muted relative z-10" />
+      </div>
+      <h3 className="text-xl font-bold font-display text-edu-text mb-2">Vazifalar topilmadi</h3>
+      <p className="text-sm font-medium text-edu-muted max-w-[260px] leading-relaxed">
+        {statusFilter 
+          ? "Tanlangan holat bo'yicha vazifalar mavjud emas." 
+          : (activeRole === 'CLIENT' 
+              ? "Siz hali o'z vazifalaringizni platformaga joylashtirmadingiz." 
+              : "Sizga hali vazifa tayinlanmagan yoki ishtirok etmayapsiz.")}
+      </p>
+    </div>
+  );
+}
 
 export default function MyTasksScreen() {
   const activeRole = useAuthStore((s) => s.activeRole);
@@ -20,8 +68,6 @@ export default function MyTasksScreen() {
       setSearchParams({});
     }
   };
-
-  const { data: tasks, isLoading } = useMyTasks(activeRole, statusFilter);
 
   return (
     <PageLayout scrollable={false}>
@@ -43,34 +89,9 @@ export default function MyTasksScreen() {
 
         {/* Tasks List */}
         <div className="flex-1 overflow-y-auto space-y-3 pb-4 scrollbar-hide">
-          {isLoading ? (
-            <div className="space-y-3 animate-fade-up">
-              <TaskCardSkeleton />
-              <TaskCardSkeleton />
-              <TaskCardSkeleton />
-            </div>
-          ) : tasks?.length > 0 ? (
-            <div className="space-y-3 animate-slide-up">
-              {tasks.map(task => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
-              <div className="w-24 h-24 mb-5 rounded-2xl bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-edu-primary/10 to-transparent" />
-                <SearchX size={40} className="text-edu-muted relative z-10" />
-              </div>
-              <h3 className="text-xl font-black font-display text-edu-text mb-2">Vazifalar topilmadi</h3>
-              <p className="text-sm font-medium text-edu-muted max-w-[260px] leading-relaxed">
-                {statusFilter 
-                  ? "Tanlangan holat bo'yicha vazifalar mavjud emas." 
-                  : (activeRole === 'CLIENT' 
-                      ? "Siz hali o'z vazifalaringizni platformaga joylashtirmadingiz." 
-                      : "Sizga hali vazifa tayinlanmagan yoki ishtirok etmayapsiz.")}
-              </p>
-            </div>
-          )}
+          <SectionErrorBoundary fallbackTitle="Vazifalarni yuklashda xatolik">
+            <TaskListWidget activeRole={activeRole} statusFilter={statusFilter} />
+          </SectionErrorBoundary>
         </div>
       </div>
     </PageLayout>

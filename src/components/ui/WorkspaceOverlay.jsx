@@ -28,7 +28,7 @@ export function WorkspaceOverlay() {
           </div>
         </div>
 
-        <h2 className="text-xl font-black text-edu-text tracking-tight mb-2">
+        <h2 className="text-xl font-bold text-edu-text tracking-tight mb-2">
           {switchingTo === 'FREELANCER' ? 'Mutaxassis ish joyi' : 'Mijoz ish joyi'}
         </h2>
         <p className="text-sm font-medium text-edu-muted">

@@ -52,7 +52,7 @@ export function ReputationPassportCard({ profile }) {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <ShieldCheck className={cn("w-5 h-5", trustColor)} />
-            <h3 className="font-black text-edu-text uppercase tracking-widest text-[11px]">Raqamli Pasport</h3>
+            <h3 className="font-bold text-edu-text uppercase tracking-widest text-[11px]">Raqamli Pasport</h3>
           </div>
           <div className="px-2.5 py-1 rounded-full bg-edu-surface/80 border border-edu-border/50 backdrop-blur-md flex items-center gap-1.5 shadow-sm">
              <span className={cn("w-2 h-2 rounded-full animate-pulse-subtle", trustLevel >= 75 ? "bg-emerald-500" : "bg-blue-500")} />
@@ -63,7 +63,7 @@ export function ReputationPassportCard({ profile }) {
         <div className="flex flex-col gap-1 mb-6">
           <span className="text-[10px] font-bold text-edu-muted uppercase tracking-widest">Ishonch Darajasi</span>
           <div className="flex items-end gap-2">
-            <span className={cn("text-3xl font-black tracking-tighter leading-none", trustColor)}>
+            <span className={cn("text-3xl font-extrabold tracking-tighter leading-none", trustColor)}>
               {trustLevel}
               <span className="text-lg opacity-50 ml-0.5">%</span>
             </span>

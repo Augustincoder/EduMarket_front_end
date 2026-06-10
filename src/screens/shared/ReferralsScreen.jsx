@@ -72,7 +72,7 @@ export default function ReferralsScreen() {
             <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-600 mb-3">
               <Users size={24} />
             </div>
-            <p className="text-2xl font-black text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : referralsData?.totalReferrals || 0}
             </p>
             <p className="text-xs font-bold text-slate-500 uppercase mt-1">Taklif qilinganlar</p>
@@ -82,7 +82,7 @@ export default function ReferralsScreen() {
             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600 mb-3">
               <Coins size={24} />
             </div>
-            <p className="text-2xl font-black text-slate-900 dark:text-white">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">
               {isLoading ? '...' : formatPrice(referralsData?.referralEarned || 0)}
             </p>
             <p className="text-xs font-bold text-slate-500 uppercase mt-1">Ishlangan Bonus</p>

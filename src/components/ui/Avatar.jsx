@@ -27,7 +27,7 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
     <div
       onClick={onClick}
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full shrink-0 font-black select-none shadow-premium-sm ring-1 ring-edu-text/[0.05]",
+        "relative inline-flex items-center justify-center rounded-full shrink-0 font-bold select-none shadow-premium-sm ring-1 ring-edu-text/[0.05]",
         sizeClass[size] || sizeClass.md,
         onClick && "cursor-pointer active-spring",
         className

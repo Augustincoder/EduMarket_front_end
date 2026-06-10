@@ -67,7 +67,9 @@ export function useProfileData() {
     me,
     clientStats,
     activeRole,
-    isLoading: meLoading || clientStatsLoading,
+    meLoading,
+    clientStatsLoading,
+    isLoading: meLoading, // only wait for me for primary screen render
     updateMe,
     addPortfolio,
     delPortfolio,

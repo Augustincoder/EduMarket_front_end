@@ -48,9 +48,12 @@ function CacheClearButton() {
   );
 }
 
+import { NetworkBanner } from '../components/ui/NetworkBanner';
+
 export default function App() {
   return (
     <Providers>
+      <NetworkBanner />
       <AppRouter />
       <WorkspaceOverlay />
       <CacheClearButton />

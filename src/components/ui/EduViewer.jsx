@@ -250,7 +250,7 @@ export const EduViewer = ({
               >
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-white font-bold text-lg">Fayl ma'lumotlari</h3>
-                  <button onClick={() => setShowInfo(false)} className="p-2 text-white/50 hover:text-white rounded-full hover:bg-white/10"><X size={16} /></button>
+                  <button aria-label="Yopish" onClick={() => setShowInfo(false)} className="w-11 h-11 flex items-center justify-center text-white/50 hover:text-white rounded-full hover:bg-white/10"><X size={18} /></button>
                 </div>
 
                 <div className="space-y-6">

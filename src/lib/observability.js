@@ -11,18 +11,27 @@ export function initObservability() {
   if (SENTRY_DSN) {
     Sentry.init({
       dsn: SENTRY_DSN,
+      environment: IS_PROD ? "production" : "development",
       integrations: [
         Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration(),
+        Sentry.replayIntegration({
+          maskAllText: true,
+          blockAllMedia: false,
+        }),
       ],
       // Performance Monitoring
-      tracesSampleRate: 1.0, 
-      // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+      tracesSampleRate: IS_PROD ? 0.1 : 1.0, 
       tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
       // Session Replay
-      replaysSessionSampleRate: 0.1, 
+      replaysSessionSampleRate: 0.05, 
       replaysOnErrorSampleRate: 1.0,
-      environment: IS_PROD ? "production" : "development",
+      
+      beforeSend(event) {
+        if (event.request?.headers?.Authorization) {
+          event.request.headers.Authorization = '[Filtered]';
+        }
+        return event;
+      },
     });
   } else {
     console.warn("Sentry DSN not found. Skipping initialization.");

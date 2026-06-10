@@ -90,7 +90,7 @@ export default function VipScreen() {
             <CheckCircle size={40} className="text-edu-primary" />
           </div>
           <div className="animate-fade-up">
-            <h2 className="text-2xl font-black font-display text-edu-text">So'rov qabul qilindi!</h2>
+            <h2 className="text-2xl font-bold font-display text-edu-text">So'rov qabul qilindi!</h2>
             <p className="text-edu-muted mt-2 leading-relaxed">
               Admin 24 soat ichida tekshiradi va VIP aktivatsiya qiladi. Bot orqali xabar keladi.
             </p>
@@ -113,7 +113,7 @@ export default function VipScreen() {
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/40 pointer-events-none animate-pulse-slow" />
           <CardContent className="p-5 text-white relative z-10">
             <p className="text-sm text-white/80 font-medium uppercase tracking-widest mb-1">Joriy status</p>
-            <p className="text-[28px] font-black font-display tracking-tight drop-shadow-md">{user?.badge || 'ISHONCHLI'}</p>
+            <p className="text-[28px] font-bold font-display tracking-tight drop-shadow-md">{user?.badge || 'ISHONCHLI'}</p>
             <p className="text-sm font-semibold text-white/90 mt-1">VIP olsangiz → VIP a'zo bo'lasiz</p>
           </CardContent>
         </Card>
@@ -156,8 +156,8 @@ export default function VipScreen() {
                       {pkg.tag}
                     </span>
                   )}
-                  <p className="text-base font-black font-display text-edu-text">{pkg.label}</p>
-                  <p className="text-lg font-black text-edu-vip mt-1">{pkg.priceFormatted}</p>
+                  <p className="text-base font-bold font-display text-edu-text">{pkg.label}</p>
+                  <p className="text-lg font-bold text-edu-vip mt-1">{pkg.priceFormatted}</p>
                   <p className="text-xs text-edu-muted">so'm</p>
                 </CardContent>
               </Card>

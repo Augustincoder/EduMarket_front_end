@@ -347,7 +347,7 @@ export default function CreateGigScreen() {
                         placeholder="Masalan: 50000"
                         error={errors.price?.message}
                         startContent={<DollarSign className="w-4 h-4 text-edu-primary shrink-0" />}
-                        endContent={<span className="text-[10px] font-black text-edu-muted shrink-0">SO'M</span>}
+                        endContent={<span className="text-[10px] font-bold text-edu-muted shrink-0">SO'M</span>}
                         {...register('price')}
                       />
                       {priceVal && !isNaN(Number(priceVal)) && Number(priceVal) >= 5000 && (
@@ -365,7 +365,7 @@ export default function CreateGigScreen() {
                       placeholder="Masalan: 3"
                       error={errors.deliveryDays?.message}
                       startContent={<Clock className="w-4 h-4 text-edu-primary shrink-0" />}
-                      endContent={<span className="text-[10px] font-black text-edu-muted shrink-0">KUN</span>}
+                      endContent={<span className="text-[10px] font-bold text-edu-muted shrink-0">KUN</span>}
                       {...register('deliveryDays')}
                     />
                   </div>

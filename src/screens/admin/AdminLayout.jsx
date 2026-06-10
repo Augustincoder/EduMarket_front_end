@@ -70,7 +70,7 @@ export default function AdminLayout() {
               <Terminal size={18} />
             </span>
             <div>
-              <h2 className="font-black text-sm tracking-tight text-white leading-none">EduMarket</h2>
+              <h2 className="font-bold text-sm tracking-tight text-white leading-none">EduMarket</h2>
               <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Admin Panel</span>
             </div>
           </div>

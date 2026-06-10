@@ -15,6 +15,7 @@ import EduViewer from '../../components/ui/EduViewer';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 
+import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
 import { useProfileData } from './Profile/hooks/useProfileData';
 import { ProfileHeader } from './Profile/ProfileHeader';
 import { ProfileStats } from './Profile/ProfileStats';
@@ -28,7 +29,7 @@ export default function ProfileScreen() {
   const toggleActiveRole = useAuthStore((s) => s.toggleActiveRole);
   const logout = useAuthStore((s) => s.logout);
 
-  const { me, clientStats, activeRole, isLoading, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
+  const { me, clientStats, activeRole, isLoading, clientStatsLoading, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
 
   const [editOpen, setEditOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -108,7 +109,7 @@ export default function ProfileScreen() {
                   {activeRole === 'CLIENT' ? <Briefcase size={22} /> : <User size={22} />}
                 </div>
                 <div>
-                  <h3 className="text-[13px] font-black text-edu-text leading-tight">
+                  <h3 className="text-[13px] font-bold text-edu-text leading-tight">
                     {activeRole === 'CLIENT' ? 'Mutaxassis ish joyi' : 'Mijoz ish joyi'}
                   </h3>
                   <p className="text-[10px] text-edu-muted font-bold uppercase tracking-wider mt-0.5">
@@ -134,14 +135,16 @@ export default function ProfileScreen() {
 
           <ProfileHeader me={me} activeRole={activeRole} />
           
-          <ProfileStats me={me} activeRole={activeRole} clientStats={clientStats} />
+          <SectionErrorBoundary fallbackTitle="Statistikani yuklashda xatolik">
+            <ProfileStats me={me} activeRole={activeRole} clientStats={clientStats} isLoading={clientStatsLoading} />
+          </SectionErrorBoundary>
 
           {activeRole === 'CLIENT' && (
             <>
               {/* Post task button */}
               <button
                 onClick={() => navigate('/tasks/create')}
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-edu-primary/20 active:scale-[0.98] transition-all"
+                className="w-full h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-edu-primary/20 active:scale-[0.98] transition-all"
               >
                 <span>Yangi vazifa yaratish</span>
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
@@ -165,17 +168,19 @@ export default function ProfileScreen() {
 
           {activeRole === 'FREELANCER' && (
             <>
-              <ProfilePortfolio 
-                me={me} 
-                addPortfolio={addPortfolio} 
-                delPortfolio={delPortfolio} 
-                handleViewFile={handleViewFile} 
-              />
+              <SectionErrorBoundary fallbackTitle="Portfolioni yuklashda xatolik">
+                <ProfilePortfolio 
+                  me={me} 
+                  addPortfolio={addPortfolio} 
+                  delPortfolio={delPortfolio} 
+                  handleViewFile={handleViewFile} 
+                />
+              </SectionErrorBoundary>
               
               {/* Offer ready gig button */}
               <button
                 onClick={() => navigate('/gigs/create')}
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all"
+                className="w-full h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all"
               >
                 <span>Tayyor xizmat (Gig) yaratish</span>
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">

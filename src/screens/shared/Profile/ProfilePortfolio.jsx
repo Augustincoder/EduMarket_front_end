@@ -51,7 +51,7 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
     <>
       <div className="space-y-2.5 mt-4">
         <div className="flex items-center justify-between px-1">
-          <p className="text-sm font-black text-edu-text">Portfolio ishlari</p>
+          <p className="text-sm font-bold text-edu-text">Portfolio ishlari</p>
           <span className="text-xs font-semibold text-edu-muted">
             {me?.portfolioItems?.length ?? 0}/{portfolioLimit}
             {!me?.isVip && <span className="text-edu-vip font-bold"> (VIP: 20)</span>}
@@ -75,7 +75,7 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
                 <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
                 
                 <button
-                  className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors border border-red-500/10 z-10"
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors border border-red-500/10 z-10 after:absolute after:-inset-3 after:content-['']"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {

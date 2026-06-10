@@ -35,7 +35,7 @@ export function GigCard({ gig, onOrder }) {
       </div>
 
       {/* Gig title */}
-      <h3 className="font-black text-edu-text text-[17px] font-display tracking-ios-display line-clamp-2 mb-2 leading-tight">
+      <h3 className="font-bold text-edu-text text-[17px] font-display tracking-ios-display line-clamp-2 mb-2 leading-tight">
         {gig.title}
       </h3>
       {gig.description && (
@@ -47,8 +47,8 @@ export function GigCard({ gig, onOrder }) {
       {/* Footer */}
       <div className="flex items-center justify-between mt-2 pt-4 border-t border-edu-border/10">
         <div>
-          <p className="text-[10px] font-black text-edu-muted uppercase tracking-widest mb-1">Narxi</p>
-          <p className="text-xl font-black text-edu-primary tracking-ios-display">
+          <p className="text-[10px] font-bold text-edu-muted uppercase tracking-widest mb-1">Narxi</p>
+          <p className="text-xl font-bold text-edu-primary tracking-ios-display">
             {formatPrice(gig.price)} <span className="text-[11px] font-bold text-edu-muted uppercase">so'm</span>
           </p>
           <p className="flex items-center gap-1.5 text-[11px] font-bold text-edu-muted mt-1 tracking-ios-text">

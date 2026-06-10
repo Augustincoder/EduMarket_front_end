@@ -75,10 +75,10 @@ export default function SplashScreen() {
 
         {/* Brand name */}
         <div className="text-center">
-          <h1 className="text-4xl font-black text-edu-text font-display tracking-ios-display drop-shadow-sm">
+          <h1 className="text-4xl font-bold text-edu-text font-display tracking-ios-display drop-shadow-sm">
             EduMarket
           </h1>
-          <p className="text-[12px] font-black text-edu-muted mt-2 font-body uppercase tracking-[0.2em] opacity-70">Bilim bozori</p>
+          <p className="text-[12px] font-bold text-edu-muted mt-2 font-body uppercase tracking-[0.2em] opacity-70">Bilim bozori</p>
         </div>
       </div>
 
@@ -88,7 +88,7 @@ export default function SplashScreen() {
         <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden border border-black/5">
           <div className="h-full bg-gradient-to-r from-edu-primary to-edu-accent rounded-full animate-shimmer w-1/2" />
         </div>
-        <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-black opacity-60">Ulanmoqda...</p>
+        <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-bold opacity-60">Ulanmoqda...</p>
       </div>
     </div>
   );

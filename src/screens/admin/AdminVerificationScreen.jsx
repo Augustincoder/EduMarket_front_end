@@ -107,7 +107,7 @@ export default function AdminVerificationScreen() {
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-black text-gray-800 flex items-center gap-3">
+        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
           <ShieldCheck className="text-indigo-600" />
           Tasdiqlash so'rovlari
         </h1>
@@ -129,10 +129,10 @@ export default function AdminVerificationScreen() {
                     <h3 className="font-bold text-lg text-gray-900">{req.user.fullname}</h3>
                     <p className="text-sm text-gray-500 font-medium">Telegram ID: {req.user.telegramId.toString()}</p>
                     <div className="mt-1.5 flex gap-2">
-                      <span className="text-[11px] font-black bg-indigo-50 px-2.5 py-1 rounded-lg text-indigo-600 uppercase tracking-wider border border-indigo-100">
+                      <span className="text-[11px] font-bold bg-indigo-50 px-2.5 py-1 rounded-lg text-indigo-600 uppercase tracking-wider border border-indigo-100">
                         {req.documentType}
                       </span>
-                      <span className="text-[11px] font-black bg-gray-50 px-2.5 py-1 rounded-lg text-gray-600 uppercase tracking-wider border border-gray-100">
+                      <span className="text-[11px] font-bold bg-gray-50 px-2.5 py-1 rounded-lg text-gray-600 uppercase tracking-wider border border-gray-100">
                         {new Date(req.createdAt).toLocaleDateString()}
                       </span>
                     </div>
@@ -159,7 +159,7 @@ export default function AdminVerificationScreen() {
 
               <div className="flex items-start gap-10">
                 <div className="space-y-3">
-                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Hujjatlar</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Hujjatlar</p>
                   <div className="flex gap-4">
                     <ImagePreview fileId={req.documentFileId} label="Asosiy hujjat" icon={Eye} />
                     <ImagePreview fileId={req.selfieFileId} label="Selfie rasm" icon={Camera} />
@@ -167,7 +167,7 @@ export default function AdminVerificationScreen() {
                 </div>
                 
                 <div className="flex-1 space-y-3">
-                   <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Bot orqali tekshirish</p>
+                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Bot orqali tekshirish</p>
                    <div className="flex gap-2">
                      <Button 
                         size="sm" 

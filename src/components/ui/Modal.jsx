@@ -10,11 +10,11 @@ export function Modal({ isOpen, onClose, title, footer, children }) {
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[400px] p-6 bg-edu-surface rounded-lg shadow-premium-lg border border-edu-border/30 z-[101] max-h-[85vh] overflow-y-auto scrollbar-hide focus:outline-none animate-ios-pop">
           {title && (
             <div className="flex items-center justify-between mb-6 px-1">
-              <Dialog.Title className="text-[19px] font-black text-edu-text tracking-tight leading-tight">
+              <Dialog.Title className="text-[19px] font-bold text-edu-text tracking-tight leading-tight">
                 {title}
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button className="w-10 h-10 rounded-full bg-edu-bg flex items-center justify-center active-spring transition-all text-edu-muted hover:text-edu-text">
+                <button aria-label="Yopish" className="w-11 h-11 rounded-full bg-edu-bg flex items-center justify-center active-spring transition-all text-edu-muted hover:text-edu-text">
                   <X size={20} strokeWidth={3} />
                 </button>
               </Dialog.Close>

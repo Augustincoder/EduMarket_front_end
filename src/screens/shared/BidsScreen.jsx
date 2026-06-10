@@ -45,7 +45,7 @@ export default function BidsScreen() {
   const hasMore = bids && bids.length > displayLimit;
 
   return (
-    <PageLayout showNav={false} bgClass="bg-[#F2F2F7] dark:bg-black">
+    <PageLayout showNav={false} bgClass="bg-edu-bg dark:bg-black">
       <Header title={`Takliflar (${bids?.length ?? 0} ta)`} showBack className="ios-glass" />
 
       <div className="px-4 py-6 space-y-4">
@@ -71,7 +71,7 @@ export default function BidsScreen() {
             </div>
             {hasMore && (
               <div className="flex justify-center pt-6 pb-10">
-                <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-2xl px-8 font-black uppercase tracking-widest text-[12px] h-11">
+                <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-2xl px-8 font-bold uppercase tracking-widest text-[12px] h-11">
                   Ko'proq ko'rsatish
                 </Button>
               </div>

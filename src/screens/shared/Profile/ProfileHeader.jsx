@@ -22,7 +22,7 @@ export function ProfileHeader({ me, activeRole }) {
             </div>
             
             <div className="space-y-1.5">
-              <h1 className="text-[24px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
+              <h1 className="text-[24px] font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
               <p className="text-sm font-semibold text-edu-muted tracking-wide opacity-80">@{me?.username || 'username'}</p>
               
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
@@ -32,10 +32,10 @@ export function ProfileHeader({ me, activeRole }) {
               </div>
               
               <div className="flex items-center justify-center gap-4 mt-4">
-                <div className="flex items-center gap-2 text-xs font-black text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
+                <div className="flex items-center gap-2 text-xs font-bold text-orange-500 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
                   <Flame size={14} /> {me?.streakCount || 0} KUN
                 </div>
-                <div className="flex items-center gap-2 text-xs font-black text-blue-500 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
+                <div className="flex items-center gap-2 text-xs font-bold text-blue-500 bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
                   <Zap size={14} /> {me?.xp || 0} XP
                 </div>
               </div>
@@ -86,7 +86,7 @@ export function ProfileHeader({ me, activeRole }) {
             </div>
             
             <div className="space-y-2">
-              <h1 className="text-[22px] font-black font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
+              <h1 className="text-[22px] font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
               <p className="text-xs font-semibold text-edu-muted tracking-wide">@{me?.username || 'username'}</p>
               
               <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">
@@ -98,7 +98,7 @@ export function ProfileHeader({ me, activeRole }) {
               {me?.freelancerCategories?.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1 mt-2.5">
                   {me.freelancerCategories.map(cat => (
-                    <span key={cat} className="text-[9px] font-black bg-edu-primary/10 text-edu-primary px-2 py-0.5 rounded-full border border-edu-primary/20 uppercase tracking-wide">
+                    <span key={cat} className="text-[9px] font-bold bg-edu-primary/10 text-edu-primary px-2 py-0.5 rounded-full border border-edu-primary/20 uppercase tracking-wide">
                       {cat}
                     </span>
                   ))}

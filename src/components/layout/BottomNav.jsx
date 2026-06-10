@@ -100,7 +100,7 @@ export function BottomNav() {
                   strokeWidth={isActive ? 2.5 : 2} 
                 />
                 {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-edu-urgent text-white text-[10px] font-black min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center border-2 border-edu-surface shadow-premium-sm">
+                  <span className="absolute -top-1.5 -right-2.5 bg-edu-urgent text-white text-[10px] font-bold min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center border-2 border-edu-surface shadow-premium-sm">
                     {badge > 99 ? '99+' : badge}
                   </span>
                 )}

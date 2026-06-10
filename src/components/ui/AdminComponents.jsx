@@ -28,7 +28,7 @@ export function DialogContent({ children, className = '' }) {
 
 export function DialogTitle({ children }) {
   return (
-    <DialogPrimitive.Title className="text-lg font-black text-slate-950 dark:text-white mb-2">
+    <DialogPrimitive.Title className="text-lg font-bold text-slate-950 dark:text-white mb-2">
       {children}
     </DialogPrimitive.Title>
   );

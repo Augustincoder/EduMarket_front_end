@@ -24,12 +24,12 @@ export function BottomSheet({
           
           {title && (
             <div className="flex items-center justify-between px-6 pt-3 pb-4 border-b border-edu-border/30">
-              <Dialog.Title className="font-display text-lg font-black text-edu-text tracking-tight">
+              <Dialog.Title className="font-display text-lg font-bold text-edu-text tracking-tight">
                 {title}
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button className="w-9 h-9 rounded-2xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/20 transition-all">
-                  <X size={18} className="text-edu-muted" />
+                <button aria-label="Yopish" className="w-11 h-11 rounded-[20px] bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/20 transition-all">
+                  <X size={20} className="text-edu-muted" />
                 </button>
               </Dialog.Close>
             </div>
