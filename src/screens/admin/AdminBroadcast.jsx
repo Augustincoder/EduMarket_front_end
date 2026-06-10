@@ -29,7 +29,7 @@ export default function AdminBroadcast() {
 
     showConfirm('Haqiqatdan ham ushbu xabarni barcha tanlangan foydalanuvchilarga yubormoqchimisiz?', (ok) => {
       if (ok) {
-        const sanitizedText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['b', 'strong', 'i', 'em', 'code', 's', 'strike', 'del', 'pre', 'a'] });
+        const sanitizedText = DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
         broadcastMutation.mutate({ targetType, text: sanitizedText });
       }
     });
@@ -56,9 +56,9 @@ export default function AdminBroadcast() {
         </div>
 
         <div>
-          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Xabar Matni (HTML formatida yozish mumkin)</label>
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Xabar Matni</label>
           <textarea
-            placeholder="Xabarni yozing...\nMasalan:\n📢 <b>Yangi xizmatlar!</b>\n\nTizimda yangi giglar paydo bo'ldi. O'tib ko'ring! ⚡"
+            placeholder="Xabarni yozing...\nMasalan:\n📢 Yangi xizmatlar!\n\nTizimda yangi giglar paydo bo'ldi. O'tib ko'ring! ⚡"
             value={text}
             onChange={(e) => setText(e.target.value)}
             className="w-full bg-slate-900 border border-slate-850 focus:border-indigo-500 rounded-2xl p-4 text-xs outline-none min-h-[180px] font-mono leading-relaxed text-slate-100"

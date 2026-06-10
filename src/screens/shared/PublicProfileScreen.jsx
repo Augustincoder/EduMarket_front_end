@@ -5,12 +5,13 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
-import { UserBadge, VipBadge, VerifiedBadge } from '../../components/ui/Badge';
+import { UserBadge, VerifiedBadge } from '../../components/ui/Badge';
+import { SkillChip } from '../../components/ui/Chip';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
 import { ReputationPassportCard } from '../../components/cards/ReputationPassportCard';
 import { usersApi } from '../../services/users.service';
 import { filesApi } from '../../services/other.service';
-import { tasksApi } from '../../services/tasks.service';
+import { gigsApi } from '../../services/gigs.service';
 
 import { Heart, Zap, Trophy, Star, Clock, ChevronRight, FileText, MessageCircle } from 'lucide-react';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
@@ -18,8 +19,7 @@ import { useFavorites } from '../../hooks/useFavorites';
 import EduViewer from '../../components/ui/EduViewer';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
-import { formatPrice, cn } from '../../lib/utils';
-import { Button } from '../../components/ui/Button';
+import { formatPrice } from '../../lib/utils';
 
 export default function PublicProfileScreen() {
   const { userId } = useParams();
@@ -30,11 +30,13 @@ export default function PublicProfileScreen() {
     staleTime: 60 * 1000,
   });
 
-  const { data: gigs } = useQuery({
+  const { data: gigsData } = useQuery({
     queryKey: ['gigs', 'user', userId],
-    queryFn: () => tasksApi.getUserGigs(userId).then(r => r.data.data),
+    queryFn: () => gigsApi.getAll({ freelancerId: userId }).then(r => r.data.data),
     enabled: !!profile,
   });
+
+  const gigs = gigsData?.gigs || [];
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const [viewerFile, setViewerFile] = useState(null);
@@ -56,9 +58,9 @@ export default function PublicProfileScreen() {
 
   return (
     <PageLayout showNav={false} bgClass="bg-[#F2F2F7] dark:bg-black">
-      <Header 
-        title="Mutaxassis profili" 
-        showBack 
+      <Header
+        title="Mutaxassis profili"
+        showBack
         right={
           <div className="flex items-center gap-1.5">
             <button
@@ -84,8 +86,8 @@ export default function PublicProfileScreen() {
             <div className="absolute inset-0 bg-edu-primary/20 blur-3xl rounded-full scale-150 animate-pulse-subtle" />
             <Avatar name={profile.fullname} avatarUrl={profile.avatarUrl} size="2xl" className="ring-4 ring-white dark:ring-[#1C1C1E] shadow-xl relative z-10" />
             {profile.isVip && (
-              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full p-1.5 border-4 border-white dark:border-[#1C1C1E] shadow-lg z-20">
-                <VipBadge size="xs" hideLabel />
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-white dark:border-[#1C1C1E] shadow-sm z-20">
+                <span className="text-white text-[11px] block leading-none">👑</span>
               </div>
             )}
           </div>
@@ -106,16 +108,20 @@ export default function PublicProfileScreen() {
         {/* ── QUICK STATS ROW ── */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Bajarilgan', value: profile.completedTasksCount ?? 0, icon: <Trophy size={14} className="text-emerald-500" />, bg: 'bg-emerald-500/5' },
-            { label: 'Reyting', value: avgRating ? avgRating : '—', icon: <Star size={14} className="text-amber-500" />, bg: 'bg-amber-500/5' },
-            { label: 'Streak', value: `${profile.streakCount || 0} kun`, icon: <Zap size={14} className="text-orange-500" />, bg: 'bg-orange-500/5' },
+            { label: 'Bajarilgan', value: profile.completedTasksCount ?? 0, icon: <Trophy size={18} className="text-emerald-500" /> },
+            { label: 'Reyting', value: avgRating ? avgRating : '—', icon: <Star size={18} className="text-amber-500" /> },
+            { label: 'Streak', value: profile.streakCount || 0, icon: <Zap size={18} className="text-orange-500" />, suffix: ' kun' },
           ].map((stat, i) => (
-            <div key={i} className={cn("p-3.5 rounded-[24px] flex flex-col items-center gap-1.5 border border-black/[0.03] dark:border-white/[0.03] bg-white dark:bg-[#1C1C1E] shadow-ios")}>
-              <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center mb-1", stat.bg)}>
+            <div key={i} className="bg-white dark:bg-[#1C1C1E] border border-black/[0.03] dark:border-white/[0.03] rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+               <div className="w-8 h-8 rounded-xl bg-gray-50 dark:bg-black/20 flex items-center justify-center">
                 {stat.icon}
               </div>
-              <p className="text-[15px] font-black text-gray-900 dark:text-white leading-none">{stat.value}</p>
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{stat.label}</p>
+              <div className="mt-2">
+                <p className="text-[17px] font-black font-display text-gray-900 dark:text-white leading-none truncate">
+                  {stat.value}{stat.suffix}
+                </p>
+                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1 leading-snug">{stat.label}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -128,19 +134,17 @@ export default function PublicProfileScreen() {
           <CardContent className="p-6 space-y-6">
             {profile.bio && (
               <div className="space-y-2">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">O'zi haqida</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Mavjud ma'lumotlar (Bio)</p>
                 <p className="text-[14px] text-gray-700 dark:text-gray-300 leading-relaxed font-medium">{profile.bio}</p>
               </div>
             )}
 
             {profile.skills?.length > 0 && (
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Ko'nikmalar</p>
-                <div className="flex flex-wrap gap-2">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Ko'nikmalar (Skills)</p>
+                <div className="flex flex-wrap gap-1.5">
                   {profile.skills.map((s) => (
-                    <span key={s} className="px-3.5 py-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-black/[0.02] dark:border-white/[0.02] text-[12px] font-black text-gray-700 dark:text-gray-300">
-                      {s}
-                    </span>
+                    <SkillChip key={s} label={s} />
                   ))}
                 </div>
               </div>
@@ -237,7 +241,7 @@ export default function PublicProfileScreen() {
       </div>
 
       {/* ── STICKY CALL TO ACTION ── */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/80 dark:bg-black/80 backdrop-blur-2xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50 animate-slide-up">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/90 dark:bg-black/90 backdrop-blur-2xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50">
         <div className="flex gap-3">
           <button
             onClick={() => { hapticLight(); navigate(`/tasks/${userId}/chat`); }}
@@ -245,16 +249,16 @@ export default function PublicProfileScreen() {
           >
             <MessageCircle size={22} />
           </button>
-          <Button
-            variant="primary"
+          <button
             onClick={() => {
               hapticSuccess();
               navigate(`/tasks/create?freelancerId=${userId}`);
             }}
-            className="flex-1 h-14 rounded-2xl font-black text-[15px] shadow-ios-primary uppercase tracking-widest"
+            className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-black text-[15px] shadow-lg shadow-edu-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all uppercase tracking-widest"
           >
             <span>Menga ishlash taklif qiling</span>
-          </Button>
+            <ChevronRight size={18} />
+          </button>
         </div>
       </div>
 

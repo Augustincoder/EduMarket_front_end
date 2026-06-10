@@ -1,6 +1,7 @@
 // src/store/authStore.js
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { authApi } from '../services/auth.service';
 
 export const useAuthStore = create(
   persist(
@@ -19,9 +20,15 @@ export const useAuthStore = create(
       updateProfile: (data) =>
         set((s) => ({ user: { ...s.user, ...data } })),
 
-      logout: () => {
-
-        set({ user: null, token: null, activeRole: 'CLIENT' });
+      logout: async () => {
+        set({ isLoading: true });
+        try {
+          await authApi.logout();
+        } catch (error) {
+          console.error('Logout failed:', error);
+        } finally {
+          set({ user: null, token: null, activeRole: 'CLIENT', isLoading: false });
+        }
       },
 
       setLoading: (v) => set({ isLoading: v }),

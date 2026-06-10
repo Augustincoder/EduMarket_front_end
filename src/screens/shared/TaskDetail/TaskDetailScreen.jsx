@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Clock, ChevronDown, ChevronUp,
-  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, Sparkles, FileText
+  MessageSquare, CheckCircle, RotateCcw, AlertTriangle, Star, FileText, Zap
 } from 'lucide-react';
 import { PageLayout } from '../../../components/layout/PageLayout';
 import { Avatar } from '../../../components/ui/Avatar';
@@ -13,7 +13,6 @@ import { TaskDetailSkeleton } from '../../../components/ui/SkeletonCard';
 import { useTask } from '../../../hooks/useTasks';
 import { useAuthStore } from '../../../store/authStore';
 import { useChatStore } from '../../../store/chatStore';
-import { useMainButton } from '../../../hooks/useMainButton';
 import { formatPrice, formatPriceRange, deadlineCountdown, cn } from '../../../lib/utils';
 import { showConfirm, hapticLight } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
@@ -99,45 +98,6 @@ export default function TaskDetailScreen() {
     }
   };
 
-  // Determine MainButton state
-  let mainBtnText = '';
-  let mainBtnClick = () => {};
-  let mainBtnLoading = false;
-
-  if (task && user) {
-    if (task.status === 'OPEN' && !isClient) {
-      mainBtnText = 'Taklif berish';
-      mainBtnClick = () => setBidOpen(true);
-    } else if (task.status === 'OPEN' && isClient) {
-      mainBtnText = 'Takliflarni ko\'rish';
-      mainBtnClick = () => navigate(`/tasks/${id}/bids`);
-    } else if (task.status === 'ASSIGNED' && isFreelancer) {
-      mainBtnText = 'Ishni boshlash';
-      mainBtnClick = () => transitions.startProgress.mutate();
-      mainBtnLoading = transitions.startProgress.isPending;
-    } else if (task.status === 'IN_PROGRESS' && isFreelancer) {
-      mainBtnText = 'Natijani yuborish';
-      mainBtnClick = () => setDeliverySubmitOpen(true);
-      mainBtnLoading = false;
-    } else if (task.status === 'PREVIEW_PENDING' && isClient) {
-      mainBtnText = 'Vazifani baholash';
-      mainBtnClick = () => setRatingOpen(true);
-    } else if (task.status === 'IN_REVIEW' && isClient) {
-      mainBtnText = 'Vazifani qabul qilish va Baho qoldirish';
-      mainBtnClick = async () => {
-        await transitions.accept.mutateAsync();
-        setRatingOpen(true);
-      };
-      mainBtnLoading = transitions.accept.isPending;
-    }
-  }
-
-  useMainButton({
-    text: mainBtnText,
-    onClick: mainBtnClick,
-    isLoading: mainBtnLoading,
-  }, [mainBtnText, mainBtnClick, mainBtnLoading]);
-
   if (isLoading) {
     return (
       <PageLayout showNav={false} scrollable={false}>
@@ -178,7 +138,7 @@ export default function TaskDetailScreen() {
               className="w-14 h-14 rounded-[20px] bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 active:scale-90 transition-all border border-amber-500/10 shadow-sm"
               title="Vazifani ko'tarish"
             >
-              <Sparkles size={20} fill="currentColor" />
+              <Zap size={20} fill="currentColor" />
             </button>
           </div>
         );

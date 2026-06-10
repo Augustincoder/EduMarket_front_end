@@ -44,12 +44,12 @@ export default {
         '4xl': ['28px', '36px'],
       },
       borderRadius: {
-        'sm':  '6px',
-        'md':  '10px',
-        'lg':  '14px',
-        'xl':  '18px',
-        '2xl': '24px',
-        'full':'9999px',
+        'sm':   'var(--radius-sm)',
+        'md':   'var(--radius-md)',
+        'lg':   'var(--radius-lg)',
+        'xl':   'var(--radius-xl)',
+        '2xl':  'var(--radius-2xl)',
+        'full': 'var(--radius-full)',
       },
       boxShadow: {
         'ios':    '0 4px 14px 0 rgba(0, 0, 0, 0.04), 0 2px 5px 0 rgba(0, 0, 0, 0.02)',

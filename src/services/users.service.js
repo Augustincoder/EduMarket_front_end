@@ -8,6 +8,7 @@ export const usersApi = {
   leaderboard:  ()           => api.get('/users/leaderboard'),
   getMyReferrals: ()         => api.get('/users/me/referrals'),
   updatePushToken: (token)   => api.post('/users/me/push-token', { token }),
+  deleteMe:     ()           => api.delete('/users/me'),
 };
 
 export const onboardingApi = {
