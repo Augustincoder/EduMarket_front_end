@@ -1,6 +1,6 @@
 // src/components/chat/ChatInput.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, X, Image, FileText, Check, Mic, Lock } from 'lucide-react';
+import { Paperclip, Send, X, Image as ImageIcon, FileText, Check, Mic, Lock, File } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -12,10 +12,14 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
+  
+  // Pending file state for preview before sending
+  const [pendingFile, setPendingFile] = useState(null);
+  const [pendingFilePreview, setPendingFilePreview] = useState(null);
+  const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
+
   const fileRef = useRef(null);
   const textareaRef = useRef(null);
-
-  const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
 
   useEffect(() => {
     if (editingMessage) {
@@ -32,11 +36,41 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     }
   }, [text]);
 
-  const handleSend = () => {
-    const trimmed = text?.trim();
-    if (!trimmed) return;
-    onSend?.(trimmed, null);
-    if (!editingMessage) setText('');
+  const handleSend = async () => {
+    const trimmed = text?.trim() || '';
+    if (!trimmed && !pendingFile) return;
+
+    if (pendingFile) {
+      setUploading(true);
+      try {
+        const fd = new FormData();
+        fd.append('files', pendingFile);
+        const res = await filesApi.upload(fd);
+        const fileId = res.data.data.fileIds[0];
+        
+        // Determine fileType
+        let fileType = 'document';
+        if (pendingFile.type.startsWith('image/')) fileType = 'photo';
+        else if (pendingFile.type.startsWith('video/')) fileType = 'video';
+        else if (pendingFile.type.startsWith('audio/')) fileType = 'voice';
+
+        onSend?.(trimmed, fileId, fileType, pendingFile.name, isSelectingSecureFile);
+      } catch (err) {
+        toast.error('Fayl yuklashda xato');
+      } finally {
+        setUploading(false);
+        setPendingFile(null);
+        if (pendingFilePreview) URL.revokeObjectURL(pendingFilePreview);
+        setPendingFilePreview(null);
+        setIsSelectingSecureFile(false);
+        if (!editingMessage) setText('');
+        textareaRef.current.style.height = 'auto';
+      }
+    } else {
+      onSend?.(trimmed, null);
+      if (!editingMessage) setText('');
+      textareaRef.current.style.height = 'auto';
+    }
   };
 
   const handleVoiceSend = async (blob) => {
@@ -73,31 +107,29 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     onTyping?.();
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setShowMenu(false);
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append('files', file);
-      const res = await filesApi.upload(fd);
-      const fileId = res.data.data.fileIds[0];
-      
-      // Determine fileType
-      let fileType = 'document';
-      if (file.type.startsWith('image/')) fileType = 'photo';
-      else if (file.type.startsWith('video/')) fileType = 'video';
-      else if (file.type.startsWith('audio/')) fileType = 'voice';
-
-      onSend?.(null, fileId, fileType, file.name, isSelectingSecureFile);
-    } catch {
-      toast.error('Fayl yuklashda xato');
-    } finally {
-      setUploading(false);
-      e.target.value = '';
-      setIsSelectingSecureFile(false);
+    
+    setPendingFile(file);
+    if (file.type.startsWith('image/')) {
+      setPendingFilePreview(URL.createObjectURL(file));
+    } else {
+      setPendingFilePreview(null);
     }
+    
+    // Clear input so same file can be selected again
+    e.target.value = '';
+    // Focus text input
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  };
+
+  const handleCancelFile = () => {
+    setPendingFile(null);
+    if (pendingFilePreview) URL.revokeObjectURL(pendingFilePreview);
+    setPendingFilePreview(null);
+    setIsSelectingSecureFile(false);
   };
 
   return (
@@ -110,7 +142,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='image/*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <Image size={18} className="text-blue-500" />
+              <ImageIcon size={18} className="text-blue-500" />
             </div>
             Foto / Video
           </button>
@@ -138,7 +170,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       )}
 
       {/* Reply / Edit Preview Bar */}
-      {(replyingTo || editingMessage) && (
+      {(replyingTo || editingMessage) && !pendingFile && (
         <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-2.5 border-b border-edu-border/30">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <div className="w-1 h-8 bg-edu-primary rounded-full mt-0.5" />
@@ -152,6 +184,37 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             </div>
           </div>
           <button aria-label="Bekor qilish" onClick={onCancelAction} className="w-11 h-11 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active-spring">
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
+      {/* Selected File Preview Bar */}
+      {pendingFile && (
+        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-3 border-b border-edu-border/30 animate-fade-in">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {pendingFilePreview ? (
+              <img src={pendingFilePreview} alt="preview" className="w-12 h-12 object-cover rounded-xl shadow-sm border border-black/10" />
+            ) : (
+              <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-black/10 flex items-center justify-center">
+                <File size={24} className="text-blue-500" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <div className="text-[14px] font-bold text-edu-text truncate">
+                  {pendingFile.name}
+                </div>
+                {isSelectingSecureFile && (
+                  <Lock size={12} className="text-red-500 shrink-0" />
+                )}
+              </div>
+              <div className="text-[12px] font-medium text-edu-muted">
+                {(pendingFile.size / 1024 / 1024).toFixed(2)} MB {isSelectingSecureFile ? '• Himoyalangan' : ''}
+              </div>
+            </div>
+          </div>
+          <button aria-label="Faylni bekor qilish" onClick={handleCancelFile} disabled={uploading} className="w-10 h-10 ml-2 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-edu-text active-spring">
             <X size={18} />
           </button>
         </div>
@@ -194,7 +257,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                   e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Xabar..."
+                placeholder={pendingFile ? "Izoh yozing..." : "Xabar..."}
                 disabled={disabled || uploading}
                 rows={1}
                 className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary focus:ring-[3px] focus:ring-edu-primary/20 transition-all max-h-32 overflow-y-auto resize-none block leading-tight"
@@ -203,7 +266,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             </div>
 
             {/* Send or Mic button */}
-            {text.trim() || editingMessage ? (
+            {text.trim() || editingMessage || pendingFile ? (
               <button
                 aria-label={editingMessage ? "Saqlash" : "Yuborish"}
                 disabled={uploading}
@@ -226,7 +289,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         )}
       </div>
 
-      <input ref={fileRef} type="file" className="hidden" onChange={handleFileUpload} />
+      <input ref={fileRef} type="file" className="hidden" onChange={handleFileSelect} />
     </div>
   );
 }
