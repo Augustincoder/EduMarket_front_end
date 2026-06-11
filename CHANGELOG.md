@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.4](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.3...v2.2.4) (2026-06-11)
+
+
+### Bug Fixes
+
+* **compatibility:** remove flatMap to support older iOS devices, fix category crash ([ed1e3f8](https://github.com/Augustincoder/EduMarket_front_end/commit/ed1e3f8c00865b76dab85f97fd11841d25ae5c4a))
+
 ### [2.2.3](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.2...v2.2.3) (2026-06-11)
 
 
