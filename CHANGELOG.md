@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.7](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.6...v2.2.7) (2026-06-11)
+
+
+### Bug Fixes
+
+* resolve notification reload and create task crash ([b52747c](https://github.com/Augustincoder/EduMarket_front_end/commit/b52747ced4e536fdadb73da85b5c0536955fbfe7))
+
 ### [2.2.6](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.5...v2.2.6) (2026-06-11)
 
 ### [2.2.5](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.4...v2.2.5) (2026-06-11)
