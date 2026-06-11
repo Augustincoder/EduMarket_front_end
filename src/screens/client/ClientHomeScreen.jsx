@@ -180,6 +180,7 @@ export default function ClientHomeScreen() {
   const handleCategoryClick = (catValue) => {
     navigate('/tasks/create', { state: { category: catValue } });
   };
+  const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
 
   return (
     <div className="flex flex-col h-full bg-mesh-aurora pb-24 p-6 overflow-y-auto scrollbar-hide">
@@ -248,7 +249,7 @@ export default function ClientHomeScreen() {
           </button>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {useCategoryStore().getTrendingCategories().map(cat => (
+          {getTrendingCategories().map(cat => (
             <div 
               key={cat.value} 
               onClick={() => handleCategoryClick(cat.value)}

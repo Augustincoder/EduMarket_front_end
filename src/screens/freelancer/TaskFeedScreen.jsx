@@ -22,6 +22,7 @@ const SORT_OPTIONS = [
 ];
 
 export default function TaskFeedScreen() {
+  const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const filterState = useUiStore((s) => s.filterState);
@@ -140,7 +141,7 @@ export default function TaskFeedScreen() {
             onClick={() => { setFilter('category', ''); hapticLight(); }}
             className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
           />
-          {useCategoryStore().getTrendingCategories().map((cat) => (
+          {getTrendingCategories().map((cat) => (
             <FilterChip
               key={cat.value}
               label={`${cat.emoji} ${cat.label}`}
