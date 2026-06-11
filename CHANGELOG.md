@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.0...v2.2.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* **ui:** resolve white screen crash by fixing invalid hook calls in home and feed screens ([1ebed77](https://github.com/Augustincoder/EduMarket_front_end/commit/1ebed7720c0f71ce47ce8cb518c9ff04d88e59c4))
+
 ## 2.2.0 (2026-06-11)
 
 
