@@ -1,11 +1,21 @@
 // src/components/chat/MessageBubble.jsx
 import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
-import { Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle, FileType, Lock } from 'lucide-react';
+import { 
+  Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, 
+  Edit2, Trash2, Ban, Clock, AlertCircle, FileType, Lock,
+  ThumbsUp, ThumbsDown, Heart, Flame, Star, Zap, Smile, Coffee, Gift, Trophy
+} from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import { Spinner } from '../ui/Spinner';
 import DOMPurify from 'dompurify';
 import { VoicePlayer } from './VoicePlayer';
+import { useAuthStore } from '../../store/authStore';
+import { useChatStore } from '../../store/chatStore';
+
+const REACTION_ICONS = {
+  ThumbsUp, ThumbsDown, Heart, Flame, Star, Zap, Smile, Coffee, Gift, Trophy
+};
 
 function ImageAttachment({ fileId, onClick }) {
   const [url, setUrl] = useState(null);
@@ -64,12 +74,26 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   const isImage = message.fileType === 'photo' || (message.fileName && /\.(jpg|jpeg|png|gif|webp)$/i.test(message.fileName));
 
   const [showMenu, setShowMenu] = useState(false);
+  const user = useAuthStore(s => s.user);
+  const toggleReaction = useChatStore(s => s.toggleReaction);
 
   const handleFileClick = () => {
     if (hasFile && !isImage && message.fileType !== 'voice') {
       onViewFile?.(message.fileId, message.fileName, message.isSecureFile);
     }
   };
+
+  const handleReact = (iconName) => {
+    toggleReaction(message.id, iconName);
+    setShowMenu(false);
+  };
+
+  const rawReactions = message.reactions || [];
+  const groupedReactions = rawReactions.reduce((acc, r) => {
+    if (!acc[r.icon]) acc[r.icon] = [];
+    acc[r.icon].push(r.userId);
+    return acc;
+  }, {});
 
   if (message.isDeleted) {
     return (
@@ -97,7 +121,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
       )}
 
       <div className={cn('group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-2 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto', showMenu && 'z-[70]')}>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 w-full relative">
           <div
             className={cn(
               'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
@@ -122,22 +146,35 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             {showMenu && (
               <div 
                 className={cn(
-                  "absolute bottom-full mb-2 z-[80] w-36 bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop",
+                  "absolute bottom-full mb-2 z-[80] bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop flex flex-col min-w-[180px] max-w-[240px]",
                   isMe ? "right-0" : "left-0"
                 )} 
                 onClick={(e) => e.stopPropagation()}
               >
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
-                  <CornerDownRight size={14} /> Javob berish
+                {/* Reactions Row */}
+                <div className="flex items-center gap-1 px-2 py-2 border-b border-edu-border/50 overflow-x-auto scrollbar-hide">
+                  {Object.entries(REACTION_ICONS).map(([name, Icon]) => (
+                    <button 
+                      key={name}
+                      onClick={() => handleReact(name)}
+                      className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:scale-90 transition-transform shrink-0"
+                    >
+                      <Icon size={18} className={isMe ? "text-edu-text" : "text-edu-text"} />
+                    </button>
+                  ))}
+                </div>
+
+                <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold mt-0.5" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
+                  <CornerDownRight size={15} /> Javob berish
                 </button>
                 {isMe && !hasFile && (
-                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
-                    <Edit2 size={14} /> Tahrirlash
+                  <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
+                    <Edit2 size={15} /> Tahrirlash
                   </button>
                 )}
                 {isMe && (
-                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
-                    <Trash2 size={14} /> O'chirish
+                  <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
+                    <Trash2 size={15} /> O'chirish
                   </button>
                 )}
               </div>
@@ -217,13 +254,39 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
               )}
             </div>
           </div>
+
+          {/* Render Reactions */}
+          {Object.keys(groupedReactions).length > 0 && (
+            <div className={cn("flex flex-wrap gap-1 mt-0.5 -mb-2 z-10 relative", isMe ? "justify-end mr-1" : "justify-start ml-1")}>
+              {Object.entries(groupedReactions).map(([iconName, users]) => {
+                const Icon = REACTION_ICONS[iconName];
+                if (!Icon) return null;
+                const hasReacted = users.includes(user?.id);
+                return (
+                  <button
+                    key={iconName}
+                    onClick={() => handleReact(iconName)}
+                    className={cn(
+                      "flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold border transition-all active:scale-90",
+                      hasReacted 
+                        ? "bg-edu-primary border-edu-primary text-white shadow-sm" 
+                        : "bg-edu-surface dark:bg-slate-800 border-edu-border text-edu-text shadow-sm hover:bg-black/5 dark:hover:bg-white/5"
+                    )}
+                  >
+                    <Icon size={12} className={hasReacted ? "text-white" : "text-edu-text"} />
+                    {users.length > 1 && <span className={hasReacted ? "text-white/90" : "opacity-80"}>{users.length}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* External action trigger for better visibility */}
         <button 
           onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
           className={cn(
-            "p-1 rounded-full text-edu-muted opacity-0 group-hover:opacity-100 transition-opacity self-center hover:bg-black/5 dark:hover:bg-white/5",
+            "p-1 rounded-full text-edu-muted opacity-0 group-hover:opacity-100 transition-opacity self-end mb-2 hover:bg-black/5 dark:hover:bg-white/5",
             showMenu && "opacity-100 bg-black/5"
           )}
         >

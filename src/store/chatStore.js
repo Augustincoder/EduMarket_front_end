@@ -155,6 +155,19 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
+    socket.on('message_reaction_updated', ({ messageId, taskId, reactions }) => {
+      set((s) => {
+        const roomMsgs = s.messages[taskId];
+        if (!roomMsgs) return s;
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m)
+          }
+        };
+      });
+    });
+
     set({ socket });
     // Also load initial conversations upon connecting
     get().loadConversations();
@@ -321,6 +334,14 @@ export const useChatStore = create((set, get) => ({
       await chatApi.deleteMessage(messageId);
     } catch (err) {
       console.error('Failed to delete message:', err);
+    }
+  },
+
+  toggleReaction: async (messageId, icon) => {
+    try {
+      await chatApi.toggleReaction(messageId, icon);
+    } catch (err) {
+      console.error('Failed to toggle reaction:', err);
     }
   },
 
