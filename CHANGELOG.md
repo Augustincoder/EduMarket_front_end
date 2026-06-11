@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.10](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.9...v2.2.10) (2026-06-11)
+
+
+### Bug Fixes
+
+* chat badge, profile role verification, secure file messaging, and eduviewer zoom bug ([123f16d](https://github.com/Augustincoder/EduMarket_front_end/commit/123f16d41ae8cefa7d9f6364dc1e9d525791c320))
+
 ### [2.2.9](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.8...v2.2.9) (2026-06-11)
 
 
