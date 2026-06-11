@@ -12,10 +12,17 @@ dist
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 # Environment
 .env
 .env.local
 .env.*.local
+=======
+# Environment files (never commit secrets)
+.env
+.env.*
+!.env.example
+>>>>>>> d8cc00312beb57962c0d49cd0517e80d448110ef
 
 # Editor directories and files
 .vscode/*

@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
-import { initKeepAlive } from '../lib/keepAlive';
 import { initNotifications } from '../lib/notifications';
 import { useThemeStore } from '../store/themeStore';
 import { useAuthStore } from '../store/authStore';
@@ -39,7 +38,6 @@ export function Providers({ children }) {
   const activeRole = useAuthStore((s) => s.activeRole);
 
   useEffect(() => {
-    initKeepAlive();
     initNotifications();
   }, []);
 

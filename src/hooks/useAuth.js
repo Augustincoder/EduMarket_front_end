@@ -10,6 +10,7 @@ import { authApi } from '../services/auth.service';
 import { usersApi } from '../services/users.service';
 import { getInitData } from '../lib/telegram';
 import { identifyUser } from '../lib/observability';
+import i18n from '../lib/i18n';
 import toast from 'react-hot-toast';
 
 export function useAuth() {
@@ -35,7 +36,7 @@ export function useAuth() {
       identifyUser(u);
       return { success: true, user: u };
     } catch (err) {
-      const msg = err.serverMsg || 'Kirish xatoligi yuz berdi';
+      const msg = err.serverMsg || i18n.t('system.auth.loginError');
       toast.error(msg);
       return { success: false, error: msg };
     } finally {
@@ -51,7 +52,7 @@ export function useAuth() {
       updateProfile(u);
       identifyUser(u);
       return u;
-    } catch { 
+    } catch {
       return null;
     }
   }, [updateProfile]);
@@ -62,7 +63,7 @@ export function useAuth() {
     storeLogout();
     queryClient.clear();
     useOnboardingStore.getState().reset();
-    
+
     const uiState = useUiStore.getState();
     uiState.resetFilters();
     uiState.closeSheet();
@@ -81,7 +82,7 @@ export function useAuth() {
     const handler = () => {
       resetAllCachesAndStores();
       navigate('/', { replace: true });
-      toast.error('Sessiya muddati tugadi. Qayta kirish kerak.');
+      toast.error(i18n.t('system.auth.sessionExpired'));
     };
     window.addEventListener('auth:logout', handler);
     return () => window.removeEventListener('auth:logout', handler);

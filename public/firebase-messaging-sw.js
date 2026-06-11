@@ -1,7 +1,10 @@
 /* global firebase, importScripts */
 // public/firebase-messaging-sw.js
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+// NOTE: Service workers cannot read Vite env vars, so this config must be kept
+// in sync with the VITE_FIREBASE_* variables (see .env.example).
+// Firebase web config values are public app identifiers, not secrets.
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js');
 
 firebase.initializeApp({
   apiKey: "AIzaSyARVihbIUnHdzJZrXDN_hRsmMJSjUUE3-M",
@@ -15,12 +18,11 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/favicon.svg'
-  };
+  const notification = payload?.notification;
+  if (!notification?.title) return;
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notification.title, {
+    body: notification.body || '',
+    icon: '/favicon.svg',
+  });
 });

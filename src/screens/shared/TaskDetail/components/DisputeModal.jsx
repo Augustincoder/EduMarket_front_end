@@ -34,10 +34,6 @@ export function DisputeModal({
     setDisputeErrors((prev) => ({ ...prev, reason: null }));
   };
 
-  const removeFile = (idx) => {
-    setDisputeFiles(prev => prev.filter((_, i) => i !== idx));
-  };
-
   return (
     <Modal
       isOpen={isOpen}

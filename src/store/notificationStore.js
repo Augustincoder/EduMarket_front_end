@@ -72,6 +72,5 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
-  clearUnread: () => set({ unreadCount: 0 }),
-  setUnreadCount: (count) => set({ unreadCount: count })
+  clearUnread: () => set({ unreadCount: 0 })
 }));

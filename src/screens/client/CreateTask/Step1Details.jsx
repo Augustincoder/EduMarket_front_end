@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { TextInput } from '../../../components/forms/TextInput';
 import { TextArea } from '../../../components/forms/TextArea';
@@ -11,6 +10,11 @@ export function Step1Details() {
   const { category, title, description, errors, updateField, setNlpSeverity } = useCreateTaskStore();
   const nlpSeverity = useNLPCheck(title + ' ' + description);
   const categoryStore = useCategoryStore(s => s.categories) || [];
+
+  // Sync NLP severity into the store so later steps (review/submit) can use it.
+  useEffect(() => {
+    setNlpSeverity?.(nlpSeverity);
+  }, [nlpSeverity, setNlpSeverity]);
 
   const catInfo = categoryStore.find(c => c.value === category) || { label: 'Vazifa', emoji: '📌', formType: 'GENERAL' };
   const catLabel = catInfo.label;

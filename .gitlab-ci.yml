@@ -1,0 +1,42 @@
+stages:
+  - lint
+  - test
+  - build
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Jobs/Dependency-Scanning.gitlab-ci.yml
+
+.node:
+  image: node:20
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+lint:
+  extends: .node
+  stage: lint
+  script:
+    - npm run lint
+
+unit_tests:
+  extends: .node
+  stage: test
+  script:
+    - npm run test:run
+
+build:
+  extends: .node
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
