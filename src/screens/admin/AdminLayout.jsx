@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { toast } from 'react-hot-toast';
+import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
 import { 
   LayoutDashboard, 
   Users, 
@@ -134,7 +135,13 @@ export default function AdminLayout() {
         </header>
 
         <div className="flex-1 p-8 overflow-y-auto">
-          <Outlet />
+          <SectionErrorBoundary 
+            fallbackTitle="Sahifani yuklashda xatolik" 
+            fallbackMessage="Ushbu admin sahifasida xatolik yuz berdi. Sahifani yangilang yoki chap menyudan boshqa bo'limga o'ting."
+            className="h-full border-none bg-slate-900/50"
+          >
+            <Outlet />
+          </SectionErrorBoundary>
         </div>
       </main>
     </div>

@@ -3,6 +3,8 @@ import { cn } from '../../lib/utils';
 import { BottomNav } from './BottomNav';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { SectionErrorBoundary } from '../ui/SectionErrorBoundary';
+
 export function PageLayout({
   children,
   showNav    = true,
@@ -27,7 +29,13 @@ export function PageLayout({
             className
           )}
         >
-          {children}
+          <SectionErrorBoundary 
+            fallbackTitle="Sahifani yuklashda xatolik" 
+            fallbackMessage="Tizimda kichik uzilish yuz berdi. Iltimos sahifani yangilang yoki pastki menyudan boshqa bo'limga o'ting."
+            className="h-full min-h-[50vh] border-none bg-transparent"
+          >
+            {children}
+          </SectionErrorBoundary>
         </motion.main>
       </AnimatePresence>
       {showNav && <BottomNav />}

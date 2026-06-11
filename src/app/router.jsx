@@ -63,7 +63,9 @@ export function AppRouter() {
   );
 }
 
-const router = createBrowserRouter([
+import { RouteErrorBoundary } from '../components/layout/ErrorBoundary';
+
+const routes = [
   { path: '/',                  element: <SplashScreen />                                },
   { path: '/onboarding',        element: <ProtectedRoute><OnboardingContainer /></ProtectedRoute> },
   { path: '/home',              element: <ProtectedRoute><HomeScreen /></ProtectedRoute> },
@@ -112,6 +114,11 @@ const router = createBrowserRouter([
   },
   
   { path: '*',                  element: <Navigate to="/" replace />                    },
-]);
+].map(route => ({
+  ...route,
+  errorElement: <RouteErrorBoundary />
+}));
+
+const router = createBrowserRouter(routes);
 
 export default AppRouter;
