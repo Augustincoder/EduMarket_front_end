@@ -8,6 +8,7 @@ import { hapticLight } from '../lib/telegram';
 import { NetworkBanner } from '../components/ui/NetworkBanner';
 import { useCategoryStore } from '../store/categoryStore';
 import { useAuthStore } from '../store/authStore';
+import { Analytics } from '@vercel/analytics/react';
 
 function CacheClearButton() {
   const [isVisible, setIsVisible] = useState(true);
@@ -67,6 +68,7 @@ export default function App() {
       <AppRouter />
       <WorkspaceOverlay />
       <CacheClearButton />
+      <Analytics />
     </Providers>
   );
 }
