@@ -29,7 +29,7 @@ export function LivePulseFeed() {
 
     socket.on('platform_pulse', handlePulse);
     return () => socket.off('platform_pulse', handlePulse);
-  }, [socket]);
+  }, [socket, categoryStore]);
 
   if (pulseEvents.length === 0) return null;
 
