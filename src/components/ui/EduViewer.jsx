@@ -6,72 +6,100 @@ import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
 import { hapticImpact } from '../../lib/telegram';
 
-export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose }) {
+export default function EduViewer({ 
+  isOpen = true, 
+  file, 
+  fileId, 
+  fileName, 
+  mimeType, 
+  isPaid, 
+  isSecure = false,
+  onClose 
+}) {
   const [isLoading, setIsLoading] = useState(true);
   const [isHolding, setIsHolding] = useState(false);
   const [fileUrl, setFileUrl] = useState(null);
   const [error, setError] = useState(null);
   const canvasRef = useRef(null);
 
-  const isImage = mimeType?.startsWith('image/');
-  const isText = mimeType?.startsWith('text/') || mimeType === 'application/json';
+  // Determine actual values from either legacy `file` object or direct props
+  const actualFileId = fileId || file?.id;
+  const actualFileName = fileName || file?.name || 'Fayl';
+  const actualMimeType = mimeType || file?.mimeType || file?.type || '';
+  
+  // A file is considered "secured" only if isSecure is explicitly true, OR if it's the old Faza 13 task flow where isPaid is false.
+  // Actually, let's just say it's secure if `isSecure` is true OR (`isPaid` is explicitly false and we are using secure viewer logic).
+  // But wait, ChatScreen doesn't pass isPaid, it passes nothing. So isPaid is undefined.
+  // If isPaid is undefined, it's NOT a paid task context. It's just a normal file!
+  const requireSecureView = isSecure || isPaid === false; 
 
-  // 1. Fetch Secure Token and Stream File
+  const isImage = actualMimeType?.startsWith('image/');
+  const isText = actualMimeType?.startsWith('text/') || actualMimeType === 'application/json';
+
+  // 1. Fetch Secure Token and Stream File OR just use normal URL
   useEffect(() => {
+    if (!isOpen || !actualFileId) return;
+
     let objectUrl = null;
 
-    const loadSecureFile = async () => {
+    const loadFile = async () => {
       try {
         setIsLoading(true);
+        setError(null);
 
-        if (isPaid) {
-          // If paid, just get the normal URL
-          const res = await fileApi.getFileUrl(fileId);
-          setFileUrl(res.data.data.url);
+        if (!requireSecureView) {
+          // Normal viewing mode
+          if (file?.url) {
+            setFileUrl(file.url);
+          } else {
+            const res = await fileApi.getFileUrl(actualFileId);
+            setFileUrl(res.data.data.url);
+          }
           setIsLoading(false);
           return;
         }
 
+        // Secure viewing mode (Task Delivery preview)
         // 1. Get 60s Token
-        const tokenRes = await fileApi.getSecureToken(fileId);
+        const tokenRes = await fileApi.getSecureToken(actualFileId);
         const token = tokenRes.data.data.token;
 
         // 2. Stream File Binary
         const streamRes = await fileApi.streamSecureFile(token);
         
         // 3. Create Blob URL
-        const blob = new Blob([streamRes.data], { type: mimeType });
+        const blob = new Blob([streamRes.data], { type: actualMimeType });
         objectUrl = URL.createObjectURL(blob);
         setFileUrl(objectUrl);
         
       } catch (err) {
         console.error(err);
-        setError(err.response?.data?.message || "Faylni yuklashda xatolik. Limit tugagan bo'lishi mumkin.");
+        setError(err.response?.data?.message || "Faylni yuklashda xatolik yuz berdi.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadSecureFile();
+    loadFile();
 
     return () => {
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [fileId, isPaid, mimeType]);
+  }, [actualFileId, requireSecureView, file, isOpen, actualMimeType]);
 
   // 2. Block Right-Click and Copy
   useEffect(() => {
     const handleContextMenu = (e) => {
-      if (!isPaid) {
+      if (requireSecureView) {
         e.preventDefault();
         toast.error('Saqlash taqiqlangan!');
       }
     };
     
     const handleCopy = (e) => {
-      if (!isPaid) {
+      if (requireSecureView) {
         e.preventDefault();
         e.clipboardData.setData('text/plain', "⚠️ Ushbu ish uchun hali to'lov qilinmagan (EduMarket). Uni o'g'irlab universitetga topshirish mumkin emas!");
         toast.error("Nusxa ko'chirish taqiqlangan!");
@@ -85,7 +113,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('copy', handleCopy);
     };
-  }, [isPaid]);
+  }, [requireSecureView]);
 
   // 3. Render Canvas with Visible Watermarks for Images
   useEffect(() => {
@@ -103,7 +131,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
       // Draw original image
       ctx.drawImage(img, 0, 0);
 
-      if (!isPaid) {
+      if (requireSecureView) {
         // Add Heavy Visible Watermarks making it unusable for submission
         ctx.fillStyle = 'rgba(239, 68, 68, 0.4)'; // Red-ish semi-transparent
         ctx.font = `bold ${Math.max(20, img.width / 15)}px sans-serif`;
@@ -130,10 +158,10 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
     };
     img.src = fileUrl;
 
-  }, [fileUrl, isImage, isLoading, isPaid]);
+  }, [fileUrl, isImage, isLoading, requireSecureView]);
 
   // 4. Glitch Effect CSS for Text/PDF wrappers
-  const glitchStyle = !isPaid && !isHolding ? { filter: 'blur(15px) grayscale(100%)' } : {};
+  const glitchStyle = requireSecureView && !isHolding ? { filter: 'blur(15px) grayscale(100%)' } : {};
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col">
@@ -144,13 +172,13 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
             ✕
           </button>
           <div className="text-white">
-            <h3 className="font-bold text-sm max-w-[200px] truncate">{fileName}</h3>
-            <p className="text-xs text-white/50">{isPaid ? "To'liq ruxsat" : "Himoyalangan namuna"}</p>
+            <h3 className="font-bold text-sm max-w-[200px] truncate">{actualFileName}</h3>
+            <p className="text-xs text-white/50">{!requireSecureView ? "To'liq ruxsat" : "Himoyalangan namuna"}</p>
           </div>
         </div>
         
-        {isPaid && (
-          <a href={fileUrl} download={fileName} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-edu-primary rounded-xl text-white font-bold text-sm active-spring">
+        {!requireSecureView && (
+          <a href={fileUrl} download={actualFileName} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-edu-primary rounded-xl text-white font-bold text-sm active-spring">
             <Download size={16} />
             Yuklash
           </a>
@@ -175,7 +203,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
             className="w-full h-full flex items-center justify-center transition-all duration-300"
             style={glitchStyle}
           >
-            {!isPaid && !isHolding && (
+            {requireSecureView && !isHolding && (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
                 <Lock size={64} className="text-white/20 mb-4" />
                 <h2 className="text-2xl font-black text-white/40 tracking-widest uppercase text-center">Bosib turing</h2>
@@ -186,7 +214,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
               <canvas ref={canvasRef} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
             ) : isText ? (
               <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-2xl whitespace-pre-wrap font-mono text-sm overflow-auto max-h-full relative select-none">
-                {!isPaid && (
+                {requireSecureView && (
                   <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center opacity-10 space-y-10 overflow-hidden">
                      {Array.from({length: 10}).map((_, i) => (
                        <h1 key={i} className="text-6xl font-black text-red-600 -rotate-12 whitespace-nowrap">TO'LANMAGAN PREVIEW</h1>
@@ -198,7 +226,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
               </div>
             ) : (
               <div className="w-full max-w-4xl h-full bg-white rounded-xl overflow-hidden relative select-none">
-                 {!isPaid && (
+                 {requireSecureView && (
                   <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center opacity-20 space-y-10 bg-white/50 backdrop-blur-[2px]">
                      {Array.from({length: 5}).map((_, i) => (
                        <h1 key={i} className="text-8xl font-black text-red-600 -rotate-45 whitespace-nowrap drop-shadow-lg">EDUMARKET</h1>
@@ -213,7 +241,7 @@ export default function EduViewer({ fileId, fileName, mimeType, isPaid, onClose 
       </div>
 
       {/* Hold-to-View Action Bar for Unpaid Files */}
-      {!isPaid && !isLoading && !error && (
+      {requireSecureView && !isLoading && !error && (
         <div className="p-6 pb-10 bg-gradient-to-t from-black to-transparent flex flex-col items-center justify-end absolute bottom-0 left-0 right-0 z-50">
           <AnimatePresence>
             {!isHolding && (

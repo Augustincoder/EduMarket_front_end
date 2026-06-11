@@ -1,7 +1,7 @@
 // src/components/chat/MessageBubble.jsx
 import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
-import { Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle, FileType } from 'lucide-react';
+import { Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, Edit2, Trash2, Ban, Clock, AlertCircle, FileType, Lock } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import { Spinner } from '../ui/Spinner';
 import DOMPurify from 'dompurify';
@@ -67,7 +67,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
   const handleFileClick = () => {
     if (hasFile && !isImage && message.fileType !== 'voice') {
-      onViewFile?.(message.fileId, message.fileName);
+      onViewFile?.(message.fileId, message.fileName, message.isSecureFile);
     }
   };
 
@@ -158,7 +158,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
             {hasFile ? (
               isImage ? (
-                <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName)} />
+                <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName, message.isSecureFile)} />
               ) : message.fileType === 'voice' ? (
                 <div className="voice-player-wrap" onClick={(e) => e.stopPropagation()}>
                   <VoicePlayer fileId={message.fileId} isMe={isMe} />
@@ -167,12 +167,19 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                 <div className="flex items-center gap-2.5 min-w-[160px] p-1">
                   <div className={cn(
                     'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0',
-                    isMe ? 'bg-white/20' : 'bg-edu-primary/10'
+                    isMe ? 'bg-white/20' : (message.isSecureFile ? 'bg-red-500/10' : 'bg-edu-primary/10')
                   )}>
-                    <FileText size={18} className={isMe ? 'text-white' : 'text-edu-primary'} />
+                    {message.isSecureFile ? (
+                      <Lock size={18} className={isMe ? 'text-white' : 'text-red-500'} />
+                    ) : (
+                      <FileText size={18} className={isMe ? 'text-white' : 'text-edu-primary'} />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold truncate">{message.fileName || 'Biriktirma'}</p>
+                    <p className="text-xs font-semibold truncate flex items-center gap-1">
+                      {message.isSecureFile && <span className="text-[9px] uppercase bg-red-500 text-white px-1 py-0.5 rounded-sm shrink-0">Namuna</span>}
+                      {message.fileName || 'Biriktirma'}
+                    </p>
                     <p className={cn('text-[10px] mt-0.5', isMe ? 'text-white/70' : 'text-edu-muted')}>
                       Ko'rish uchun bosing
                     </p>

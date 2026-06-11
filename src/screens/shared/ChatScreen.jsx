@@ -54,13 +54,8 @@ export default function ChatScreen() {
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [viewerFile, setViewerFile] = useState(null);
 
-  const handleViewFile = async (fileId, fileName) => {
-    try {
-      const res = await filesApi.getUrl(fileId);
-      setViewerFile({ url: res.data.data.url, name: fileName || fileId.split('/').pop() });
-    } catch {
-      toast.error('Faylni ochishda xatolik');
-    }
+  const handleViewFile = (fileId, fileName, isSecureFile) => {
+    setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile });
   };
 
   const handleRevisionSubmit = async () => {
@@ -327,6 +322,7 @@ export default function ChatScreen() {
         isOpen={!!viewerFile}
         onClose={() => setViewerFile(null)}
         file={viewerFile}
+        isSecure={viewerFile?.isSecureFile}
       />
     </div>
   );

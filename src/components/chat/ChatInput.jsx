@@ -1,6 +1,6 @@
 // src/components/chat/ChatInput.jsx
 import { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, X, Image, FileText, Check, Mic } from 'lucide-react';
+import { Paperclip, Send, X, Image, FileText, Check, Mic, Lock } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -13,6 +13,8 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   const [uploading, setUploading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const fileRef = useRef(null);
+
+  const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
 
   useEffect(() => {
     if (editingMessage) {
@@ -82,12 +84,13 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       else if (file.type.startsWith('video/')) fileType = 'video';
       else if (file.type.startsWith('audio/')) fileType = 'voice';
 
-      onSend?.(null, fileId, fileType, file.name);
+      onSend?.(null, fileId, fileType, file.name, isSelectingSecureFile);
     } catch {
       toast.error('Fayl yuklashda xato');
     } finally {
       setUploading(false);
       e.target.value = '';
+      setIsSelectingSecureFile(false);
     }
   };
 
@@ -95,10 +98,10 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     <div className="relative border-t border-edu-border ios-glass pb-safe flex flex-col">
       {/* File menu */}
       {showMenu && (
-        <div className="absolute bottom-full left-4 mb-3 w-[200px] ios-glass rounded-[20px] shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
+        <div className="absolute bottom-full left-4 mb-3 w-[240px] ios-glass rounded-[20px] shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
           <button
-            className="flex items-center gap-3 px-4 py-3.5 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
-            onClick={() => { fileRef.current.accept='image/*'; fileRef.current.click(); }}
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
+            onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='image/*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
               <Image size={18} className="text-blue-500" />
@@ -107,13 +110,23 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           </button>
           <div className="h-[1px] bg-edu-border mx-4" />
           <button
-            className="flex items-center gap-3 px-4 py-3.5 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
-            onClick={() => { fileRef.current.accept='*'; fileRef.current.click(); }}
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
+            onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
               <FileText size={18} className="text-edu-accent" />
             </div>
             Fayl (Hujjat)
+          </button>
+          <div className="h-[1px] bg-edu-border mx-4" />
+          <button
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-red-500 active-spring"
+            onClick={() => { setIsSelectingSecureFile(true); fileRef.current.accept='*'; fileRef.current.click(); }}
+          >
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <Lock size={18} className="text-red-500" />
+            </div>
+            Himoyalangan fayl (Namuna)
           </button>
         </div>
       )}
