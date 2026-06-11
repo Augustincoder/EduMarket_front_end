@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../services/auth.service';
@@ -7,6 +8,7 @@ import { Lock, User, Terminal } from 'lucide-react';
 
 export default function AdminLoginScreen() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const setAuth = useAuthStore((s) => s.setAuth);
   
   const [username, setUsername] = useState('');
@@ -16,7 +18,7 @@ export default function AdminLoginScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !password) {
-      toast.error('Login va parolni kiriting');
+      toast.error(t('system.admin.enterCredentials'));
       return;
     }
 
@@ -28,13 +30,13 @@ export default function AdminLoginScreen() {
           user: res.data.data.user,
           token: res.data.data.token,
         });
-        toast.success('Admin panelga xush kelibsiz!');
+        toast.success(t('system.admin.welcome'));
         navigate('/admin/dashboard');
       } else {
-        toast.error(res.data.message || 'Xatolik yuz berdi');
+        toast.error(res.data.message || t('system.admin.genericError'));
       }
     } catch (err) {
-      toast.error(err.serverMsg || 'Login yoki parol noto\'g\'ri');
+      toast.error(err.serverMsg || t('system.admin.invalidCredentials'));
     } finally {
       setIsLoading(false);
     }

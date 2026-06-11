@@ -1,11 +1,17 @@
-// src/hooks/useSocket.js
+// src/hooks/useSocket.jsx
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
 import { useChatStore } from '../store/chatStore';
 import { useNotificationStore } from '../store/notificationStore';
 import { STATUS_CONFIG } from '../lib/constants';
+import { router } from '../app/router';
+import i18n from '../lib/i18n';
 import toast from 'react-hot-toast';
+
+// Only allow same-app relative paths to prevent open redirects.
+const toSafeInternalPath = (url) =>
+  typeof url === 'string' && url.startsWith('/') && !url.startsWith('//') ? url : null;
 
 export function useSocket() {
   const token = useAuthStore((s) => s.token);
@@ -31,42 +37,32 @@ export function useSocket() {
       queryClient.invalidateQueries({ queryKey: ['task', taskId] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       const statusLabel = STATUS_CONFIG[newStatus]?.label || newStatus;
-      toast.success(`Vazifa holati o'zgardi: ${statusLabel}`);
+      toast.success(i18n.t('system.socket.taskStatusChanged', { status: statusLabel }));
     };
 
     const handleNewBid = ({ taskId, bidCount }) => {
       queryClient.invalidateQueries({ queryKey: ['tasks', taskId, 'bids'] });
       queryClient.invalidateQueries({ queryKey: ['task', taskId] });
-      toast.info(`Yangi taklif yuborildi! Jami takliflar: ${bidCount}`);
+      toast(i18n.t('system.socket.newBid', { total: bidCount }));
     };
 
     const handleBidAccepted = ({ taskId }) => {
       queryClient.invalidateQueries({ queryKey: ['task', taskId] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      toast.success('Taklifingiz qabul qilindi! 🎉');
+      toast.success(i18n.t('system.socket.bidAccepted'));
     };
 
     const handleNewNotification = (notif) => {
       useNotificationStore.getState().addNotification(notif);
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      
-      // Play a subtle notification sound (if supported/not muted)
-      try {
-        const audio = new Audio('/sounds/pop.mp3');
-        audio.volume = 0.5;
-        audio.play().catch(() => {}); // ignore auto-play policies if blocked
-      } catch (error) {
-        console.debug('Audio play prevented by browser', error);
-      }
 
       // Dynamic Island style capsule toast
       toast.custom((t) => (
         <div
           onClick={() => {
             toast.dismiss(t.id);
-            if (notif.actionUrl) {
-              window.location.href = notif.actionUrl;
-            }
+            const target = toSafeInternalPath(notif.actionUrl);
+            if (target) router.navigate(target);
           }}
           className={`${
             t.visible ? 'animate-in slide-in-from-top-4 fade-in duration-300' : 'animate-out slide-out-to-top-4 fade-out duration-300'
@@ -88,7 +84,7 @@ export function useSocket() {
           {notif.type === 'new_bid' && (
             <div className="flex-shrink-0 ml-2">
               <span className="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                Ko'rish
+                {i18n.t('system.socket.view')}
               </span>
             </div>
           )}

@@ -1,4 +1,22 @@
 {
+  "system": {
+    "socket": {
+      "taskStatusChanged": "Vazifa holati o'zgardi: {{status}}",
+      "newBid": "Yangi taklif yuborildi! Jami takliflar: {{total}}",
+      "bidAccepted": "Taklifingiz qabul qilindi! \ud83c\udf89",
+      "view": "Ko'rish"
+    },
+    "auth": {
+      "loginError": "Kirish xatoligi yuz berdi",
+      "sessionExpired": "Sessiya muddati tugadi. Qayta kirish kerak."
+    },
+    "admin": {
+      "enterCredentials": "Login va parolni kiriting",
+      "welcome": "Admin panelga xush kelibsiz!",
+      "genericError": "Xatolik yuz berdi",
+      "invalidCredentials": "Login yoki parol noto'g'ri"
+    }
+  },
   "app": {
     "name": "EduMarket",
     "slogan": "Bilim bozori",
