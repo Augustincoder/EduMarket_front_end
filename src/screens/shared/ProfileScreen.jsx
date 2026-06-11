@@ -81,48 +81,53 @@ export default function ProfileScreen() {
 
       <div className="px-4 pt-4 space-y-5 pb-6">
         
-        {/* Workspace Context Switcher Card (Only for freelancers) */}
-        {me?.isFreelancer && (
-          <Card 
-            className={cn(
-              "border-2 relative overflow-hidden group cursor-pointer press-scale animate-fade-in shadow-ios",
-              activeRole === 'CLIENT' 
-                ? "bg-indigo-600/5 border-indigo-600/10 dark:bg-indigo-500/10 dark:border-indigo-500/20" 
-                : "bg-edu-primary/5 border-edu-primary/10 dark:bg-edu-primary/10 dark:border-edu-primary/20"
-            )}
-            onClick={() => { hapticLight(); toggleActiveRole(); }}
-            radius="2xl"
-          >
-            <div className={cn(
-              "absolute -right-6 -top-6 w-24 h-24 blur-2xl rounded-full opacity-20 pointer-events-none transition-colors duration-500",
-              activeRole === 'CLIENT' ? "bg-indigo-600" : "bg-edu-primary"
-            )} />
-            
-            <CardContent className="p-4 flex items-center justify-between relative z-10">
-              <div className="flex items-center gap-4">
-                <div className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500",
-                  activeRole === 'CLIENT' 
-                    ? "bg-indigo-600 text-white shadow-indigo-600/20" 
-                    : "bg-edu-primary text-white shadow-edu-primary/20"
-                )}>
-                  {activeRole === 'CLIENT' ? <Briefcase size={22} /> : <User size={22} />}
-                </div>
-                <div>
-                  <h3 className="text-[13px] font-bold text-edu-text leading-tight">
-                    {activeRole === 'CLIENT' ? 'Mutaxassis ish joyi' : 'Mijoz ish joyi'}
-                  </h3>
-                  <p className="text-[10px] text-edu-muted font-bold uppercase tracking-wider mt-0.5">
-                    {activeRole === 'CLIENT' ? 'Daromad olishga o\'tish' : 'E\'lon berishga o\'tish'}
-                  </p>
-                </div>
+        {/* Workspace Context Switcher Card (For everyone, but enforces verification) */}
+        <Card 
+          className={cn(
+            "border-2 relative overflow-hidden group cursor-pointer press-scale animate-fade-in shadow-ios",
+            activeRole === 'CLIENT' 
+              ? "bg-indigo-600/5 border-indigo-600/10 dark:bg-indigo-500/10 dark:border-indigo-500/20" 
+              : "bg-edu-primary/5 border-edu-primary/10 dark:bg-edu-primary/10 dark:border-edu-primary/20"
+          )}
+          onClick={() => {
+            hapticLight();
+            if (activeRole === 'CLIENT' && me?.verificationStatus !== 'APPROVED') {
+              toast.error("Frilanser ish joyiga o'tish uchun profilingiz tasdiqlangan bo'lishi kerak!");
+              return;
+            }
+            toggleActiveRole();
+          }}
+          radius="2xl"
+        >
+          <div className={cn(
+            "absolute -right-6 -top-6 w-24 h-24 blur-2xl rounded-full opacity-20 pointer-events-none transition-colors duration-500",
+            activeRole === 'CLIENT' ? "bg-indigo-600" : "bg-edu-primary"
+          )} />
+          
+          <CardContent className="p-4 flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500",
+                activeRole === 'CLIENT' 
+                  ? "bg-indigo-600 text-white shadow-indigo-600/20" 
+                  : "bg-edu-primary text-white shadow-edu-primary/20"
+              )}>
+                {activeRole === 'CLIENT' ? <Briefcase size={22} /> : <User size={22} />}
               </div>
-              <div className="w-8 h-8 rounded-full bg-edu-surface border border-edu-border flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
-                <ArrowRight size={14} className="text-edu-muted" />
+              <div>
+                <h3 className="text-[13px] font-bold text-edu-text leading-tight">
+                  {activeRole === 'CLIENT' ? 'Mutaxassis ish joyi' : 'Mijoz ish joyi'}
+                </h3>
+                <p className="text-[10px] text-edu-muted font-bold uppercase tracking-wider mt-0.5">
+                  {activeRole === 'CLIENT' ? 'Daromad olishga o\'tish' : 'E\'lon berishga o\'tish'}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+            <div className="w-8 h-8 rounded-full bg-edu-surface border border-edu-border flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+              <ArrowRight size={14} className="text-edu-muted" />
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="space-y-4 animate-fade-up">
           {/* Verification Status Card */}

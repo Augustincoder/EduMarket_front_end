@@ -87,12 +87,12 @@ export default function ChatScreen() {
     }
   }, [roomMessages, taskId, user?.id]);
 
-  const handleSend = useCallback((content, fileId, fileType, fileName) => {
+  const handleSend = useCallback((content, fileId, fileType, fileName, isSecureFile) => {
     if (editingMessage) {
       editMessage(editingMessage.id, content);
       setEditingMessage(null);
     } else {
-      sendMessage(taskId, content, fileId, replyingTo?.id, fileType, fileName);
+      sendMessage(taskId, content, fileId, replyingTo?.id, fileType, fileName, isSecureFile);
       setReplyingTo(null);
     }
   }, [taskId, sendMessage, editMessage, replyingTo, editingMessage]);

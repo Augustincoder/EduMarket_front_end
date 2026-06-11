@@ -213,7 +213,7 @@ export default function EduViewer({
             )}
 
             {isImage ? (
-              <canvas ref={canvasRef} className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
+              <canvas ref={canvasRef} className="w-full h-full max-h-[75vh] object-contain rounded-xl shadow-2xl" />
             ) : isText ? (
               <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-2xl whitespace-pre-wrap font-mono text-sm overflow-auto max-h-full relative select-none">
                 {requireSecureView && (
