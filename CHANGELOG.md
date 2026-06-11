@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.5](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.4...v2.2.5) (2026-06-11)
+
+
+### Bug Fixes
+
+* **notifications:** add missing setUnreadCount in store ([516ad7d](https://github.com/Augustincoder/EduMarket_front_end/commit/516ad7d080cd1510b2a78dadb632a3d785c6c7de))
+
 ### [2.2.4](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.3...v2.2.4) (2026-06-11)
 
 
