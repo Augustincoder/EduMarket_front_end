@@ -78,8 +78,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   const toggleReaction = useChatStore(s => s.toggleReaction);
 
   const handleFileClick = () => {
-    if (hasFile && !isImage && message.fileType !== 'voice') {
-      onViewFile?.(message.fileId, message.fileName, message.isSecureFile);
+    if (hasFile && message.fileType !== 'voice') {
+      const mime = isImage ? 'image/jpeg' : '';
+      onViewFile?.(message.fileId, message.fileName, message.isSecureFile, mime);
     }
   };
 
@@ -128,13 +129,13 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
               isMe
                 ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
                 : 'bg-edu-surface dark:bg-edu-surface text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
-              hasFile && !isImage && message.fileType !== 'voice' && 'hover:opacity-90 active:scale-[0.98]'
+              hasFile && message.fileType !== 'voice' && (!isImage || message.isSecureFile) && 'hover:opacity-90 active:scale-[0.98]'
             )}
             onClick={(e) => {
               const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('audio') || e.target.closest('img') || e.target.closest('.voice-player-wrap');
               if (isInteractive) return;
 
-              if (hasFile && !isImage && message.fileType !== 'voice') {
+              if (hasFile && message.fileType !== 'voice' && (!isImage || message.isSecureFile)) {
                 handleFileClick();
               } else {
                 setShowMenu(!showMenu);
@@ -194,8 +195,8 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             )}
 
             {hasFile ? (
-              isImage ? (
-                <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName, message.isSecureFile)} />
+              (isImage && !message.isSecureFile) ? (
+                <ImageAttachment fileId={message.fileId} onClick={() => onViewFile?.(message.fileId, message.fileName, false, 'image/jpeg')} />
               ) : message.fileType === 'voice' ? (
                 <div className="voice-player-wrap" onClick={(e) => e.stopPropagation()}>
                   <VoicePlayer fileId={message.fileId} isMe={isMe} />
@@ -214,7 +215,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold truncate flex items-center gap-1">
-                      {message.isSecureFile && <span className="text-[9px] uppercase bg-red-500 text-white px-1 py-0.5 rounded-sm shrink-0">Namuna</span>}
+                      {message.isSecureFile && <span className="text-[9px] uppercase bg-red-500 text-white px-1 py-0.5 rounded-sm shrink-0">Himoyalangan</span>}
                       {message.fileName || 'Biriktirma'}
                     </p>
                     <p className={cn('text-[10px] mt-0.5', isMe ? 'text-white/70' : 'text-edu-muted')}>

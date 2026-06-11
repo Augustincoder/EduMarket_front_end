@@ -51,8 +51,8 @@ export default function ChatScreen() {
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [viewerFile, setViewerFile] = useState(null);
 
-  const handleViewFile = (fileId, fileName, isSecureFile) => {
-    setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile });
+  const handleViewFile = (fileId, fileName, isSecureFile, mimeType) => {
+    setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile, mimeType });
   };
 
   const handleRevisionSubmit = async () => {
