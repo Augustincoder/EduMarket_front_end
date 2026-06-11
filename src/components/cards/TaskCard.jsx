@@ -4,14 +4,17 @@ import { Clock, Users, Bookmark, Sparkles } from 'lucide-react';
 import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
 import { Avatar } from '../ui/Avatar';
 import { deadlineCountdown, formatPriceRange } from '../../lib/utils';
-import { CATEGORIES } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
+import { useCategoryStore } from '../../store/categoryStore';
 import toast from 'react-hot-toast';
 
 function TaskCard({ task, className }) {
   const navigate = useNavigate();
-  const catInfo = CATEGORIES.find((c) => c.value === task.category);
+  
+  // Dynamic category mapping
+  const categoryStore = useCategoryStore(s => s.categories);
+  const catInfo = categoryStore.find((c) => c.value === task.category) || { emoji: '📌', label: task.category, colorHex: '#64748b' };
 
   // Local favorite state for tasks
   const [isSaved, setIsSaved] = useState(() => {

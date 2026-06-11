@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usersApi } from '../../services/users.service';
 import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
-import { CATEGORIES } from '../../lib/constants';
+import { useCategoryStore } from '../../store/categoryStore';
 import { Avatar } from '../../components/ui/Avatar';
 import { VerifiedBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
@@ -238,15 +238,23 @@ export default function ClientHomeScreen() {
 
       {/* ── Popular Categories (Floating Grid) ──────────── */}
       <div className="mb-10">
-        <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.15em] mb-4 px-1">Kategoriyalar</h3>
+        <div className="flex justify-between items-center mb-4 px-1">
+          <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.15em]">Ommabop Kategoriyalar</h3>
+          <button 
+            onClick={() => navigate('/gigs')} 
+            className="text-[12px] font-bold text-edu-primary flex items-center gap-1"
+          >
+            Barchasi <ChevronRight size={14} strokeWidth={3} />
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-3">
-          {CATEGORIES.slice(0, 4).map(cat => (
+          {useCategoryStore().getTrendingCategories().map(cat => (
             <div 
               key={cat.value} 
               onClick={() => handleCategoryClick(cat.value)}
               className="bg-edu-surface rounded-2xl p-4 flex items-center gap-3 cursor-pointer active-spring shadow-premium-sm border border-edu-border"
             >
-              <div className="w-10 h-10 rounded-xl bg-edu-bg flex items-center justify-center text-xl shadow-inner border border-edu-border">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner border border-edu-border">
                 {cat.emoji}
               </div>
               <span className="text-[13px] font-bold text-edu-text tracking-tight">{cat.label}</span>

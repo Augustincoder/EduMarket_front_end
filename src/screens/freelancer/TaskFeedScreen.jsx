@@ -11,7 +11,7 @@ import { Button } from '../../components/ui/Button';
 import { useTaskFeed } from '../../hooks/useTasks';
 import { useUiStore } from '../../store/uiStore';
 import { useDebounce } from '../../hooks/useDebounce';
-import { CATEGORIES } from '../../lib/constants';
+import { useCategoryStore } from '../../store/categoryStore';
 import { hapticLight } from '../../lib/telegram';
 import { cn } from '../../lib/utils';
 
@@ -35,6 +35,8 @@ export default function TaskFeedScreen() {
     try { return JSON.parse(localStorage.getItem('recentSearches')) || []; }
     catch { return []; }
   });
+
+  const [categoryFilterSearch, setCategoryFilterSearch] = useState('');
 
   const addSearch = useCallback((query) => {
     if (!query) return;
@@ -138,15 +140,24 @@ export default function TaskFeedScreen() {
             onClick={() => { setFilter('category', ''); hapticLight(); }}
             className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
           />
-          {CATEGORIES.map((cat) => (
+          {useCategoryStore().getTrendingCategories().map((cat) => (
             <FilterChip
               key={cat.value}
               label={`${cat.emoji} ${cat.label}`}
               active={filterState.category === cat.value}
               onClick={() => { setFilter('category', cat.value); hapticLight(); }}
-              className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
+              className={cn(
+                "rounded-xl px-4 h-8 text-[12px] font-bold border-transparent",
+                filterState.category === cat.value ? "bg-slate-800 text-white dark:bg-white dark:text-black" : "bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400"
+              )}
             />
           ))}
+          <button
+            onClick={() => { setFilterOpen(true); hapticLight(); }}
+            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 whitespace-nowrap shrink-0"
+          >
+            Barchasini ko'rish
+          </button>
         </div>
       </div>
 
@@ -174,6 +185,59 @@ export default function TaskFeedScreen() {
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Predictive Search Overlay */}
+        {isFocused && localQuery && (
+          <div className="absolute inset-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md animate-fade-in px-4 py-4">
+            <div className="bg-edu-surface rounded-[28px] p-4 shadow-2xl border border-edu-border flex flex-col gap-4">
+              
+              {/* Category Matches */}
+              {(() => {
+                const matchedCats = useCategoryStore.getState().categories.filter(c => 
+                  c.label.toLowerCase().includes(localQuery.toLowerCase()) || 
+                  (c.skills && c.skills.some(s => s.name.toLowerCase().includes(localQuery.toLowerCase())))
+                );
+                if (matchedCats.length === 0) return null;
+                return (
+                  <div>
+                    <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.1em] mb-2 px-2">🏷 Kategoriyalar bo'yicha</h3>
+                    <div className="flex flex-col gap-1">
+                      {matchedCats.slice(0, 3).map(cat => (
+                        <button
+                          key={cat.id}
+                          onClick={() => { setFilter('category', cat.value); setLocalQuery(''); setIsFocused(false); hapticLight(); }}
+                          className="text-left w-full px-4 py-3 rounded-2xl bg-edu-bg border border-edu-border/50 hover:bg-edu-primary/5 hover:border-edu-primary/30 flex items-center gap-3 transition-colors"
+                        >
+                          <span className="w-8 h-8 rounded-lg bg-edu-surface flex items-center justify-center text-lg border border-edu-border">{cat.emoji}</span>
+                          <div>
+                            <p className="text-[14px] font-bold text-edu-text">{cat.label}</p>
+                            <p className="text-[10px] text-edu-muted">Kategoriya ichiga kirish</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Task Match Prompt */}
+              <div>
+                <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.1em] mb-2 px-2">🔍 Vazifalar ichidan qidirish</h3>
+                <button
+                  onClick={() => { setIsFocused(false); hapticLight(); }}
+                  className="text-left w-full px-4 py-3 rounded-2xl bg-edu-primary text-white hover:bg-edu-primary/90 flex items-center gap-3 transition-colors shadow-premium-sm"
+                >
+                  <Search size={18} />
+                  <div>
+                    <p className="text-[14px] font-bold">"{localQuery}" ni qidirish</p>
+                    <p className="text-[10px] opacity-80">Barcha ochiq vazifalar ro'yxatidan</p>
+                  </div>
+                </button>
+              </div>
+
             </div>
           </div>
         )}
@@ -270,23 +334,51 @@ export default function TaskFeedScreen() {
 
           {/* Categories: Improved Grid */}
           <div>
-            <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em] mb-4 px-1">Kategoriya</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex justify-between items-center mb-3 px-1">
+              <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Kategoriya</p>
+              <div className="relative w-40">
+                <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Qidirish..."
+                  value={categoryFilterSearch}
+                  onChange={(e) => setCategoryFilterSearch(e.target.value)}
+                  className="w-full h-7 bg-slate-100 dark:bg-white/5 border border-transparent focus:border-edu-primary/30 rounded-lg pl-7 pr-2 text-[12px] font-medium outline-none text-edu-text transition-all"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1 scrollbar-hide">
               <FilterChip 
                 label="Barchasi" 
                 active={!filterState.category} 
                 onClick={() => setFilter('category', '')} 
                 className="rounded-xl h-11 px-4 text-[13px] font-bold border-transparent bg-edu-bg" 
               />
-              {CATEGORIES.map((cat) => (
-                <FilterChip
-                  key={cat.value}
-                  label={`${cat.emoji} ${cat.label}`}
-                  active={filterState.category === cat.value}
-                  onClick={() => setFilter('category', cat.value)}
-                  className="rounded-xl h-11 px-4 text-[13px] font-bold border-transparent bg-edu-bg"
-                />
-              ))}
+              {useCategoryStore.getState().categories
+                .filter(cat => cat.label.toLowerCase().includes(categoryFilterSearch.toLowerCase()))
+                .map((cat) => {
+                  const r = parseInt(cat.colorHex.slice(1, 3), 16) || 100;
+                  const g = parseInt(cat.colorHex.slice(3, 5), 16) || 100;
+                  const b = parseInt(cat.colorHex.slice(5, 7), 16) || 100;
+                  const bgRgba = `rgba(${r}, ${g}, ${b}, ${filterState.category === cat.value ? '0.2' : '0.05'})`;
+                  const borderRgba = `rgba(${r}, ${g}, ${b}, ${filterState.category === cat.value ? '0.5' : '0.1'})`;
+                  const color = filterState.category === cat.value ? cat.colorHex : 'inherit';
+
+                  return (
+                    <button
+                      key={cat.value}
+                      onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+                      style={{ backgroundColor: bgRgba, borderColor: borderRgba, color }}
+                      className={cn(
+                        "rounded-xl h-11 px-4 text-[13px] font-bold border flex items-center justify-center gap-2 transition-all active:scale-95",
+                        filterState.category === cat.value ? "shadow-sm" : ""
+                      )}
+                    >
+                      <span>{cat.emoji}</span>
+                      <span className="truncate">{cat.label}</span>
+                    </button>
+                  );
+              })}
             </div>
           </div>
 

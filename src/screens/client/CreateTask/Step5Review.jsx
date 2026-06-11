@@ -1,16 +1,20 @@
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
-import { formatPriceRange, CATEGORIES } from '../../../lib/constants';
+import { useCategoryStore } from '../../../store/categoryStore';
+import { formatPriceRange } from '../../../lib/constants';
 import { format } from 'date-fns';
 import { uz } from 'date-fns/locale';
 import { CheckCircle2, ShieldCheck, Globe, Crown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function Step5Review() {
   const { 
     category, title, priceMin, priceMax, deadline, 
     isUrgent, files, targeting, nlpSeverity 
   } = useCreateTaskStore();
+  const navigate = useNavigate();
 
-  const catObj = CATEGORIES.find(c => c.value === category);
+  const categoryStore = useCategoryStore(s => s.categories);
+  const catObj = categoryStore.find(c => c.value === category);
   
   let targetLabel = 'Barcha freelancerlarga';
   let TargetIcon = Globe;

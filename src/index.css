@@ -2,20 +2,22 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* iOS 17+ System Light Palette */
-  --edu-bg: #F2F2F7;         /* systemGroupedBackground */
-  --edu-surface: #FFFFFF;    /* secondarySystemGroupedBackground */
-  --edu-surface-2: #F9F9F9;  /* tertiarySystemGroupedBackground */
-  --edu-border: rgba(60, 60, 67, 0.12); /* separator */
-  --edu-muted: #8E8E93;      /* secondaryLabel */
-  --edu-text: #000000;       /* label */
+  /* iOS 17+ System Light Palette Optimized for Contrast */
+  --edu-bg: #EBEBF0;         /* Slightly darker than F2F2F7 for better contrast */
+  --edu-surface: #FFFFFF;    
+  --edu-surface-2: #F2F2F7;  
+  --edu-border: rgba(0, 0, 0, 0.15); /* Darker border for better visibility */
+  --edu-muted: #6B7280;      /* Darker gray for better readability */
+  --edu-text: #111827;       /* Almost black for sharp contrast */
   
   --edu-primary: #10B981;    /* Clean Green */
   --edu-primary-d: #059669;
   --edu-accent: #6366F1;     /* Indigo Accent */
-  --edu-urgent: #FF3B30;     /* iOS Red */
-  --edu-vip: #AF8B3B;        /* Muted Gold */
+  --edu-urgent: #EF4444;     /* Red */
+  --edu-vip: #D97706;        /* Gold/Amber */
 
   --status-open: #34C759;      /* iOS Green */
   --status-assigned: #5856D6;  /* iOS Indigo */

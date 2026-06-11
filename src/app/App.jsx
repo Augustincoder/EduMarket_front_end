@@ -5,6 +5,9 @@ import { Providers } from './providers';
 import { WorkspaceOverlay } from '../components/ui/WorkspaceOverlay';
 import { RefreshCw, X } from 'lucide-react';
 import { hapticLight } from '../lib/telegram';
+import { NetworkBanner } from '../components/ui/NetworkBanner';
+import { useCategoryStore } from '../store/categoryStore';
+import { useAuthStore } from '../store/authStore';
 
 function CacheClearButton() {
   const [isVisible, setIsVisible] = useState(true);
@@ -48,9 +51,16 @@ function CacheClearButton() {
   );
 }
 
-import { NetworkBanner } from '../components/ui/NetworkBanner';
 
 export default function App() {
+  const checkTokenStatus = useAuthStore(state => state.checkTokenStatus);
+  const fetchCategories = useCategoryStore(state => state.fetchCategories);
+
+  useEffect(() => {
+    checkTokenStatus();
+    fetchCategories(); // Fetch categories dynamically on app load
+  }, [checkTokenStatus, fetchCategories]);
+
   return (
     <Providers>
       <NetworkBanner />

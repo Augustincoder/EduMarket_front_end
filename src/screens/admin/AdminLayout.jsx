@@ -14,7 +14,8 @@ import {
   Send, 
   ShieldAlert, 
   LogOut,
-  Terminal
+  Terminal,
+  Tags
 } from 'lucide-react';
 
 export default function AdminLayout() {
@@ -43,6 +44,7 @@ export default function AdminLayout() {
 
   const navItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Kategoriyalar', path: '/admin/categories', icon: Tags },
     { label: 'Foydalanuvchilar', path: '/admin/users', icon: Users },
     { label: 'Tasdiqlash (KYC)', path: '/admin/verification', icon: ShieldAlert },
     { label: 'VIP Arizalar', path: '/admin/vip', icon: Crown },

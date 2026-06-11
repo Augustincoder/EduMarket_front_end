@@ -82,6 +82,7 @@ export default function NotificationInboxScreen() {
       return r.data.data;
     }),
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: null,
   });
 
   const markAsRead = useMutation({

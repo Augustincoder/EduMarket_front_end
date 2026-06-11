@@ -7,10 +7,7 @@ import { cn } from '../../../lib/utils';
 import { hapticLight, hapticSuccess } from '../../../lib/telegram';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = [
-  'Dasturlash', 'Dizayn', 'Tarjima', 'SMM', 'Kopirayterlik',
-  'Video montaj', 'Buxgalteriya', 'Huquqshunoslik', 'Repetitorlik'
-];
+import { useCategoryStore } from '../../../store/categoryStore';
 
 export function ProfileEditSheet({ me, updateMe, isOpen, onClose }) {
   const [editTab, setEditTab] = useState('client');
@@ -156,20 +153,21 @@ export function ProfileEditSheet({ me, updateMe, isOpen, onClose }) {
                 Mutaxassis yo'nalishlari (Maks 3 ta)
               </label>
               <div className="flex flex-wrap gap-1.5">
-                {CATEGORIES.map(cat => {
+                {useCategoryStore.getState().categories.map(catObj => {
+                  const cat = catObj.value;
                   const isSelected = editForm.freelancerCategories?.includes(cat);
                   return (
                     <button
                       type="button"
                       key={cat}
                       onClick={() => toggleCategoryInEdit(cat)}
-                      className={`px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
                         isSelected 
-                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/20' 
-                          : 'bg-edu-surface text-edu-muted border-edu-border/30 hover:bg-edu-bg'
+                          ? 'bg-edu-primary text-white border-edu-primary' 
+                          : 'bg-edu-surface text-edu-muted border-edu-border'
                       }`}
                     >
-                      {cat}
+                      {catObj.emoji} {catObj.label}
                     </button>
                   );
                 })}

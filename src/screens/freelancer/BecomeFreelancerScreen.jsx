@@ -7,10 +7,7 @@ import { useTelegram } from '../../hooks/useTelegram';
 import { useMainButton } from '../../hooks/useMainButton';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = [
-  'Dasturlash', 'Dizayn', 'Tarjima', 'SMM', 'Kopirayterlik',
-  'Video montaj', 'Buxgalteriya', 'Huquqshunoslik', 'Repetitorlik'
-];
+import { useCategoryStore } from '../../store/categoryStore';
 
 export default function BecomeFreelancerScreen() {
   const updateProfile = useAuthStore((s) => s.updateProfile);
@@ -78,7 +75,8 @@ export default function BecomeFreelancerScreen() {
               Yo'nalishingiz (Maks 3 ta)
             </label>
             <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map(cat => {
+              {useCategoryStore.getState().categories.map(catObj => {
+                const cat = catObj.value;
                 const isSelected = formData.freelancerCategories.includes(cat);
                 return (
                   <button
@@ -90,7 +88,7 @@ export default function BecomeFreelancerScreen() {
                         : 'bg-edu-surface text-edu-muted border-edu-border'
                     }`}
                   >
-                    {cat}
+                    {catObj.emoji} {catObj.label}
                   </button>
                 );
               })}

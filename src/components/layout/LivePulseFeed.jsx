@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
 import { useSocket } from '../../hooks/useSocket';
-import { CATEGORIES } from '../../lib/constants';
+import { useCategoryStore } from '../../store/categoryStore';
 
 export function LivePulseFeed() {
   const { socket } = useSocket();
   const [pulseEvents, setPulseEvents] = useState([]);
+  const categoryStore = useCategoryStore(s => s.categories);
 
   useEffect(() => {
     if (!socket) return;
 
     const handlePulse = (data) => {
       if (data.event === 'TASK_COMPLETED') {
-        const catInfo = CATEGORIES.find(c => c.value === data.category);
+        const catInfo = categoryStore.find(c => c.value === data.category) || { emoji: '📌', label: data.category };
         const newEvent = {
           id: Math.random().toString(36).substring(7),
           message: `${catInfo?.emoji || '💼'} ${catInfo?.label || data.category} bo'yicha vazifa yakunlandi`,

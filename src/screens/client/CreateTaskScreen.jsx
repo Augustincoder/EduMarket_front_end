@@ -179,7 +179,7 @@ export default function CreateTaskScreen() {
                 animate="animate"
                 exit="exit"
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="absolute inset-0 overflow-y-auto pb-10"
+                className="absolute inset-0 overflow-y-auto pb-10 flex flex-col"
               >
                 {step === 0 && <Step0Category />}
                 {step === 1 && <Step1Details />}

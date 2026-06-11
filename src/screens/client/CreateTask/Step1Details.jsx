@@ -1,26 +1,25 @@
-import { useEffect } from 'react';
+import { useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { TextInput } from '../../../components/forms/TextInput';
 import { TextArea } from '../../../components/forms/TextArea';
 import { NLPWarning, useNLPCheck } from '../../../components/forms/NLPWarning';
-import { CATEGORIES } from '../../../lib/constants';
+import { useCategoryStore } from '../../../store/categoryStore';
 import { CategoryMetaForms } from './CategoryMetaForms';
 
 export function Step1Details() {
   const { category, title, description, errors, updateField, setNlpSeverity } = useCreateTaskStore();
   const nlpSeverity = useNLPCheck(title + ' ' + description);
+  const categoryStore = useCategoryStore(s => s.categories);
 
-  useEffect(() => {
-    setNlpSeverity(nlpSeverity);
-  }, [nlpSeverity, setNlpSeverity]);
-
-  const catLabel = CATEGORIES.find(c => c.value === category)?.label || 'Vazifa';
+  const catInfo = categoryStore.find(c => c.value === category) || { label: 'Vazifa', emoji: '📌', formType: 'GENERAL' };
+  const catLabel = catInfo.label;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-bold text-edu-text">{catLabel} tafsiloti</h2>
-        <span className="text-2xl">{CATEGORIES.find(c => c.value === category)?.emoji}</span>
+        <span className="text-2xl">{catInfo.emoji}</span>
       </div>
 
       <TextInput

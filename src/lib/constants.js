@@ -1,15 +1,5 @@
 // src/lib/constants.js
 
-export const CATEGORIES = [
-  { value: 'REFERAT',      label: 'Referat',       emoji: '📄' },
-  { value: 'SLAYD',        label: 'Slayd',         emoji: '📊' },
-  { value: 'TARJIMA',      label: 'Tarjima',       emoji: '🌐' },
-  { value: 'KURS_ISHI',    label: 'Kurs ishi',     emoji: '📚' },
-  { value: 'KONSPEKT',     label: 'Konspekt',      emoji: '📝' },
-  { value: 'LABORATORIYA', label: 'Laboratoriya',  emoji: '🔬' },
-  { value: 'BOSHQA',       label: 'Boshqa',        emoji: '📌' },
-];
-
 export const STATUS_CONFIG = {
   OPEN:        { label: 'Ochiq',         bg: '#E1F5EE', text: '#0F6E56', dot: '#1D9E75' },
   ASSIGNED:    { label: 'Biriktirildi', bg: '#EEEDFE', text: '#3C3489', dot: '#534AB7' },

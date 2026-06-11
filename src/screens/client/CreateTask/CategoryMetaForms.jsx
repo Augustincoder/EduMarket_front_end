@@ -1,12 +1,14 @@
 import { TextInput } from '../../../components/forms/TextInput';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
+import { useCategoryStore } from '../../../store/categoryStore';
 import * as Select from '@radix-ui/react-select';
 import { ChevronDown, Check } from 'lucide-react';
 
 export const CategoryMetaForms = () => {
   const { category, meta, updateMeta } = useCreateTaskStore();
+  const catInfo = useCategoryStore.getState().categories.find(c => c.value === category) || { formType: 'GENERAL' };
 
-  if (category === 'KURS_ISHI' || category === 'REFERAT' || category === 'MUSTAQIL_ISH') {
+  if (catInfo.formType === 'ACADEMIC') {
     return (
       <div className="grid grid-cols-2 gap-4">
         <TextInput
@@ -27,7 +29,7 @@ export const CategoryMetaForms = () => {
     );
   }
 
-  if (category === 'TARJIMA') {
+  if (catInfo.formType === 'TRANSLATION') {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
@@ -59,13 +61,27 @@ export const CategoryMetaForms = () => {
     );
   }
 
-  if (category === 'DASTURLASH' || category === 'LABORATORIYA') {
+  if (catInfo.formType === 'PROGRAMMING') {
     return (
       <div className="space-y-1.5">
         <label className="text-sm font-semibold text-edu-text">Dasturlash tili</label>
         <ProgrammingLangSelect 
           value={meta.programmingLang} 
           onChange={(val) => updateMeta('programmingLang', val)} 
+        />
+      </div>
+    );
+  }
+
+  if (catInfo.formType === 'DESIGN') {
+    return (
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold text-edu-text">Dizayn Asbobi</label>
+        <TextInput
+          label=""
+          placeholder="Masalan: Figma, Photoshop..."
+          value={meta.designTool || ''}
+          onValueChange={(val) => updateMeta('designTool', val)}
         />
       </div>
     );

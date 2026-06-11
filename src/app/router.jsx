@@ -38,6 +38,7 @@ const LearningCompassScreen = lazy(() => import('../screens/freelancer/LearningC
 const AdminLoginScreen  = lazy(() => import('../screens/admin/AdminLoginScreen'));
 const AdminLayout       = lazy(() => import('../screens/admin/AdminLayout'));
 const AdminDashboard    = lazy(() => import('../screens/admin/AdminDashboard'));
+const AdminCategories   = lazy(() => import('../screens/admin/AdminCategories'));
 const AdminUsers        = lazy(() => import('../screens/admin/AdminUsers'));
 const AdminVipRequests  = lazy(() => import('../screens/admin/AdminVipRequests'));
 const AdminComplaints   = lazy(() => import('../screens/admin/AdminComplaints'));
@@ -95,6 +96,7 @@ const router = createBrowserRouter([
     element: <RoleGuard require="ADMIN"><Screen element={<AdminLayout />} /></RoleGuard>,
     children: [
       { path: 'dashboard', element: <Screen element={<AdminDashboard />} /> },
+      { path: 'categories', element: <Screen element={<AdminCategories />} /> },
       { path: 'users',     element: <Screen element={<AdminUsers />} /> },
       { path: 'verification', element: <Screen element={<AdminVerificationScreen />} /> },
       { path: 'vip',       element: <Screen element={<AdminVipRequests />} /> },
