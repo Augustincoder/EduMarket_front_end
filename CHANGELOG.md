@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.8](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.7...v2.2.8) (2026-06-11)
+
+
+### Features
+
+* **admin:** add 16 predefined categories and bulk load button ([684c9ec](https://github.com/Augustincoder/EduMarket_front_end/commit/684c9ecfedb603a28f6665ad140c0c5fd72a66db))
+
 ### [2.2.7](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.6...v2.2.7) (2026-06-11)
 
 
