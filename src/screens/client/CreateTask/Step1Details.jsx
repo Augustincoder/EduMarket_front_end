@@ -10,7 +10,7 @@ import { CategoryMetaForms } from './CategoryMetaForms';
 export function Step1Details() {
   const { category, title, description, errors, updateField, setNlpSeverity } = useCreateTaskStore();
   const nlpSeverity = useNLPCheck(title + ' ' + description);
-  const categoryStore = useCategoryStore(s => s.categories);
+  const categoryStore = useCategoryStore(s => s.categories) || [];
 
   const catInfo = categoryStore.find(c => c.value === category) || { label: 'Vazifa', emoji: '📌', formType: 'GENERAL' };
   const catLabel = catInfo.label;

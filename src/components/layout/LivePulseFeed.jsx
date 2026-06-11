@@ -6,7 +6,7 @@ import { useCategoryStore } from '../../store/categoryStore';
 export function LivePulseFeed() {
   const { socket } = useSocket();
   const [pulseEvents, setPulseEvents] = useState([]);
-  const categoryStore = useCategoryStore(s => s.categories);
+  const categoryStore = useCategoryStore(s => s.categories) || [];
 
   useEffect(() => {
     if (!socket) return;

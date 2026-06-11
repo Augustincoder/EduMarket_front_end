@@ -13,7 +13,7 @@ function TaskCard({ task, className }) {
   const navigate = useNavigate();
   
   // Dynamic category mapping
-  const categoryStore = useCategoryStore(s => s.categories);
+  const categoryStore = useCategoryStore(s => s.categories) || [];
   const catInfo = categoryStore.find((c) => c.value === task.category) || { emoji: '📌', label: task.category, colorHex: '#64748b' };
 
   // Local favorite state for tasks

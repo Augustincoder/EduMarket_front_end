@@ -13,7 +13,7 @@ export function Step5Review() {
   } = useCreateTaskStore();
   const navigate = useNavigate();
 
-  const categoryStore = useCategoryStore(s => s.categories);
+  const categoryStore = useCategoryStore(s => s.categories) || [];
   const catObj = categoryStore.find(c => c.value === category);
   
   let targetLabel = 'Barcha freelancerlarga';

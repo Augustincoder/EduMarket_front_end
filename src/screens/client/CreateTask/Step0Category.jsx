@@ -3,7 +3,7 @@ import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { hapticLight } from '../../../lib/telegram';
 
 export function Step0Category() {
-  const categoryStore = useCategoryStore(s => s.categories);
+  const categoryStore = useCategoryStore(s => s.categories) || [];
   const { category, updateField, nextStep } = useCreateTaskStore();
 
   const handleSelect = (val) => {

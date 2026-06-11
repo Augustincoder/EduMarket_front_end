@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/layout/Header';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -12,6 +13,7 @@ import confetti from 'canvas-confetti';
 import { hapticLight, hapticImpact } from '../../lib/telegram';
 
 function NotificationItem({ notif, onMarkRead }) {
+  const navigate = useNavigate();
   const isRead = notif.isRead || notif.status === 'READ';
 
   const handleDragEnd = (e, info) => {
@@ -46,7 +48,7 @@ function NotificationItem({ notif, onMarkRead }) {
         onClick={() => {
           if (!isRead) onMarkRead(notif.id);
           if (notif.actionUrl) {
-            window.location.href = notif.actionUrl;
+            navigate(notif.actionUrl);
           }
         }}
         className={cn(
@@ -97,7 +99,7 @@ export default function NotificationInboxScreen() {
           ...old,
           pages: old.pages.map(p => ({
             ...p,
-            notifications: p.notifications.map(n => n.id === id ? { ...n, isRead: true, status: 'READ' } : n)
+            notifications: (p.notifications || []).map(n => n.id === id ? { ...n, isRead: true, status: 'READ' } : n)
           }))
         };
       });
