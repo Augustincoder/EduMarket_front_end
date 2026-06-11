@@ -62,7 +62,7 @@ export function useSocket() {
           onClick={() => {
             toast.dismiss(t.id);
             const target = toSafeInternalPath(notif.actionUrl);
-            if (target) router.navigate(target);
+            if (target) navigateTo(target);
           }}
           className={`${
             t.visible ? 'animate-in slide-in-from-top-4 fade-in duration-300' : 'animate-out slide-out-to-top-4 fade-out duration-300'
