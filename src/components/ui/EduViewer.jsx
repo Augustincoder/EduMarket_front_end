@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { fileApi } from '../../services/file.service';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, AlertTriangle, Download, EyeOff, Loader2 } from 'lucide-react';
+import { Lock, AlertTriangle, Download, EyeOff, Eye, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
 import { hapticImpact } from '../../lib/telegram';
@@ -242,54 +242,41 @@ export default function EduViewer({
         )}
       </div>
 
-      {/* Hold-to-View Action Bar for Unpaid Files */}
+      {/* Click-to-Toggle Action Bar for Unpaid Files */}
       {requireSecureView && !isLoading && !error && (
-        <div className="p-6 pb-10 bg-gradient-to-t from-black to-transparent flex flex-col items-center justify-end absolute bottom-0 left-0 right-0 z-50">
+        <div className="p-6 pb-10 bg-gradient-to-t from-black to-transparent flex flex-col items-center justify-end absolute bottom-0 left-0 right-0 z-50 pointer-events-none">
           <AnimatePresence>
             {!isHolding && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="mb-4 text-center"
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex flex-col items-center pointer-events-auto"
               >
-                <p className="text-white/90 text-sm font-bold bg-black/50 px-4 py-1 rounded-full inline-block backdrop-blur-md">Ko'rish uchun tugmani bosib turing</p>
-                <p className="text-red-400 text-xs mt-2 drop-shadow-md font-medium">Skrinshot qilish qat'iyan man etiladi!</p>
+                <div 
+                  className="w-16 h-16 rounded-full bg-red-500/90 flex items-center justify-center cursor-pointer relative shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:scale-105 active:scale-95 transition-transform"
+                  onClick={() => { hapticImpact('heavy'); setIsHolding(true); }}
+                >
+                  <div className="absolute inset-0 rounded-full border border-white/20 animate-ping opacity-50" />
+                  <Eye size={28} className="text-white" />
+                </div>
+                <p className="text-white/80 text-xs font-bold mt-3 tracking-widest uppercase">Ko'rish uchun bosing</p>
+              </motion.div>
+            )}
+
+            {isHolding && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center gap-2 px-6 py-3 bg-red-500 rounded-full shadow-2xl pointer-events-auto cursor-pointer hover:bg-red-600 transition-colors"
+                onClick={() => { hapticImpact('light'); setIsHolding(false); }}
+              >
+                <EyeOff size={18} className="text-white animate-pulse" />
+                <span className="text-white text-sm font-bold tracking-widest uppercase">Berkitish</span>
               </motion.div>
             )}
           </AnimatePresence>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onPointerDown={(e) => {
-              e.preventDefault();
-              hapticImpact('heavy');
-              setIsHolding(true);
-            }}
-            onPointerUp={(e) => {
-              e.preventDefault();
-              hapticImpact('light');
-              setIsHolding(false);
-            }}
-            onPointerLeave={(e) => {
-              e.preventDefault();
-              setIsHolding(false);
-            }}
-            onContextMenu={(e) => e.preventDefault()}
-            className={cn(
-              "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 shadow-[0_0_40px_rgba(0,0,0,0.5)] border-4 touch-none cursor-pointer",
-              isHolding 
-                ? "bg-edu-primary border-edu-primary/50 shadow-[0_0_60px_rgba(79,70,229,0.5)] scale-110" 
-                : "bg-white/10 border-white/20"
-            )}
-          >
-            {isHolding ? (
-              <EyeOff size={32} className="text-white animate-pulse" />
-            ) : (
-              <Lock size={32} className="text-white/80" />
-            )}
-          </motion.button>
         </div>
       )}
     </div>

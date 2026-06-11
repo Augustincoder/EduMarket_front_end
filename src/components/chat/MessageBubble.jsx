@@ -77,9 +77,23 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   const user = useAuthStore(s => s.user);
   const toggleReaction = useChatStore(s => s.toggleReaction);
 
+  const getMimeType = (fileName, isImg) => {
+    if (isImg) return 'image/jpeg';
+    if (!fileName) return '';
+    const ext = fileName.split('.').pop().toLowerCase();
+    switch (ext) {
+      case 'pdf': return 'application/pdf';
+      case 'doc': return 'application/msword';
+      case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      case 'txt': return 'text/plain';
+      case 'json': return 'application/json';
+      default: return '';
+    }
+  };
+
   const handleFileClick = () => {
     if (hasFile && message.fileType !== 'voice') {
-      const mime = isImage ? 'image/jpeg' : '';
+      const mime = getMimeType(message.fileName, isImage);
       onViewFile?.(message.fileId, message.fileName, message.isSecureFile, mime);
     }
   };
