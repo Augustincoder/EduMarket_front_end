@@ -51,7 +51,7 @@ export default function GigsScreen() {
     initialPageParam: 1
   });
 
-  const gigs = gigsRes?.pages.flatMap(p => p.data.data.gigs) || [];
+  const gigs = gigsRes?.pages ? gigsRes.pages.reduce((acc, p) => acc.concat(p.data?.data?.gigs || []), []) : [];
 
   const sentinelRef = useInfiniteScroll(
     useCallback(() => { if (hasNextPage && !isFetchingNextPage) fetchNextPage(); }, [hasNextPage, isFetchingNextPage, fetchNextPage]),

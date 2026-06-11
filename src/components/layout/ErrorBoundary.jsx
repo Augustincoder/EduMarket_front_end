@@ -54,7 +54,7 @@ export function RouteErrorBoundary() {
   console.error("Route Error:", error);
   
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] h-full p-4 text-center">
+    <div className="flex flex-col items-center justify-center min-h-[400px] h-full p-4 text-center bg-edu-bg w-full">
       <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
         <AlertTriangle className="w-8 h-8 text-red-500" />
       </div>

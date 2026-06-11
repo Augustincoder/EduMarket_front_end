@@ -66,7 +66,7 @@ export default function TaskFeedScreen() {
     data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error
   } = useTaskFeed(filters);
 
-  const allTasks = data?.pages.flatMap((p) => p.tasks) ?? [];
+  const allTasks = data?.pages ? data.pages.reduce((acc, p) => acc.concat(p.tasks || []), []) : [];
 
   const parentRef = useRef(null);
 

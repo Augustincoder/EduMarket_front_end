@@ -33,8 +33,8 @@ export const useCategoryStore = create(
       },
 
       // Helper selectors
-      getCategoryByValue: (value) => get().categories.find(c => c.value === value),
-      getTrendingCategories: () => get().categories.filter(c => c.isTrending).slice(0, 5)
+      getCategoryByValue: (value) => (get().categories || []).find(c => c.value === value),
+      getTrendingCategories: () => (get().categories || []).filter(c => c.isTrending).slice(0, 5)
     }),
     {
       name: 'category-storage',

@@ -129,7 +129,7 @@ export default function NotificationInboxScreen() {
     }
   });
 
-  const allNotifications = data?.pages.flatMap(p => p.notifications) || [];
+  const allNotifications = data?.pages ? data.pages.reduce((acc, p) => acc.concat(p.notifications || []), []) : [];
 
   return (
     <PageLayout>
