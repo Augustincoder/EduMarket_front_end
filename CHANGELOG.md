@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.9](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.8...v2.2.9) (2026-06-11)
+
+
+### Features
+
+* **ui:** redesign chat list screen with search and animations ([4d2d088](https://github.com/Augustincoder/EduMarket_front_end/commit/4d2d0881d5cf21a7aa022512eea59bada7eae970))
+
 ### [2.2.8](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.7...v2.2.8) (2026-06-11)
 
 
