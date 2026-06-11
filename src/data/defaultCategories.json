@@ -1,0 +1,178 @@
+[
+  {
+    "value": "web_dev",
+    "label": "Web Dasturlash",
+    "emoji": "🌐",
+    "colorHex": "#3B82F6",
+    "formType": "PROGRAMMING",
+    "sortOrder": 1,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["React", "Node.js", "PHP", "Vue.js", "HTML/CSS"]
+  },
+  {
+    "value": "mobile_dev",
+    "label": "Mobil Dasturlash",
+    "emoji": "📱",
+    "colorHex": "#10B981",
+    "formType": "PROGRAMMING",
+    "sortOrder": 2,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["Flutter", "React Native", "Swift", "Kotlin", "Android"]
+  },
+  {
+    "value": "python_backend",
+    "label": "Python / Backend",
+    "emoji": "🐍",
+    "colorHex": "#F59E0B",
+    "formType": "PROGRAMMING",
+    "sortOrder": 3,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Python", "Django", "FastAPI", "Go", "Java", "SQL"]
+  },
+  {
+    "value": "ui_ux_design",
+    "label": "UI/UX Dizayn",
+    "emoji": "🎨",
+    "colorHex": "#EC4899",
+    "formType": "DESIGN",
+    "sortOrder": 4,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["Figma", "Adobe XD", "Sketch", "Prototyping", "Wireframing"]
+  },
+  {
+    "value": "graphic_design",
+    "label": "Grafik Dizayn",
+    "emoji": "🖌️",
+    "colorHex": "#8B5CF6",
+    "formType": "DESIGN",
+    "sortOrder": 5,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Photoshop", "Illustrator", "Logo Dizayn", "Brending", "SMM Post"]
+  },
+  {
+    "value": "3d_modeling",
+    "label": "3D Modellash",
+    "emoji": "🧊",
+    "colorHex": "#6366F1",
+    "formType": "DESIGN",
+    "sortOrder": 6,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Blender", "Maya", "3ds Max", "Cinema 4D", "ZBrush"]
+  },
+  {
+    "value": "english_translation",
+    "label": "Ingliz Tili",
+    "emoji": "🇬🇧",
+    "colorHex": "#14B8A6",
+    "formType": "TRANSLATION",
+    "sortOrder": 7,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["IELTS", "CEFR", "Sinxron Tarjima", "Matn Tarjima", "Essay Writing"]
+  },
+  {
+    "value": "russian_translation",
+    "label": "Rus Tili",
+    "emoji": "🇷🇺",
+    "colorHex": "#F43F5E",
+    "formType": "TRANSLATION",
+    "sortOrder": 8,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Rus Tili", "Matn Tarjima", "Sinxron Tarjima", "TRKI"]
+  },
+  {
+    "value": "text_translation",
+    "label": "Matn Tarjimasi",
+    "emoji": "📝",
+    "colorHex": "#06B6D4",
+    "formType": "TRANSLATION",
+    "sortOrder": 9,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Arab Tili", "Xitoy Tili", "Koreys Tili", "Turk Tili", "Nemis Tili"]
+  },
+  {
+    "value": "higher_math",
+    "label": "Oliy Matematika",
+    "emoji": "➗",
+    "colorHex": "#EAB308",
+    "formType": "ACADEMIC",
+    "sortOrder": 10,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["Algebra", "Geometriya", "Oliy Matematika", "Ehtimollar Nazariyasi"]
+  },
+  {
+    "value": "physics_electronics",
+    "label": "Fizika / Elektronika",
+    "emoji": "⚡",
+    "colorHex": "#F97316",
+    "formType": "ACADEMIC",
+    "sortOrder": 11,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Fizika", "Sxemotexnika", "Mexanika", "Termodinamika", "Optika"]
+  },
+  {
+    "value": "history_philosophy",
+    "label": "Tarix / Falsafa",
+    "emoji": "🏛️",
+    "colorHex": "#84CC16",
+    "formType": "ACADEMIC",
+    "sortOrder": 12,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["Jahon Tarixi", "O'zbekiston Tarixi", "Falsafa", "Mantiq", "Huquq"]
+  },
+  {
+    "value": "smm_marketing",
+    "label": "SMM / Marketing",
+    "emoji": "📈",
+    "colorHex": "#10B981",
+    "formType": "GENERAL",
+    "sortOrder": 13,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["Instagram SMM", "Targeting", "Telegram Ads", "Kontent Meyker", "PR"]
+  },
+  {
+    "value": "seo_copywriting",
+    "label": "SEO / Kopirayting",
+    "emoji": "✍️",
+    "colorHex": "#3B82F6",
+    "formType": "GENERAL",
+    "sortOrder": 14,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["SEO Optimizatsiya", "Kopirayting", "Maqola Yozish", "Blogging", "Sotuvchi Matn"]
+  },
+  {
+    "value": "video_editing",
+    "label": "Video Montaj",
+    "emoji": "🎬",
+    "colorHex": "#EC4899",
+    "formType": "DESIGN",
+    "sortOrder": 15,
+    "isActive": true,
+    "isTrending": true,
+    "skills": ["Premiere Pro", "After Effects", "CapCut", "Color Grading", "VFX"]
+  },
+  {
+    "value": "accounting_finance",
+    "label": "Buxgalteriya",
+    "emoji": "📊",
+    "colorHex": "#64748B",
+    "formType": "GENERAL",
+    "sortOrder": 16,
+    "isActive": true,
+    "isTrending": false,
+    "skills": ["1C Buxgalteriya", "Moliyaviy Tahlil", "Audit", "Soliqlar", "Excel"]
+  }
+]

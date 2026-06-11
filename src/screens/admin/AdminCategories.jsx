@@ -7,12 +7,39 @@ import {
   DialogContent, 
   DialogTitle, 
 } from '../../components/ui/AdminComponents';
-import { Plus, Edit2, Trash2, CheckCircle2, XCircle } from 'lucide-react';
-
+import { Plus, Edit2, Trash2, CheckCircle2, XCircle, Database } from 'lucide-react';
+import defaultCategories from '../../data/defaultCategories.json';
 export default function AdminCategories() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+
+  const handleBulkLoad = async () => {
+    const confirm = window.confirm("Rostdan ham lokal JSON dagi kategoriyalarni bazaga yuklamoqchimisiz?");
+    if (!confirm) return;
+    
+    setIsBulkLoading(true);
+    let successCount = 0;
+    toast.loading('Kategoriyalar yuklanmoqda...', { id: 'bulk-load' });
+    
+    try {
+      for (const cat of defaultCategories) {
+        try {
+          await api.post('/categories/admin', cat);
+          successCount++;
+        } catch (err) {
+          console.warn(`Failed to create category ${cat.value}:`, err.response?.data || err.message);
+        }
+      }
+      toast.success(`${successCount} ta kategoriya muvaffaqiyatli yuklandi!`, { id: 'bulk-load' });
+      queryClient.invalidateQueries(['admin', 'categories']);
+    } catch (err) {
+      toast.error("Kategoriyalarni yuklashda xatolik yuz berdi", { id: 'bulk-load' });
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
 
   // Form State
   const [formData, setFormData] = useState({
@@ -105,13 +132,23 @@ export default function AdminCategories() {
           <h1 className="text-2xl font-bold text-white mb-2">Kategoriyalar boshqaruvi</h1>
           <p className="text-slate-400">Platformadagi dinamik ranglar, shakllar va ko'nikmalar sozlami</p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
-        >
-          <Plus size={18} />
-          Yangi yaratish
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleBulkLoad}
+            disabled={isBulkLoading}
+            className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all border border-slate-700 disabled:opacity-50"
+          >
+            <Database size={18} />
+            {isBulkLoading ? 'Yuklanmoqda...' : 'Lokal yuklash'}
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-600/20"
+          >
+            <Plus size={18} />
+            Yangi yaratish
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
