@@ -6,6 +6,7 @@ import { useSocket } from '../hooks/useSocket';
 import { RoleGuard } from '../components/layout/RoleGuard';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 import { ErrorBoundary } from '../components/layout/ErrorBoundary';
+import { registerRouter } from './navigation';
 
 import SplashScreen from '../screens/auth/SplashScreen';
 import HomeScreen from '../screens/shared/HomeScreen';
@@ -119,6 +120,7 @@ const routes = [
   errorElement: <RouteErrorBoundary />
 }));
 
-export const router = createBrowserRouter(routes);
+const router = createBrowserRouter(routes);
+registerRouter(router);
 
 export default AppRouter;

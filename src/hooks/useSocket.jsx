@@ -5,7 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { useChatStore } from '../store/chatStore';
 import { useNotificationStore } from '../store/notificationStore';
 import { STATUS_CONFIG } from '../lib/constants';
-import { router } from '../app/router';
+import { navigateTo } from '../app/navigation';
 import i18n from '../lib/i18n';
 import toast from 'react-hot-toast';
 

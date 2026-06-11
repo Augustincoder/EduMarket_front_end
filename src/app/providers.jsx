@@ -38,7 +38,6 @@ export function Providers({ children }) {
   const activeRole = useAuthStore((s) => s.activeRole);
 
   useEffect(() => {
-    initKeepAlive();
     initNotifications();
   }, []);
 
