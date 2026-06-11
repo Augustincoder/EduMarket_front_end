@@ -23,6 +23,8 @@ export const useNotificationStore = create((set, get) => ({
     }
   },
 
+  setUnreadCount: (count) => set({ unreadCount: count }),
+
   loadMore: async () => {
     const { nextCursor, notifications } = get();
     if (!nextCursor) return;
