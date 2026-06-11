@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.11](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.10...v2.2.11) (2026-06-11)
+
+
+### Features
+
+* **chat:** add file preview and text attachment support ([19c054f](https://github.com/Augustincoder/EduMarket_front_end/commit/19c054f275b604480e18c1752518d4d855eee187))
+
 ### [2.2.10](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.9...v2.2.10) (2026-06-11)
 
 
