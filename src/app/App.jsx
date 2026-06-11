@@ -58,8 +58,8 @@ export default function App() {
   const fetchCategories = useCategoryStore(state => state.fetchCategories);
 
   useEffect(() => {
-    checkTokenStatus();
-    fetchCategories(); // Fetch categories dynamically on app load
+    if (checkTokenStatus) checkTokenStatus();
+    if (fetchCategories) fetchCategories();
   }, [checkTokenStatus, fetchCategories]);
 
   return (
