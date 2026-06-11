@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.3](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.2...v2.2.3) (2026-06-11)
+
+
+### Bug Fixes
+
+* apply rigorous error boundaries to prevent app crash ([2030510](https://github.com/Augustincoder/EduMarket_front_end/commit/2030510a4f0ad2888c5f9b4b3c7f21330f381d38))
+
 ### [2.2.2](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.1...v2.2.2) (2026-06-11)
 
 
