@@ -163,6 +163,8 @@ export default function EduViewer({
   // 4. Glitch Effect CSS for Text/PDF wrappers
   const glitchStyle = requireSecureView && !isHolding ? { filter: 'blur(15px) grayscale(100%)' } : {};
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col">
       {/* Header */}

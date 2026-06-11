@@ -19,9 +19,6 @@ import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
 import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert } from 'lucide-react';
 import { AcceptDeliveryModal } from './TaskDetail/components/AcceptDeliveryModal';
-import { filesApi } from '../../services/other.service';
-import toast from 'react-hot-toast';
-
 export default function ChatScreen() {
   const { id }    = useParams();
   const navigate  = useNavigate();

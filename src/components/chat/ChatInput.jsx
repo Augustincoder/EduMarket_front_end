@@ -13,6 +13,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   const [uploading, setUploading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const fileRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
 
@@ -21,10 +22,15 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setText(editingMessage.content || '');
     } else if (!replyingTo) {
-       
       setText('');
     }
   }, [editingMessage, replyingTo]);
+
+  useEffect(() => {
+    if (!text && textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  }, [text]);
 
   const handleSend = () => {
     const trimmed = text?.trim();
@@ -180,13 +186,19 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           <>
             <div className="flex-1">
               <textarea
+                ref={textareaRef}
                 value={text}
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={(e) => {
+                  handleChange(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder="Xabar..."
                 disabled={disabled || uploading}
                 rows={1}
-                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary focus:ring-[3px] focus:ring-edu-primary/20 transition-all max-h-32 overflow-y-auto resize-none"
+                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary focus:ring-[3px] focus:ring-edu-primary/20 transition-all max-h-32 overflow-y-auto resize-none block leading-tight"
+                style={{ minHeight: '44px' }}
               />
             </div>
 
