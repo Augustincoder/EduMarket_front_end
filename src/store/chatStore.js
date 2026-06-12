@@ -349,12 +349,48 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  toggleReaction: async (messageId, icon) => {
+  toggleReaction: async (messageId, taskId, icon) => {
+    const user = useAuthStore.getState().user;
+    if (!user) return;
+
+    // Save previous state for rollback
+    const prevMsgs = get().messages[taskId];
+    if (!prevMsgs) return;
+
+    // Optimistically update
+    set((s) => {
+      const roomMsgs = s.messages[taskId];
+      return {
+        messages: {
+          ...s.messages,
+          [taskId]: roomMsgs.map(m => {
+            if (m.id !== messageId) return m;
+            
+            let reactions = Array.isArray(m.reactions) ? [...m.reactions] : [];
+            const existingIndex = reactions.findIndex(r => r.userId === user.id);
+            
+            if (existingIndex !== -1) {
+              if (reactions[existingIndex].icon === icon) {
+                reactions.splice(existingIndex, 1);
+              } else {
+                reactions[existingIndex].icon = icon;
+              }
+            } else {
+              reactions.push({ icon, userId: user.id });
+            }
+            
+            return { ...m, reactions };
+          })
+        }
+      };
+    });
+
     try {
       const res = await chatApi.toggleReaction(messageId, icon);
+      // Socket will broadcast the true state, so we don't strictly need to set it here, 
+      // but we can update it just in case to be safe.
       const updatedMsg = res.data.data;
       set((s) => {
-        const taskId = updatedMsg.taskId;
         const roomMsgs = s.messages[taskId];
         if (!roomMsgs) return s;
         return {
@@ -366,6 +402,13 @@ export const useChatStore = create((set, get) => ({
       });
     } catch (err) {
       console.error('Failed to toggle reaction:', err);
+      // Revert optimistic update
+      set((s) => ({
+        messages: {
+          ...s.messages,
+          [taskId]: prevMsgs
+        }
+      }));
     }
   },
 

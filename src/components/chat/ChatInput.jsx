@@ -133,7 +133,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   };
 
   return (
-    <div className="relative border-t border-edu-border ios-glass pb-safe flex flex-col">
+    <div className="relative rounded-[24px] border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col">
       {/* File menu */}
       {showMenu && (
         <div className="absolute bottom-full left-4 mb-3 w-[240px] ios-glass rounded-[20px] shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
@@ -220,7 +220,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         </div>
       )}
 
-      <div className="flex items-end gap-2 px-3 py-3 pb-safe">
+      <div className="flex items-end gap-2 px-3 py-3">
         {/* Voice Mode */}
         {isVoiceMode ? (
           <VoiceRecorder 

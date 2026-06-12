@@ -84,7 +84,7 @@ export default function TaskFeedScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <PageLayout className="h-dvh flex flex-col overflow-hidden" scrollable={false}>
+    <PageLayout className="flex flex-col min-h-0 relative" scrollable={false}>
       {/* ── Fixed Header (Search + Category) ── */}
       <div className="z-30 bg-edu-surface/95 backdrop-blur-xl border-b border-edu-border shadow-sm shrink-0">
         
@@ -271,7 +271,7 @@ export default function TaskFeedScreen() {
             actionLabel="Filtrlarni tozalash"
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {allTasks.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}

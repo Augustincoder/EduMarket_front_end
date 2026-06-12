@@ -162,9 +162,9 @@ export default function CreateTaskScreen() {
         className="!border-none" 
       />
 
-      <div className="px-6 pt-2 pb-24 flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         {step > 0 && (
-          <div className="mb-6">
+          <div className="mb-6 px-6 pt-4">
             <ProgressStepper steps={STEPS} current={step} />
           </div>
         )}
@@ -179,7 +179,7 @@ export default function CreateTaskScreen() {
                 animate="animate"
                 exit="exit"
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="absolute inset-0 overflow-y-auto pb-10 flex flex-col"
+                className="absolute inset-0 overflow-y-auto flex flex-col"
               >
                 {step === 0 && <Step0Category />}
                 {step === 1 && <Step1Details />}

@@ -118,13 +118,6 @@ export default function ChatScreen() {
         className="!border-b-0"
         right={
           <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setIsWorkspaceOpen(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
-              title="Ish maydoni (Milestones)"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-            </button>
             <div 
               className={cn(
                 "flex items-center justify-center w-5 h-5 rounded-full",
@@ -138,6 +131,13 @@ export default function ChatScreen() {
                 )}
               />
             </div>
+            <button 
+              onClick={() => setIsWorkspaceOpen(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
+              title="Ish maydoni (Milestones)"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+            </button>
             {task && (
               <button 
                 onClick={() => navigate(`/report?targetId=${isClient ? task.freelancerId : task.clientId}&targetType=USER`)}
@@ -264,7 +264,7 @@ export default function ChatScreen() {
       </div>
 
       {/* Input */}
-      <div className="shrink-0 bg-edu-bg relative z-20">
+      <div className="shrink-0 relative z-20 pb-4 pt-2 px-3 bg-gradient-to-t from-edu-bg via-edu-bg to-transparent">
         <ChatInput 
           onSend={handleSend} 
           onTyping={() => emitTyping(taskId)} 

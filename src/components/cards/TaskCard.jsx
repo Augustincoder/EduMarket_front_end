@@ -71,14 +71,14 @@ function TaskCard({ task, className }) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-[24px] mb-4">
+    <div className="relative overflow-hidden rounded-[20px] mb-2.5">
       {/* Background layer revealed during swipe */}
-      <div className="absolute inset-0 bg-edu-primary/10 flex items-center px-6 border border-edu-primary/20 rounded-[24px]">
+      <div className="absolute inset-0 bg-edu-primary/10 flex items-center px-4 border border-edu-primary/20 rounded-[20px]">
         <motion.div 
           style={{ opacity: swipeOpacity, scale: swipeScale }}
-          className="w-12 h-12 bg-edu-primary text-white rounded-full flex items-center justify-center shadow-lg"
+          className="w-10 h-10 bg-edu-primary text-white rounded-full flex items-center justify-center shadow-md"
         >
-          <Bookmark size={24} fill="currentColor" />
+          <Bookmark size={20} fill="currentColor" />
         </motion.div>
       </div>
 
@@ -91,11 +91,11 @@ function TaskCard({ task, className }) {
         style={{ x }}
         onClick={handleClick}
         className={cn(
-          'relative z-10 bg-edu-surface rounded-[24px] p-5 active:scale-[0.98] transition-transform duration-300 cursor-pointer border border-edu-border shadow-ios hover:shadow-ios-lg',
+          'relative z-10 bg-edu-surface rounded-[20px] p-4 active:scale-[0.98] transition-transform duration-300 cursor-pointer border border-edu-border shadow-ios hover:shadow-ios-sm',
           className
         )}
       >
-        <div className="flex flex-col h-full space-y-4 pointer-events-none">
+        <div className="flex flex-col h-full space-y-3 pointer-events-none">
         {/* Header: Status Labels & Actions */}
         <div className="flex items-start justify-between">
           <div className="flex flex-wrap items-center gap-1.5 max-w-[75%]">

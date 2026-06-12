@@ -99,7 +99,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   };
 
   const handleReact = (iconName) => {
-    toggleReaction(message.id, iconName);
+    toggleReaction(message.id, message.taskId, iconName);
     setShowMenu(false);
   };
 
