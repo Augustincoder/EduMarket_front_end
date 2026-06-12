@@ -323,9 +323,21 @@ export const useChatStore = create((set, get) => ({
 
   editMessage: async (messageId, content) => {
     try {
-      await chatApi.editMessage(messageId, { content });
+      const res = await chatApi.editMessage(messageId, { content });
+      const updatedMsg = res.data.data;
+      set((s) => {
+        const taskId = updatedMsg.taskId;
+        const roomMsgs = s.messages[taskId];
+        if (!roomMsgs) return s;
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
+          }
+        };
+      });
     } catch (err) {
-      console.error('Failed to edit message:', err);
+      console.error('Failed to edit message', err);
     }
   },
 
@@ -339,7 +351,19 @@ export const useChatStore = create((set, get) => ({
 
   toggleReaction: async (messageId, icon) => {
     try {
-      await chatApi.toggleReaction(messageId, icon);
+      const res = await chatApi.toggleReaction(messageId, icon);
+      const updatedMsg = res.data.data;
+      set((s) => {
+        const taskId = updatedMsg.taskId;
+        const roomMsgs = s.messages[taskId];
+        if (!roomMsgs) return s;
+        return {
+          messages: {
+            ...s.messages,
+            [taskId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
+          }
+        };
+      });
     } catch (err) {
       console.error('Failed to toggle reaction:', err);
     }
