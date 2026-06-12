@@ -197,7 +197,7 @@ export default function ChatListScreen() {
           </div>
           
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors z-10">
               <Search size={18} strokeWidth={2.5} />
             </div>
             <input

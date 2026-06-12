@@ -109,7 +109,7 @@ export default function ChatScreen() {
   const isCounterpartOnline = useChatStore((s) => s.userPresence[counterpart?.id]) ?? counterpart?.isOnline ?? false;
 
   return (
-    <div className="flex flex-col h-dvh bg-edu-bg max-w-[768px] mx-auto">
+    <div className="fixed inset-0 flex flex-col bg-edu-bg max-w-[768px] mx-auto w-full">
       {/* Header */}
       <Header
         title={counterpart?.fullname || 'Chat'}
@@ -125,15 +125,18 @@ export default function ChatScreen() {
             >
               <LayoutDashboard className="w-4 h-4" />
             </button>
-            <div className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide transition-colors",
-              isCounterpartOnline ? "bg-edu-primary/10 text-edu-primary" : "bg-edu-muted/10 text-edu-muted"
-            )}>
-              <div className={cn(
-                "w-1.5 h-1.5 rounded-full transition-colors",
-                isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
-              )} />
-              {isCounterpartOnline ? 'ONLAYN' : 'OFLAYN'}
+            <div 
+              className={cn(
+                "flex items-center justify-center w-5 h-5 rounded-full",
+                isCounterpartOnline ? "bg-edu-primary/20" : "bg-edu-muted/20"
+              )}
+            >
+              <div 
+                className={cn(
+                  "w-2.5 h-2.5 rounded-full",
+                  isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
+                )}
+              />
             </div>
             {task && (
               <button 
@@ -169,8 +172,8 @@ export default function ChatScreen() {
         </div>
       )}
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
+      {/* Main Chat Area */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4 min-h-0 bg-mesh-aurora flex flex-col relative overscroll-none" id="chat-scroll-container">
         {/* System Message Card (Auto-Chat Initialization) */}
         {task && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
           <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-[20px] p-4 shadow-sm mb-6 mt-2 relative overflow-hidden">
@@ -261,13 +264,15 @@ export default function ChatScreen() {
       </div>
 
       {/* Input */}
-      <ChatInput 
-        onSend={handleSend} 
-        onTyping={() => emitTyping(taskId)} 
-        replyingTo={replyingTo}
-        editingMessage={editingMessage}
-        onCancelAction={handleCancelAction}
-      />
+      <div className="shrink-0 bg-edu-bg relative z-20">
+        <ChatInput 
+          onSend={handleSend} 
+          onTyping={() => emitTyping(taskId)} 
+          replyingTo={replyingTo}
+          editingMessage={editingMessage}
+          onCancelAction={handleCancelAction}
+        />
+      </div>
 
       {/* ── Revision Modal ─────────────────────────── */}
       <Modal

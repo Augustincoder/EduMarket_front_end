@@ -220,34 +220,33 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         </div>
       )}
 
-      <div className="flex items-end gap-3 px-3 py-2.5">
-        {/* Attach button */}
-        {!isVoiceMode && (
-          <button
-            aria-label="Biriktirish"
-            onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
-            className={cn(
-              'w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all',
-              showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-black/5 dark:bg-white/5 text-edu-muted'
-            )}
-            disabled={!!editingMessage || uploading}
-          >
-            {uploading
-              ? <div className="w-5 h-5 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
-              : <Paperclip size={20} className={showMenu ? 'text-white' : 'text-edu-text'} />
-            }
-          </button>
-        )}
-
-        {/* Text input or Voice UI */}
+      <div className="flex items-end gap-2 px-3 py-3 pb-safe">
+        {/* Voice Mode */}
         {isVoiceMode ? (
           <VoiceRecorder 
             onSend={handleVoiceSend} 
             onCancel={() => setIsVoiceMode(false)} 
           />
         ) : (
-          <>
-            <div className="flex-1">
+          <div className="flex items-end flex-1 bg-edu-surface shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none border border-edu-border/60 rounded-[28px] p-1 transition-all focus-within:border-edu-primary/50 focus-within:ring-[3px] focus-within:ring-edu-primary/10">
+            {/* Attach button */}
+            <button
+              aria-label="Biriktirish"
+              onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
+              className={cn(
+                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all ml-0.5 mb-0.5',
+                showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5'
+              )}
+              disabled={!!editingMessage || uploading}
+            >
+              {uploading
+                ? <div className="w-5 h-5 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
+                : <Paperclip size={20} className={showMenu ? 'text-white' : ''} />
+              }
+            </button>
+
+            {/* Text input */}
+            <div className="flex-1 overflow-hidden min-h-[44px] flex items-center py-1">
               <textarea
                 ref={textareaRef}
                 value={text}
@@ -260,32 +259,34 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                 placeholder={pendingFile ? "Izoh yozing..." : "Xabar..."}
                 disabled={disabled || uploading}
                 rows={1}
-                className="w-full bg-black/5 dark:bg-white/5 border border-edu-border/50 rounded-[20px] px-4 py-2.5 text-[15px] text-edu-text focus:outline-none focus:border-edu-primary focus:ring-[3px] focus:ring-edu-primary/20 transition-all max-h-32 overflow-y-auto resize-none block leading-tight"
-                style={{ minHeight: '44px' }}
+                className="w-full bg-transparent border-none px-3 text-[15px] font-medium text-edu-text placeholder:text-edu-muted focus:outline-none focus:ring-0 max-h-[120px] overflow-y-auto resize-none block leading-[1.4]"
+                style={{ height: '24px' }}
               />
             </div>
 
             {/* Send or Mic button */}
-            {text.trim() || editingMessage || pendingFile ? (
-              <button
-                aria-label={editingMessage ? "Saqlash" : "Yuborish"}
-                disabled={uploading}
-                onClick={() => { hapticSuccess(); handleSend(); }}
-                className="w-11 h-11 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring flex-shrink-0"
-              >
-                {editingMessage ? <Check size={20} /> : <Send size={20} className="ml-0.5" />}
-              </button>
-            ) : (
-              <button
-                aria-label="Ovozli xabar"
-                onClick={() => { hapticLight(); setIsVoiceMode(true); }}
-                disabled={uploading}
-                className="w-11 h-11 rounded-full flex items-center justify-center bg-black/5 dark:bg-white/5 text-edu-text hover:text-edu-primary active-spring transition-colors flex-shrink-0"
-              >
-                <Mic size={20} />
-              </button>
-            )}
-          </>
+            <div className="mr-0.5 mb-0.5 flex-shrink-0">
+              {text.trim() || editingMessage || pendingFile ? (
+                <button
+                  aria-label={editingMessage ? "Saqlash" : "Yuborish"}
+                  disabled={uploading}
+                  onClick={() => { hapticSuccess(); handleSend(); }}
+                  className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring transition-transform"
+                >
+                  {editingMessage ? <Check size={18} /> : <Send size={18} className="ml-0.5" />}
+                </button>
+              ) : (
+                <button
+                  aria-label="Ovozli xabar"
+                  onClick={() => { hapticLight(); setIsVoiceMode(true); }}
+                  disabled={uploading}
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active-spring transition-colors"
+                >
+                  <Mic size={20} />
+                </button>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

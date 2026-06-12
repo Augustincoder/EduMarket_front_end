@@ -272,7 +272,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
           {/* Render Reactions */}
           {Object.keys(groupedReactions).length > 0 && (
-            <div className={cn("flex flex-wrap gap-1 mt-0.5 -mb-2 z-10 relative", isMe ? "justify-end mr-1" : "justify-start ml-1")}>
+            <div className={cn("flex flex-wrap gap-1 mt-1 z-10 relative px-1", isMe ? "justify-end" : "justify-start")}>
               {Object.entries(groupedReactions).map(([iconName, users]) => {
                 const Icon = REACTION_ICONS[iconName];
                 if (!Icon) return null;
@@ -282,14 +282,14 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                     key={iconName}
                     onClick={() => handleReact(iconName)}
                     className={cn(
-                      "flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold border transition-all active:scale-90",
+                      "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold transition-all active:scale-95 shadow-sm border",
                       hasReacted 
-                        ? "bg-edu-primary border-edu-primary text-white shadow-sm" 
-                        : "bg-edu-surface dark:bg-slate-800 border-edu-border text-edu-text shadow-sm hover:bg-black/5 dark:hover:bg-white/5"
+                        ? "bg-edu-primary/10 border-edu-primary/30 text-edu-primary dark:bg-edu-primary/20" 
+                        : "bg-edu-surface dark:bg-slate-800 border-edu-border/60 text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5"
                     )}
                   >
-                    <Icon size={12} className={hasReacted ? "text-white" : "text-edu-text"} />
-                    {users.length > 1 && <span className={hasReacted ? "text-white/90" : "opacity-80"}>{users.length}</span>}
+                    <Icon size={14} className={cn("transition-transform group-hover:scale-110", hasReacted ? "text-edu-primary fill-edu-primary/20" : "")} />
+                    <span className={hasReacted ? "text-edu-primary font-extrabold" : "font-medium"}>{users.length}</span>
                   </button>
                 );
               })}

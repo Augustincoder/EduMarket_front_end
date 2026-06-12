@@ -155,14 +155,14 @@ export default function CreateTaskScreen() {
   };
 
   return (
-    <PageLayout showNav={false} className="bg-edu-bg overflow-hidden flex flex-col">
+    <PageLayout showNav={false} scrollable={false} className="bg-edu-bg flex flex-col">
       <Header 
         title={step === 0 ? "Yangi vazifa" : "Topshiriq yaratish"} 
         onBack={handleBack} 
         className="!border-none" 
       />
 
-      <div className="px-6 pt-2 pb-24 h-full flex flex-col">
+      <div className="px-6 pt-2 pb-24 flex-1 flex flex-col min-h-0">
         {step > 0 && (
           <div className="mb-6">
             <ProgressStepper steps={STEPS} current={step} />
