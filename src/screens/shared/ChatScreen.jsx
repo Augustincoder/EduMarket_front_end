@@ -17,16 +17,21 @@ import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
-import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert, Settings2 } from 'lucide-react';
 import { AcceptDeliveryModal } from './TaskDetail/components/AcceptDeliveryModal';
+
+import { ChatInfoDrawer } from './Chat/ChatInfoDrawer';
+
+// GroupSettingsModal removed, we now use ChatInfoDrawer.
+
 export default function ChatScreen() {
-  const { id }    = useParams();
-  const navigate  = useNavigate();
+  const { chatRoomId } = useParams();
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const bottomRef = useRef(null);
-  const taskId = id;
-
+  
+  const conversations = useChatStore((s) => s.conversations);
   const messages = useChatStore((s) => s.messages);
   const typingUsers = useChatStore((s) => s.typingUsers);
   const sendMessage = useChatStore((s) => s.sendMessage);
@@ -34,12 +39,15 @@ export default function ChatScreen() {
   const deleteMessage = useChatStore((s) => s.deleteMessage);
   const emitTyping = useChatStore((s) => s.emitTyping);
   
-  const { data: task } = useTask(id);
-  const transitions = useTaskTransition(id);
+  const conversation = conversations.find(c => c.chatRoomId === chatRoomId);
+  const taskId = conversation?.taskId;
+  const isGroup = conversation?.type === 'CUSTOM_GROUP';
 
-  // Decoupled hooks
-  useChatSocket(taskId, token);
-  const { isLoading, hasMore, isLoadingMore, loadMore } = useChatHistory(taskId);
+  const { data: task } = useTask(taskId, { enabled: !!taskId });
+  const transitions = useTaskTransition(taskId);
+
+  useChatSocket(chatRoomId, token);
+  const { isLoading, hasMore, isLoadingMore, loadMore } = useChatHistory(chatRoomId);
 
   const [revisionOpen, setRevisionOpen] = useState(false);
   const [revisionNote, setRevisionNote] = useState('');
@@ -50,12 +58,14 @@ export default function ChatScreen() {
   const [editingMessage, setEditingMessage] = useState(null);
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [viewerFile, setViewerFile] = useState(null);
+  const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
 
   const handleViewFile = (fileId, fileName, isSecureFile, mimeType) => {
     setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile, mimeType });
   };
 
   const handleRevisionSubmit = async () => {
+    if (!taskId) return;
     setRevisionErrors({});
     if (!revisionNote.trim()) return setRevisionErrors({ note: ['Izoh kiritish majburiy'] });
     try {
@@ -67,35 +77,36 @@ export default function ChatScreen() {
     }
   };
 
-  const roomMessages = useMemo(() => messages[taskId] || [], [messages, taskId]);
+  const roomMessages = useMemo(() => messages[chatRoomId] || [], [messages, chatRoomId]);
   const lastMessageId = roomMessages[roomMessages.length - 1]?.id;
-  const typingCount = typingUsers?.[taskId]?.length || 0;
+  const typingCount = typingUsers?.[chatRoomId]?.length || 0;
 
-  // Robust Auto-Scroll
+  // Auto-Scroll
   useEffect(() => {
     const timer = setTimeout(() => {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 150);
     return () => clearTimeout(timer);
-  }, [lastMessageId, typingCount, taskId]);
+  }, [lastMessageId, typingCount, chatRoomId]);
 
-  // Mark messages as read
+  // Read receipt
   useEffect(() => {
     const hasUnread = roomMessages.some(m => !m.isRead && m.senderId !== user?.id);
     if (hasUnread) {
-      chatApi.markAsRead(taskId).catch(() => {});
+      chatApi.markAsRead(chatRoomId).catch(() => {});
+      useChatStore.getState().markConversationRead(chatRoomId);
     }
-  }, [roomMessages, taskId, user?.id]);
+  }, [roomMessages, chatRoomId, user?.id]);
 
   const handleSend = useCallback((content, fileId, fileType, fileName, isSecureFile) => {
     if (editingMessage) {
       editMessage(editingMessage.id, content);
       setEditingMessage(null);
     } else {
-      sendMessage(taskId, content, fileId, replyingTo?.id, fileType, fileName, isSecureFile);
+      sendMessage(chatRoomId, content, fileId, replyingTo?.id, fileType, fileName, isSecureFile);
       setReplyingTo(null);
     }
-  }, [taskId, sendMessage, editMessage, replyingTo, editingMessage]);
+  }, [chatRoomId, sendMessage, editMessage, replyingTo, editingMessage]);
 
   const handleCancelAction = () => {
     setReplyingTo(null);
@@ -105,45 +116,57 @@ export default function ChatScreen() {
   const isInReview = task?.status === 'IN_REVIEW';
   const isClient   = user?.id === task?.clientId;
 
-  const counterpart = isClient ? task?.freelancer : task?.client;
-  const isCounterpartOnline = useChatStore((s) => s.userPresence[counterpart?.id]) ?? counterpart?.isOnline ?? false;
+  const userPresence = useChatStore((s) => s.userPresence);
+  const isCounterpartOnline = conversation?.otherUser && userPresence[conversation.otherUser.id];
   
-  const title = task?.isCoWorking 
-    ? "Study Buddy Jamoasi" 
-    : (counterpart?.fullname || 'Chat');
+  const title = conversation ? conversation.title : 'Chat';
+  const subtitle = isGroup ? 'Guruh suhbati' : (task?.title || 'Shaxsiy suhbat');
 
   return (
     <div className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full grid grid-rows-[auto_1fr_auto] h-[100dvh]">
       {/* Row 1: Header Area */}
       <div className="flex flex-col z-30">
         <Header
-          title={title}
-          subtitle={task?.title}
+          title={
+            <div 
+              className="flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setIsGroupSettingsOpen(true)}
+            >
+              <span className="font-bold">{title}</span>
+              <span className="text-[11px] text-edu-muted">{subtitle}</span>
+            </div>
+          }
           showBack
           className="!border-b-0"
           right={
             <div className="flex items-center gap-2">
-              <div 
-                className={cn(
-                  "flex items-center justify-center w-5 h-5 rounded-full",
-                  isCounterpartOnline ? "bg-edu-primary/20" : "bg-edu-muted/20"
-                )}
-              >
-                <div 
-                  className={cn(
-                    "w-2.5 h-2.5 rounded-full",
-                    isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted"
-                  )}
-                />
-              </div>
-              <button 
-                onClick={() => setIsWorkspaceOpen(true)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
-                title="Ish maydoni (Milestones)"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-              </button>
-              {task && !task.isCoWorking && (
+              {!isGroup && (
+                <div className={cn("flex items-center justify-center w-5 h-5 rounded-full", isCounterpartOnline ? "bg-edu-primary/20" : "bg-edu-muted/20")}>
+                  <div className={cn("w-2.5 h-2.5 rounded-full", isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted")} />
+                </div>
+              )}
+
+              {isGroup ? (
+                <button 
+                  onClick={() => setIsGroupSettingsOpen(true)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 transition-colors"
+                  title="Guruh sozlamalari"
+                >
+                  <Settings2 size={16} />
+                </button>
+              ) : (
+                taskId && (
+                  <button 
+                    onClick={() => setIsWorkspaceOpen(true)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
+                    title="Ish maydoni (Milestones)"
+                  >
+                    <LayoutDashboard size={14} />
+                  </button>
+                )
+              )}
+              
+              {task && !task.isCoWorking && !isGroup && (
                 <button 
                   onClick={() => navigate(`/report?targetId=${isClient ? task.freelancerId : task.clientId}&targetType=USER`)}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-urgent/10 text-edu-urgent hover:bg-edu-urgent/20 transition-colors"
@@ -160,7 +183,7 @@ export default function ChatScreen() {
         <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-edu-border/50 to-transparent" />
 
         {/* IN_REVIEW sticky banner */}
-        {isInReview && isClient && (
+        {isInReview && isClient && !isGroup && (
           <div className="bg-edu-surface/90 backdrop-blur-xl border-b border-edu-border/50 px-4 py-3 shadow-sm relative">
             <p className="text-sm font-bold text-edu-text mb-3 flex items-center gap-2">
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-yellow-500/20 text-yellow-600 text-[10px]">
@@ -169,10 +192,8 @@ export default function ChatScreen() {
               Ish topshirildi, tekshiring
             </p>
             <div className="flex gap-2">
-              <Button size="sm" variant="primary" fullWidth
-                onClick={() => setAcceptDeliveryOpen(true)}><CheckCircle size={14} className="mr-1" /> Qabul</Button>
-              <Button size="sm" variant="secondary" fullWidth
-                onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}><RefreshCw size={14} className="mr-1" /> Qaytarish</Button>
+              <Button size="sm" variant="primary" fullWidth onClick={() => setAcceptDeliveryOpen(true)}><CheckCircle size={14} className="mr-1" /> Qabul</Button>
+              <Button size="sm" variant="secondary" fullWidth onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }}><RefreshCw size={14} className="mr-1" /> Qaytarish</Button>
             </div>
           </div>
         )}
@@ -181,7 +202,7 @@ export default function ChatScreen() {
       {/* Row 2: Main Chat Area */}
       <div className="overflow-y-auto px-3 py-4 space-y-4 min-h-0 bg-mesh-aurora flex flex-col relative overscroll-none" id="chat-scroll-container">
         {/* System Message Card (Auto-Chat Initialization) */}
-        {task && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
+        {task && !isGroup && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
           <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 shadow-sm mb-6 mt-2 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
             <div className="flex items-center gap-2.5 mb-3">
@@ -208,11 +229,12 @@ export default function ChatScreen() {
 
             <p className="text-[11px] leading-relaxed text-blue-800/70 dark:text-blue-200/70 font-medium bg-blue-500/5 p-2 rounded-lg">
               <ShieldAlert size={12} className="inline mr-1 -mt-0.5" />
-              Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring. Tashqi platformalardagi kelishuvlar himoyalanmaydi.
+              Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring.
             </p>
           </div>
         )}
-        {task && task.status === 'ASSIGNED' && !isClient && (
+        
+        {task && task.status === 'ASSIGNED' && !isClient && !isGroup && (
           <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
             Vazifani boshlash
           </Button>
@@ -234,7 +256,6 @@ export default function ChatScreen() {
               <Hand size={40} className="text-edu-primary opacity-50" />
             </div>
             <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang!</p>
-            <p className="text-xs mt-1 text-center max-w-[200px] font-medium leading-relaxed">Vazifa bo'yicha barcha savollarni shu yerda muhokama qiling.</p>
           </div>
         )}
 
@@ -256,7 +277,7 @@ export default function ChatScreen() {
           )) : null}
         </div>
         
-        {typingUsers?.[taskId]?.length > 0 && (
+        {typingUsers?.[chatRoomId]?.length > 0 && (
           <div className="flex items-center gap-1.5 text-edu-muted text-[11px] font-bold animate-pulse px-3 py-1 opacity-70">
             <div className="flex gap-0.5">
               <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
@@ -273,20 +294,20 @@ export default function ChatScreen() {
       <div className="shrink-0 relative z-20 pb-4 pt-2 px-3 bg-gradient-to-t from-edu-bg via-edu-bg to-transparent">
         <ChatInput 
           onSend={handleSend} 
-          onTyping={() => emitTyping(taskId)} 
+          onTyping={() => emitTyping(chatRoomId)} 
           replyingTo={replyingTo}
           editingMessage={editingMessage}
           onCancelAction={handleCancelAction}
         />
       </div>
 
-      {/* ── Revision Modal ─────────────────────────── */}
+      {/* ── Modals ─────────────────────────── */}
       <Modal
         isOpen={revisionOpen}
         onClose={() => setRevisionOpen(false)}
         title="Qayta ishlashga yuborish"
         footer={
-          <Button fullWidth variant="primary" onClick={handleRevisionSubmit} isLoading={transitions.requestRevision.isPending}>
+          <Button fullWidth variant="primary" onClick={handleRevisionSubmit} isLoading={transitions?.requestRevision?.isPending}>
             Yuborish
           </Button>
         }
@@ -294,7 +315,6 @@ export default function ChatScreen() {
         <div className="py-2">
           <TextArea
             label="Izoh (qayta ishlash sababi) *"
-            placeholder="Nimalarni to'g'irlash kerakligini batafsil yozing..."
             value={revisionNote}
             onValueChange={(v) => { setRevisionNote(v); setRevisionErrors(e => ({ ...e, note: null })); }}
             maxLength={1000}
@@ -304,18 +324,27 @@ export default function ChatScreen() {
         </div>
       </Modal>
 
-      {/* ── Workspace Overlay ─────────────────────────── */}
-      <WorkspaceOverlay 
-        taskId={taskId}
-        isClient={isClient}
-        isOpen={isWorkspaceOpen}
-        onClose={() => setIsWorkspaceOpen(false)}
+      <ChatInfoDrawer 
+        isOpen={isGroupSettingsOpen} 
+        onClose={() => setIsGroupSettingsOpen(false)} 
+        chatRoomId={chatRoomId} 
+        conversation={conversation}
+        currentUser={user}
       />
+
+      {taskId && isWorkspaceOpen && (
+        <WorkspaceOverlay 
+          taskId={taskId}
+          isClient={isClient}
+          isOpen={isWorkspaceOpen}
+          onClose={() => setIsWorkspaceOpen(false)}
+        />
+      )}
 
       <AcceptDeliveryModal
         isOpen={acceptDeliveryOpen}
         onClose={() => setAcceptDeliveryOpen(false)}
-        isLoading={transitions.accept.isPending}
+        isLoading={transitions?.accept?.isPending}
         onConfirm={async () => {
           try {
             await transitions.accept.mutateAsync();

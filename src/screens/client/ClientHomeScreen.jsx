@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usersApi } from '../../services/users.service';
-import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { useCategoryStore } from '../../store/categoryStore';
 import { useChatStore } from '../../store/chatStore';

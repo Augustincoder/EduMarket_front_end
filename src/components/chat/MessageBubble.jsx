@@ -123,6 +123,17 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
     );
   }
 
+  // Tizim xabarlari (SYSTEM_EVENT)
+  if (message.type === 'SYSTEM_EVENT') {
+    return (
+      <div className="flex justify-center w-full my-3 animate-fade-in pointer-events-none">
+        <div className="px-4 py-1.5 bg-blue-500/10 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[12px] font-bold rounded-full shadow-sm border border-blue-500/20 flex items-center gap-1.5 backdrop-blur-sm">
+          {message.content}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {showMenu && (

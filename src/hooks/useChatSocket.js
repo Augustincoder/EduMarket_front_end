@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useChatStore } from '../store/chatStore';
 
-export function useChatSocket(taskId, token) {
+export function useChatSocket(chatRoomId, token) {
   const connected = useChatStore((s) => s.connected);
   const connect = useChatStore((s) => s.connect);
   const joinRoom = useChatStore((s) => s.joinRoom);
@@ -10,15 +10,15 @@ export function useChatSocket(taskId, token) {
 
   useEffect(() => {
     if (token) connect(token);
-    return () => leaveRoom(taskId);
-  }, [token, taskId, connect, leaveRoom]);
+    return () => leaveRoom(chatRoomId);
+  }, [token, chatRoomId, connect, leaveRoom]);
 
   // Rejoin room automatically if socket reconnects
   useEffect(() => {
-    if (connected && taskId) {
-      joinRoom(taskId);
+    if (connected && chatRoomId) {
+      joinRoom(chatRoomId);
     }
-  }, [connected, taskId, joinRoom]);
+  }, [connected, chatRoomId, joinRoom]);
 
   return { connected };
 }

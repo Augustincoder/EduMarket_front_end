@@ -7,12 +7,86 @@ import { timeAgo, cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
 import { SectionErrorBoundary, WidgetError } from '../../components/ui/SectionErrorBoundary';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MessageSquare, Check, CheckCheck } from 'lucide-react';
+import { Search, MessageSquare, Check, CheckCheck, Users, Plus, X } from 'lucide-react';
+import { chatApi } from '../../services/chat.service';
+
+function CreateGroupModal({ isOpen, onClose, onSuccess }) {
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await chatApi.createCustomGroup({ name: name.trim() });
+      hapticLight();
+      onSuccess();
+      onClose();
+      setName('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Guruh yaratishda xatolik yuz berdi');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="bg-edu-surface w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden border border-edu-border"
+      >
+        <div className="p-5 flex justify-between items-center border-b border-edu-border/50">
+          <h2 className="text-xl font-bold text-edu-text">Yangi Guruh</h2>
+          <button onClick={onClose} className="p-2 text-edu-muted hover:text-edu-text bg-edu-bg rounded-full transition-colors">
+            <X size={20} />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-5">
+          <div className="mb-5">
+            <label className="block text-sm font-bold text-edu-muted mb-2">Guruh nomi</label>
+            <input 
+              type="text" 
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="Masalan: Frontend jamoasi"
+              className="w-full bg-edu-bg border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all"
+              autoFocus
+            />
+            {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
+          </div>
+          <button 
+            type="submit" 
+            disabled={!name.trim() || loading}
+            className="w-full bg-edu-primary text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 transition-transform active:scale-95"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Plus size={20} />
+                <span>Yaratish</span>
+              </>
+            )}
+          </button>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
 
 function ChatListWidget({ searchTerm }) {
   const navigate = useNavigate();
   const conversations = useChatStore((s) => s.conversations);
   const loadConversations = useChatStore((s) => s.loadConversations);
+  const userPresence = useChatStore((s) => s.userPresence);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,9 +94,17 @@ function ChatListWidget({ searchTerm }) {
     loadConversations()
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
-      
-    // Note: Real-time updates are handled by useSocket/websocket events instead of manual polling
   }, [loadConversations]);
+
+  const filteredConversations = useMemo(() => {
+    if (!conversations) return [];
+    if (!searchTerm) return conversations;
+    const lower = searchTerm.toLowerCase();
+    return conversations.filter(conv => 
+      (conv.title && conv.title.toLowerCase().includes(lower)) || 
+      (conv.lastMessage?.content && conv.lastMessage.content.toLowerCase().includes(lower))
+    );
+  }, [conversations, searchTerm]);
 
   if (error) {
     return (
@@ -39,21 +121,11 @@ function ChatListWidget({ searchTerm }) {
     );
   }
 
-  const handleOpenChat = (taskId) => {
+  const handleOpenChat = (chatRoomId) => {
     hapticLight();
-    navigate(`/tasks/${taskId}/chat`);
+    // Assuming new route structure: /chat/:chatRoomId 
+    navigate(`/chat/${chatRoomId}`);
   };
-
-  const filteredConversations = useMemo(() => {
-    if (!conversations) return [];
-    if (!searchTerm) return conversations;
-    const lower = searchTerm.toLowerCase();
-    return conversations.filter(conv => 
-      conv.otherUser.fullname.toLowerCase().includes(lower) || 
-      conv.taskTitle.toLowerCase().includes(lower) ||
-      (conv.lastMessage?.content && conv.lastMessage.content.toLowerCase().includes(lower))
-    );
-  }, [conversations, searchTerm]);
 
   if (loading) {
     return (
@@ -76,7 +148,7 @@ function ChatListWidget({ searchTerm }) {
         </div>
         <h2 className="text-2xl font-bold text-edu-text mb-2 tracking-tight">Chatlar topilmadi</h2>
         <p className="text-[15px] text-edu-muted font-medium leading-relaxed">
-          Hozircha hech qanday suhbat mavjud emas. Vazifalarga taklif berish orqali muloqotni boshlang.
+          Hozircha hech qanday suhbat mavjud emas. Yangi guruh yarating yoki vazifalarga qayting.
         </p>
       </motion.div>
     );
@@ -117,70 +189,87 @@ function ChatListWidget({ searchTerm }) {
       className="w-full flex flex-col gap-3"
     >
       <AnimatePresence mode="popLayout">
-        {filteredConversations.map((conv) => (
-          <motion.div 
-            key={conv.taskId}
-            variants={item}
-            layout
-            onClick={() => handleOpenChat(conv.taskId)}
-            className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden"
-          >
-            {/* Unread indicator glow */}
-            {conv.unreadCount > 0 && (
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-edu-primary shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
-            )}
-            
-            <div className="flex items-center gap-4">
-              <div className="relative shrink-0">
-                <Avatar name={conv.otherUser.fullname} avatarUrl={conv.otherUser.avatarUrl} size="lg" />
-                {conv.unreadCount > 0 && (
-                  <motion.span 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center border-2 border-edu-surface shadow-md"
-                  >
-                    {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
-                  </motion.span>
-                )}
-              </div>
+        {filteredConversations.map((conv) => {
+          const isGroup = conv.type === 'CUSTOM_GROUP';
+          const isOnline = conv.otherUser && userPresence[conv.otherUser.id];
+          
+          return (
+            <motion.div 
+              key={conv.chatRoomId}
+              variants={item}
+              layout
+              onClick={() => handleOpenChat(conv.chatRoomId)}
+              className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden"
+            >
+              {/* Unread indicator glow */}
+              {conv.unreadCount > 0 && (
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-edu-primary shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
+              )}
               
-              <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="text-[16px] font-bold text-edu-text truncate tracking-tight pr-2">
-                    {conv.otherUser.fullname}
-                  </h3>
-                  {conv.lastMessage && (
-                    <span className="text-[11px] font-bold text-edu-muted whitespace-nowrap tabular-nums">
-                      {timeAgo(conv.lastMessage.createdAt)}
-                    </span>
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  {isGroup ? (
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                      <Users size={24} />
+                    </div>
+                  ) : (
+                    <Avatar name={conv.title} avatarUrl={conv.avatarUrl} size="lg" />
+                  )}
+                  
+                  {isOnline && !isGroup && (
+                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-edu-surface rounded-full shadow-sm" />
+                  )}
+
+                  {conv.unreadCount > 0 && (
+                    <motion.span 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center border-2 border-edu-surface shadow-md"
+                    >
+                      {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
+                    </motion.span>
                   )}
                 </div>
                 
-                <p className="text-[13px] font-bold text-edu-primary truncate mb-1">
-                  {conv.taskTitle}
-                </p>
-                
-                <div className="flex items-center gap-1.5">
-                  {conv.lastMessage && conv.lastMessage.senderId !== conv.otherUser.id && (
-                    <span className="text-edu-muted shrink-0">
-                      {conv.lastMessage.isRead ? <CheckCheck size={14} className="text-blue-500" /> : <Check size={14} />}
-                    </span>
-                  )}
-                  <p className={cn(
-                    "text-[14px] truncate flex-1",
-                    conv.unreadCount > 0 ? "text-edu-text font-bold" : "text-edu-muted font-medium"
-                  )}>
-                    {conv.lastMessage ? (
-                      conv.lastMessage.content || '📁 Fayl yuborildi'
-                    ) : (
-                      'Hali xabar yo\'q'
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <div className="flex justify-between items-center mb-1">
+                    <h3 className="text-[16px] font-bold text-edu-text truncate tracking-tight pr-2 flex items-center gap-1.5">
+                      {isGroup && <Users size={14} className="text-edu-muted" />}
+                      {conv.title || 'Nomsiz Guruh'}
+                    </h3>
+                    {conv.lastMessage && (
+                      <span className="text-[11px] font-bold text-edu-muted whitespace-nowrap tabular-nums">
+                        {timeAgo(conv.lastMessage.createdAt)}
+                      </span>
                     )}
-                  </p>
+                  </div>
+                  
+                  {/* Tizim xabari yoki file yoki oddiy matn */}
+                  <div className="flex items-center gap-1.5">
+                    {conv.lastMessage && conv.lastMessage.senderId !== (conv.otherUser?.id || 'none') && conv.lastMessage.type !== 'SYSTEM_EVENT' && (
+                      <span className="text-edu-muted shrink-0">
+                        {conv.lastMessage.isRead ? <CheckCheck size={14} className="text-blue-500" /> : <Check size={14} />}
+                      </span>
+                    )}
+                    <p className={cn(
+                      "text-[14px] truncate flex-1",
+                      conv.unreadCount > 0 ? "text-edu-text font-bold" : "text-edu-muted font-medium",
+                      conv.lastMessage?.type === 'SYSTEM_EVENT' && "text-blue-500 italic text-[13px]"
+                    )}>
+                      {conv.lastMessage ? (
+                        conv.lastMessage.type === 'SYSTEM_EVENT' 
+                          ? conv.lastMessage.content 
+                          : (conv.lastMessage.content || '📁 Fayl yuborildi')
+                      ) : (
+                        'Hali xabar yo\'q'
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </motion.div>
   );
@@ -188,6 +277,8 @@ function ChatListWidget({ searchTerm }) {
 
 export default function ChatListScreen() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const loadConversations = useChatStore((s) => s.loadConversations);
 
   return (
     <PageLayout className="bg-edu-bg relative overflow-hidden">
@@ -197,11 +288,17 @@ export default function ChatListScreen() {
           <div className="flex items-center justify-between mb-5">
             <div>
               <h1 className="text-[34px] font-extrabold text-edu-text tracking-tight leading-none">Xabarlar</h1>
-              <p className="text-[14px] font-bold text-edu-muted tracking-wide mt-2">Sizning muloqotlaringiz</p>
+              <p className="text-[14px] font-bold text-edu-muted tracking-wide mt-2">Shaxsiy chatlar va guruhlar</p>
             </div>
-            <div className="w-12 h-12 bg-edu-surface rounded-full flex items-center justify-center border border-edu-border shadow-sm">
-              <MessageSquare size={22} className="text-edu-primary" />
-            </div>
+            <button 
+              onClick={() => {
+                hapticLight();
+                setIsModalOpen(true);
+              }}
+              className="w-12 h-12 bg-edu-surface rounded-full flex items-center justify-center border border-edu-border shadow-sm hover:scale-105 active:scale-95 transition-transform text-edu-primary"
+            >
+              <Plus size={22} />
+            </button>
           </div>
           
           <div className="relative group">
@@ -212,7 +309,7 @@ export default function ChatListScreen() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Suhbatdosh yoki vazifani qidiring..."
+              placeholder="Suhbatdosh yoki guruhni qidiring..."
               className="w-full bg-edu-surface/60 backdrop-blur-md border border-edu-border text-edu-text text-[15px] font-medium rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all shadow-sm placeholder:font-medium placeholder:text-edu-muted"
             />
           </div>
@@ -224,6 +321,16 @@ export default function ChatListScreen() {
           </SectionErrorBoundary>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <CreateGroupModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)} 
+            onSuccess={() => loadConversations()} 
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   );
 }

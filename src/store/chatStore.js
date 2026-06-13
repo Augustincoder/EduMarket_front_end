@@ -11,8 +11,8 @@ const typingTimers = new Map();
 export const useChatStore = create((set, get) => ({
   socket:      null,
   connected:   false,
-  messages:    {},       // Record<taskId, Message[]>
-  typingUsers: {},       // Record<taskId, userId[]>
+  messages:    {},       // Record<chatRoomId, Message[]>
+  typingUsers: {},       // Record<chatRoomId, userId[]>
   conversations: [],     // Array of Conversation
   userPresence: {},      // Record<userId, boolean>
   totalUnread:  0,
@@ -38,9 +38,9 @@ export const useChatStore = create((set, get) => ({
     socket.on('disconnect', () => { set({ connected: false }); });
 
     socket.on('new_message', (msg) => {
-      const taskId = msg.taskId;
+      const chatRoomId = msg.chatRoomId;
       set((s) => {
-        const roomMsgs = s.messages[taskId] || [];
+        const roomMsgs = s.messages[chatRoomId] || [];
         
         // 1. If we already have this message (real ID), ignore duplicate
         if (roomMsgs.some(m => m.id === msg.id)) return s;
@@ -56,28 +56,61 @@ export const useChatStore = create((set, get) => ({
             const newMsgs = [...roomMsgs];
             newMsgs[optIndex] = msg;
             return {
-              messages: { ...s.messages, [taskId]: newMsgs }
+              messages: { ...s.messages, [chatRoomId]: newMsgs }
             };
           }
         }
         
+        // Update conversation sidebar locally without HTTP request
+        const conversations = [...s.conversations];
+        const convIndex = conversations.findIndex(c => c.chatRoomId === chatRoomId);
+        
+        if (convIndex !== -1) {
+          const conv = { ...conversations[convIndex] };
+          conv.lastMessage = msg;
+          
+          // Increment unread if message is from someone else and room is not actively read right now
+          const user = useAuthStore.getState().user;
+          const isMyOwn = msg.senderId === user?.id;
+          
+          // Note: if user is currently looking at this chat room, `isRead` would be handled by Read Receipt logic,
+          // but for now, we just increment if it's not our own message. The chat UI marks read automatically.
+          if (!isMyOwn) {
+            conv.unreadCount = (conv.unreadCount || 0) + 1;
+          }
+          
+          // Move to top
+          conversations.splice(convIndex, 1);
+          conversations.unshift(conv);
+          
+          const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+          
+          return {
+            messages: {
+              ...s.messages,
+              [chatRoomId]: [...roomMsgs, msg],
+            },
+            conversations,
+            totalUnread
+          };
+        }
+
         return {
           messages: {
             ...s.messages,
-            [taskId]: [...roomMsgs, msg],
+            [chatRoomId]: [...roomMsgs, msg],
           },
         };
       });
-      get().loadConversations();
     });
 
-    socket.on('user_typing', ({ taskId, userId }) => {
+    socket.on('user_typing', ({ chatRoomId, userId }) => {
       set((s) => {
-        const cur = s.typingUsers[taskId] || [];
+        const cur = s.typingUsers[chatRoomId] || [];
         if (cur.includes(userId)) return s;
-        const updated = { ...s.typingUsers, [taskId]: [...cur, userId] };
+        const updated = { ...s.typingUsers, [chatRoomId]: [...cur, userId] };
         
-        const timerKey = `${taskId}_${userId}`;
+        const timerKey = `${chatRoomId}_${userId}`;
         if (typingTimers.has(timerKey)) {
           clearTimeout(typingTimers.get(timerKey));
         }
@@ -86,7 +119,7 @@ export const useChatStore = create((set, get) => ({
           set((s2) => ({
             typingUsers: {
               ...s2.typingUsers,
-              [taskId]: (s2.typingUsers[taskId] || []).filter((u) => u !== userId),
+              [chatRoomId]: (s2.typingUsers[chatRoomId] || []).filter((u) => u !== userId),
             },
           }));
           typingTimers.delete(timerKey);
@@ -108,35 +141,35 @@ export const useChatStore = create((set, get) => ({
     });
 
     socket.on('message_edited', (updatedMsg) => {
-      const taskId = updatedMsg.taskId;
+      const chatRoomId = updatedMsg.chatRoomId;
       set((s) => {
-        const roomMsgs = s.messages[taskId];
+        const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m)
+            [chatRoomId]: roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m)
           }
         };
       });
     });
 
-    socket.on('message_deleted', ({ messageId, taskId }) => {
+    socket.on('message_deleted', ({ messageId, chatRoomId }) => {
       set((s) => {
-        const roomMsgs = s.messages[taskId];
+        const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m)
+            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m)
           }
         };
       });
     });
 
-    socket.on('messages_read', ({ taskId, readerId, messageIds }) => {
+    socket.on('messages_read', ({ chatRoomId, readerId, messageIds }) => {
       set((s) => {
-        const roomMessages = s.messages[taskId];
+        const roomMessages = s.messages[chatRoomId];
         if (!roomMessages) return s;
 
         // Update messages that were read
@@ -149,23 +182,28 @@ export const useChatStore = create((set, get) => ({
         return {
           messages: {
             ...s.messages,
-            [taskId]: updatedMessages
+            [chatRoomId]: updatedMessages
           }
         };
       });
     });
 
-    socket.on('message_reaction_updated', ({ messageId, taskId, reactions }) => {
+    socket.on('message_reaction_updated', ({ messageId, chatRoomId, reactions }) => {
       set((s) => {
-        const roomMsgs = s.messages[taskId];
+        const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m)
+            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m)
           }
         };
       });
+    });
+    
+    socket.on('message_pinned', () => {
+      // Just emit a system event instead of full reload, or locally update room if we stored pinnedMsg
+      // get().loadConversations(); // Avoiding this heavy call
     });
 
     set({ socket });
@@ -196,15 +234,8 @@ export const useChatStore = create((set, get) => ({
         const res = await chatApi.getConversations();
         const allConversations = res.data.data || [];
         
-        const user = useAuthStore.getState().user;
-        const activeRole = useAuthStore.getState().activeRole;
-
-        // Filter conversations based on role
-        const conversations = allConversations.filter(c => {
-          if (activeRole === 'CLIENT') return c.clientId === user?.id;
-          if (activeRole === 'FREELANCER') return c.freelancerId === user?.id;
-          return true;
-        });
+        // No role filtering needed since we fetch per userId in backend now for chatRoom
+        const conversations = allConversations;
 
         const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
         
@@ -236,32 +267,32 @@ export const useChatStore = create((set, get) => ({
     set({ loadConversationsTimeout: timeout });
   },
 
-  markConversationRead: (taskId) => {
+  markConversationRead: (chatRoomId) => {
     set((s) => {
       const conversations = s.conversations.map((c) =>
-        c.taskId === taskId ? { ...c, unreadCount: 0 } : c
+        c.chatRoomId === chatRoomId ? { ...c, unreadCount: 0 } : c
       );
       const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
       return { conversations, totalUnread };
     });
   },
 
-  joinRoom: (taskId) => {
-    get().socket?.emit('join_task_room', taskId);
+  joinRoom: (chatRoomId) => {
+    get().socket?.emit('join_chat_room', chatRoomId);
   },
 
-  leaveRoom: (taskId) => {
-    get().socket?.emit('leave_task_room', taskId);
+  leaveRoom: (chatRoomId) => {
+    get().socket?.emit('leave_chat_room', chatRoomId);
   },
 
-  sendMessage: async (taskId, content, fileId = null, replyToId = null, fileType = null, fileName = null, isSecureFile = false) => {
+  sendMessage: async (chatRoomId, content, fileId = null, replyToId = null, fileType = null, fileName = null, isSecureFile = false) => {
     const tempId = `temp_${Date.now()}_${Math.random()}`;
     const user = useAuthStore.getState().user;
 
     // Create optimistic message
     const tempMsg = {
       id: tempId,
-      taskId,
+      chatRoomId,
       senderId: user?.id,
       sender: user,
       content,
@@ -270,23 +301,23 @@ export const useChatStore = create((set, get) => ({
       fileName,
       isSecureFile,
       replyToId,
-      replyTo: replyToId ? get().messages[taskId]?.find(m => m.id === replyToId) : null,
+      replyTo: replyToId ? get().messages[chatRoomId]?.find(m => m.id === replyToId) : null,
       createdAt: new Date().toISOString(),
       isRead: false,
       isSending: true,
     };
 
     set((s) => {
-      const roomMsgs = s.messages[taskId] || [];
-      return { messages: { ...s.messages, [taskId]: [...roomMsgs, tempMsg] } };
+      const roomMsgs = s.messages[chatRoomId] || [];
+      return { messages: { ...s.messages, [chatRoomId]: [...roomMsgs, tempMsg] } };
     });
 
     try {
-      const res = await chatApi.sendMessage(taskId, { content, fileId, fileType, fileName, replyToId, isSecureFile });
+      const res = await chatApi.sendMessage(chatRoomId, { content, fileId, fileType, fileName, replyToId, isSecureFile });
       const realMsg = res.data.data;
       
       set((s) => {
-        const roomMsgs = s.messages[taskId] || [];
+        const roomMsgs = s.messages[chatRoomId] || [];
         
         // If the socket event already added this message (real ID is present), 
         // just remove the temp one to clean up.
@@ -294,7 +325,7 @@ export const useChatStore = create((set, get) => ({
            return {
              messages: {
                ...s.messages,
-               [taskId]: roomMsgs.filter(m => m.id !== tempId)
+               [chatRoomId]: roomMsgs.filter(m => m.id !== tempId)
              }
            };
         }
@@ -303,18 +334,18 @@ export const useChatStore = create((set, get) => ({
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === tempId ? realMsg : m),
+            [chatRoomId]: roomMsgs.map(m => m.id === tempId ? realMsg : m),
           }
         };
       });
     } catch (err) {
       console.error('Failed to send message:', err);
       set((s) => {
-        const roomMsgs = s.messages[taskId] || [];
+        const roomMsgs = s.messages[chatRoomId] || [];
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === tempId ? { ...m, isError: true, isSending: false } : m),
+            [chatRoomId]: roomMsgs.map(m => m.id === tempId ? { ...m, isError: true, isSending: false } : m),
           }
         };
       });
@@ -326,13 +357,13 @@ export const useChatStore = create((set, get) => ({
       const res = await chatApi.editMessage(messageId, { content });
       const updatedMsg = res.data.data;
       set((s) => {
-        const taskId = updatedMsg.taskId;
-        const roomMsgs = s.messages[taskId];
+        const chatRoomId = updatedMsg.chatRoomId;
+        const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
+            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
           }
         };
       });
@@ -349,21 +380,21 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  toggleReaction: async (messageId, taskId, icon) => {
+  toggleReaction: async (messageId, chatRoomId, icon) => {
     const user = useAuthStore.getState().user;
     if (!user) return;
 
     // Save previous state for rollback
-    const prevMsgs = get().messages[taskId];
+    const prevMsgs = get().messages[chatRoomId];
     if (!prevMsgs) return;
 
     // Optimistically update
     set((s) => {
-      const roomMsgs = s.messages[taskId];
+      const roomMsgs = s.messages[chatRoomId];
       return {
         messages: {
           ...s.messages,
-          [taskId]: roomMsgs.map(m => {
+          [chatRoomId]: roomMsgs.map(m => {
             if (m.id !== messageId) return m;
             
             let reactions = Array.isArray(m.reactions) ? [...m.reactions] : [];
@@ -391,12 +422,12 @@ export const useChatStore = create((set, get) => ({
       // but we can update it just in case to be safe.
       const updatedMsg = res.data.data;
       set((s) => {
-        const roomMsgs = s.messages[taskId];
+        const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
         return {
           messages: {
             ...s.messages,
-            [taskId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
+            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
           }
         };
       });
@@ -406,40 +437,40 @@ export const useChatStore = create((set, get) => ({
       set((s) => ({
         messages: {
           ...s.messages,
-          [taskId]: prevMsgs
+          [chatRoomId]: prevMsgs
         }
       }));
     }
   },
 
-  emitTyping: (taskId) => {
+  emitTyping: (chatRoomId) => {
     // Basic throttle using a store variable
     const now = Date.now();
     const last = get().lastTypingTime || 0;
     if (now - last > 1500) {
-      get().socket?.emit('typing', { taskId });
+      get().socket?.emit('typing', { chatRoomId });
       set({ lastTypingTime: now });
     }
   },
 
-  setMessages: (taskId, msgs) =>
-    set((s) => ({ messages: { ...s.messages, [taskId]: msgs } })),
+  setMessages: (chatRoomId, msgs) =>
+    set((s) => ({ messages: { ...s.messages, [chatRoomId]: msgs } })),
 
   addMessage: (msg) =>
     set((s) => {
-      const taskId = msg.taskId;
+      const chatRoomId = msg.chatRoomId;
       return {
         messages: {
           ...s.messages,
-          [taskId]: [...(s.messages[taskId] || []), msg],
+          [chatRoomId]: [...(s.messages[chatRoomId] || []), msg],
         },
       };
     }),
 
-  clearRoom: (taskId) =>
+  clearRoom: (chatRoomId) =>
     set((s) => {
       const msgs = { ...s.messages };
-      delete msgs[taskId];
+      delete msgs[chatRoomId];
       return { messages: msgs };
     }),
 }));

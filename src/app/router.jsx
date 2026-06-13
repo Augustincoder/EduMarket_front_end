@@ -76,7 +76,7 @@ const routes = [
   { path: '/tasks/:id',         element: <Screen element={<ProtectedRoute><TaskDetailScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute><BidsScreen /></ProtectedRoute>} /> },
   { path: '/chats',             element: <ProtectedRoute><ChatListScreen /></ProtectedRoute> },
-  { path: '/tasks/:id/chat',    element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
+  { path: '/chat/:chatRoomId',  element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
   { path: '/earnings',          element: <Screen element={<RoleGuard require="FREELANCER"><EarningsScreen /></RoleGuard>} /> },
   { path: '/profile',           element: <ProtectedRoute><ProfileScreen /></ProtectedRoute> },
   { path: '/become-freelancer', element: <Screen element={<ProtectedRoute><BecomeFreelancerScreen /></ProtectedRoute>} />},

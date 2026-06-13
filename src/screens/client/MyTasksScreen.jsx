@@ -7,7 +7,7 @@ import TaskCard from '../../components/cards/TaskCard';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
 import { FilterChip } from '../../components/ui/Chip';
 import { SearchX } from 'lucide-react';
-import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
+import { WidgetError } from '../../components/ui/SectionErrorBoundary';
 
 // Extracted List component to allow Error Boundary to catch its errors
 function TaskListWidget({ activeRole, statusFilter }) {

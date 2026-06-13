@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { chatApi } from '../services/chat.service';
 import { useChatStore } from '../store/chatStore';
 
-export function useChatHistory(taskId) {
+export function useChatHistory(chatRoomId) {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -13,8 +13,8 @@ export function useChatHistory(taskId) {
   const setMessages = useChatStore((s) => s.setMessages);
 
   const { data: history, isLoading } = useQuery({
-    queryKey: ['messages', taskId],
-    queryFn:  () => chatApi.getByTask(taskId).then((r) => {
+    queryKey: ['messages', chatRoomId],
+    queryFn:  () => chatApi.getMessages(chatRoomId).then((r) => {
       const data = r.data.data;
       const msgs = Array.isArray(data) ? data : (data?.messages || []);
       
@@ -27,18 +27,18 @@ export function useChatHistory(taskId) {
       
       return msgs.slice().reverse();
     }),
-    enabled: !!taskId,
+    enabled: !!chatRoomId,
   });
 
   useEffect(() => {
-    if (history) setMessages(taskId, history);
-  }, [history, taskId, setMessages]);
+    if (history) setMessages(chatRoomId, history);
+  }, [history, chatRoomId, setMessages]);
 
   const loadMore = async () => {
     if (!cursor || isLoadingMore) return;
     setIsLoadingMore(true);
     try {
-      const res = await chatApi.getByTask(taskId, { cursor });
+      const res = await chatApi.getMessages(chatRoomId, { cursor });
       const data = res.data.data;
       const msgs = Array.isArray(data) ? data : (data?.messages || []);
       const nextCursor = data?.nextCursor;
@@ -46,7 +46,7 @@ export function useChatHistory(taskId) {
       setCursor(nextCursor);
       
       const reversedMsgs = msgs.slice().reverse();
-      setMessages(taskId, [...reversedMsgs, ...(messages[taskId] || [])]);
+      setMessages(chatRoomId, [...reversedMsgs, ...(messages[chatRoomId] || [])]);
     } catch (e) {
       console.error(e);
     } finally {

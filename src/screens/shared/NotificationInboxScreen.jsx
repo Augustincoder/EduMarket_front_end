@@ -11,6 +11,45 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { hapticLight, hapticImpact } from '../../lib/telegram';
+import { chatApi } from '../../services/chat.service';
+import { useQuery } from '@tanstack/react-query';
+import { Users, UserPlus } from 'lucide-react';
+
+function ChatInviteItem({ invite, onAction }) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="p-4 rounded-xl border bg-indigo-500/10 border-indigo-500/30 mb-3 flex items-start gap-3"
+    >
+      <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white shrink-0">
+        <Users size={20} />
+      </div>
+      <div className="flex-1">
+        <h3 className="text-sm font-bold text-edu-text">Guruhga taklif</h3>
+        <p className="text-xs text-edu-muted mt-1 leading-relaxed">
+          Sizni <strong>{invite.chatRoom?.name || 'Guruh'}</strong> guruhiga taklif qilishdi.
+        </p>
+        <div className="flex gap-2 mt-3">
+          <button 
+            onClick={() => onAction(invite.id, 'accept')}
+            className="flex-1 py-1.5 bg-indigo-500 text-white text-xs font-bold rounded-lg active:scale-95 transition-transform flex items-center justify-center gap-1"
+          >
+            <UserPlus size={14} /> Qabul qilish
+          </button>
+          <button 
+            onClick={() => onAction(invite.id, 'reject')}
+            className="px-3 py-1.5 bg-edu-surface text-edu-muted text-xs font-bold rounded-lg border border-edu-border active:scale-95 transition-transform"
+          >
+            Rad etish
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 function NotificationItem({ notif, onMarkRead }) {
   const navigate = useNavigate();
@@ -133,6 +172,29 @@ export default function NotificationInboxScreen() {
 
   const allNotifications = data?.pages ? data.pages.reduce((acc, p) => acc.concat(p.notifications || []), []) : [];
 
+  // Fetch Chat Invites
+  const { data: invitesData, refetch: refetchInvites } = useQuery({
+    queryKey: ['chatInvites'],
+    queryFn: () => chatApi.getMyInvites().then(r => r.data.data),
+  });
+  
+  const pendingInvites = invitesData || [];
+
+  const handleInviteAction = async (inviteId, action) => {
+    try {
+      if (action === 'accept') {
+        await chatApi.acceptInvite(inviteId);
+        toast.success("Guruhga qo'shildingiz!");
+      } else {
+        await chatApi.rejectInvite(inviteId);
+        toast.success("Taklif rad etildi.");
+      }
+      refetchInvites();
+    } catch {
+      toast.error("Xatolik yuz berdi");
+    }
+  };
+
   return (
     <PageLayout>
       <Header 
@@ -151,9 +213,17 @@ export default function NotificationInboxScreen() {
       />
       
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 pb-10 overflow-x-hidden">
+        
+        {/* Chat Invites Section */}
+        <AnimatePresence>
+          {pendingInvites.map(invite => (
+            <ChatInviteItem key={`inv-${invite.id}`} invite={invite} onAction={handleInviteAction} />
+          ))}
+        </AnimatePresence>
+
         {isLoading ? (
           <div className="flex justify-center py-10"><div className="w-8 h-8 rounded-full border-2 border-edu-primary border-t-transparent animate-spin"/></div>
-        ) : allNotifications.length === 0 ? (
+        ) : allNotifications.length === 0 && pendingInvites.length === 0 ? (
           <EmptyState
             emoji="📭"
             title="Hozircha bo'sh"
