@@ -26,6 +26,7 @@ export default function TaskFeedScreen() {
   const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const filterState = useUiStore((s) => s.filterState);
   const setFilter = useUiStore((s) => s.setFilter);
@@ -148,33 +149,49 @@ export default function TaskFeedScreen() {
           </div>
         </div>
 
-        {/* Categories Floating Glassmorphism Bar (Sticky) */}
-        <div className="sticky top-[calc(env(safe-area-inset-top)_+_12px)] z-30 mb-6 px-4">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-lg">
-            <FilterChip
-              label="Barchasi"
-              active={!filterState.category}
-              onClick={() => { setFilter('category', ''); hapticLight(); }}
-              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300"
-            />
-            {getTrendingCategories().map((cat) => (
-              <FilterChip
-                key={cat.value}
-                label={`${cat.emoji} ${cat.label}`}
-                active={filterState.category === cat.value}
-                onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+        {/* Expandable Category Grid (Glassmorphism) */}
+        <div className="z-30 mb-6 px-4">
+          <div className="p-3 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-sm flex flex-col transition-all duration-500 overflow-hidden">
+            <div className="flex items-center justify-between px-2 mb-3">
+              <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Yo'nalishlar</h3>
+              <button 
+                onClick={() => { hapticLight(); setCategoriesExpanded(!categoriesExpanded); }}
+                className="text-edu-primary text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-transform bg-edu-primary/10 px-2 py-1 rounded-full"
+              >
+                {categoriesExpanded ? 'Yashirish' : 'Barchasi...'}
+              </button>
+            </div>
+            
+            <motion.div layout className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => { setFilter('category', ''); hapticLight(); }}
                 className={cn(
-                  "rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300",
-                  filterState.category === cat.value ? "bg-edu-text text-edu-bg shadow-sm scale-100" : "bg-transparent text-edu-text-2 hover:bg-black/5 dark:hover:bg-white/5"
+                  "rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border",
+                  !filterState.category 
+                    ? "bg-edu-text text-edu-bg border-transparent shadow-md" 
+                    : "bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5"
                 )}
-              />
-            ))}
-            <button
-              onClick={() => { setFilterOpen(true); hapticLight(); }}
-              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent bg-transparent text-edu-primary whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
-            >
-              Barchasi...
-            </button>
+              >
+                <span className="text-base leading-none">🌐</span>
+                <span className="truncate">Barchasi</span>
+              </button>
+              
+              {(categoriesExpanded ? useCategoryStore.getState().categories : useCategoryStore.getState().categories.slice(0, 5)).map(cat => (
+                <button
+                  key={cat.value}
+                  onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+                  className={cn(
+                    "rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border",
+                    filterState.category === cat.value 
+                      ? "bg-edu-text text-edu-bg border-transparent shadow-md" 
+                      : "bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5"
+                  )}
+                >
+                  <span className="text-base leading-none">{cat.emoji}</span>
+                  <span className="truncate">{cat.label}</span>
+                </button>
+              ))}
+            </motion.div>
           </div>
         </div>
 
