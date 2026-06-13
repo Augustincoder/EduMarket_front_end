@@ -168,7 +168,7 @@ export default function CreateGigScreen() {
             <div className="flex flex-col gap-4">
               
               {/* Option 1: VIP Status */}
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${
+              <div className={`p-4 rounded-xl border transition-all duration-300 ${
                 isVip 
                   ? 'bg-edu-primary/5 border-edu-primary/30' 
                   : 'bg-edu-surface border-edu-border/40 shadow-sm'
@@ -209,7 +209,7 @@ export default function CreateGigScreen() {
               </div>
 
               {/* Option 2: Completed Tasks */}
-              <div className={`p-4 rounded-2xl border transition-all duration-300 ${
+              <div className={`p-4 rounded-xl border transition-all duration-300 ${
                 completedTasks >= 3 
                   ? 'bg-edu-primary/5 border-edu-primary/30' 
                   : 'bg-edu-surface border-edu-border/40 shadow-sm'
@@ -257,7 +257,7 @@ export default function CreateGigScreen() {
             <Button
               variant="secondary"
               onClick={() => navigate('/gigs')}
-              className="w-full h-12 rounded-2xl font-bold mt-2 active-bounce text-sm"
+              className="w-full h-12 rounded-xl font-bold mt-2 active-bounce text-sm"
             >
               Katalogga qaytish
             </Button>
@@ -299,7 +299,7 @@ export default function CreateGigScreen() {
               {/* Step 1: General Info */}
               {step === 1 && (
                 <div className="flex flex-col gap-4 animate-fade-in">
-                  <div className="bg-edu-surface rounded-2xl p-4 border border-edu-border/30 shadow-sm flex flex-col gap-4">
+                  <div className="bg-edu-surface rounded-xl p-4 border border-edu-border/30 shadow-sm flex flex-col gap-4">
                     {/* Title */}
                     <TextInput
                       label="XIZMAT SARLAVHASI"
@@ -327,7 +327,7 @@ export default function CreateGigScreen() {
                     type="button"
                     variant="primary"
                     onClick={handleNextStep}
-                    className="w-full h-12 rounded-2xl font-bold flex items-center justify-center gap-1.5 active-bounce mt-2 shadow-lg shadow-edu-primary/10"
+                    className="w-full h-12 rounded-xl font-bold flex items-center justify-center gap-1.5 active-bounce mt-2 shadow-lg shadow-edu-primary/10"
                   >
                     Keyingi bosqich <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -337,7 +337,7 @@ export default function CreateGigScreen() {
               {/* Step 2: Pricing and Conditions */}
               {step === 2 && (
                 <div className="flex flex-col gap-4 animate-fade-in">
-                  <div className="bg-edu-surface rounded-2xl p-4 border border-edu-border/30 shadow-sm flex flex-col gap-4">
+                  <div className="bg-edu-surface rounded-xl p-4 border border-edu-border/30 shadow-sm flex flex-col gap-4">
                     
                     {/* Price Input */}
                     <div>
@@ -376,7 +376,7 @@ export default function CreateGigScreen() {
                       type="button"
                       variant="secondary"
                       onClick={() => setStep(1)}
-                      className="flex-1 h-12 rounded-2xl font-bold active-bounce flex items-center justify-center gap-1.5"
+                      className="flex-1 h-12 rounded-xl font-bold active-bounce flex items-center justify-center gap-1.5"
                     >
                       <ArrowLeft className="w-4 h-4" /> Orqaga
                     </Button>
@@ -384,7 +384,7 @@ export default function CreateGigScreen() {
                       type="submit"
                       variant="primary"
                       isLoading={createMutation.isPending}
-                      className="flex-1 h-12 rounded-2xl font-bold active-bounce shadow-lg shadow-edu-primary/10 flex items-center justify-center gap-1.5"
+                      className="flex-1 h-12 rounded-xl font-bold active-bounce shadow-lg shadow-edu-primary/10 flex items-center justify-center gap-1.5"
                     >
                       Katalogga joylash <Sparkles className="w-4 h-4" />
                     </Button>

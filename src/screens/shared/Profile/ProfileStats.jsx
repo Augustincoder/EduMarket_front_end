@@ -7,29 +7,29 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading }) {
     if (isLoading) {
       return (
         <div className="grid grid-cols-3 gap-2.5 animate-pulse">
-          <div className="bg-edu-surface border border-edu-border/30 rounded-2xl min-h-[82px] shadow-sm"></div>
-          <div className="bg-edu-surface border border-edu-border/30 rounded-2xl min-h-[82px] shadow-sm"></div>
-          <div className="bg-edu-surface border border-edu-border/30 rounded-2xl min-h-[82px] shadow-sm"></div>
+          <div className="bg-edu-surface border border-edu-border/30 rounded-xl min-h-[82px] shadow-sm"></div>
+          <div className="bg-edu-surface border border-edu-border/30 rounded-xl min-h-[82px] shadow-sm"></div>
+          <div className="bg-edu-surface border border-edu-border/30 rounded-xl min-h-[82px] shadow-sm"></div>
         </div>
       );
     }
     return (
       <div className="grid grid-cols-3 gap-2.5">
-        <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+        <div className="bg-edu-surface border border-edu-border/30 rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
           <ClipboardList size={22} className="text-edu-primary" />
           <div className="mt-2">
             <p className="text-lg font-bold font-display text-edu-text leading-none">{clientStats?.createdTasks ?? 0}</p>
             <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">E'lon qilingan</p>
           </div>
         </div>
-        <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+        <div className="bg-edu-surface border border-edu-border/30 rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
           <Wallet size={22} className="text-indigo-500" />
           <div className="mt-2">
             <p className="text-lg font-bold font-display text-edu-text leading-none truncate">{formatPrice(clientStats?.totalSpent ?? 0)}</p>
             <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">Sarflandi</p>
           </div>
         </div>
-        <div className="bg-edu-surface border border-edu-border/30 rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+        <div className="bg-edu-surface border border-edu-border/30 rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
           <Zap size={22} className="text-orange-500" />
           <div className="mt-2">
             <p className="text-lg font-bold font-display text-edu-text leading-none">
@@ -49,8 +49,8 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading }) {
     return (
       <div className="space-y-4">
         {/* Gamification: Level & Streak */}
-        <div className="bg-edu-surface border border-edu-border/40 shadow-sm rounded-2xl p-4 animate-fade-in relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="bg-edu-surface border border-edu-border/40 shadow-sm rounded-xl p-4 animate-fade-in relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-xl rounded-full pointer-events-none" />
           
           <div className="flex justify-between items-center mb-3 relative z-10">
             <div className="flex flex-col">
@@ -99,7 +99,7 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading }) {
             { label: 'Muvaffaqiyat', value: me?.completionRate ? `${Math.round(me.completionRate)}%` : '100%', icon: <TrendingUp size={24} className="text-blue-500" />, color: 'from-blue-500/5 to-transparent border-blue-500/20' },
             { label: 'Javob tezligi', value: me?.avgResponseHrs ? `${me.avgResponseHrs}s` : '1s', icon: <Zap size={24} className="text-orange-500" />, color: 'from-orange-500/5 to-transparent border-orange-500/20' },
           ].map((item, i) => (
-            <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-premium-sm transition-all hover:border-edu-text/10`}>
+            <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-sm transition-all hover:border-edu-text/10`}>
               <span>{item.icon}</span>
               <div className="mt-4">
                 <p className="text-2xl font-bold font-display text-edu-text leading-none">{item.value}</p>

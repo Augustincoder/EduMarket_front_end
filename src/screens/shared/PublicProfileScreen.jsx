@@ -89,8 +89,8 @@ export default function PublicProfileScreen() {
         {/* ── HERO SECTION ── */}
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-edu-primary/20 blur-3xl rounded-full scale-150 animate-pulse-subtle" />
-            <Avatar name={profile.fullname} avatarUrl={profile.avatarUrl} size="2xl" className="ring-4 ring-edu-surface shadow-xl relative z-10" />
+            <div className="absolute inset-0 bg-edu-primary/20 blur-xl rounded-full scale-150 animate-pulse-subtle" />
+            <Avatar name={profile.fullname} avatarUrl={profile.avatarUrl} size="2xl" className="ring-4 ring-edu-surface shadow-lg relative z-10" />
             {profile.isVip && (
               <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1.5 border-2 border-edu-surface shadow-sm z-20">
                 <span className="text-white text-[11px] block leading-none">👑</span>
@@ -118,7 +118,7 @@ export default function PublicProfileScreen() {
             { label: 'Reyting', value: avgRating ? avgRating : '—', icon: <Star size={18} className="text-amber-500" /> },
             { label: 'Streak', value: profile.streakCount || 0, icon: <Zap size={18} className="text-orange-500" />, suffix: ' kun' },
           ].map((stat, i) => (
-            <div key={i} className="bg-edu-surface border border-edu-border rounded-2xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
+            <div key={i} className="bg-edu-surface border border-edu-border rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
                <div className="w-8 h-8 rounded-xl bg-gray-50 dark:bg-black/20 flex items-center justify-center">
                 {stat.icon}
               </div>
@@ -136,7 +136,7 @@ export default function PublicProfileScreen() {
         {dnaData && <ReputationRadarChart dna={dnaData} />}
 
         {/* ── ABOUT & SKILLS (CV STYLE) ── */}
-        <Card className="bg-edu-surface shadow-ios border border-edu-border" radius="2xl">
+        <Card className="bg-edu-surface shadow-ios border border-edu-border" radius="xl">
           <CardContent className="p-6 space-y-6">
             {profile.bio && (
               <div className="space-y-2">
@@ -161,7 +161,7 @@ export default function PublicProfileScreen() {
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Yutuqlar</p>
                 <div className="grid grid-cols-1 gap-2">
                   {profile.achievements.map((ach, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100/50 dark:border-indigo-500/10">
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100/50 dark:border-indigo-500/10">
                       <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-600">
                         <Trophy size={16} />
                       </div>
@@ -189,7 +189,7 @@ export default function PublicProfileScreen() {
                   onClick={() => { hapticLight(); handleViewFile(item.fileId, item.title); }}
                   className="bg-edu-surface border border-edu-border rounded-xl p-3 flex flex-col gap-3 active:scale-[0.98] transition-all text-left shadow-ios"
                 >
-                  <div className="aspect-square w-full rounded-2xl bg-gray-50 dark:bg-black/20 flex flex-col items-center justify-center relative overflow-hidden group">
+                  <div className="aspect-square w-full rounded-xl bg-gray-50 dark:bg-black/20 flex flex-col items-center justify-center relative overflow-hidden group">
                     <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                       <FileText size={22} />
                     </div>
@@ -247,11 +247,11 @@ export default function PublicProfileScreen() {
       </div>
 
       {/* ── STICKY CALL TO ACTION ── */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/90 dark:bg-black/90 backdrop-blur-2xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50">
         <div className="flex gap-3">
           <button
             onClick={() => { hapticLight(); navigate(`/tasks/${userId}/chat`); }}
-            className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center justify-center shrink-0 active:scale-90 transition-all border border-black/[0.02] dark:border-white/[0.05]"
+            className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center justify-center shrink-0 active:scale-90 transition-all border border-black/[0.02] dark:border-white/[0.05]"
           >
             <MessageCircle size={22} />
           </button>
@@ -260,7 +260,7 @@ export default function PublicProfileScreen() {
               hapticSuccess();
               navigate(`/tasks/create?freelancerId=${userId}`);
             }}
-            className="flex-1 h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-[15px] shadow-lg shadow-edu-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all uppercase tracking-widest"
+            className="flex-1 h-14 rounded-xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-[15px] shadow-lg shadow-edu-primary/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all uppercase tracking-widest"
           >
             <span>Menga ishlash taklif qiling</span>
             <ChevronRight size={18} />

@@ -39,12 +39,12 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-edu-bg w-full sm:max-w-md rounded-t-[2rem] sm:rounded-3xl flex flex-col max-h-[90vh] shadow-2xl animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 relative border border-edu-border/20">
+      <div className="bg-edu-bg w-full sm:max-w-md rounded-t-[2rem] sm:rounded-xl flex flex-col max-h-[90vh] shadow-lg animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 relative border border-edu-border/20">
         
         {/* Header */}
-        <div className="p-5 pb-4 border-b border-edu-border/30 flex items-center justify-between sticky top-0 bg-edu-bg z-10 sm:rounded-t-3xl">
+        <div className="p-5 pb-4 border-b border-edu-border/30 flex items-center justify-between sticky top-0 bg-edu-bg z-10 sm:rounded-t-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-edu-primary/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-edu-primary/10 flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-edu-primary" />
             </div>
             <div>
@@ -64,7 +64,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
         <div className="p-5 overflow-y-auto space-y-6">
           
           {/* Info Banner */}
-          <div className="bg-amber-50/50 border border-amber-200/50 rounded-2xl p-3 flex gap-3 items-start">
+          <div className="bg-amber-50/50 border border-amber-200/50 rounded-xl p-3 flex gap-3 items-start">
             <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
             <p className="text-[11px] text-amber-700/80 leading-relaxed font-medium">
               Mijoz avval sizning ishingizni <b>"Ko'rish uchun"</b> fayllar orqali tekshiradi. To'liq variant fayllari esa ular faqat baho qoldirgandan keyingina ochiladi.
@@ -78,7 +78,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
               {previewUpload.isUploading && <span className="text-[10px] text-edu-primary animate-pulse">Yuklanmoqda {previewUpload.progress}%</span>}
             </label>
             <div className={cn(
-              "border-2 border-dashed border-edu-border/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center bg-edu-surface/30 relative hover:bg-edu-surface/60 transition-colors",
+              "border-2 border-dashed border-edu-border/50 rounded-xl p-4 flex flex-col items-center justify-center text-center bg-edu-surface/30 relative hover:bg-edu-surface/60 transition-colors",
               previewUpload.isUploading && "opacity-50 pointer-events-none"
             )}>
               <UploadCloud className="w-6 h-6 text-edu-muted mb-2" />
@@ -115,7 +115,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
               {fullUpload.isUploading && <span className="text-[10px] text-edu-primary animate-pulse">Yuklanmoqda {fullUpload.progress}%</span>}
             </label>
             <div className={cn(
-              "border-2 border-dashed border-edu-border/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center bg-edu-surface/30 relative hover:bg-edu-surface/60 transition-colors",
+              "border-2 border-dashed border-edu-border/50 rounded-xl p-4 flex flex-col items-center justify-center text-center bg-edu-surface/30 relative hover:bg-edu-surface/60 transition-colors",
               fullUpload.isUploading && "opacity-50 pointer-events-none"
             )}>
               <Lock className="w-6 h-6 text-edu-muted mb-2" />
@@ -153,7 +153,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full bg-edu-surface border border-edu-border/30 rounded-2xl p-3 text-sm text-edu-text focus:outline-none focus:border-edu-primary/30 min-h-[80px]"
+              className="w-full bg-edu-surface border border-edu-border/30 rounded-xl p-3 text-sm text-edu-text focus:outline-none focus:border-edu-primary/30 min-h-[80px]"
               placeholder="Qo'shimcha ma'lumotlar..."
             />
           </div>
@@ -167,7 +167,7 @@ export function DeliverySubmitModal({ isOpen, onClose, onSubmit, isSubmitting })
             variant="primary"
             disabled={!isFormValid || isSubmitting || previewUpload.isUploading || fullUpload.isUploading}
             onClick={handleSubmit}
-            className="shadow-lg shadow-edu-primary/20 h-12 rounded-2xl font-bold uppercase tracking-widest text-[13px]"
+            className="shadow-lg shadow-edu-primary/20 h-12 rounded-xl font-bold uppercase tracking-widest text-[13px]"
           >
             {isSubmitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />

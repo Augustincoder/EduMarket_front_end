@@ -7,7 +7,7 @@ export function Modal({ isOpen, onClose, title, footer, children }) {
     <Dialog.Root open={isOpen} onOpenChange={(val) => !val && onClose?.()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] animate-in fade-in duration-300" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[400px] p-6 bg-edu-surface rounded-lg shadow-premium-lg border border-edu-border/30 z-[101] max-h-[85vh] overflow-y-auto scrollbar-hide focus:outline-none animate-ios-pop">
+        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-[400px] p-6 bg-edu-surface rounded-lg shadow-lg border border-edu-border/30 z-[101] max-h-[85vh] overflow-y-auto scrollbar-hide focus:outline-none animate-ios-pop">
           {title && (
             <div className="flex items-center justify-between mb-6 px-1">
               <Dialog.Title className="text-[19px] font-bold text-edu-text tracking-tight leading-tight">

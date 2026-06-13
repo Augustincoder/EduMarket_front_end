@@ -137,7 +137,7 @@ function TopFreelancersWidget() {
             <div
               key={fl.id}
               onClick={() => { navigate(`/profile/${fl.id}`); }}
-              className="flex items-center gap-3 p-3 bg-edu-surface rounded-[16px] border border-edu-border cursor-pointer active:scale-95 transition-transform"
+              className="flex items-center gap-3 p-3 bg-edu-surface rounded-lg border border-edu-border cursor-pointer active:scale-95 transition-transform"
             >
               <div className="relative">
                 <Avatar name={fl.fullname} avatarUrl={fl.avatarUrl} size="md" />
@@ -159,7 +159,7 @@ function TopFreelancersWidget() {
           ))}
         </div>
       ) : (
-        <div className="bg-edu-surface rounded-[16px] p-6 text-center border border-dashed border-edu-border">
+        <div className="bg-edu-surface rounded-lg p-6 text-center border border-dashed border-edu-border">
           <p className="text-[13px] font-medium text-edu-muted">Hozircha mutaxassislar yo'q</p>
         </div>
       )}

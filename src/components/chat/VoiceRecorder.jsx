@@ -90,7 +90,7 @@ export function VoiceRecorder({ onSend, onCancel }) {
 
   if (!isRecording) {
     return (
-      <div className="flex-1 flex items-center gap-3 bg-black/5 dark:bg-white/5 rounded-2xl px-4 py-2.5 animate-pulse text-xs text-edu-muted font-bold">
+      <div className="flex-1 flex items-center gap-3 bg-black/5 dark:bg-white/5 rounded-xl px-4 py-2.5 animate-pulse text-xs text-edu-muted font-bold">
         <div className="w-1.5 h-1.5 rounded-full bg-edu-primary animate-ping shrink-0" />
         <span>Mikrofon faollashtirilmoqda...</span>
         <div className="flex-1" />
@@ -102,7 +102,7 @@ export function VoiceRecorder({ onSend, onCancel }) {
   }
 
   return (
-    <div className="flex-1 flex items-center gap-3 bg-edu-primary/10 rounded-2xl px-3 py-1 animate-fade-in">
+    <div className="flex-1 flex items-center gap-3 bg-edu-primary/10 rounded-xl px-3 py-1 animate-fade-in">
       <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
       <span className="text-sm font-mono font-bold text-edu-primary">{formatDuration(duration)}</span>
       

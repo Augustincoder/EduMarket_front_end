@@ -44,9 +44,9 @@ function StatisticsWidget({ user }) {
           <div 
             key={item.label}
             onClick={() => navigate(item.nav)}
-            className="flex-shrink-0 w-[150px] h-[80px] flex items-center gap-3 bg-edu-surface rounded-[16px] p-3 snap-center cursor-pointer border border-edu-border shadow-sm active:scale-95 transition-transform"
+            className="flex-shrink-0 w-[150px] h-[80px] flex items-center gap-3 bg-edu-surface rounded-lg p-3 snap-center cursor-pointer border border-edu-border shadow-sm active:scale-95 transition-transform"
           >
-            <div className={cn("w-12 h-12 rounded-[12px] flex items-center justify-center text-[20px]", item.bg)}>
+            <div className={cn("w-12 h-12 rounded-md flex items-center justify-center text-[20px]", item.bg)}>
               {item.emoji}
             </div>
             <div className="flex flex-col min-w-0">
@@ -163,7 +163,7 @@ function RecommendedTasksWidget() {
           ))}
         </div>
       ) : (
-        <div className="bg-edu-surface rounded-[16px] p-6 text-center border border-dashed border-edu-border">
+        <div className="bg-edu-surface rounded-lg p-6 text-center border border-dashed border-edu-border">
           <p className="text-[13px] font-medium text-edu-muted">Hozircha tavsiya etilgan ishlar yo'q</p>
         </div>
       )}
@@ -195,7 +195,7 @@ export default function FreelancerHomeScreen() {
           onClick={() => { navigate('/tasks'); }}
           className="bg-edu-accent border-none shadow-btn min-h-[120px] relative overflow-hidden"
         >
-          <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
           <CardContent className="p-5 flex flex-col justify-between h-full relative z-10 text-white">
             <h2 className="text-[20px] font-bold font-display mb-1">Yangi ish topish</h2>
             <p className="text-[12px] font-medium text-white/80 max-w-[200px] mb-4">Mijozlar kutmoqda, eng yaxshi buyurtmani oling.</p>

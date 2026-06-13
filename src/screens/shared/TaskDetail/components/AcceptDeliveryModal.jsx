@@ -20,7 +20,7 @@ export function AcceptDeliveryModal({ isOpen, onClose, onConfirm, isLoading }) {
       }
     >
       <div className="py-2 space-y-4">
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 shadow-sm text-emerald-800 space-y-3">
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 shadow-sm text-emerald-800 space-y-3">
           <p className="text-[13px] font-bold text-emerald-700 uppercase tracking-widest text-center">Tasdiqlaganingizdan so'ng:</p>
           
           <div className="space-y-2">

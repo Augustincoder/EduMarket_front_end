@@ -122,7 +122,7 @@ export default function AdminUsers() {
       
       {/* ── Filter Bar ────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/40 border border-slate-800/60 p-5 rounded-3xl flex-1">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/40 border border-slate-800/60 p-5 rounded-xl flex-1">
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
               <Search size={16} />
@@ -132,7 +132,7 @@ export default function AdminUsers() {
               placeholder="Qidirish..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none focus:border-indigo-600 transition-all"
+              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none focus:border-indigo-600 transition-all"
             />
           </div>
           
@@ -194,14 +194,14 @@ export default function AdminUsers() {
               toast.error("Eksport qilish uchun ma'lumot yo'q");
             }
           }}
-          className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 md:w-auto w-full"
+          className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 md:w-auto w-full"
         >
           <Download size={16} /> Export (CSV)
         </button>
       </div>
 
       {/* ── Table Grid ────────────────────────────────────── */}
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -436,7 +436,7 @@ export default function AdminUsers() {
             Foydalanuvchi talabalik guvohnomasi va u yuborgan o'quv ma'lumotlari.
           </DialogDescription>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-2xl border border-slate-850">
+            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-xl border border-slate-850">
               <div>
                 <p className="text-slate-500 font-bold uppercase tracking-wider">Universitet</p>
                 <p className="text-slate-100 font-bold mt-1">{selectedUser?.university || 'Kiritilmagan'}</p>
@@ -456,7 +456,7 @@ export default function AdminUsers() {
             </div>
 
             {/* Document Preview */}
-            <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[250px] max-h-[350px]">
+            <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[250px] max-h-[350px]">
               {studentCardUrl ? (
                 <img 
                   src={studentCardUrl} 

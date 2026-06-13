@@ -60,7 +60,7 @@ export default function AdminDisputes() {
   return (
     <div className="space-y-6 animate-fade-in text-slate-100">
       
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -131,7 +131,7 @@ export default function AdminDisputes() {
             
             {/* Left: Task Info & Chat Logs */}
             <div className="space-y-4">
-              <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-850 space-y-2">
+              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-850 space-y-2">
                 <h4 className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Topshiriq tavsifi</h4>
                 <p className="text-xs font-bold text-slate-100">{selectedDispute?.task?.title}</p>
                 <p className="text-[11px] text-slate-400 leading-relaxed max-h-24 overflow-y-auto">{selectedDispute?.task?.description}</p>
@@ -142,7 +142,7 @@ export default function AdminDisputes() {
               </div>
 
               {/* Chat history */}
-              <div className="bg-slate-950/60 rounded-2xl border border-slate-850 p-4 flex flex-col h-[280px]">
+              <div className="bg-slate-950/60 rounded-xl border border-slate-850 p-4 flex flex-col h-[280px]">
                 <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
                   <MessageSquare size={12} />
                   Muloqot chat loglari
@@ -157,7 +157,7 @@ export default function AdminDisputes() {
                       const publicUrl = msg.fileId ? filesApi.getPublicUrl(msg.fileId) : null;
                       return (
                         <div key={msg.id} className={`flex flex-col ${isClient ? 'items-start' : 'items-end'}`}>
-                          <div className={`p-2.5 rounded-2xl max-w-[80%] ${
+                          <div className={`p-2.5 rounded-xl max-w-[80%] ${
                             isClient ? 'bg-slate-900 text-slate-300' : 'bg-indigo-600/10 text-indigo-300 border border-indigo-500/20'
                           }`}>
                             <p className="font-bold text-[9px] mb-0.5 opacity-60">{msg.sender?.fullname}</p>
@@ -199,7 +199,7 @@ export default function AdminDisputes() {
             {/* Right: Resolution controls */}
             <div className="space-y-4 flex flex-col justify-between">
               <div className="space-y-4">
-                <div className="bg-slate-950/60 p-4 border border-slate-850 rounded-2xl">
+                <div className="bg-slate-950/60 p-4 border border-slate-850 rounded-xl">
                   <h4 className="text-[10px] font-bold text-rose-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
                     <ShieldAlert size={12} />
                     Nizo ochilish sababi
@@ -236,7 +236,7 @@ export default function AdminDisputes() {
               <button
                 disabled={!winner || !adminNotes.trim() || resolveMutation.isLoading}
                 onClick={() => resolveMutation.mutate({ id: selectedDispute.id, winner, adminNotes })}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
               >
                 <Award size={16} /> Qarorni Tasdiqlash & Yopish
               </button>

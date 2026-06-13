@@ -10,12 +10,12 @@ export function ProfileHeader({ me, activeRole }) {
       <>
         {/* Client Profile Card */}
         <Card className="bg-gradient-to-br from-edu-primary/5 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="lg">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 blur-3xl rounded-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 blur-xl rounded-full pointer-events-none" />
           <CardContent className="p-8 flex flex-col items-center text-center gap-4 relative z-10">
             <div className="relative">
-              <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/10 shadow-premium-lg animate-fade-in" />
+              <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/10 shadow-lg animate-fade-in" />
               {me?.isVip && (
-                <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 border-2 border-edu-surface shadow-premium-sm">
+                <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 border-2 border-edu-surface shadow-sm">
                   <span className="text-white text-[12px] block leading-none">👑</span>
                 </div>
               )}
@@ -73,8 +73,8 @@ export function ProfileHeader({ me, activeRole }) {
     return (
       <>
         {/* Freelancer Header card */}
-        <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="2xl">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/15 blur-3xl rounded-full pointer-events-none" />
+        <Card className="bg-gradient-to-br from-edu-primary/10 via-edu-accent/5 to-transparent border border-edu-border/30 relative overflow-hidden" radius="xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/15 blur-xl rounded-full pointer-events-none" />
           <CardContent className="p-6 flex flex-col items-center text-center gap-3.5 relative z-10">
             <div className="relative">
               <Avatar name={me?.fullname} avatarUrl={me?.avatarUrl} size="2xl" className="ring-4 ring-edu-primary/20 shadow-md animate-fade-in" />

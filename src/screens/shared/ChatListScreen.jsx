@@ -206,7 +206,7 @@ export default function ChatListScreen() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Suhbatdosh yoki vazifani qidiring..."
-              className="w-full bg-edu-surface/60 backdrop-blur-md border border-edu-border text-edu-text text-[15px] font-medium rounded-2xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all shadow-sm placeholder:font-medium placeholder:text-edu-muted"
+              className="w-full bg-edu-surface/60 backdrop-blur-md border border-edu-border text-edu-text text-[15px] font-medium rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all shadow-sm placeholder:font-medium placeholder:text-edu-muted"
             />
           </div>
         </div>

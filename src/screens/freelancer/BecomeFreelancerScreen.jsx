@@ -62,7 +62,7 @@ export default function BecomeFreelancerScreen() {
     <PageLayout title="Mutaxassis bo'lish">
       <div className="p-4 flex flex-col h-full overflow-y-auto pb-24">
         
-        <div className="bg-edu-accent/10 p-5 rounded-2xl mb-6 border border-edu-accent/20">
+        <div className="bg-edu-accent/10 p-5 rounded-xl mb-6 border border-edu-accent/20">
           <h2 className="text-lg font-bold text-edu-accent mb-2">Daromadni boshlang!</h2>
           <p className="text-sm text-edu-text opacity-80">
             Siz mutaxassis sifatida ro'yxatdan o'tib, platformadagi vazifalarni bajarishingiz va pul ishlashingiz mumkin.

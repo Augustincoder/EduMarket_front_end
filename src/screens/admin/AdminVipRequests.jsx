@@ -67,7 +67,7 @@ export default function AdminVipRequests() {
   return (
     <div className="space-y-6 animate-fade-in text-slate-100">
       
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -140,7 +140,7 @@ export default function AdminVipRequests() {
           </DialogDescription>
           
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-2xl border border-slate-850">
+            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-xl border border-slate-850">
               <div>
                 <p className="text-slate-500 font-bold uppercase tracking-wider">Paket</p>
                 <p className="text-amber-400 font-bold mt-1">👑 {selectedReq?.packageType}</p>
@@ -160,7 +160,7 @@ export default function AdminVipRequests() {
             </div>
 
             {/* Check Screenshot */}
-            <div className="border border-slate-850 rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[300px] max-h-[400px]">
+            <div className="border border-slate-850 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2 min-h-[300px] max-h-[400px]">
               {screenshotUrl ? (
                 <img 
                   src={screenshotUrl} 
@@ -177,7 +177,7 @@ export default function AdminVipRequests() {
               <button
                 disabled={processMutation.isLoading}
                 onClick={() => processMutation.mutate({ id: selectedReq.id, isApproved: true })}
-                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
               >
                 <Check size={16} /> To'lovni tasdiqlash (VIP maqomini yoqish)
               </button>

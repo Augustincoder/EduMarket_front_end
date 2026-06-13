@@ -4,7 +4,7 @@ import * as Switch from '@radix-ui/react-switch';
 export function ToggleSwitch({ label, description, checked, onChange }) {
   const switchId = label ? label.replace(/\s+/g, '-').toLowerCase() : 'switch';
   return (
-    <div className="flex flex-row-reverse w-full justify-between items-center bg-edu-surface rounded-[16px] px-4 py-3.5 border border-edu-border gap-4 shadow-sm active-bounce">
+    <div className="flex flex-row-reverse w-full justify-between items-center bg-edu-surface rounded-lg px-4 py-3.5 border border-edu-border gap-4 shadow-sm active-bounce">
       <Switch.Root
         id={switchId}
         aria-label={label}

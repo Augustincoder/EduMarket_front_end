@@ -180,7 +180,7 @@ export default function BidsScreen() {
               </div>
               {hasMore && (
                 <div className="flex justify-center pt-6 pb-20">
-                  <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-2xl px-8 font-bold uppercase tracking-widest text-[12px] h-11">
+                  <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-xl px-8 font-bold uppercase tracking-widest text-[12px] h-11">
                     Ko'proq ko'rsatish
                   </Button>
                 </div>
@@ -194,7 +194,7 @@ export default function BidsScreen() {
       {task?.isCoWorking && selectedTeam.length > 0 && user?.id === task?.clientId && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pb-8 z-40">
           <Button 
-            className="w-full shadow-2xl h-14 text-base font-bold" 
+            className="w-full shadow-lg h-14 text-base font-bold" 
             onClick={handleAssembleTeam}
             loading={assembleTeam.isPending}
           >
@@ -239,7 +239,7 @@ export default function BidsScreen() {
         title="Qarshi taklif"
       >
         <div className="space-y-5 py-2">
-          <div className="bg-edu-primary/5 rounded-2xl p-4 flex items-center justify-between border border-edu-primary/10">
+          <div className="bg-edu-primary/5 rounded-xl p-4 flex items-center justify-between border border-edu-primary/10">
             <div>
               <p className="text-[10px] font-bold text-edu-muted uppercase tracking-widest mb-1">Joriy taklif</p>
               <p className="text-sm font-bold">{formatPrice(countering?.proposedPrice)} UZS</p>

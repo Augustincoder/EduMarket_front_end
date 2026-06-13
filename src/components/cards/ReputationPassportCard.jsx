@@ -42,7 +42,7 @@ export function ReputationPassportCard({ profile }) {
   const joinMonth = joinDate.toLocaleDateString('uz-UZ', { month: 'long' });
 
   return (
-    <Card className={cn("relative overflow-hidden shadow-card backdrop-blur-xl border-2 transition-all", bgGradient)} radius="2xl">
+    <Card className={cn("relative overflow-hidden shadow-card backdrop-blur-xl border-2 transition-all", bgGradient)} radius="xl">
       {/* Background Watermark */}
       <div className="absolute -right-6 -top-6 opacity-5 rotate-12 pointer-events-none">
         <ShieldCheck size={120} strokeWidth={1} />

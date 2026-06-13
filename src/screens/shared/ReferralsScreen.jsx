@@ -41,7 +41,7 @@ export default function ReferralsScreen() {
       <div className="p-4 space-y-6 pb-24">
         
         {/* Banner */}
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-20">
             <Gift size={100} />
           </div>
@@ -51,7 +51,7 @@ export default function ReferralsScreen() {
               Siz taklif qilgan har bir do'stingiz o'zining ilk buyurtmasini yakunlaganda, siz uning foydasidan 5% bonus (Cashback) olasiz!
             </p>
             
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between border border-white/20">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 flex items-center justify-between border border-white/20">
               <div>
                 <p className="text-[10px] text-indigo-200 font-bold uppercase tracking-wider mb-1">Sizning taklif havolangiz</p>
                 <p className="font-mono text-sm">{referralsData?.referralCode || 'Yuklanmoqda...'}</p>
@@ -68,7 +68,7 @@ export default function ReferralsScreen() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-600 mb-3">
               <Users size={24} />
             </div>
@@ -78,7 +78,7 @@ export default function ReferralsScreen() {
             <p className="text-xs font-bold text-slate-500 uppercase mt-1">Taklif qilinganlar</p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 flex flex-col items-center justify-center text-center">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex flex-col items-center justify-center text-center">
             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-600 mb-3">
               <Coins size={24} />
             </div>
@@ -90,7 +90,7 @@ export default function ReferralsScreen() {
         </div>
 
         {/* List */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <h3 className="font-bold text-sm text-slate-900 dark:text-white">Taklif qilingan do'stlar</h3>
           </div>

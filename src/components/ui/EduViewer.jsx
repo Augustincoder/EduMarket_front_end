@@ -212,9 +212,9 @@ export default function EduViewer({
             )}
 
             {isImage ? (
-              <canvas ref={canvasRef} className="w-full h-full max-h-[75vh] object-contain rounded-xl shadow-2xl" />
+              <canvas ref={canvasRef} className="w-full h-full max-h-[75vh] object-contain rounded-xl shadow-lg" />
             ) : isText ? (
-              <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-2xl whitespace-pre-wrap font-mono text-sm overflow-auto max-h-full relative select-none">
+              <div className="w-full max-w-3xl bg-white p-6 rounded-xl shadow-lg whitespace-pre-wrap font-mono text-sm overflow-auto max-h-full relative select-none">
                 {requireSecureView && (
                   <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center opacity-10 space-y-10 overflow-hidden">
                      {Array.from({length: 10}).map((_, i) => (
@@ -268,7 +268,7 @@ export default function EduViewer({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center gap-2 px-6 py-3 bg-red-500 rounded-full shadow-2xl pointer-events-auto cursor-pointer hover:bg-red-600 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-red-500 rounded-full shadow-lg pointer-events-auto cursor-pointer hover:bg-red-600 transition-colors"
                 onClick={() => { hapticImpact('light'); setIsHolding(false); }}
               >
                 <EyeOff size={18} className="text-white animate-pulse" />

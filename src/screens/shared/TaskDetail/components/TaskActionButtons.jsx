@@ -29,7 +29,7 @@ export function TaskActionButtons({
 
   if (!user) {
     return (
-      <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')} className="rounded-2xl h-14 font-bold shadow-ios-primary">
+      <Button fullWidth variant="primary" size="lg" onClick={() => navigate('/')} className="rounded-xl h-14 font-bold shadow-ios-primary">
         Kirish va taklif bering
       </Button>
     );
@@ -76,7 +76,7 @@ export function TaskActionButtons({
     if (isFreelancer) {
       return (
         <div className="flex flex-col gap-3 w-full animate-fade-in">
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 shadow-sm mb-2">
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 shadow-sm mb-2">
             <h4 className="text-blue-700 font-bold text-[13px] mb-1">Mijoz taklifingizni qabul qildi! 🎉</h4>
             <p className="text-[11px] text-blue-600/80 font-medium">Shartlar bilan yana bir bor tanishib chiqing va ishni boshlang.</p>
           </div>
@@ -101,7 +101,7 @@ export function TaskActionButtons({
       return (
         <div className="flex flex-col gap-3 w-full">
           {isFreelancerGhosting ? (
-            <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4 rounded-2xl">
+            <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4 rounded-xl">
               <p className="text-red-600 dark:text-red-400 text-[12px] font-bold text-center">
                 Freelancer 48 soatdan beri aloqaga chiqmadi. Boshqasini topish uchun vazifani bekor qilishingiz mumkin.
               </p>
@@ -115,7 +115,7 @@ export function TaskActionButtons({
               </Button>
             </div>
           ) : (
-            <div className="text-[13px] text-center text-gray-400 bg-edu-bg p-4 rounded-2xl border border-black/[0.03] font-bold">
+            <div className="text-[13px] text-center text-gray-400 bg-edu-bg p-4 rounded-xl border border-black/[0.03] font-bold">
               ⏳ Ijrochi ishni boshlashini kutilmoqda...
             </div>
           )}
@@ -123,7 +123,7 @@ export function TaskActionButtons({
             fullWidth size="md" variant="outline"
             icon={<MessageSquare size={16} />}
             onClick={() => navigate(`/tasks/${task.id}/chat`)}
-            className="rounded-2xl h-12 border-edu-border font-bold"
+            className="rounded-xl h-12 border-edu-border font-bold"
           >
             Chatga o'tish
           </Button>
@@ -140,7 +140,7 @@ export function TaskActionButtons({
           <Button
             fullWidth size="lg" variant="primary"
             onClick={() => setDeliverySubmitOpen(true)}
-            className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
+            className="rounded-xl h-14 text-[15px] font-bold shadow-ios-primary"
           >
             Natijani yuborish 📤
           </Button>
@@ -157,14 +157,14 @@ export function TaskActionButtons({
     } else if (isClient) {
       return (
         <div className="flex flex-col gap-3 w-full">
-          <div className="text-[13px] text-center text-edu-primary bg-edu-primary/5 p-4 rounded-2xl border border-edu-primary/10 font-bold">
+          <div className="text-[13px] text-center text-edu-primary bg-edu-primary/5 p-4 rounded-xl border border-edu-primary/10 font-bold">
             ⚙️ Ijrochi vazifa ustida ishlamoqda
           </div>
           <Button
             fullWidth size="md" variant="outline"
             icon={<MessageSquare size={16} />}
             onClick={() => navigate(`/tasks/${task.id}/chat`)}
-            className="rounded-2xl h-12 border-edu-border font-bold"
+            className="rounded-xl h-12 border-edu-border font-bold"
           >
             Chatga o'tish
           </Button>
@@ -181,7 +181,7 @@ export function TaskActionButtons({
           <Button
             fullWidth size="lg" variant="primary"
             onClick={() => setRatingOpen(true)}
-            className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
+            className="rounded-xl h-14 text-[15px] font-bold shadow-ios-primary"
           >
             Vazifani baholash ⭐
           </Button>
@@ -189,7 +189,7 @@ export function TaskActionButtons({
             fullWidth size="md" variant="outline"
             icon={<MessageSquare size={16} />}
             onClick={() => navigate(`/tasks/${task.id}/chat`)}
-            className="rounded-2xl h-12 border-edu-border font-bold"
+            className="rounded-xl h-12 border-edu-border font-bold"
           >
             Chatga o'tish
           </Button>
@@ -198,7 +198,7 @@ export function TaskActionButtons({
     } else if (isFreelancer) {
       return (
         <div className="flex flex-col gap-3 w-full">
-          <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10 font-bold">
+          <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-xl border border-amber-500/10 font-bold">
             ⏳ Mijoz yuborilgan fayllarni tekshirmoqda
             {hoursToAutoAccept > 0 && (
               <div className="mt-2 text-[11px] text-amber-600/70 font-medium">
@@ -210,7 +210,7 @@ export function TaskActionButtons({
             fullWidth size="md" variant="outline"
             icon={<MessageSquare size={16} />}
             onClick={() => navigate(`/tasks/${task.id}/chat`)}
-            className="rounded-2xl h-12 border-edu-border font-bold"
+            className="rounded-xl h-12 border-edu-border font-bold"
           >
             Chatga o'tish
           </Button>
@@ -231,7 +231,7 @@ export function TaskActionButtons({
               await transitions.accept.mutateAsync();
               setRatingOpen(true);
             }}
-            className="rounded-2xl h-14 text-[15px] font-bold shadow-ios-primary"
+            className="rounded-xl h-14 text-[15px] font-bold shadow-ios-primary"
           >
             Vazifani qabul qilish ✅
           </Button>
@@ -256,7 +256,7 @@ export function TaskActionButtons({
     } else if (isFreelancer) {
       return (
         <div className="flex flex-col gap-3 w-full">
-          <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10 font-bold">
+          <div className="text-[13px] text-center text-amber-600 bg-amber-500/5 p-4 rounded-xl border border-amber-500/10 font-bold">
             ⏳ Mijoz yakuniy qabul qilishini kutilmoqda...
             {hoursToAutoAccept > 0 && (
               <div className="mt-2 text-[11px] text-amber-600/70 font-medium">
@@ -268,7 +268,7 @@ export function TaskActionButtons({
             fullWidth size="md" variant="outline"
             icon={<MessageSquare size={16} />}
             onClick={() => navigate(`/tasks/${task.id}/chat`)}
-            className="rounded-2xl h-12 border-edu-border font-bold"
+            className="rounded-xl h-12 border-edu-border font-bold"
           >
             Chatga o'tish
           </Button>
@@ -281,8 +281,8 @@ export function TaskActionButtons({
   if (task.status === 'COMPLETED' && isMember) {
     return (
       <div className="flex flex-col gap-3 w-full animate-fade-in">
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 text-center shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-2xl rounded-full pointer-events-none" />
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 text-center shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-xl rounded-full pointer-events-none" />
           <div className="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-md relative z-10">
             <CheckCircle size={24} />
           </div>
@@ -313,8 +313,8 @@ export function TaskActionButtons({
   if (task.status === 'DISPUTED' && isMember) {
     return (
       <div className="flex flex-col gap-3 w-full animate-fade-in">
-        <div className="bg-red-50 dark:bg-red-500/10 border border-red-500/20 rounded-2xl p-5 text-center shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-2xl rounded-full pointer-events-none" />
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-500/20 rounded-xl p-5 text-center shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-xl rounded-full pointer-events-none" />
           <div className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-md relative z-10">
             <AlertTriangle size={24} />
           </div>
@@ -327,7 +327,7 @@ export function TaskActionButtons({
           fullWidth size="md" variant="outline"
           icon={<MessageSquare size={16} />}
           onClick={() => navigate(`/tasks/${task.id}/chat`)}
-          className="rounded-2xl h-12 border-edu-border font-bold"
+          className="rounded-xl h-12 border-edu-border font-bold"
         >
           Chatda muloqotni davom ettirish
         </Button>

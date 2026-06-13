@@ -49,7 +49,7 @@ export function RatingModal({
       title="Tajribangizni baholang"
       footer={
         <div className="flex flex-col gap-3">
-          <Button fullWidth variant="primary" onClick={onSubmit} isLoading={isLoading} className="h-14 rounded-2xl shadow-ios-primary font-bold text-[15px]">
+          <Button fullWidth variant="primary" onClick={onSubmit} isLoading={isLoading} className="h-14 rounded-xl shadow-ios-primary font-bold text-[15px]">
             ⭐ Review yuborish
           </Button>
           <button onClick={onClose} className="text-edu-muted font-bold text-xs uppercase tracking-widest py-2">
@@ -84,7 +84,7 @@ export function RatingModal({
         )}
 
         {/* Sub-ratings (UX Showcase) */}
-        <div className="bg-edu-bg rounded-2xl p-4 border border-edu-border/50 space-y-3">
+        <div className="bg-edu-bg rounded-xl p-4 border border-edu-border/50 space-y-3">
           <h3 className="text-[11px] font-bold text-edu-muted uppercase tracking-widest mb-2">Muayyan baholar (Ixtiyoriy)</h3>
           
           <div className="flex items-center justify-between">

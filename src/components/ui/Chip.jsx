@@ -14,10 +14,10 @@ export function FilterChip({ label, active, onClick }) {
     <button
       onClick={handleClick}
       className={cn(
-        'cursor-pointer active:scale-[0.97] transition-transform duration-[120ms] h-9 px-5 rounded-[16px] flex items-center justify-center transition-all flex-shrink-0 border',
+        'cursor-pointer active:scale-[0.97] transition-transform duration-[120ms] h-9 px-5 rounded-lg flex items-center justify-center transition-all flex-shrink-0 border',
         active
           ? 'bg-edu-primary text-white border-transparent shadow-lg shadow-edu-primary/25'
-          : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-300 border-black/[0.03] dark:border-white/[0.05] shadow-premium-sm hover:border-edu-primary/30'
+          : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-300 border-black/[0.03] dark:border-white/[0.05] shadow-sm hover:border-edu-primary/30'
       )}
     >
       <span className="text-[12px] font-bold tracking-tight">{label}</span>

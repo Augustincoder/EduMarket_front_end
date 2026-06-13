@@ -161,7 +161,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             {showMenu && (
               <div 
                 className={cn(
-                  "absolute bottom-full mb-2 z-[80] bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-premium-lg py-1 animate-ios-pop flex flex-col min-w-[180px] max-w-[240px]",
+                  "absolute bottom-full mb-2 z-[80] bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-lg py-1 animate-ios-pop flex flex-col min-w-[180px] max-w-[240px]",
                   isMe ? "right-0" : "left-0"
                 )} 
                 onClick={(e) => e.stopPropagation()}

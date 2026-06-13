@@ -104,7 +104,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => (
     </Select.Trigger>
     
     <Select.Portal>
-      <Select.Content className="z-[100] overflow-hidden bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-edu-border">
+      <Select.Content className="z-[100] overflow-hidden bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-edu-border">
         <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-edu-text cursor-default">
           <ChevronDown size={14} className="rotate-180" />
         </Select.ScrollUpButton>

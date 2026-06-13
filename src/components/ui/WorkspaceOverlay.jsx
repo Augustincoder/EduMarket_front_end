@@ -16,7 +16,7 @@ export function WorkspaceOverlay() {
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-edu-bg/80 backdrop-blur-xl animate-in fade-in duration-300">
       <div className="relative flex flex-col items-center animate-in zoom-in-95 slide-in-from-bottom-10 duration-500">
         <div className={cn(
-          "w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl mb-6 relative",
+          "w-24 h-24 rounded-xl flex items-center justify-center shadow-lg mb-6 relative",
           switchingTo === 'FREELANCER' 
             ? "bg-indigo-600 text-white shadow-indigo-600/30" 
             : "bg-edu-primary text-white shadow-edu-primary/30"

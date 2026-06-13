@@ -40,8 +40,8 @@ export default function EarningsScreen() {
       <div className="pt-3 pb-24 px-4 h-full flex flex-col space-y-5 overflow-y-auto scrollbar-hide">
         
         {/* ── Balance Card ────────────────────────────── */}
-        <div className="bg-gradient-to-br from-edu-accent to-[#7064E2] rounded-3xl p-6 text-white shadow-lg shadow-edu-accent/20 relative overflow-hidden">
-          <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="bg-gradient-to-br from-edu-accent to-[#7064E2] rounded-xl p-6 text-white shadow-lg shadow-edu-accent/20 relative overflow-hidden">
+          <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-xl pointer-events-none" />
           <div className="flex items-center gap-2 mb-2 text-white/80">
             <Wallet size={16} />
             <span className="text-[10px] font-bold uppercase tracking-wider">Umumiy daromad</span>
@@ -69,7 +69,7 @@ export default function EarningsScreen() {
 
         {/* ── VIP status Card ─────────────────────────── */}
         {user?.isVip ? (
-          <div className="bg-gradient-to-r from-yellow-500 to-amber-600 rounded-3xl p-5 text-white shadow-md shadow-amber-500/10 flex justify-between items-center">
+          <div className="bg-gradient-to-r from-yellow-500 to-amber-600 rounded-xl p-5 text-white shadow-md shadow-amber-500/10 flex justify-between items-center">
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">👑</span>
@@ -82,7 +82,7 @@ export default function EarningsScreen() {
             </button>
           </div>
         ) : (
-          <div className="bg-edu-surface border border-edu-border/40 rounded-3xl p-5 flex justify-between items-center hover:border-amber-500/30 transition-colors cursor-pointer active-bounce" onClick={() => navigate('/vip')}>
+          <div className="bg-edu-surface border border-edu-border/40 rounded-xl p-5 flex justify-between items-center hover:border-amber-500/30 transition-colors cursor-pointer active-bounce" onClick={() => navigate('/vip')}>
             <div className="space-y-1 pr-2">
               <div className="flex items-center gap-1.5">
                 <span className="text-sm">👑</span>
@@ -98,7 +98,7 @@ export default function EarningsScreen() {
 
         {/* ── Weekly Earnings Chart ───────────────────── */}
         {!isLoading && stats?.weeklyEarnings && stats.weeklyEarnings.length > 0 && (
-          <div className="bg-edu-surface border border-edu-border/40 rounded-3xl p-4 space-y-3">
+          <div className="bg-edu-surface border border-edu-border/40 rounded-xl p-4 space-y-3">
             <h3 className="text-xs font-bold text-edu-text uppercase tracking-wider">Haftalik daromad (so'nggi 7 kun)</h3>
             <div className="flex justify-between items-end h-28 pt-2">
               {stats.weeklyEarnings.map((day, idx) => {
@@ -125,7 +125,7 @@ export default function EarningsScreen() {
 
         {/* ── Category Breakdown ───────────────────────── */}
         {!isLoading && stats?.categoryBreakdown && stats.categoryBreakdown.length > 0 && (
-          <div className="bg-edu-surface border border-edu-border/40 rounded-3xl p-4 space-y-3">
+          <div className="bg-edu-surface border border-edu-border/40 rounded-xl p-4 space-y-3">
             <h3 className="text-xs font-bold text-edu-text uppercase tracking-wider font-display">Kategoriyalar bo'yicha</h3>
             <div className="space-y-3">
               {stats.categoryBreakdown.map((cat, idx) => {
@@ -152,7 +152,7 @@ export default function EarningsScreen() {
 
         {/* ── Frozen Info Alert ───────────────────────── */}
         {stats?.frozenEarned > 0 && (
-          <div className="bg-edu-accent/10 border border-edu-accent/20 rounded-2xl p-3.5 flex gap-2.5 items-start">
+          <div className="bg-edu-accent/10 border border-edu-accent/20 rounded-xl p-3.5 flex gap-2.5 items-start">
             <Info size={16} className="text-edu-accent shrink-0 mt-0.5" />
             <p className="text-[11px] text-edu-text opacity-90 leading-normal font-medium">
               Muzlatilgan mablag'lar faol topshiriqlar yakunlangandan keyin asosiy hisobingizga avtomatik ravishda o'tkazib beriladi.
@@ -189,7 +189,7 @@ export default function EarningsScreen() {
           {isLoading ? (
             <div className="space-y-2 animate-pulse flex-1">
               {[1, 2].map(i => (
-                <div key={i} className="h-16 bg-edu-surface rounded-2xl border border-edu-border/20" />
+                <div key={i} className="h-16 bg-edu-surface rounded-xl border border-edu-border/20" />
               ))}
             </div>
           ) : filteredCompleted.length > 0 ? (
@@ -200,7 +200,7 @@ export default function EarningsScreen() {
                   isPressable
                   onClick={() => { navigate(`/tasks/${task.id}`); }}
                   className="bg-edu-surface border border-edu-border/40 hover:border-edu-border active-bounce"
-                  radius="2xl"
+                  radius="xl"
                 >
                   <CardContent className="p-3.5 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
@@ -225,7 +225,7 @@ export default function EarningsScreen() {
               ))}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center py-12 text-center text-edu-muted bg-edu-surface/50 border border-edu-border/20 rounded-3xl">
+            <div className="flex-1 flex flex-col items-center justify-center py-12 text-center text-edu-muted bg-edu-surface/50 border border-edu-border/20 rounded-xl">
               <span className="text-3xl mb-2.5">💸</span>
               <p className="text-xs font-bold">Ushbu davr uchun daromad tarixi mavjud emas</p>
             </div>

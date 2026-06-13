@@ -170,7 +170,7 @@ export default function OnboardingStep3() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Universitet nomini yozing..."
-              className="w-full bg-edu-surface-2 border-0 rounded-2xl pl-10 pr-4 py-3.5 text-sm text-edu-text placeholder-edu-muted focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary"
+              className="w-full bg-edu-surface-2 border-0 rounded-xl pl-10 pr-4 py-3.5 text-sm text-edu-text placeholder-edu-muted focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary"
             />
             {searchQuery && (
               <button 

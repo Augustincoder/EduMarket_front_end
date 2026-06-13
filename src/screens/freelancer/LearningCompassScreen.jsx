@@ -22,7 +22,7 @@ export default function LearningCompassScreen() {
     return (
       <PageLayout title="AI Learning Compass" showBack>
         <div className="p-4">
-          <div className="bg-red-50 text-red-500 p-4 rounded-2xl text-sm font-medium">
+          <div className="bg-red-50 text-red-500 p-4 rounded-xl text-sm font-medium">
             Ma'lumotlarni yuklashda xatolik yuz berdi.
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function LearningCompassScreen() {
                </h3>
                <div className="space-y-3">
                  {compass.suggestedCourses.map((course, idx) => (
-                   <div key={idx} className="bg-edu-surface rounded-2xl p-4 shadow-sm border border-edu-border active:scale-[0.98] transition-all cursor-pointer">
+                   <div key={idx} className="bg-edu-surface rounded-xl p-4 shadow-sm border border-edu-border active:scale-[0.98] transition-all cursor-pointer">
                      <h4 className="text-sm font-bold text-edu-text leading-tight mb-1">{course.title}</h4>
                      <p className="text-[11px] text-edu-muted font-medium line-clamp-2 leading-relaxed mb-3">
                        {course.description}

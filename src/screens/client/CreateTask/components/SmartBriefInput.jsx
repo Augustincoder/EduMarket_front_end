@@ -57,7 +57,7 @@ export function SmartBriefInput() {
   return (
     <div className="relative mb-6">
       <div className={cn(
-        "p-1 rounded-2xl transition-all duration-500",
+        "p-1 rounded-xl transition-all duration-500",
         isParsing ? "bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 animate-pulse" : "bg-gradient-to-r from-edu-primary/20 via-edu-accent/20 to-blue-500/20"
       )}>
         <div className="bg-edu-surface rounded-xl p-4 shadow-sm relative overflow-hidden">

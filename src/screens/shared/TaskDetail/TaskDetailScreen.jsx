@@ -140,7 +140,7 @@ export default function TaskDetailScreen() {
         <div className="flex flex-col h-dvh bg-edu-bg">
           <TaskHeader title="Xatolik" showBack />
           <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
-            <div className="w-full bg-edu-surface border border-red-500/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm">
+            <div className="w-full bg-edu-surface border border-red-500/20 rounded-xl p-6 flex flex-col items-center justify-center text-center shadow-sm">
               <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-3">
                 <AlertTriangle size={24} className="text-red-500" />
               </div>
@@ -284,7 +284,7 @@ export default function TaskDetailScreen() {
                       <button
                         key={fileId}
                         onClick={() => handleViewFile(fileId)}
-                        className="flex items-center gap-3 p-3.5 rounded-2xl bg-gray-50 dark:bg-black/20 border border-black/[0.02] dark:border-white/[0.02] text-[12px] font-bold text-gray-700 dark:text-gray-300 active:scale-[0.98] transition-all"
+                        className="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-black/20 border border-black/[0.02] dark:border-white/[0.02] text-[12px] font-bold text-gray-700 dark:text-gray-300 active:scale-[0.98] transition-all"
                       >
                         <div className="w-8 h-8 rounded-xl bg-edu-primary/10 flex items-center justify-center text-edu-primary shrink-0">
                           <FileText size={16} />
@@ -406,7 +406,7 @@ export default function TaskDetailScreen() {
 
         {/* Bottom CTA Bar */}
         <div className={cn(
-          "border-t border-edu-border bg-edu-surface/90 backdrop-blur-2xl pb-safe shadow-ios-lg relative z-20 transition-all duration-500",
+          "border-t border-edu-border bg-edu-surface/90 backdrop-blur-xl pb-safe shadow-ios-lg relative z-20 transition-all duration-500",
           bidOpen ? "translate-y-full opacity-0" : "translate-y-0 opacity-100"
         )}>
           <div className="p-4 max-w-[768px] mx-auto">

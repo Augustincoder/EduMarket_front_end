@@ -64,7 +64,7 @@ export default function AdminContentModerator() {
     <div className="space-y-6 animate-fade-in text-slate-100">
       
       {/* ── Tabs ─────────────────────────────────────────── */}
-      <div className="flex gap-2 p-1.5 bg-slate-950/40 border border-slate-800/60 rounded-2xl w-fit">
+      <div className="flex gap-2 p-1.5 bg-slate-950/40 border border-slate-800/60 rounded-xl w-fit">
         <button
           onClick={() => setActiveTab('TASKS')}
           className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
@@ -85,7 +85,7 @@ export default function AdminContentModerator() {
 
       {/* ── Tasks Tab Content ────────────────────────────── */}
       {activeTab === 'TASKS' && (
-        <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+        <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
           {isTasksLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -159,7 +159,7 @@ export default function AdminContentModerator() {
 
       {/* ── Gigs Tab Content ─────────────────────────────── */}
       {activeTab === 'GIGS' && (
-        <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+        <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
           {isGigsLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />

@@ -49,10 +49,10 @@ export function PromoteModal({
               key={pkg.type}
               disabled={isLoading}
               onClick={() => { hapticLight(); onSubmit(pkg.type); }}
-              className="w-full text-left p-4 rounded-3xl bg-edu-bg border border-black/[0.03] dark:border-white/[0.05] transition-all active:scale-[0.98] flex items-center gap-4 group hover:border-edu-primary/30"
+              className="w-full text-left p-4 rounded-xl bg-edu-bg border border-black/[0.03] dark:border-white/[0.05] transition-all active:scale-[0.98] flex items-center gap-4 group hover:border-edu-primary/30"
             >
               <div className={cn(
-                "w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-sm",
+                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
                 pkg.color === 'blue' ? "bg-blue-50 dark:bg-blue-500/10" : "bg-amber-50 dark:bg-amber-500/10"
               )}>
                 {pkg.icon}
@@ -69,7 +69,7 @@ export function PromoteModal({
         </div>
 
         <div className="pt-2">
-          <Button variant="ghost" fullWidth onClick={onClose} disabled={isLoading} className="rounded-2xl h-11 text-gray-400 font-bold text-xs uppercase tracking-widest">
+          <Button variant="ghost" fullWidth onClick={onClose} disabled={isLoading} className="rounded-xl h-11 text-gray-400 font-bold text-xs uppercase tracking-widest">
             Bekor qilish
           </Button>
         </div>

@@ -87,7 +87,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
         
         {/* Progress Overview Card */}
         <div className="bg-edu-surface rounded-xl p-5 shadow-ios border border-edu-border relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-edu-primary/5 blur-2xl rounded-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-edu-primary/5 blur-xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between mb-4 relative z-10">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-edu-primary/10 flex items-center justify-center text-edu-primary">
@@ -131,7 +131,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
           ) : milestones.length === 0 ? (
             /* empty state with guide */
             <div className="bg-edu-surface rounded-xl p-8 border border-dashed border-gray-200 dark:border-white/10 text-center space-y-6">
-              <div className="w-16 h-16 bg-blue-50 dark:bg-blue-500/10 rounded-3xl flex items-center justify-center text-blue-500 mx-auto">
+              <div className="w-16 h-16 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500 mx-auto">
                 <Rocket size={32} />
               </div>
               <div className="space-y-2">
@@ -147,7 +147,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
                   { icon: <ShieldCheck size={14} />, text: 'Nazoratni ta\'minlang' },
                   { icon: <Info size={14} />, text: 'Shaffof ish jarayoni' },
                 ].map((tip, i) => (
-                  <div key={i} className="flex items-center gap-3 px-4 py-2.5 bg-edu-bg rounded-2xl text-[12px] font-bold text-gray-600 dark:text-gray-400">
+                  <div key={i} className="flex items-center gap-3 px-4 py-2.5 bg-edu-bg rounded-xl text-[12px] font-bold text-gray-600 dark:text-gray-400">
                     <span className="text-edu-primary">{tip.icon}</span>
                     {tip.text}
                   </div>
@@ -156,7 +156,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
 
               {!isClient && (
                 <div className="pt-2 px-2">
-                  <p className="text-[11px] text-amber-600 dark:text-amber-500 font-bold bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10">
+                  <p className="text-[11px] text-amber-600 dark:text-amber-500 font-bold bg-amber-500/5 p-3 rounded-xl border border-amber-500/10">
                     💡 Faqat mijoz yangi bosqichlarni qo'shishi mumkin. Siz esa ularni bajarilgan deb belgilaysiz.
                   </p>
                 </div>
@@ -214,7 +214,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="Yangi bosqich nomi (masalan: Dizayn tayyor)..."
-                className="w-full h-14 bg-edu-surface border border-edu-border rounded-2xl pl-5 pr-14 text-[14px] font-bold outline-none focus:ring-2 focus:ring-edu-primary/10 transition-all shadow-ios"
+                className="w-full h-14 bg-edu-surface border border-edu-border rounded-xl pl-5 pr-14 text-[14px] font-bold outline-none focus:ring-2 focus:ring-edu-primary/10 transition-all shadow-ios"
               />
               <button 
                 type="submit" 

@@ -139,7 +139,7 @@ export default function GigsScreen() {
         {/* Banner with modern premium gradient */}
         {(activeRole === 'CLIENT' || activeTab === 'MARKET') && (
           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-edu-primary to-edu-accent text-white p-6 shadow-btn border border-white/10">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl translate-x-10 -translate-y-10" />
             <div className="relative z-10 max-w-[85%]">
               <h2 className="text-xl font-bold font-display mb-1 tracking-ios-display">
                 {activeRole === 'FREELANCER' ? 'Bozor tahlili' : 'Tayyor Xizmatlar'}
@@ -180,7 +180,7 @@ export default function GigsScreen() {
             onValueChange={setLocalSearch}
             placeholder={activeTab === 'MARKET' ? "Xizmatlardan qidirish..." : "O'z xizmatlaringizdan qidirish..."}
             startContent={<Search className="w-4 h-4 text-edu-muted" />}
-            containerClassName="h-12 rounded-2xl bg-edu-surface shadow-ios"
+            containerClassName="h-12 rounded-xl bg-edu-surface shadow-ios"
           />
         </div>
 
@@ -255,7 +255,7 @@ export default function GigsScreen() {
             <p className="text-[14px] text-edu-muted leading-relaxed font-medium">
               Ushbu xizmatni buyurtma qilganingizda, tizimda avtomatik ravishda yangi vazifa yaratiladi va mutaxassisga biriktiriladi.
             </p>
-            <div className="p-4 bg-edu-surface-2 rounded-2xl border border-edu-border/40 shadow-inner">
+            <div className="p-4 bg-edu-surface-2 rounded-xl border border-edu-border/40 shadow-inner">
               <h4 className="font-bold text-[15px] text-edu-text mb-2 font-display leading-tight">{selectedGig.title}</h4>
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-edu-border/10">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-edu-muted">

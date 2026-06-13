@@ -38,7 +38,7 @@ export default function LeaderboardScreen() {
                 isPressable
                 onClick={() => { navigate(`/profile/${users[0].id}`); }}
                 className="bg-gradient-to-br from-amber-400 to-amber-500 border border-amber-200/50 shadow-lg shadow-amber-500/40 relative overflow-hidden active-bounce"
-                radius="2xl"
+                radius="xl"
               >
                 {/* Metallic shine overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/40 pointer-events-none" />

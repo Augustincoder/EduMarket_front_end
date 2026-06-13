@@ -66,7 +66,7 @@ export function useSocket() {
           }}
           className={`${
             t.visible ? 'animate-in slide-in-from-top-4 fade-in duration-300' : 'animate-out slide-out-to-top-4 fade-out duration-300'
-          } max-w-[90%] sm:max-w-sm mx-auto mt-2 bg-black/90 backdrop-blur-xl shadow-2xl rounded-full pointer-events-auto flex items-center cursor-pointer active:scale-95 transition-transform overflow-hidden px-4 py-3`}
+          } max-w-[90%] sm:max-w-sm mx-auto mt-2 bg-black/90 backdrop-blur-xl shadow-lg rounded-full pointer-events-auto flex items-center cursor-pointer active:scale-95 transition-transform overflow-hidden px-4 py-3`}
         >
           <div className="flex-shrink-0 mr-3">
             <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-sm">

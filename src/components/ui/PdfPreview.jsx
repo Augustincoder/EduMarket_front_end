@@ -57,7 +57,7 @@ export const PdfPreview = ({ file, allowDownload }) => {
           }
         >
           {numPages && (
-            <div className="shadow-2xl rounded-xl overflow-hidden bg-white mt-4 relative">
+            <div className="shadow-lg rounded-xl overflow-hidden bg-white mt-4 relative">
               <Page 
                 pageNumber={pageNumber} 
                 scale={scale} 
@@ -70,7 +70,7 @@ export const PdfPreview = ({ file, allowDownload }) => {
       </div>
 
       {numPages && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 shadow-2xl z-50 pointer-events-auto">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/60 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 shadow-lg z-50 pointer-events-auto">
           <button 
             disabled={pageNumber <= 1} 
             onClick={previousPage}

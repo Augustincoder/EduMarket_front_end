@@ -54,7 +54,7 @@ export default function AdminDashboard() {
             <div 
               key={idx}
               onClick={() => navigate(card.path)}
-              className={`p-6 bg-edu-surface border border-edu-border rounded-3xl flex flex-col justify-between h-36 cursor-pointer hover:border-edu-primary/30 transition-all active:scale-[0.98] relative overflow-hidden group`}
+              className={`p-6 bg-edu-surface border border-edu-border rounded-xl flex flex-col justify-between h-36 cursor-pointer hover:border-edu-primary/30 transition-all active:scale-[0.98] relative overflow-hidden group`}
             >
               {card.alert && (
                 <span className="absolute top-3 right-3 flex h-2 w-2">
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
               )}
               
               <div className="flex justify-between items-start">
-                <span className={`w-10 h-10 rounded-2xl flex items-center justify-center border ${card.textClass} ${card.bgClass} ${card.borderClass}`}>
+                <span className={`w-10 h-10 rounded-xl flex items-center justify-center border ${card.textClass} ${card.bgClass} ${card.borderClass}`}>
                   <Icon size={20} />
                 </span>
                 <span className="text-edu-muted group-hover:text-edu-text transition-colors">
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Neon SVG Chart Widget */}
-        <div className="lg:col-span-2 bg-edu-surface-2 border border-edu-border rounded-3xl p-6 flex flex-col justify-between min-h-[350px]">
+        <div className="lg:col-span-2 bg-edu-surface-2 border border-edu-border rounded-xl p-6 flex flex-col justify-between min-h-[350px]">
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className="text-sm font-bold text-edu-text flex items-center gap-2">
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Alerts / Tasks requiring quick action */}
-        <div className="bg-edu-surface border border-edu-border rounded-3xl p-6 flex flex-col justify-between">
+        <div className="bg-edu-surface border border-edu-border rounded-xl p-6 flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-edu-text mb-4">Tezkor Moderator Harakatlari</h3>
             <div className="space-y-3.5">
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
               {/* VIP Request Alert */}
               <div 
                 onClick={() => navigate('/admin/vip')}
-                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-2xl flex items-center justify-between cursor-pointer transition-all"
+                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-xl flex items-center justify-between cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center shrink-0">
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
               {/* Reports Alert */}
               <div 
                 onClick={() => navigate('/admin/complaints')}
-                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-2xl flex items-center justify-between cursor-pointer transition-all"
+                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-xl flex items-center justify-between cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center shrink-0">
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
               {/* Disputes Alert */}
               <div 
                 onClick={() => navigate('/admin/disputes')}
-                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-2xl flex items-center justify-between cursor-pointer transition-all"
+                className="p-3.5 bg-edu-bg border border-edu-border hover:border-edu-primary/30 rounded-xl flex items-center justify-between cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center shrink-0">

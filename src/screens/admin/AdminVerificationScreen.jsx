@@ -192,7 +192,7 @@ export default function AdminVerificationScreen() {
           </Card>
         )) : (
           <div className="py-24 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-            <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
               <ShieldCheck size={40} className="text-gray-300" />
             </div>
             <p className="text-gray-500 font-bold text-lg">Hozircha yangi so'rovlar yo'q</p>

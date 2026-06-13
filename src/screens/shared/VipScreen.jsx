@@ -109,7 +109,7 @@ export default function VipScreen() {
       <div className="px-4 py-4 space-y-5 pb-nav">
 
         {/* Current status */}
-        <Card className="bg-gradient-to-br from-amber-400 to-amber-500 border border-amber-200/50 shadow-lg shadow-amber-500/40 relative overflow-hidden" radius="2xl">
+        <Card className="bg-gradient-to-br from-amber-400 to-amber-500 border border-amber-200/50 shadow-lg shadow-amber-500/40 relative overflow-hidden" radius="xl">
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/40 pointer-events-none animate-pulse-slow" />
           <CardContent className="p-5 text-white relative z-10">
             <p className="text-sm text-white/80 font-medium uppercase tracking-widest mb-1">Joriy status</p>
@@ -148,7 +148,7 @@ export default function VipScreen() {
                     ? 'border-yellow-400 bg-gradient-to-b from-yellow-500/10 to-orange-500/5 shadow-[0_4px_20px_rgba(250,204,21,0.15)]'
                     : 'border-edu-border/50 bg-edu-surface hover:border-edu-border',
                 ].join(' ')}
-                radius="2xl"
+                radius="xl"
               >
                 <CardContent className="p-4 text-center">
                   {pkg.tag && (
@@ -166,7 +166,7 @@ export default function VipScreen() {
         </div>
 
         {/* Payment Mode Selector */}
-        <div className="flex bg-edu-surface border border-edu-border/50 p-1 rounded-2xl shadow-sm">
+        <div className="flex bg-edu-surface border border-edu-border/50 p-1 rounded-xl shadow-sm">
           <button 
             onClick={() => setPayMode('AUTOMATED')}
             className={cn("flex-1 py-2.5 text-xs font-bold rounded-xl transition-all", payMode === 'AUTOMATED' ? "bg-edu-primary text-white shadow-btn" : "text-edu-muted")}
@@ -186,13 +186,13 @@ export default function VipScreen() {
             <CardContent className="p-4 space-y-4">
               <p className="text-sm font-bold text-edu-text">To'lov tizimini tanlang</p>
               <div className="grid grid-cols-2 gap-3">
-                <button className="flex flex-col items-center gap-2 p-4 border border-edu-border/40 rounded-2xl hover:border-blue-500 transition-all active:scale-95 group">
+                <button className="flex flex-col items-center gap-2 p-4 border border-edu-border/40 rounded-xl hover:border-blue-500 transition-all active:scale-95 group">
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md">
                     <img src="https://click.uz/wp-content/themes/click/img/logo-dark.png" alt="Click" className="max-w-[80%]" />
                   </div>
                   <span className="text-xs font-bold text-edu-muted group-hover:text-edu-text">Click</span>
                 </button>
-                <button className="flex flex-col items-center gap-2 p-4 border border-edu-border/40 rounded-2xl hover:border-blue-500 transition-all active:scale-95 group">
+                <button className="flex flex-col items-center gap-2 p-4 border border-edu-border/40 rounded-xl hover:border-blue-500 transition-all active:scale-95 group">
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md">
                     <img src="https://cdn.payme.uz/logo/payme_color.svg" alt="Payme" className="max-w-[80%]" />
                   </div>
@@ -212,7 +212,7 @@ export default function VipScreen() {
                 <button
                   onClick={handleCopyCard}
                   className={[
-                    'w-full flex items-center justify-between bg-edu-bg rounded-[16px] px-4 py-3.5 border transition-all active-bounce shadow-sm',
+                    'w-full flex items-center justify-between bg-edu-bg rounded-lg px-4 py-3.5 border transition-all active-bounce shadow-sm',
                     copied ? 'border-edu-primary bg-edu-primary/5' : 'border-edu-border',
                   ].join(' ')}
                 >

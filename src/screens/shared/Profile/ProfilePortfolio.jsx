@@ -92,7 +92,7 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
           {(me?.portfolioItems?.length ?? 0) < portfolioLimit && (
             <button
               onClick={() => { setPortfolioTitle(''); setPortfolioFiles([]); setPortfolioError(''); setAddPortfolioOpen(true); }}
-              className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[128px] group active:scale-95 duration-[120ms]"
+              className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-xl flex flex-col items-center justify-center p-4 min-h-[128px] group active:scale-95 duration-[120ms]"
             >
               <div className="w-8 h-8 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
                 <Plus size={18} className="text-edu-muted group-hover:text-edu-primary" />

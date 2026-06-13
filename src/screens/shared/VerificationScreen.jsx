@@ -137,7 +137,7 @@ export default function VerificationScreen() {
         <Header title="Tasdiqlash" showBack />
         <div className="px-4 py-10 flex flex-col items-center text-center space-y-6">
           <div className={cn(
-            "w-24 h-24 rounded-2xl flex items-center justify-center shadow-2xl",
+            "w-24 h-24 rounded-xl flex items-center justify-center shadow-lg",
             currentStatus === 'APPROVED' ? "bg-edu-primary text-white" : "bg-amber-500 text-white"
           )}>
             {currentStatus === 'APPROVED' ? <ShieldCheck size={48} /> : <AlertCircle size={48} />}
@@ -155,7 +155,7 @@ export default function VerificationScreen() {
           </div>
 
           {status?.adminNote && (
-            <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/50 text-left w-full">
+            <div className="bg-edu-surface p-4 rounded-xl border border-edu-border/50 text-left w-full">
               <p className="text-[10px] font-bold text-edu-muted uppercase tracking-wider mb-1">Admin izohi:</p>
               <p className="text-xs text-edu-text italic leading-relaxed">{status.adminNote}</p>
             </div>
@@ -192,7 +192,7 @@ export default function VerificationScreen() {
         {/* Step 1: Instructions */}
         {step === 1 && (
           <div className="space-y-5 animate-fade-in">
-            <div className="bg-edu-primary/5 border border-edu-primary/10 rounded-3xl p-6 text-center">
+            <div className="bg-edu-primary/5 border border-edu-primary/10 rounded-xl p-6 text-center">
               <ShieldCheck size={48} className="mx-auto text-edu-primary mb-4" />
               <h3 className="text-xl font-bold text-edu-text mb-2">Nega tasdiqlash kerak?</h3>
               <ul className="text-sm text-edu-muted text-left space-y-3 mt-4">
@@ -238,7 +238,7 @@ export default function VerificationScreen() {
         {/* Step 3: Document Upload */}
         {step === 3 && (
           <div className="space-y-5 animate-fade-in">
-            <div className="bg-amber-500/5 border border-amber-500/10 p-4 rounded-2xl flex gap-3">
+            <div className="bg-amber-500/5 border border-amber-500/10 p-4 rounded-xl flex gap-3">
               <Info size={20} className="text-amber-500 shrink-0" />
               <p className="text-xs text-amber-700 font-medium leading-relaxed">
                 Hujjatning old tomoni to'liq va aniq ko'rinishi kerak. Matnlar o'qiladigan bo'lishi shart.
@@ -289,7 +289,7 @@ export default function VerificationScreen() {
         {/* Step 5: Summary */}
         {step === 5 && (
           <div className="space-y-5 animate-fade-in">
-            <Card className="bg-edu-primary/5 border border-edu-primary/20" radius="2xl">
+            <Card className="bg-edu-primary/5 border border-edu-primary/20" radius="xl">
               <CardContent className="p-6 text-center space-y-4">
                 <ShieldCheck size={48} className="mx-auto text-edu-primary" />
                 <h3 className="text-xl font-bold text-edu-text">Ma'lumotlarni tasdiqlaysizmi?</h3>

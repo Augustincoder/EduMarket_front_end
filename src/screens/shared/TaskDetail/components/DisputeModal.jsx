@@ -48,7 +48,7 @@ export function DisputeModal({
       <div className="py-2 space-y-5">
         
         {/* Warning Banner */}
-        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4 rounded-2xl flex gap-3 items-start">
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-4 rounded-xl flex gap-3 items-start">
           <ShieldAlert size={20} className="text-red-500 shrink-0 mt-0.5" />
           <div className="text-sm">
             <p className="font-bold text-red-700 dark:text-red-400 mb-1">Diqqat qiling!</p>

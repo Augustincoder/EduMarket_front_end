@@ -7,7 +7,7 @@ function Bone({ className }) {
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-lg p-6 shadow-premium-md space-y-5 animate-in fade-in duration-500 border border-edu-border/30">
+    <div className="bg-edu-surface rounded-lg p-6 shadow-md space-y-5 animate-in fade-in duration-500 border border-edu-border/30">
       <div className="flex items-start justify-between gap-2">
         <div className="flex gap-2">
           <Bone className="w-16 h-7 rounded-sm" />
@@ -69,7 +69,7 @@ export function ChatBubbleSkeleton() {
 
 export function GigCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-xl p-6 shadow-premium-md space-y-4 animate-in fade-in duration-500">
+    <div className="bg-edu-surface rounded-xl p-6 shadow-md space-y-4 animate-in fade-in duration-500">
       <div className="flex items-center gap-3">
         <Bone className="w-12 h-12 rounded-full" />
         <div className="space-y-2 flex-1">
@@ -114,7 +114,7 @@ export function TaskDetailSkeleton() {
 
 export function TaskStatusSkeleton() {
   return (
-    <div className="mb-10 bg-edu-surface rounded-xl p-6 shadow-premium-md border border-black/[0.02] dark:border-white/[0.03] space-y-6 animate-in fade-in duration-500">
+    <div className="mb-10 bg-edu-surface rounded-xl p-6 shadow-md border border-black/[0.02] dark:border-white/[0.03] space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center px-1">
         <Bone className="w-24 h-4 rounded-full" />
         <Bone className="w-16 h-4 rounded-full opacity-50" />
@@ -137,7 +137,7 @@ export function LeaderboardSkeleton() {
       </div>
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-edu-surface rounded-xl p-4 flex items-center gap-4 shadow-premium-sm">
+          <div key={i} className="bg-edu-surface rounded-xl p-4 flex items-center gap-4 shadow-sm">
             <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
             <div className="space-y-2 flex-1">
               <Bone className="w-32 h-4 rounded-full" />
@@ -156,7 +156,7 @@ export function ChatSkeleton() {
       <div className="flex justify-between items-center mb-4 px-1">
         <Bone className="w-28 h-4 rounded-full" />
       </div>
-      <div className="bg-white/80 dark:bg-edu-surface/80 rounded-xl p-4 flex items-center gap-4 shadow-premium-md">
+      <div className="bg-white/80 dark:bg-edu-surface/80 rounded-xl p-4 flex items-center gap-4 shadow-md">
         <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-2">
           <Bone className="w-32 h-4 rounded-full" />

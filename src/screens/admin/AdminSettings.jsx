@@ -58,7 +58,7 @@ export default function AdminSettings() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in text-slate-100">
       
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl p-6 space-y-6">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl p-6 space-y-6">
         
         {/* VIP Price 7 Days */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-850">
@@ -133,7 +133,7 @@ export default function AdminSettings() {
 
       </div>
 
-      <div className="p-5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-3xl flex gap-3 text-xs">
+      <div className="p-5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl flex gap-3 text-xs">
         <ShieldAlert size={20} className="shrink-0 mt-0.5" />
         <div>
           <h5 className="font-bold uppercase tracking-wider">Ehtiyot Bo'ling!</h5>

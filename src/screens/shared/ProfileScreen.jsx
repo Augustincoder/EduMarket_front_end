@@ -98,17 +98,17 @@ export default function ProfileScreen() {
             }
             toggleActiveRole();
           }}
-          radius="2xl"
+          radius="xl"
         >
           <div className={cn(
-            "absolute -right-6 -top-6 w-24 h-24 blur-2xl rounded-full opacity-20 pointer-events-none transition-colors duration-500",
+            "absolute -right-6 -top-6 w-24 h-24 blur-xl rounded-full opacity-20 pointer-events-none transition-colors duration-500",
             activeRole === 'CLIENT' ? "bg-indigo-600" : "bg-edu-primary"
           )} />
           
           <CardContent className="p-4 flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
               <div className={cn(
-                "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-500",
+                "w-12 h-12 rounded-xl flex items-center justify-center shadow-lg transition-all duration-500",
                 activeRole === 'CLIENT' 
                   ? "bg-indigo-600 text-white shadow-indigo-600/20" 
                   : "bg-edu-primary text-white shadow-edu-primary/20"
@@ -156,7 +156,7 @@ export default function ProfileScreen() {
               {/* Post task button */}
               <button
                 onClick={() => navigate('/tasks/create')}
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-edu-primary/20 active:scale-[0.98] transition-all"
+                className="w-full h-14 rounded-xl bg-gradient-to-r from-edu-primary to-edu-accent text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-edu-primary/20 active:scale-[0.98] transition-all"
               >
                 <span>Yangi vazifa yaratish</span>
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
@@ -166,8 +166,8 @@ export default function ProfileScreen() {
 
               {/* Become Freelancer Banner */}
               {!me?.isFreelancer && (
-                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden mt-2">
-                  <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-5 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden mt-2">
+                  <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-xl -mr-10 -mt-10 pointer-events-none" />
                   <h3 className="text-lg font-bold mb-1">Mutaxassis bo'lish</h3>
                   <p className="text-indigo-100 text-sm mb-4">Platformada vazifalarni bajarish orqali daromad olishni boshlang.</p>
                   <Button variant="secondary" className="w-full bg-white text-indigo-600 hover:bg-slate-50" onClick={() => navigate('/become-freelancer')}>
@@ -192,7 +192,7 @@ export default function ProfileScreen() {
               {/* Offer ready gig button */}
               <button
                 onClick={() => navigate('/gigs/create')}
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all"
+                className="w-full h-14 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all"
               >
                 <span>Tayyor xizmat (Gig) yaratish</span>
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">

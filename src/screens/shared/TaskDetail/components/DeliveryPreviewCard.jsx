@@ -63,7 +63,7 @@ export function DeliveryPreviewCard({ delivery, task, isClient, onApprovePreview
 
         {/* Freelancer's delivery note */}
         {delivery.previewNote && (
-          <div className="bg-edu-bg rounded-2xl p-4 border border-black/[0.02] dark:border-white/0.02">
+          <div className="bg-edu-bg rounded-xl p-4 border border-black/[0.02] dark:border-white/0.02">
             <p className="text-[13px] text-gray-600 dark:text-gray-400 leading-relaxed font-medium italic">
               "{delivery.previewNote}"
             </p>
@@ -96,7 +96,7 @@ export function DeliveryPreviewCard({ delivery, task, isClient, onApprovePreview
             </p>
             
             {isClient && !isFullRevealed ? (
-              <div className="relative rounded-2xl overflow-hidden">
+              <div className="relative rounded-xl overflow-hidden">
                 <div className="space-y-2 select-none pointer-events-none blur-[2px] opacity-30">
                   {delivery.fullFileIds?.map((_, idx) => (
                     <div key={idx} className="h-11 bg-edu-bg rounded-xl border border-black/[0.02] flex items-center px-4 gap-3">
@@ -146,7 +146,7 @@ export function DeliveryPreviewCard({ delivery, task, isClient, onApprovePreview
               variant="primary"
               isLoading={isApproving}
               onClick={onApprovePreview}
-              className="h-13 rounded-2xl font-bold uppercase tracking-widest text-[13px] shadow-ios-primary"
+              className="h-13 rounded-xl font-bold uppercase tracking-widest text-[13px] shadow-ios-primary"
             >
               ✅ Natijani tasdiqlash
             </Button>

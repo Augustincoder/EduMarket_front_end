@@ -40,7 +40,7 @@ function TaskListWidget({ activeRole, statusFilter }) {
 
   return (
     <div className="h-full flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
-      <div className="w-24 h-24 mb-5 rounded-2xl bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50 relative overflow-hidden">
+      <div className="w-24 h-24 mb-5 rounded-xl bg-edu-surface flex items-center justify-center shadow-sm border border-edu-border/50 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-edu-primary/10 to-transparent" />
         <SearchX size={40} className="text-edu-muted relative z-10" />
       </div>

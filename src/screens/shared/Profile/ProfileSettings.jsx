@@ -59,7 +59,7 @@ export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
 
       <BottomSheet isOpen={deleteProfileOpen} onClose={() => setDeleteProfileOpen(false)} title="Profilni O'chirish">
         <div className="py-4 space-y-4">
-          <div className="bg-edu-surface rounded-2xl p-4 shadow-sm border border-edu-border/30">
+          <div className="bg-edu-surface rounded-xl p-4 shadow-sm border border-edu-border/30">
             <h3 className="text-lg font-bold text-edu-text mb-2">Haqiqatdan ham profilingizni o'chirmoqchimisiz?</h3>
             <p className="text-sm font-normal text-edu-muted">
               Bu amal profilingizni va shaxsiy ma'lumotlaringizni tizimdan o'chirib yuboradi. Barcha aktiv tranzaksiyalar va pullaringiz saqlanib qoladi (moliyaviy xavfsizlik uchun), lekin profilga qayta kira olmaysiz.

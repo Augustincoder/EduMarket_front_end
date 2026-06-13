@@ -32,10 +32,10 @@ function NotificationItem({ notif, onMarkRead }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9, rotateX: 90 }}
       transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
-      className="relative rounded-2xl overflow-hidden"
+      className="relative rounded-xl overflow-hidden"
     >
       {/* Background showing when swiped */}
-      <div className="absolute inset-0 bg-green-500/20 flex items-center px-6 rounded-2xl">
+      <div className="absolute inset-0 bg-green-500/20 flex items-center px-6 rounded-xl">
         <CheckCircle2 size={24} className="text-green-500" />
       </div>
 
@@ -52,7 +52,7 @@ function NotificationItem({ notif, onMarkRead }) {
           }
         }}
         className={cn(
-          "p-4 rounded-2xl border transition-colors active:scale-[0.97] transition-transform duration-[120ms] relative z-10 w-full",
+          "p-4 rounded-xl border transition-colors active:scale-[0.97] transition-transform duration-[120ms] relative z-10 w-full",
           isRead ? "bg-edu-surface border-edu-border" : "bg-edu-bg border-edu-primary/30 shadow-ios"
         )}
       >
