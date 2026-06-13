@@ -149,13 +149,21 @@ export default function TaskFeedScreen() {
         </div>
 
         {/* Categories Floating Glassmorphism Bar (Sticky) */}
-        <div className="sticky top-0 pt-3 z-30 mb-6 px-4" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}>
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-lg">
+        <div 
+          className="sticky top-0 z-30 mb-4 bg-white/70 dark:bg-[#121212]/70 backdrop-blur-[24px] border-b border-black/5 dark:border-white/5 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-[#121212]/60"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+        >
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-3 items-center">
             <FilterChip
               label="Barchasi"
               active={!filterState.category}
               onClick={() => { setFilter('category', ''); hapticLight(); }}
-              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300"
+              className={cn(
+                "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border",
+                !filterState.category 
+                  ? "bg-edu-text text-edu-bg border-transparent shadow-sm" 
+                  : "bg-edu-surface/50 text-edu-text border-black/5 dark:border-white/5 hover:bg-edu-surface"
+              )}
             />
             {getTrendingCategories().map((cat) => (
               <FilterChip
@@ -164,14 +172,16 @@ export default function TaskFeedScreen() {
                 active={filterState.category === cat.value}
                 onClick={() => { setFilter('category', cat.value); hapticLight(); }}
                 className={cn(
-                  "rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300",
-                  filterState.category === cat.value ? "bg-edu-text text-edu-bg shadow-sm scale-100" : "bg-transparent text-edu-text-2 hover:bg-black/5 dark:hover:bg-white/5"
+                  "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border flex-shrink-0",
+                  filterState.category === cat.value 
+                    ? "bg-edu-text text-edu-bg border-transparent shadow-sm" 
+                    : "bg-edu-surface/50 text-edu-text border-black/5 dark:border-white/5 hover:bg-edu-surface"
                 )}
               />
             ))}
             <button
               onClick={() => { setFilterOpen(true); hapticLight(); }}
-              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent bg-transparent text-edu-primary whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
+              className="rounded-full px-5 h-9 text-[13px] font-bold bg-edu-surface/50 text-edu-primary border border-black/5 dark:border-white/5 whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
             >
               Barchasi...
             </button>
