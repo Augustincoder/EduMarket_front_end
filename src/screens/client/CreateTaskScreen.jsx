@@ -168,6 +168,7 @@ export default function CreateTaskScreen() {
     <PageLayout showNav={false} scrollable={false} className="bg-edu-bg flex flex-col">
       <Header 
         title={step === 0 ? "Yangi vazifa" : "Topshiriq yaratish"} 
+        showBack={true}
         onBack={handleBack} 
         className="!border-none" 
       />

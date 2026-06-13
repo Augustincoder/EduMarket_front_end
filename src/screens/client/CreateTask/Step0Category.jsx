@@ -33,30 +33,24 @@ export function Step0Category() {
   return (
     <div className="flex flex-col bg-edu-bg animate-fade-in">
       {/* Header Area (Sticky/Unscrollable) */}
-      <div className="px-5 pt-6 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-2xl font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
-            <p className="text-[13px] text-edu-muted font-medium">Kerakli mutaxassisni topish uchun toifa tanlang</p>
-          </div>
-        </div>
+      <div className="px-5 pt-4 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
         
         {/* AI Action Button */}
         <button 
           onClick={() => { hapticLight(); setIsAiModalOpen(true); }}
-          className="w-full mb-4 relative overflow-hidden rounded-xl p-[1px] bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-[0.98] transition-transform shadow-sm group"
+          className="w-full mb-4 relative overflow-hidden rounded-2xl p-[2px] bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-[0.98] transition-transform shadow-sm group"
         >
-          <div className="bg-edu-surface w-full rounded-[11px] px-4 py-3 flex items-center justify-between group-hover:bg-opacity-95 transition-all">
+          <div className="bg-edu-surface w-full rounded-[14px] px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
-                <Sparkles size={18} className="text-edu-primary" />
+              <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
+                <Sparkles size={20} className="text-edu-primary" />
               </div>
               <div className="text-left">
-                <p className="text-[14px] font-bold text-edu-text leading-tight">AI bilan yaratish</p>
-                <p className="text-[11px] text-edu-muted font-medium mt-0.5">Bitta gap yozing, AI o'zi to'ldiradi</p>
+                <p className="text-[15px] font-bold text-edu-text leading-tight">AI bilan yaratish</p>
+                <p className="text-[12px] text-edu-muted font-medium mt-0.5">Tez va aqlli yordamchi</p>
               </div>
             </div>
-            <div className="px-2 py-1 bg-edu-primary/10 rounded text-[10px] font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
+            <div className="px-2 py-1 bg-edu-primary/10 rounded-lg text-[10px] font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
           </div>
         </button>
 

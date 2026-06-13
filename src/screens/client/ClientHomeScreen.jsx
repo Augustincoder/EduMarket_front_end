@@ -1,11 +1,13 @@
 // src/screens/client/ClientHomeScreen.jsx
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { usersApi } from '../../services/users.service';
 import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { useCategoryStore } from '../../store/categoryStore';
 import { Avatar } from '../../components/ui/Avatar';
+import { hapticLight } from '../../lib/telegram';
 import { VerifiedBadge } from '../../components/ui/Badge';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Plus, ClipboardList, ChevronRight } from 'lucide-react';
@@ -171,11 +173,11 @@ function TopFreelancersWidget() {
 
 export default function ClientHomeScreen() {
   const navigate = useNavigate();
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false);
 
   const handleCategoryClick = (catValue) => {
     navigate('/tasks/create', { state: { category: catValue } });
   };
-  const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
 
   return (
     <div className="flex flex-col h-full bg-edu-bg pb-24 px-4 py-4 overflow-y-auto scrollbar-hide">
@@ -227,22 +229,39 @@ export default function ClientHomeScreen() {
         <ActiveChatWidget />
       </SectionErrorBoundary>
 
-      {/* ── Popular Categories (Horizontal Chips) ─────── */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-3 px-1">
-          <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.05em]">Kategoriyalar</h3>
-        </div>
-        <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide px-1">
-          {getTrendingCategories().map(cat => (
+      {/* ── Categories (Expandable Grid) ─────── */}
+      <div className="mb-8 px-1">
+        <div className="p-3 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-sm flex flex-col transition-all duration-500 overflow-hidden">
+          <div className="flex items-center justify-between px-2 mb-3">
+            <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Yo'nalishlar</h3>
             <button 
-              key={cat.value} 
-              onClick={() => handleCategoryClick(cat.value)}
-              className="flex-shrink-0 h-[36px] px-4 rounded-full bg-edu-surface border border-edu-border flex items-center gap-1.5 text-[13px] font-medium text-edu-text active:scale-95 transition-transform"
+              onClick={() => { hapticLight(); setCategoriesExpanded(!categoriesExpanded); }}
+              className="text-edu-primary text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-transform bg-edu-primary/10 px-2 py-1 rounded-full"
             >
-              <span>{cat.emoji}</span>
-              <span>{cat.label}</span>
+              {categoriesExpanded ? 'Yashirish' : 'Barchasi...'}
             </button>
-          ))}
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => handleCategoryClick('')}
+              className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+            >
+              <span className="text-base leading-none">🌐</span>
+              <span className="truncate">Barchasi</span>
+            </button>
+            
+            {(categoriesExpanded ? useCategoryStore.getState().categories : useCategoryStore.getState().categories.slice(0, 5)).map(cat => (
+              <button
+                key={cat.value}
+                onClick={() => handleCategoryClick(cat.value)}
+                className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+              >
+                <span className="text-base leading-none">{cat.emoji}</span>
+                <span className="truncate">{cat.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
