@@ -1,8 +1,13 @@
 import { Trophy, Star, TrendingUp, Zap, Flame, ClipboardList, Wallet } from 'lucide-react';
 import { calculateLevel, calculateStreak } from '../../../lib/gamification';
 import { formatPrice } from '../../../lib/utils';
+import { WidgetError } from '../../../components/ui/SectionErrorBoundary';
 
-export function ProfileStats({ me, activeRole, clientStats, isLoading }) {
+export function ProfileStats({ me, activeRole, clientStats, isLoading, error, onRetry }) {
+  if (error) {
+    return <WidgetError fallbackTitle="Statistikani yuklashda xatolik" onRetry={onRetry} />;
+  }
+
   if (activeRole === 'CLIENT') {
     if (isLoading) {
       return (

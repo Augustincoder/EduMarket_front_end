@@ -17,7 +17,7 @@ export function useProfileData() {
   });
 
   // Fetch Client Personal Analytics
-  const { data: clientStats, isLoading: clientStatsLoading } = useQuery({
+  const { data: clientStats, isLoading: clientStatsLoading, error: clientStatsError, refetch: refetchClientStats } = useQuery({
     queryKey: ['analytics', 'client', me?.id],
     queryFn: () => analyticsApi.getMe({ role: 'CLIENT' }).then(r => r.data.data),
     enabled: !!me,
@@ -77,6 +77,8 @@ export function useProfileData() {
     activeRole,
     meLoading,
     clientStatsLoading,
+    clientStatsError,
+    refetchClientStats,
     isLoading: meLoading, // only wait for me for primary screen render
     updateMe,
     addPortfolio,

@@ -30,7 +30,7 @@ export default function ProfileScreen() {
   const toggleActiveRole = useAuthStore((s) => s.toggleActiveRole);
   const logout = useAuthStore((s) => s.logout);
 
-  const { me, clientStats, dnaData, activeRole, isLoading, clientStatsLoading, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
+  const { me, clientStats, dnaData, activeRole, isLoading, clientStatsLoading, clientStatsError, refetchClientStats, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
 
   const [editOpen, setEditOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -141,9 +141,7 @@ export default function ProfileScreen() {
 
           <ProfileHeader me={me} activeRole={activeRole} />
           
-          <SectionErrorBoundary fallbackTitle="Statistikani yuklashda xatolik">
-            <ProfileStats me={me} activeRole={activeRole} clientStats={clientStats} isLoading={clientStatsLoading} />
-          </SectionErrorBoundary>
+          <ProfileStats me={me} activeRole={activeRole} clientStats={clientStats} isLoading={clientStatsLoading} error={clientStatsError} onRetry={refetchClientStats} />
 
           {activeRole === 'FREELANCER' && dnaData && (
             <div className="animate-fade-up" style={{ animationDelay: '0.1s' }}>

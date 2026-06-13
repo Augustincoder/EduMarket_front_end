@@ -73,8 +73,34 @@ export function ProfileEditSheet({ me, updateMe, isOpen, onClose }) {
     });
   };
 
+  const hasUnsavedChanges = () => {
+    if (!me) return false;
+    if (editForm.fullname !== (me.fullname || '')) return true;
+    if (editForm.bio !== (me.bio || '')) return true;
+    if (editForm.skills !== (me.skills?.join(', ') || '')) return true;
+    if (me?.isFreelancer) {
+      if (editForm.freelancerBio !== (me.freelancerBio || '')) return true;
+      if (editForm.freelancerExperience !== (me.freelancerExperience !== null ? String(me.freelancerExperience) : '')) return true;
+      const currentCats = editForm.freelancerCategories || [];
+      const originalCats = me.freelancerCategories || [];
+      if (currentCats.length !== originalCats.length) return true;
+      if (!currentCats.every(c => originalCats.includes(c))) return true;
+    }
+    return false;
+  };
+
+  const handleClose = () => {
+    if (hasUnsavedChanges()) {
+      showConfirm("Saqlanmagan o'zgarishlar mavjud. Haqiqatan ham yopmoqchimisiz?", (ok) => {
+        if (ok) onClose();
+      });
+    } else {
+      onClose();
+    }
+  };
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Profilni tahrirlash" fullHeight>
+    <BottomSheet isOpen={isOpen} onClose={handleClose} title="Profilni tahrirlash" fullHeight>
       <div className="space-y-4 py-2">
         {/* Tab Selection */}
         {me?.isFreelancer && (
