@@ -30,7 +30,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const code   = error.response?.data?.code;
 
-    if (status === 401) {
+    if (status === 401 && !error.config?.url?.includes('/auth/login')) {
       // Do not clear localStorage manually here, the event triggers zustand logout
       // which clears the store and persist storage.
       // Auth store logout handled by useAuth hook

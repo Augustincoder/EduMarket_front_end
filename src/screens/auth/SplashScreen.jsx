@@ -1,5 +1,5 @@
 // src/screens/SplashScreen.jsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ready, expand, getStartParam } from '../../lib/telegram';
@@ -9,11 +9,14 @@ export default function SplashScreen() {
   const navigate = useNavigate();
   const { login, token, user, refreshUser } = useAuth();
 
+  const [hasError, setHasError] = useState(false);
+
   useEffect(() => {
     ready();
     expand();
 
     const init = async () => {
+      setHasError(false);
       const startParam = getStartParam();
       let referralCode;
       if (startParam && startParam.startsWith('ref_')) {
@@ -54,6 +57,8 @@ export default function SplashScreen() {
         } else {
           navigate('/home', { replace: true });
         }
+      } else {
+        setHasError(true);
       }
     };
 
@@ -82,13 +87,23 @@ export default function SplashScreen() {
         </div>
       </div>
 
-      {/* Loading indicator */}
-      <div className="flex flex-col items-center gap-5 w-56 mt-10 relative z-10">
-        {/* Progress bar */}
-        <div className="w-full h-1.5 bg-edu-border-2 rounded-full overflow-hidden">
-          <div className="h-full bg-edu-primary rounded-full animate-shimmer w-1/2" />
-        </div>
-        <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-bold opacity-60">Ulanmoqda...</p>
+      {/* Loading indicator or Error */}
+      <div className="flex flex-col items-center gap-5 w-56 mt-10 relative z-10 min-h-[40px]">
+        {hasError ? (
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-edu-surface border border-edu-border rounded-xl shadow-sm text-edu-text text-[13px] font-bold uppercase tracking-widest active:scale-95 transition-all"
+          >
+            Qayta urinish
+          </button>
+        ) : (
+          <>
+            <div className="w-full h-1.5 bg-edu-border-2 rounded-full overflow-hidden">
+              <div className="h-full bg-edu-primary rounded-full animate-shimmer w-1/2" />
+            </div>
+            <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-bold opacity-60">Ulanmoqda...</p>
+          </>
+        )}
       </div>
     </div>
   );
