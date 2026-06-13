@@ -26,7 +26,7 @@ export function BidModal({
     <BottomSheet isOpen={isOpen} onClose={onClose} title="Taklif yuborish">
       <div className="space-y-5 py-2">
         {/* Client Budget Context */}
-        <div className="bg-edu-primary/5 border border-edu-primary/10 rounded-[20px] px-4 py-3 flex items-center justify-between">
+        <div className="bg-edu-primary/5 border border-edu-primary/10 rounded-xl px-4 py-3 flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-edu-primary uppercase tracking-widest mb-0.5">Mijoz Byudjeti</p>
             <p className="text-sm font-bold text-edu-text">{formatPriceRange(task?.priceMin, task?.priceMax)} so'm</p>
@@ -86,7 +86,7 @@ export function BidModal({
             fullWidth size="lg" variant="primary"
             isLoading={isLoading}
             onClick={onSubmit}
-            className="h-14 rounded-[20px] text-[15px] font-bold shadow-ios-primary"
+            className="h-14 rounded-xl text-[15px] font-bold shadow-ios-primary"
           >
             Taklifni yuborish
           </Button>

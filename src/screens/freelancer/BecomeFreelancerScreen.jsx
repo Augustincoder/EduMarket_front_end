@@ -82,7 +82,7 @@ export default function BecomeFreelancerScreen() {
                   <button
                     key={cat}
                     onClick={() => toggleCategory(cat)}
-                    className={`px-3 py-2 rounded-xl text-sm font-bold transition-all border press-scale ${
+                    className={`px-3 py-2 rounded-xl text-sm font-bold transition-all border active:scale-95 duration-[120ms] ${
                       isSelected 
                         ? 'bg-edu-primary text-white border-edu-primary shadow-btn' 
                         : 'bg-edu-surface text-edu-muted border-edu-border'

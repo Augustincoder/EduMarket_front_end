@@ -109,7 +109,7 @@ export default function TaskFeedScreen() {
         {/* Search Bar Row */}
         <div className="px-4 pb-3 pt-1">
           <div className="relative group">
-            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-gray-400 group-focus-within:text-edu-primary transition-colors">
+            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors">
               <Search size={18} />
             </div>
             <input
@@ -120,12 +120,12 @@ export default function TaskFeedScreen() {
               onChange={(e) => setLocalQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              className="w-full h-11 bg-gray-100/80 dark:bg-white/5 border-none rounded-2xl pl-11 pr-11 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/10 focus:bg-white dark:focus:bg-white/10 transition-all"
+              className="w-full h-11 bg-edu-surface-2 border-none rounded-2xl pl-11 pr-11 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/10 transition-all text-edu-text"
             />
             {localQuery && (
               <button 
                 onClick={() => { setLocalQuery(''); hapticLight(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-gray-300 dark:bg-white/20 rounded-full flex items-center justify-center text-white active:scale-90 transition-all after:absolute after:-inset-3 after:content-['']"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-edu-border rounded-full flex items-center justify-center text-edu-muted active:scale-90 transition-all after:absolute after:-inset-3 after:content-['']"
               >
                 <X size={14} strokeWidth={3} />
               </button>
@@ -149,13 +149,13 @@ export default function TaskFeedScreen() {
               onClick={() => { setFilter('category', cat.value); hapticLight(); }}
               className={cn(
                 "rounded-xl px-4 h-8 text-[12px] font-bold border-transparent",
-                filterState.category === cat.value ? "bg-slate-800 text-white dark:bg-white dark:text-black" : "bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400"
+                filterState.category === cat.value ? "bg-edu-text text-edu-bg" : "bg-edu-surface-2 text-edu-text-2"
               )}
             />
           ))}
           <button
             onClick={() => { setFilterOpen(true); hapticLight(); }}
-            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400 whitespace-nowrap shrink-0"
+            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent bg-edu-surface-2 text-edu-text-2 whitespace-nowrap shrink-0"
           >
             Barchasini ko'rish
           </button>
@@ -169,9 +169,9 @@ export default function TaskFeedScreen() {
       >
         {/* Recent Searches Overlay */}
         {isFocused && !localQuery && recentSearches.length > 0 && (
-          <div className="absolute inset-0 z-40 bg-white/60 dark:bg-black/60 backdrop-blur-md animate-fade-in px-4 py-4">
-            <div className="bg-edu-surface rounded-[28px] p-6 shadow-2xl border border-edu-border">
-              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">
+          <div className="absolute inset-0 z-40 bg-edu-bg/80 backdrop-blur-md animate-fade-in px-4 py-4">
+            <div className="bg-edu-surface rounded-xl p-6 shadow-2xl border border-edu-border">
+              <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.2em] mb-4">
                 Oxirgi qidiruvlar
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -179,9 +179,9 @@ export default function TaskFeedScreen() {
                   <button
                     key={q}
                     onClick={() => { setLocalQuery(q); hapticLight(); }}
-                    className="px-4 py-2 bg-edu-bg text-gray-800 dark:text-gray-200 text-[14px] font-bold rounded-2xl flex items-center gap-2 active:scale-95 transition-all border border-gray-100 dark:border-white/5 hover:border-edu-primary/30"
+                    className="px-4 py-2 bg-edu-bg text-edu-text text-[14px] font-bold rounded-2xl flex items-center gap-2 active:scale-95 transition-all border border-edu-border hover:border-edu-primary/30"
                   >
-                    <Search size={14} className="text-gray-400" />
+                    <Search size={14} className="text-edu-muted" />
                     {q}
                   </button>
                 ))}
@@ -192,8 +192,8 @@ export default function TaskFeedScreen() {
 
         {/* Predictive Search Overlay */}
         {isFocused && localQuery && (
-          <div className="absolute inset-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md animate-fade-in px-4 py-4">
-            <div className="bg-edu-surface rounded-[28px] p-4 shadow-2xl border border-edu-border flex flex-col gap-4">
+          <div className="absolute inset-0 z-40 bg-edu-bg/90 backdrop-blur-md animate-fade-in px-4 py-4">
+            <div className="bg-edu-surface rounded-xl p-4 shadow-2xl border border-edu-border flex flex-col gap-4">
               
               {/* Category Matches */}
               {(() => {
@@ -296,7 +296,7 @@ export default function TaskFeedScreen() {
               variant="secondary" 
               fullWidth 
               onClick={() => { resetFilters(); setFilterOpen(false); }} 
-              className="rounded-2xl h-13 font-bold uppercase tracking-widest text-[12px] bg-gray-100 dark:bg-white/5 border-none"
+              className="rounded-2xl h-13 font-bold uppercase tracking-widest text-[12px] bg-edu-surface-2 border-none text-edu-text"
             >
               Tozalash
             </Button>
@@ -315,7 +315,7 @@ export default function TaskFeedScreen() {
           {/* Sorting Section: Horizontal Segmented Control */}
           <div>
             <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em] mb-4 px-1">Saralash</p>
-            <div className="flex p-1 bg-gray-100 dark:bg-white/5 rounded-2xl">
+            <div className="flex p-1 bg-edu-surface-2 rounded-2xl">
               {SORT_OPTIONS.map((s) => (
                 <button
                   key={s.value}
@@ -323,8 +323,8 @@ export default function TaskFeedScreen() {
                   className={cn(
                     'flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 active:scale-95',
                     filterState.sort === s.value
-                      ? 'bg-white dark:bg-white/10 text-edu-primary shadow-sm'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-edu-surface text-edu-primary shadow-sm'
+                      : 'text-edu-muted hover:text-edu-text'
                   )}
                 >
                   {s.label}
@@ -338,13 +338,13 @@ export default function TaskFeedScreen() {
             <div className="flex justify-between items-center mb-3 px-1">
               <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Kategoriya</p>
               <div className="relative w-40">
-                <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-edu-muted" />
                 <input
                   type="text"
                   placeholder="Qidirish..."
                   value={categoryFilterSearch}
                   onChange={(e) => setCategoryFilterSearch(e.target.value)}
-                  className="w-full h-7 bg-slate-100 dark:bg-white/5 border border-transparent focus:border-edu-primary/30 rounded-lg pl-7 pr-2 text-[12px] font-medium outline-none text-edu-text transition-all"
+                  className="w-full h-7 bg-edu-surface-2 border border-transparent focus:border-edu-primary/30 rounded-lg pl-7 pr-2 text-[12px] font-medium outline-none text-edu-text transition-all"
                 />
               </div>
             </div>
@@ -387,23 +387,23 @@ export default function TaskFeedScreen() {
           <div>
             <p className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em] mb-4 px-1">Narx oralig'i (UZS)</p>
             <div className="flex items-center gap-3">
-              <div className="flex-1 bg-edu-bg rounded-2xl px-5 py-4 border border-black/[0.03] dark:border-white/[0.05] focus-within:border-edu-primary/30 transition-all">
+              <div className="flex-1 bg-edu-bg rounded-2xl px-5 py-4 border border-edu-border focus-within:border-edu-primary/30 transition-all">
                 <input
                   type="number"
                   placeholder="Min"
                   value={filterState.minPrice || ''}
                   onChange={(e) => setFilter('minPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[15px] font-bold outline-none placeholder:text-gray-400"
+                  className="bg-transparent w-full text-[15px] font-bold outline-none placeholder:text-edu-muted text-edu-text"
                 />
               </div>
-              <div className="w-4 h-[1px] bg-gray-300 dark:bg-white/10" />
-              <div className="flex-1 bg-edu-bg rounded-2xl px-5 py-4 border border-black/[0.03] dark:border-white/[0.05] focus-within:border-edu-primary/30 transition-all">
+              <div className="w-4 h-[1px] bg-edu-border" />
+              <div className="flex-1 bg-edu-bg rounded-2xl px-5 py-4 border border-edu-border focus-within:border-edu-primary/30 transition-all">
                 <input
                   type="number"
                   placeholder="Max"
                   value={filterState.maxPrice < 200000 ? filterState.maxPrice : ''}
                   onChange={(e) => setFilter('maxPrice', Number(e.target.value))}
-                  className="bg-transparent w-full text-[15px] font-bold outline-none placeholder:text-gray-400"
+                  className="bg-transparent w-full text-[15px] font-bold outline-none placeholder:text-edu-muted text-edu-text"
                 />
               </div>
             </div>

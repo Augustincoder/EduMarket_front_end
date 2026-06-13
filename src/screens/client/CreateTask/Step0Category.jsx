@@ -6,7 +6,8 @@ import { Search } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 
 export function Step0Category() {
-  const categoryStore = useCategoryStore(s => s.categories) || [];
+  const categoryStoreRaw = useCategoryStore(s => s.categories);
+  const categoryStore = useMemo(() => categoryStoreRaw || [], [categoryStoreRaw]);
   const { category, updateField, nextStep } = useCreateTaskStore();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -31,7 +32,7 @@ export function Step0Category() {
     <div className="flex flex-col h-full bg-edu-bg animate-fade-in">
       {/* Header Area (Sticky/Unscrollable) */}
       <div className="px-5 pt-6 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
-        <h2 className="text-[22px] font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
+        <h2 className="text-2xl font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
         <p className="text-[13px] text-edu-muted font-medium mb-4">Kerakli mutaxassisni topish uchun toifa tanlang</p>
         
         {/* Search Bar */}
@@ -71,7 +72,7 @@ export function Step0Category() {
                       : "bg-edu-surface border-edu-border/40 text-edu-text hover:border-edu-primary/30 hover:shadow-sm"
                   )}
                 >
-                  <div className="text-[22px] mb-1.5 leading-none bg-black/5 dark:bg-white/5 w-10 h-10 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
+                  <div className="text-2xl mb-1.5 leading-none bg-black/5 dark:bg-white/5 w-10 h-10 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
                     {cat.emoji}
                   </div>
                   <div className={cn("text-[13px] leading-tight", isSelected ? "font-bold" : "font-semibold")}>

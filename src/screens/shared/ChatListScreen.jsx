@@ -67,7 +67,7 @@ function ChatListWidget({ searchTerm }) {
         <div className="w-24 h-24 bg-edu-surface rounded-full flex items-center justify-center text-4xl mb-6 shadow-[0_0_40px_rgba(59,130,246,0.15)] border border-edu-border">
           <MessageSquare size={36} className="text-edu-primary opacity-80" />
         </div>
-        <h2 className="text-[22px] font-bold text-edu-text mb-2 tracking-tight">Chatlar topilmadi</h2>
+        <h2 className="text-2xl font-bold text-edu-text mb-2 tracking-tight">Chatlar topilmadi</h2>
         <p className="text-[15px] text-edu-muted font-medium leading-relaxed">
           Hozircha hech qanday suhbat mavjud emas. Vazifalarga taklif berish orqali muloqotni boshlang.
         </p>
@@ -116,7 +116,7 @@ function ChatListWidget({ searchTerm }) {
             variants={item}
             layout
             onClick={() => handleOpenChat(conv.taskId)}
-            className="group relative bg-edu-surface rounded-2xl p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98] transition-all border border-edu-border shadow-sm overflow-hidden"
+            className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden"
           >
             {/* Unread indicator glow */}
             {conv.unreadCount > 0 && (
@@ -183,8 +183,9 @@ export default function ChatListScreen() {
   const [searchTerm, setSearchTerm] = useState('');
 
   return (
-    <PageLayout className="bg-edu-bg">
-      <div className="h-full flex flex-col pt-6 pb-24">
+    <PageLayout className="bg-edu-bg relative overflow-hidden">
+      <div className="absolute inset-0 bg-mesh-aurora opacity-10 dark:opacity-30 pointer-events-none" />
+      <div className="relative z-10 h-full flex flex-col pt-6 pb-24">
         <div className="px-5 mb-5 shrink-0">
           <div className="flex items-center justify-between mb-5">
             <div>

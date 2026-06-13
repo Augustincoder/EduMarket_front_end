@@ -3,12 +3,12 @@ import { getInitials } from '../../lib/utils';
 import { cn } from '../../lib/utils';
 
 const sizeClass = {
-  xs:   'w-6 h-6 text-[10px]',
-  sm:   'w-8 h-8 text-xs',
-  md:   'w-10 h-10 text-sm',
-  lg:   'w-12 h-12 text-base',
-  xl:   'w-16 h-16 text-lg',
-  '2xl':'w-20 h-20 text-xl',
+  xs:   'w-[24px] h-[24px] text-[10px]',
+  sm:   'w-[32px] h-[32px] text-[12px]',
+  md:   'w-[40px] h-[40px] text-[14px]',
+  lg:   'w-[48px] h-[48px] text-[16px]',
+  xl:   'w-[64px] h-[64px] text-[20px]',
+  '2xl':'w-[80px] h-[80px] text-3xl',
 };
 
 const COLORS = [
@@ -27,14 +27,14 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
     <div
       onClick={onClick}
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full shrink-0 font-bold select-none shadow-premium-sm ring-1 ring-edu-text/[0.05]",
+        "relative inline-flex items-center justify-center rounded-full shrink-0 font-bold select-none overflow-hidden",
+        "bg-edu-surface-3 shadow-[0_0_0_2px_var(--edu-bg),0_0_0_3px_var(--edu-border)] dark:shadow-[0_0_0_2px_var(--edu-surface),0_0_0_3px_rgba(255,255,255,0.12)]",
         sizeClass[size] || sizeClass.md,
-        onClick && "cursor-pointer active-spring",
+        onClick && "cursor-pointer active:scale-[0.96] transition-transform duration-120 ease-press",
         className
       )}
-      style={{ backgroundColor: fallbackColor }}
     >
-      <div className="absolute inset-0 rounded-full overflow-hidden">
+      <div className="absolute inset-0 rounded-full overflow-hidden" style={{ backgroundColor: fallbackColor }}>
         {avatarUrl ? (
           <img
             src={avatarUrl}
@@ -49,9 +49,6 @@ export function Avatar({ name, avatarUrl, size = 'md', className, onClick }) {
           </div>
         )}
       </div>
-      {/* Premium Inner Glow & Border */}
-      <div className="absolute inset-0 rounded-full border border-edu-text/[0.08] pointer-events-none" />
-      <div className="absolute inset-[0.5px] rounded-full border border-white/10 pointer-events-none opacity-50" />
     </div>
   );
 }

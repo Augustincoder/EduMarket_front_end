@@ -15,8 +15,8 @@ export const SelectInput = forwardRef(({
   ...props
 }, ref) => {
   return (
-    <div className={cn("w-full flex flex-col gap-1.5", className)}>
-      {label && <label htmlFor={props.id || props.name} className="text-edu-muted text-sm font-medium">{label}</label>}
+    <div className={cn("w-full flex flex-col gap-2", className)}>
+      {label && <label htmlFor={props.id || props.name} className="text-xs font-semibold text-edu-muted px-1">{label}</label>}
       
       <Select.Root value={value} onValueChange={onChange} {...props}>
         <Select.Trigger 
@@ -25,9 +25,9 @@ export const SelectInput = forwardRef(({
           aria-invalid={!!error}
           aria-describedby={error ? `${props.id || props.name}-error` : undefined}
           className={cn(
-            "relative flex items-center justify-between bg-edu-surface border border-edu-border rounded-xl px-3 h-12 shadow-none focus-within:border-edu-primary focus:border-edu-primary outline-none transition-all text-sm text-edu-text w-full cursor-pointer",
-            error && "border-red-500 focus-within:border-red-500 focus:border-red-500",
-            !value && "text-edu-muted"
+            "relative flex items-center justify-between bg-edu-surface-2 border-[1.5px] border-edu-border rounded-md px-4 h-[48px] shadow-none focus-within:bg-edu-surface focus-within:border-edu-primary focus-within:ring-[3px] focus-within:ring-edu-primary-l focus:bg-edu-surface outline-none transition-all duration-220 ease-in-out text-[14px] text-edu-text w-full cursor-pointer",
+            error && "border-edu-urgent focus-within:border-edu-urgent focus-within:ring-edu-urgent-l focus:border-edu-urgent",
+            !value && "text-edu-muted-2"
           )}
         >
           <Select.Value placeholder={placeholder} />
@@ -38,12 +38,12 @@ export const SelectInput = forwardRef(({
 
         <Select.Portal>
           <Select.Content 
-            className="overflow-hidden bg-edu-surface rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-edu-border z-[100] animate-fade-in"
+            className="overflow-hidden bg-edu-surface rounded-xl shadow-lg border border-edu-border z-[100] animate-fade-in"
             position="popper"
             sideOffset={5}
             style={{ width: 'var(--radix-select-trigger-width)' }}
           >
-            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-edu-surface text-edu-text cursor-default">
+            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-edu-surface-2 text-edu-muted cursor-default">
               <ChevronUp size={14} />
             </Select.ScrollUpButton>
             
@@ -52,7 +52,7 @@ export const SelectInput = forwardRef(({
                 <Select.Item 
                   key={opt.value} 
                   value={opt.value}
-                  className="relative flex items-center px-8 py-2.5 text-sm text-edu-text rounded-lg hover:bg-edu-surface focus:bg-edu-surface outline-none cursor-pointer select-none font-medium transition-colors"
+                  className="relative flex items-center pl-8 pr-4 py-2.5 text-[14px] text-edu-text rounded-md hover:bg-edu-surface-3 focus:bg-edu-surface-3 outline-none cursor-pointer select-none font-medium transition-colors"
                 >
                   <Select.ItemText>
                     {opt.emoji ? `${opt.emoji} ` : ''}{opt.label}
@@ -65,14 +65,14 @@ export const SelectInput = forwardRef(({
               ))}
             </Select.Viewport>
 
-            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-edu-surface text-edu-text cursor-default">
+            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-edu-surface-2 text-edu-muted cursor-default">
               <ChevronDown size={14} />
             </Select.ScrollDownButton>
           </Select.Content>
         </Select.Portal>
       </Select.Root>
       
-      {error && <span id={`${props.id || props.name}-error`} className="text-red-500 text-xs mt-1" role="alert">{error}</span>}
+      {error && <span id={`${props.id || props.name}-error`} className="text-edu-urgent text-xs mt-1 px-1" role="alert">{error}</span>}
     </div>
   );
 });

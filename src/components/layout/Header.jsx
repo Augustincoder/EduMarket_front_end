@@ -24,7 +24,7 @@ export function Header({
   return (
     <header className={cn(
       'sticky top-0 z-30 w-full max-w-[768px]',
-      !transparent && 'ios-glass border-b border-edu-border',
+      !transparent && 'bg-edu-surface/60 backdrop-blur-md border-b border-edu-border',
       transparent && 'bg-transparent',
       className
     )}>
@@ -35,7 +35,7 @@ export function Header({
             aria-label="Orqaga"
             className={cn(
               'w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0',
-              'bg-black/5 dark:bg-white/5 active-spring transition-all'
+              'bg-black/5 dark:bg-white/5 active:scale-[0.97] transition-transform duration-[120ms] transition-all'
             )}
           >
             <ArrowLeft size={20} className="text-edu-text" />
@@ -44,7 +44,7 @@ export function Header({
 
         <div className="flex-1 min-w-0">
           {title && (
-            <h1 className="text-[17px] font-bold font-display text-edu-text tracking-ios-display truncate leading-tight">
+            <h1 className="text-lg font-bold font-display text-edu-text tracking-ios-display truncate leading-tight">
               {title}
             </h1>
           )}

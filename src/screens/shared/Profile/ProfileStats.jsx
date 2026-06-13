@@ -102,7 +102,7 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading }) {
             <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-premium-sm transition-all hover:border-edu-text/10`}>
               <span>{item.icon}</span>
               <div className="mt-4">
-                <p className="text-[22px] font-bold font-display text-edu-text leading-none">{item.value}</p>
+                <p className="text-2xl font-bold font-display text-edu-text leading-none">{item.value}</p>
                 <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-2 leading-snug opacity-70">{item.label}</p>
               </div>
             </div>

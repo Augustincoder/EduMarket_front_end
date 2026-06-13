@@ -31,7 +31,7 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
 
   return (
     <div className={cn(
-      'group relative bg-edu-surface rounded-[28px] p-5 active:scale-[0.99] transition-all duration-300 border border-edu-border shadow-ios hover:shadow-ios-lg',
+      'group relative card-base p-5 transition-all duration-300',
       isSelected && 'border-edu-primary/30 ring-4 ring-edu-primary/5',
     )}>
       {/* VIP Badge Overlay */}
@@ -78,7 +78,7 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
       <div className={cn(
         "rounded-2xl p-4 mb-5 border relative",
         isRedacted 
-          ? "bg-amber-50/50 dark:bg-amber-900/10 border-amber-200/50 dark:border-amber-500/10" 
+          ? "bg-edu-warn-l border-edu-warn/20" 
           : "bg-edu-bg border-edu-border"
       )}>
         <MessageCircle size={14} className={cn(
@@ -87,7 +87,7 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
         )} />
         <p className={cn(
           "text-[14px] leading-relaxed font-medium line-clamp-3 italic",
-          isRedacted ? "text-amber-600/80 dark:text-amber-500/80" : "text-edu-text"
+          isRedacted ? "text-edu-warn/80" : "text-edu-text"
         )}>
           "{bid.message || 'Hech qanday xabar qoldirilmagan.'}"
         </p>
@@ -95,11 +95,11 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
 
       {/* Counter Offer Status if any */}
       {bid.counterPrice && (
-        <div className="mb-4 p-3 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 rounded-xl">
-          <div className="flex items-center gap-1.5 text-indigo-600 font-bold text-xs mb-1">
+        <div className="mb-4 p-3 bg-edu-info-l border border-edu-info/20 rounded-xl">
+          <div className="flex items-center gap-1.5 text-edu-info font-bold text-xs mb-1">
             <ArrowRightLeft size={14} /> Karshi taklif yuborildi
           </div>
-          <p className="text-indigo-800 text-sm">{formatPrice(bid.counterPrice)} UZS</p>
+          <p className="text-edu-info text-sm">{formatPrice(bid.counterPrice)} UZS</p>
         </div>
       )}
 
@@ -133,7 +133,7 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
               size="md"
               className={cn(
                 "rounded-2xl px-6 font-bold uppercase tracking-widest text-[12px] active:scale-95 transition-all shadow-btn",
-                isVip ? "bg-gray-900 dark:bg-white text-white dark:text-black" : "bg-edu-primary text-white"
+                isVip ? "bg-edu-text text-edu-bg" : "bg-edu-primary text-white"
               )}
               disabled={isDisabled}
               onClick={() => onAccept(bid)}

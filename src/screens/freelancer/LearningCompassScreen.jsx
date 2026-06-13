@@ -35,7 +35,7 @@ export default function LearningCompassScreen() {
       <div className="p-4 space-y-6 pb-safe">
         
         {/* Header Hero */}
-        <div className="bg-gradient-to-br from-edu-primary/10 to-transparent p-6 rounded-[28px] border border-edu-primary/20 shadow-sm relative overflow-hidden">
+        <div className="bg-gradient-to-br from-edu-primary/10 to-transparent p-6 rounded-xl border border-edu-primary/20 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Compass className="w-24 h-24 text-edu-primary" />
           </div>

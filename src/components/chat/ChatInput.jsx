@@ -55,7 +55,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         else if (pendingFile.type.startsWith('audio/')) fileType = 'voice';
 
         onSend?.(trimmed, fileId, fileType, pendingFile.name, isSelectingSecureFile);
-      } catch (err) {
+      } catch {
         toast.error('Fayl yuklashda xato');
       } finally {
         setUploading(false);
@@ -133,12 +133,12 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   };
 
   return (
-    <div className="relative rounded-[24px] border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col">
+    <div className="relative rounded-xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col">
       {/* File menu */}
       {showMenu && (
-        <div className="absolute bottom-full left-4 mb-3 w-[240px] ios-glass rounded-[20px] shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
+        <div className="absolute bottom-full left-4 mb-3 w-[240px] bg-edu-surface/60 backdrop-blur-md rounded-xl shadow-sheet border border-edu-border overflow-hidden z-10 animate-ios-pop">
           <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active:scale-[0.97] transition-transform duration-[120ms]"
             onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='image/*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -148,7 +148,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           </button>
           <div className="h-[1px] bg-edu-border mx-4" />
           <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active-spring"
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active:scale-[0.97] transition-transform duration-[120ms]"
             onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
@@ -158,7 +158,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           </button>
           <div className="h-[1px] bg-edu-border mx-4" />
           <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-red-500 active-spring"
+            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-red-500 active:scale-[0.97] transition-transform duration-[120ms]"
             onClick={() => { setIsSelectingSecureFile(true); fileRef.current.accept='*'; fileRef.current.click(); }}
           >
             <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
@@ -183,7 +183,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
               </div>
             </div>
           </div>
-          <button aria-label="Bekor qilish" onClick={onCancelAction} className="w-11 h-11 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active-spring">
+          <button aria-label="Bekor qilish" onClick={onCancelAction} className="w-11 h-11 rounded-full bg-black/5 flex items-center justify-center text-edu-muted active:scale-[0.97] transition-transform duration-[120ms]">
             <X size={18} />
           </button>
         </div>
@@ -214,7 +214,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
               </div>
             </div>
           </div>
-          <button aria-label="Faylni bekor qilish" onClick={handleCancelFile} disabled={uploading} className="w-10 h-10 ml-2 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-edu-text active-spring">
+          <button aria-label="Faylni bekor qilish" onClick={handleCancelFile} disabled={uploading} className="w-10 h-10 ml-2 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-edu-text active:scale-[0.97] transition-transform duration-[120ms]">
             <X size={18} />
           </button>
         </div>
@@ -228,13 +228,13 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             onCancel={() => setIsVoiceMode(false)} 
           />
         ) : (
-          <div className="flex items-end flex-1 bg-edu-surface shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none border border-edu-border/60 rounded-[28px] p-1 transition-all focus-within:border-edu-primary/50 focus-within:ring-[3px] focus-within:ring-edu-primary/10">
+          <div className="flex items-end flex-1 bg-edu-surface shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none border border-edu-border/60 rounded-xl p-1 transition-all focus-within:border-edu-primary/50 focus-within:ring-[3px] focus-within:ring-edu-primary/10">
             {/* Attach button */}
             <button
               aria-label="Biriktirish"
               onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
               className={cn(
-                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active-spring transition-all ml-0.5 mb-0.5',
+                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-[0.97] transition-transform duration-[120ms] transition-all ml-0.5 mb-0.5',
                 showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5'
               )}
               disabled={!!editingMessage || uploading}
@@ -271,7 +271,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                   aria-label={editingMessage ? "Saqlash" : "Yuborish"}
                   disabled={uploading}
                   onClick={() => { hapticSuccess(); handleSend(); }}
-                  className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active-spring transition-transform"
+                  className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn active:scale-[0.97] transition-transform duration-[120ms] transition-transform"
                 >
                   {editingMessage ? <Check size={18} /> : <Send size={18} className="ml-0.5" />}
                 </button>
@@ -280,7 +280,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                   aria-label="Ovozli xabar"
                   onClick={() => { hapticLight(); setIsVoiceMode(true); }}
                   disabled={uploading}
-                  className="w-10 h-10 rounded-full flex items-center justify-center bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active-spring transition-colors"
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.97] transition-transform duration-[120ms] transition-colors"
                 >
                   <Mic size={20} />
                 </button>

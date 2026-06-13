@@ -28,7 +28,7 @@ export function BottomSheet({
                 {title}
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button aria-label="Yopish" className="w-11 h-11 rounded-[20px] bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/20 transition-all">
+                <button aria-label="Yopish" className="w-11 h-11 rounded-xl bg-edu-bg flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-edu-border/20 transition-all">
                   <X size={20} className="text-edu-muted" />
                 </button>
               </Dialog.Close>

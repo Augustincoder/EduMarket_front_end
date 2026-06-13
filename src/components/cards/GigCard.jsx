@@ -13,7 +13,7 @@ export function GigCard({ gig, onOrder }) {
 
   return (
     <div className={cn(
-      'bg-edu-surface squircle p-5 shadow-ios border border-edu-border/30',
+      'bg-edu-surface rounded-xl p-5 shadow-ios border border-edu-border/30',
       'transition-all duration-300 hover:border-edu-primary/30'
     )}>
       {/* Freelancer */}
@@ -35,7 +35,7 @@ export function GigCard({ gig, onOrder }) {
       </div>
 
       {/* Gig title */}
-      <h3 className="font-bold text-edu-text text-[17px] font-display tracking-ios-display line-clamp-2 mb-2 leading-tight">
+      <h3 className="font-bold text-edu-text text-lg font-display tracking-ios-display line-clamp-2 mb-2 leading-tight">
         {gig.title}
       </h3>
       {gig.description && (

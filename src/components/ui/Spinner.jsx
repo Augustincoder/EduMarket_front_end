@@ -10,19 +10,24 @@ export function Spinner({ size = 'md', className, color = 'border-edu-primary' }
 
   return (
     <div 
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
       className={cn(
         "rounded-full border-t-transparent animate-spin",
         sizes[size] || sizes.md,
         color,
         className
       )} 
-    />
+    >
+      <span className="sr-only">Yuklanmoqda...</span>
+    </div>
   );
 }
 
 export function FullPageSpinner() {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-edu-bg z-50 animate-fade-in">
+    <div role="status" aria-live="polite" aria-busy="true" className="fixed inset-0 flex flex-col items-center justify-center bg-edu-bg z-50 animate-fade-in">
       <div className="flex flex-col items-center gap-6">
         <div className="relative w-16 h-16 flex items-center justify-center">
           {/* Pulsing glow background */}

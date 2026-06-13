@@ -69,7 +69,7 @@ export default function SplashScreen() {
       {/* Logo */}
       <div className="flex flex-col items-center gap-6 animate-ios-pop relative z-10">
         {/* Logo mark */}
-        <div className="w-24 h-24 rounded-[20px] bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
+        <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-edu-primary to-edu-accent flex items-center justify-center shadow-btn animate-pulse-slow border border-white/20">
           <GraduationCap size={48} className="text-white drop-shadow-lg" />
         </div>
 
@@ -85,8 +85,8 @@ export default function SplashScreen() {
       {/* Loading indicator */}
       <div className="flex flex-col items-center gap-5 w-56 mt-10 relative z-10">
         {/* Progress bar */}
-        <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden border border-black/5">
-          <div className="h-full bg-gradient-to-r from-edu-primary to-edu-accent rounded-full animate-shimmer w-1/2" />
+        <div className="w-full h-1.5 bg-edu-border-2 rounded-full overflow-hidden">
+          <div className="h-full bg-edu-primary rounded-full animate-shimmer w-1/2" />
         </div>
         <p className="text-[10px] uppercase tracking-[0.15em] text-edu-muted font-bold opacity-60">Ulanmoqda...</p>
       </div>

@@ -19,7 +19,7 @@ export function StarRating({ value = 0, onChange, size = 28, readonly = false })
           onMouseLeave={() => !readonly && setHovered(0)}
           className={cn(
             'transition-all duration-100',
-            !readonly && 'press-scale cursor-pointer',
+            !readonly && 'active:scale-95 duration-[120ms] cursor-pointer',
             readonly && 'cursor-default'
           )}
         >

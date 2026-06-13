@@ -109,7 +109,7 @@ export default function VipScreen() {
       <div className="px-4 py-4 space-y-5 pb-nav">
 
         {/* Current status */}
-        <Card className="bg-gradient-to-br from-[#FFD700] to-[#FDB931] border border-[#FFF8B0]/50 shadow-[0_8px_30px_rgba(255,215,0,0.4)] relative overflow-hidden" radius="2xl">
+        <Card className="bg-gradient-to-br from-amber-400 to-amber-500 border border-amber-200/50 shadow-lg shadow-amber-500/40 relative overflow-hidden" radius="2xl">
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/40 pointer-events-none animate-pulse-slow" />
           <CardContent className="p-5 text-white relative z-10">
             <p className="text-sm text-white/80 font-medium uppercase tracking-widest mb-1">Joriy status</p>

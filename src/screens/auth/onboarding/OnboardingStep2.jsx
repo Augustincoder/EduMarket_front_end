@@ -31,10 +31,10 @@ export default function OnboardingStep2() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="flex flex-col h-full bg-edu-bg p-4">
       <div className="flex-1">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Qobiliyatlar</h1>
-        <p className="text-slate-500 dark:text-slate-400 mb-6">Siz qaysi sohalarda yordam bera olasiz? (Maksimum 5 ta)</p>
+        <h1 className="text-2xl font-bold text-edu-text mb-2">Qobiliyatlar</h1>
+        <p className="text-edu-muted mb-6">Siz qaysi sohalarda yordam bera olasiz? (Maksimum 5 ta)</p>
 
         <div className="flex flex-wrap gap-3">
           {SKILLS_LIST.map((skill) => {
@@ -43,10 +43,10 @@ export default function OnboardingStep2() {
               <button
                 key={skill}
                 onClick={() => toggleSkill(skill)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-[0.97] transition-transform duration-[120ms] ${
                   isSelected 
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30' 
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                    ? 'bg-edu-primary text-white shadow-btn' 
+                    : 'bg-edu-surface text-edu-text-2 border border-edu-border hover:border-edu-primary/30 shadow-sm'
                 }`}
               >
                 {skill}
@@ -57,8 +57,8 @@ export default function OnboardingStep2() {
       </div>
 
       <div className="pt-4 pb-6 flex gap-3">
-        <Button variant="outline" className="w-1/3" onClick={() => setStep(1)}>Orqaga</Button>
-        <Button variant="primary" className="w-2/3" onClick={handleNext}>Keyingisi</Button>
+        <Button variant="outline" className="w-1/3 rounded-xl h-12 font-bold border-edu-border" onClick={() => setStep(1)}>Orqaga</Button>
+        <Button variant="primary" className="w-2/3 rounded-xl h-12 font-bold shadow-btn" onClick={handleNext}>Keyingisi</Button>
       </div>
     </div>
   );

@@ -3,23 +3,22 @@ import { STATUS_CONFIG, BADGE_CONFIG } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 
 // Standardized base classes for all badges to ensure pixel-perfect consistency
-const baseBadgeClass = "inline-flex items-center justify-center gap-1.5 font-bold rounded-full h-[22px] px-2.5 text-[10px] tracking-wide uppercase transition-all select-none border";
+const baseBadgeClass = "inline-flex items-center justify-center gap-[5px] font-bold rounded-full h-[22px] px-2 text-[10px] tracking-[0.04em] uppercase transition-all select-none";
 
-export function StatusBadge({ status }) {
+export function StatusBadge({ status, className }) {
   const cfg = STATUS_CONFIG[status];
   if (!cfg) return null;
 
   return (
     <span
-      className={cn(baseBadgeClass)}
+      className={cn(baseBadgeClass, className)}
       style={{ 
-        backgroundColor: `color-mix(in srgb, ${cfg.dot} 12%, transparent)`, 
-        borderColor: `color-mix(in srgb, ${cfg.dot} 20%, transparent)`,
-        color: cfg.dot 
+        backgroundColor: cfg.bg, 
+        color: cfg.text 
       }}
     >
       <span
-        className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_4px_rgba(0,0,0,0.1)]"
+        className="w-[6px] h-[6px] rounded-full flex-shrink-0"
         style={{ backgroundColor: cfg.dot }}
       />
       {cfg.label}
@@ -27,23 +26,28 @@ export function StatusBadge({ status }) {
   );
 }
 
-export function UserBadge({ badge }) {
+export function UserBadge({ badge, className }) {
   const cfg = BADGE_CONFIG[badge] || BADGE_CONFIG.YANGI;
   return (
     <span
-      className={cn(baseBadgeClass, "bg-edu-surface-2 text-edu-muted border-edu-border/50 font-bold")}
+      className={cn(baseBadgeClass, className)}
+      style={{ 
+        backgroundColor: cfg.bg, 
+        color: cfg.color 
+      }}
     >
       {cfg.label}
     </span>
   );
 }
 
-export function VipBadge() {
+export function VipBadge({ className }) {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        "bg-gradient-to-r from-edu-vip/15 to-edu-vip/5 text-edu-vip border-edu-vip/30 font-bold"
+        "bg-edu-vip-l text-edu-vip",
+        className
       )}
     >
       <span className="text-[12px] -mt-0.5">👑</span>
@@ -52,12 +56,13 @@ export function VipBadge() {
   );
 }
 
-export function VerifiedBadge() {
+export function VerifiedBadge({ className }) {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        "bg-edu-primary/10 text-edu-primary border-edu-primary/30 font-bold"
+        "bg-edu-primary-l text-edu-primary",
+        className
       )}
     >
       <span className="text-[11px] font-bold -mt-0.5">✓</span>
@@ -66,15 +71,16 @@ export function VerifiedBadge() {
   );
 }
 
-export function UrgentBadge() {
+export function UrgentBadge({ className }) {
   return (
     <span
       className={cn(
         baseBadgeClass,
-        'bg-edu-urgent/10 text-edu-urgent border-edu-urgent/30 animate-pulse font-bold'
+        'bg-edu-urgent-l text-edu-urgent animate-pulse',
+        className
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-edu-urgent flex-shrink-0 shadow-[0_0_6px_rgba(255,59,48,0.4)]" />
+      <span className="w-[6px] h-[6px] rounded-full bg-edu-urgent flex-shrink-0" />
       SHOSHILINCH
     </span>
   );
@@ -84,7 +90,7 @@ export function CategoryChip({ category, emoji, className }) {
   return (
     <span className={cn(
       baseBadgeClass,
-      'bg-edu-surface text-edu-text border border-edu-border/50',
+      'bg-edu-surface text-edu-text border border-edu-border',
       className
     )}>
       {emoji && <span className="text-[12px]">{emoji}</span>}

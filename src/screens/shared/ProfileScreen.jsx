@@ -54,13 +54,13 @@ export default function ProfileScreen() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => { setTheme(theme === 'dark' ? 'light' : 'dark'); }}
-              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/50 transition-colors border border-edu-border/30"
+              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-edu-border/50 transition-colors border border-edu-border/30"
             >
               {theme === 'dark' ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-indigo-500" />}
             </button>
             <button
               onClick={() => setSettingsOpen(true)}
-              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center press-scale hover:bg-edu-border/50 transition-colors border border-edu-border/30"
+              className="w-9 h-9 rounded-xl bg-edu-bg flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-edu-border/50 transition-colors border border-edu-border/30"
             >
               <Settings size={18} className="text-edu-text" />
             </button>
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
                   if (ok) logout();
                 });
               }}
-              className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center press-scale hover:bg-red-500/20 transition-colors"
+              className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-red-500/20 transition-colors"
             >
               <LogOut size={18} className="text-red-500" />
             </button>
@@ -84,7 +84,7 @@ export default function ProfileScreen() {
         {/* Workspace Context Switcher Card (For everyone, but enforces verification) */}
         <Card 
           className={cn(
-            "border-2 relative overflow-hidden group cursor-pointer press-scale animate-fade-in shadow-ios",
+            "border-2 relative overflow-hidden group cursor-pointer active:scale-95 duration-[120ms] animate-fade-in shadow-ios",
             activeRole === 'CLIENT' 
               ? "bg-indigo-600/5 border-indigo-600/10 dark:bg-indigo-500/10 dark:border-indigo-500/20" 
               : "bg-edu-primary/5 border-edu-primary/10 dark:bg-edu-primary/10 dark:border-edu-primary/20"
@@ -198,7 +198,7 @@ export default function ProfileScreen() {
 
         {/* Referral Card */}
         <Card 
-          className="bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent border border-purple-500/20 shadow-card overflow-hidden relative cursor-pointer press-scale" 
+          className="bg-gradient-to-r from-violet-500/10 via-purple-500/5 to-transparent border border-purple-500/20 shadow-card overflow-hidden relative cursor-pointer active:scale-95 duration-[120ms]" 
           radius="xl"
           onClick={() => navigate('/referrals')}
         >

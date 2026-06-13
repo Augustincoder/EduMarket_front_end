@@ -84,7 +84,7 @@ export default function BidsScreen() {
 
   return (
     <PageLayout showNav={false} bgClass="bg-edu-bg dark:bg-black">
-      <Header title={`Takliflar (${bids?.length ?? 0})`} showBack className="ios-glass" />
+      <Header title={`Takliflar (${bids?.length ?? 0})`} showBack className="bg-edu-surface/60 backdrop-blur-md" />
 
       <div className="px-4 py-4">
         {/* Sort Controls */}
@@ -167,7 +167,7 @@ export default function BidsScreen() {
           </div>
           <div className="space-y-1">
             <p className="text-[13px] text-edu-muted">Narx</p>
-            <p className="text-[24px] text-emerald-500 font-bold tracking-tight">
+            <p className="text-3xl text-emerald-500 font-bold tracking-tight">
               {formatPrice(confirming?.proposedPrice)} UZS
             </p>
           </div>
@@ -198,7 +198,7 @@ export default function BidsScreen() {
           />
           
           <div className="pt-2">
-            <Button fullWidth size="lg" variant="primary" onClick={handleCounterSubmit} className="h-14 rounded-[20px] shadow-ios-primary font-bold">
+            <Button fullWidth size="lg" variant="primary" onClick={handleCounterSubmit} className="h-14 rounded-xl shadow-ios-primary font-bold">
               Yuborish
             </Button>
           </div>

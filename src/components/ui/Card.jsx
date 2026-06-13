@@ -11,15 +11,11 @@ const HAPTIC_MAP = {
   warning: hapticWarning,
 };
 
-export const Card = forwardRef(({ className, radius = 'md', isPressable, onClick, haptic = 'light', ...props }, ref) => {
-  const radiusClass = {
-    sm: 'rounded-sm',
-    md: 'rounded-md',
-    lg: 'rounded-lg',
-    xl: 'rounded-lg',
-    none: 'rounded-none',
-  }[radius] || 'rounded-md';
-
+/**
+ * EduMarket Card
+ * variant: 'base' | 'elevated'
+ */
+export const Card = forwardRef(({ className, variant = 'base', isPressable, onClick, haptic = 'light', ...props }, ref) => {
   const Comp = isPressable || onClick ? 'button' : 'div';
   
   const handleClick = (e) => {
@@ -34,9 +30,9 @@ export const Card = forwardRef(({ className, radius = 'md', isPressable, onClick
       ref={ref}
       onClick={handleClick}
       className={cn(
-        "w-full block bg-edu-surface overflow-hidden text-left transition-all",
-        radius === 'lg' || radius === 'xl' ? 'premium-card' : cn(radiusClass, "shadow-premium-sm border border-edu-border/30"),
-        (isPressable || onClick) && "active-spring cursor-pointer",
+        "w-full block text-left",
+        variant === 'elevated' ? 'card-elevated' : 'card-base',
+        (isPressable || onClick) && "card-pressable cursor-pointer",
         className
       )}
       {...props}
@@ -46,6 +42,7 @@ export const Card = forwardRef(({ className, radius = 'md', isPressable, onClick
 Card.displayName = 'Card';
 
 export const CardContent = forwardRef(({ className, ...props }, ref) => {
+  // default padding is 16px (p-4)
   return <div ref={ref} className={cn("p-4", className)} {...props} />;
 });
 CardContent.displayName = 'CardContent';

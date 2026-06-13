@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.0](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.14...v2.3.0) (2026-06-13)
+
+### Features
+
+* **design-system:** Implement Phase 1-4 UI/UX redesign with central design tokens (`edu-*` palette)
+* **components:** Refactor Phase 5-6 core components (TaskCard, BidCard, BottomNav) to native standard and remove redundant Framer Motion
+* **ui:** Standardize Light/Dark mode across all screens including AdminDashboard
+* **a11y:** Enforce 44x44px touch targets on icon buttons, improve contrast, and add ARIA attributes to spinners (Phase 8)
+* **performance:** Optimize locales lazy loading with Webpack chunk splitting, remove obsolete css classes (Phase 9)
+
+### Bug Fixes
+
+* **ui:** fix layout overflow bugs in CreateTaskScreen and chat layout sizing
 ### [2.2.11](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.10...v2.2.11) (2026-06-11)
 
 

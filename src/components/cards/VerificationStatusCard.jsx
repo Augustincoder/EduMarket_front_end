@@ -6,7 +6,7 @@ export function VerificationStatusCard({ status, onClick }) {
   return (
     <Card 
       className={cn(
-        "border relative overflow-hidden press-scale",
+        "border relative overflow-hidden active:scale-95 duration-[120ms]",
         status === 'APPROVED' ? "bg-edu-primary/5 border-edu-primary/20" : 
         status === 'PENDING' ? "bg-amber-500/5 border-amber-500/20" : "bg-edu-surface border-edu-border/40"
       )}

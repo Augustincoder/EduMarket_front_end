@@ -126,7 +126,7 @@ export default function NotificationSettingsScreen() {
 
 function SettingItem({ title, desc, checked, onChange }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-edu-surface border border-edu-border/50 rounded-2xl active-spring shadow-sm">
+    <div className="flex items-center justify-between p-4 bg-edu-surface border border-edu-border/50 rounded-2xl active:scale-[0.97] transition-transform duration-[120ms] shadow-sm">
       <div className="flex-1 pr-4">
         <p className="font-bold text-edu-text text-[15px]">{title}</p>
         <p className="text-xs text-edu-muted mt-1 leading-relaxed">{desc}</p>

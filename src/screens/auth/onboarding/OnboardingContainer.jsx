@@ -25,11 +25,11 @@ export default function OnboardingContainer() {
   if (!isAuthenticated || user?.isOnboardingComplete) return null;
 
   return (
-    <div className="h-screen w-full flex flex-col bg-slate-50 dark:bg-slate-900">
+    <div className="h-screen w-full flex flex-col bg-edu-bg">
       {/* Progress Bar */}
-      <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5">
+      <div className="w-full bg-edu-border-2 h-1.5">
         <div 
-          className="bg-blue-600 h-1.5 transition-all duration-300 ease-out"
+          className="bg-edu-primary h-1.5 transition-all duration-300 ease-out"
           style={{ width: `${(step / 3) * 100}%` }}
         />
       </div>

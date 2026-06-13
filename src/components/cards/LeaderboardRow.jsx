@@ -24,7 +24,7 @@ export function LeaderboardRow({ user, rank, isCurrentUser }) {
   return (
     <div
       onClick={handleClick}
-      className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 cursor-pointer press-scale ${
+      className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 cursor-pointer active:scale-95 duration-[120ms] ${
         isCurrentUser
           ? 'bg-edu-primary/10 border-edu-primary shadow-btn'
           : 'bg-edu-surface border-edu-border hover:border-edu-primary/30'

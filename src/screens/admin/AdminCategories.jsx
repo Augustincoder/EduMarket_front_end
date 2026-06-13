@@ -34,7 +34,7 @@ export default function AdminCategories() {
       }
       toast.success(`${successCount} ta kategoriya muvaffaqiyatli yuklandi!`, { id: 'bulk-load' });
       queryClient.invalidateQueries(['admin', 'categories']);
-    } catch (err) {
+    } catch {
       toast.error("Kategoriyalarni yuklashda xatolik yuz berdi", { id: 'bulk-load' });
     } finally {
       setIsBulkLoading(false);

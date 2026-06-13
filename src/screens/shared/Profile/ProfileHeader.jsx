@@ -22,7 +22,7 @@ export function ProfileHeader({ me, activeRole }) {
             </div>
             
             <div className="space-y-1.5">
-              <h1 className="text-[24px] font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
+              <h1 className="text-3xl font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
               <p className="text-sm font-semibold text-edu-muted tracking-wide opacity-80">@{me?.username || 'username'}</p>
               
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
@@ -86,7 +86,7 @@ export function ProfileHeader({ me, activeRole }) {
             </div>
             
             <div className="space-y-2">
-              <h1 className="text-[22px] font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
+              <h1 className="text-2xl font-bold font-display text-edu-text tracking-tight leading-tight">{me?.fullname}</h1>
               <p className="text-xs font-semibold text-edu-muted tracking-wide">@{me?.username || 'username'}</p>
               
               <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1">

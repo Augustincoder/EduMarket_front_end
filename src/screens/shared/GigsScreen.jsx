@@ -102,7 +102,7 @@ export default function GigsScreen() {
             (activeRole === 'FREELANCER' && activeTab === 'MY_GIGS') ? (
               <button
                 onClick={handleCreateGigClick}
-                className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center text-edu-primary active-spring"
+                className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center text-edu-primary active:scale-[0.97] transition-transform duration-[120ms]"
               >
                 <Plus size={20} />
               </button>
@@ -116,9 +116,9 @@ export default function GigsScreen() {
         
         {/* Role Tabs for Freelancers */}
         {activeRole === 'FREELANCER' && (
-          <div className="flex p-1 bg-black/5 dark:bg-white/5 rounded-[18px] border border-edu-border/30 mb-1">
+          <div className="flex p-1 bg-edu-surface-2 rounded-[18px] border border-edu-border/30 mb-1">
             <button
-              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active-spring ${
+              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active:scale-[0.97] transition-transform duration-[120ms] ${
                 activeTab === 'MARKET' ? 'bg-edu-surface shadow-ios text-edu-primary' : 'text-edu-muted'
               }`}
               onClick={() => setActiveTab('MARKET')}
@@ -126,7 +126,7 @@ export default function GigsScreen() {
               Bozor
             </button>
             <button
-              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active-spring ${
+              className={`flex-1 py-2 text-[13px] font-bold rounded-[14px] transition-all active:scale-[0.97] transition-transform duration-[120ms] ${
                 activeTab === 'MY_GIGS' ? 'bg-edu-surface shadow-ios text-edu-primary' : 'text-edu-muted'
               }`}
               onClick={() => setActiveTab('MY_GIGS')}
@@ -138,7 +138,7 @@ export default function GigsScreen() {
 
         {/* Banner with modern premium gradient */}
         {(activeRole === 'CLIENT' || activeTab === 'MARKET') && (
-          <div className="relative overflow-hidden squircle bg-gradient-to-br from-edu-primary to-edu-primary-d text-white p-6 shadow-btn border border-white/10">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-edu-primary to-edu-accent text-white p-6 shadow-btn border border-white/10">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
             <div className="relative z-10 max-w-[85%]">
               <h2 className="text-xl font-bold font-display mb-1 tracking-ios-display">
@@ -156,14 +156,14 @@ export default function GigsScreen() {
         {/* Analytics for Freelancers in Market */}
         {activeRole === 'FREELANCER' && activeTab === 'MARKET' && (
           <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1">
-            <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
+            <div className="min-w-[140px] bg-edu-surface-2 p-4 rounded-xl border border-edu-border/30 flex flex-col gap-2">
               <TrendingUp className="w-5 h-5 text-edu-accent" />
               <div>
                 <p className="text-[10px] text-edu-muted font-bold uppercase tracking-widest">Trenddagi toifa</p>
                 <p className="text-[15px] font-bold text-edu-text tracking-ios-display">Dasturlash</p>
               </div>
             </div>
-            <div className="min-w-[140px] bg-edu-surface-2 p-4 squircle border border-edu-border/30 flex flex-col gap-2">
+            <div className="min-w-[140px] bg-edu-surface-2 p-4 rounded-xl border border-edu-border/30 flex flex-col gap-2">
               <Clock className="w-5 h-5 text-orange-500" />
               <div>
                 <p className="text-[10px] text-edu-muted font-bold uppercase tracking-widest">Eng ko'p qidirilgan</p>

@@ -3,7 +3,6 @@ import { fileApi } from '../../services/file.service';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, AlertTriangle, Download, EyeOff, Eye, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { cn } from '../../lib/utils';
 import { hapticImpact } from '../../lib/telegram';
 
 export default function EduViewer({ 
@@ -170,7 +169,7 @@ export default function EduViewer({
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-black/50 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white active-spring">
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-[0.97] transition-transform duration-[120ms]">
             ✕
           </button>
           <div className="text-white">
@@ -180,7 +179,7 @@ export default function EduViewer({
         </div>
         
         {!requireSecureView && (
-          <a href={fileUrl} download={actualFileName} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-edu-primary rounded-xl text-white font-bold text-sm active-spring">
+          <a href={fileUrl} download={actualFileName} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-edu-primary rounded-xl text-white font-bold text-sm active:scale-[0.97] transition-transform duration-[120ms]">
             <Download size={16} />
             Yuklash
           </a>

@@ -86,7 +86,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-hide">
         
         {/* Progress Overview Card */}
-        <div className="bg-edu-surface rounded-[28px] p-5 shadow-ios border border-edu-border relative overflow-hidden">
+        <div className="bg-edu-surface rounded-xl p-5 shadow-ios border border-edu-border relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-edu-primary/5 blur-2xl rounded-full pointer-events-none" />
           <div className="flex items-center justify-between mb-4 relative z-10">
             <div className="flex items-center gap-2">
@@ -130,12 +130,12 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
             </div>
           ) : milestones.length === 0 ? (
             /* empty state with guide */
-            <div className="bg-edu-surface rounded-[24px] p-8 border border-dashed border-gray-200 dark:border-white/10 text-center space-y-6">
+            <div className="bg-edu-surface rounded-xl p-8 border border-dashed border-gray-200 dark:border-white/10 text-center space-y-6">
               <div className="w-16 h-16 bg-blue-50 dark:bg-blue-500/10 rounded-3xl flex items-center justify-center text-blue-500 mx-auto">
                 <Rocket size={32} />
               </div>
               <div className="space-y-2">
-                <h4 className="text-[17px] font-bold text-edu-text">Ish maydoni bo'sh</h4>
+                <h4 className="text-lg font-bold text-edu-text">Ish maydoni bo'sh</h4>
                 <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
                   Bu yerda vazifani kichik bosqichlarga bo'lib, loyiha holatini birgalikda kuzatishingiz mumkin.
                 </p>
@@ -168,7 +168,7 @@ export function WorkspaceOverlay({ taskId, isClient, isOpen, onClose }) {
                 <div 
                   key={m.id} 
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-[22px] border transition-all duration-300",
+                    "flex items-center gap-4 p-4 rounded-xl border transition-all duration-300",
                     m.isCompleted 
                       ? "bg-emerald-500/5 border-emerald-500/10" 
                       : "bg-edu-surface border-black/[0.02] dark:border-white/[0.03] shadow-sm"

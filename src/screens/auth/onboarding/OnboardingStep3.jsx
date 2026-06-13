@@ -77,66 +77,66 @@ export default function OnboardingStep3() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="flex flex-col h-full bg-edu-bg p-4">
       <div className="flex-1">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Ta'lim</h1>
-        <p className="text-slate-500 dark:text-slate-400 mb-6">Talaba ekanligingizni bildiruvchi ma'lumotlar (Ixtiyoriy)</p>
+        <h1 className="text-2xl font-bold text-edu-text mb-2">Ta'lim</h1>
+        <p className="text-edu-muted mb-6">Talaba ekanligingizni bildiruvchi ma'lumotlar (Ixtiyoriy)</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Viloyat / Hudud</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">Viloyat / Hudud</label>
             <input 
               type="text"
               value={formData.region || ''}
               onChange={(e) => setFormData({ region: e.target.value })}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary shadow-sm transition-colors"
               placeholder="Masalan, Toshkent sh."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Oliy ta'lim muassasasi</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">Oliy ta'lim muassasasi</label>
             <div 
               onClick={() => {
                 HapticFeedback.impactOccurred('light');
                 setIsSheetOpen(true);
               }}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary flex items-center justify-between cursor-pointer transition-all active:scale-[0.99] shadow-sm"
             >
-              <span className={`truncate ${formData.university ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'}`}>
+              <span className={`truncate ${formData.university ? 'text-edu-text' : 'text-edu-muted'}`}>
                 {formData.university || "Universitetni tanlang"}
               </span>
               <div className="flex items-center gap-2">
                 {formData.university && (
                   <button 
                     onClick={handleClearUniversity}
-                    className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                    className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                   >
-                    <X size={16} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300" />
+                    <X size={16} className="text-edu-muted hover:text-edu-text" />
                   </button>
                 )}
-                <ChevronDown size={18} className="text-slate-400 dark:text-slate-500" />
+                <ChevronDown size={18} className="text-edu-muted" />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Fakultet</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">Fakultet</label>
             <input 
               type="text"
               value={formData.faculty || ''}
               onChange={(e) => setFormData({ faculty: e.target.value })}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary shadow-sm transition-colors"
               placeholder="Masalan, Amaliy matematika"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">O'qish bosqichi (Kurs)</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">O'qish bosqichi (Kurs)</label>
             <select 
               value={formData.studyYear || ''}
               onChange={(e) => setFormData({ studyYear: e.target.value })}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary shadow-sm transition-colors"
             >
               <option value="">Tanlang</option>
               <option value="1">1-kurs</option>
@@ -150,8 +150,8 @@ export default function OnboardingStep3() {
       </div>
 
       <div className="pt-4 pb-6 flex gap-3">
-        <Button variant="outline" className="w-1/3" onClick={() => setStep(2)} disabled={loading}>Orqaga</Button>
-        <Button variant="primary" className="w-2/3" onClick={handleFinish} loading={loading}>Yakunlash</Button>
+        <Button variant="outline" className="w-1/3 rounded-xl h-12 font-bold border-edu-border" onClick={() => setStep(2)} disabled={loading}>Orqaga</Button>
+        <Button variant="primary" className="w-2/3 rounded-xl h-12 font-bold shadow-btn" onClick={handleFinish} isLoading={loading}>Yakunlash</Button>
       </div>
 
       {/* University Selection Bottom Sheet */}
@@ -164,18 +164,18 @@ export default function OnboardingStep3() {
         <div className="flex flex-col h-full space-y-4">
           {/* Search bar */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-edu-muted" size={18} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Universitet nomini yozing..."
-              className="w-full bg-slate-100 dark:bg-slate-800 border-0 rounded-2xl pl-10 pr-4 py-3.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-edu-surface-2 border-0 rounded-2xl pl-10 pr-4 py-3.5 text-sm text-edu-text placeholder-edu-muted focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-full bg-edu-border text-edu-muted hover:bg-black/10 dark:hover:bg-white/10"
               >
                 <X size={14} />
               </button>
@@ -187,27 +187,27 @@ export default function OnboardingStep3() {
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12 space-y-3">
                 <Spinner size="lg" />
-                <p className="text-sm text-slate-500 dark:text-slate-400">Yuklanmoqda...</p>
+                <p className="text-sm text-edu-muted">Yuklanmoqda...</p>
               </div>
             ) : filteredUniversities.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Universitet topilmadi</p>
+                <p className="text-sm text-edu-muted">Universitet topilmadi</p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="divide-y divide-edu-border-2">
                 {filteredUniversities.map((unv) => {
                   const isSelected = formData.universityId === unv.id;
                   return (
                     <button
                       key={unv.id}
                       onClick={() => handleSelectUniversity(unv)}
-                      className="w-full text-left py-4 px-2 flex items-center justify-between text-sm text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                      className="w-full text-left py-4 px-2 flex items-center justify-between text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors"
                     >
-                      <span className={`pr-4 ${isSelected ? 'font-semibold text-blue-600 dark:text-blue-400' : ''}`}>
+                      <span className={`pr-4 ${isSelected ? 'font-semibold text-edu-primary' : ''}`}>
                         {unv.name}
                       </span>
                       {isSelected && (
-                        <Check size={18} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        <Check size={18} className="text-edu-primary flex-shrink-0" />
                       )}
                     </button>
                   );

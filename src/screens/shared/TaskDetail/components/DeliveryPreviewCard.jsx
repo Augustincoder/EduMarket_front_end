@@ -34,7 +34,7 @@ export function DeliveryPreviewCard({ delivery, task, isClient, onApprovePreview
   const isFullRevealed = !!delivery.fullRevealedAt;
 
   return (
-    <Card className="border border-black/[0.05] dark:border-white/[0.05] bg-edu-surface shadow-ios rounded-[28px] overflow-hidden">
+    <Card className="border border-black/[0.05] dark:border-white/[0.05] bg-edu-surface shadow-ios rounded-xl overflow-hidden">
       <CardContent className="p-6 space-y-6">
         
         {/* Header */}

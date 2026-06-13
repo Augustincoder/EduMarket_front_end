@@ -93,7 +93,7 @@ export default function PublicProfileScreen() {
           </div>
 
           <div className="space-y-1 relative z-10">
-            <h1 className="text-[24px] font-bold font-display text-edu-text leading-tight tracking-tight">
+            <h1 className="text-3xl font-bold font-display text-edu-text leading-tight tracking-tight">
               {profile.fullname}
             </h1>
             <p className="text-[13px] font-bold text-gray-400 tracking-wide uppercase">@{profile.username || 'username'}</p>
@@ -117,7 +117,7 @@ export default function PublicProfileScreen() {
                 {stat.icon}
               </div>
               <div className="mt-2">
-                <p className="text-[17px] font-bold font-display text-edu-text leading-none truncate">
+                <p className="text-lg font-bold font-display text-edu-text leading-none truncate">
                   {stat.value}{stat.suffix}
                 </p>
                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-1 leading-snug">{stat.label}</p>
@@ -181,7 +181,7 @@ export default function PublicProfileScreen() {
                 <button 
                   key={item.id} 
                   onClick={() => { hapticLight(); handleViewFile(item.fileId, item.title); }}
-                  className="bg-edu-surface border border-edu-border rounded-[24px] p-3 flex flex-col gap-3 active:scale-[0.98] transition-all text-left shadow-ios"
+                  className="bg-edu-surface border border-edu-border rounded-xl p-3 flex flex-col gap-3 active:scale-[0.98] transition-all text-left shadow-ios"
                 >
                   <div className="aspect-square w-full rounded-2xl bg-gray-50 dark:bg-black/20 flex flex-col items-center justify-center relative overflow-hidden group">
                     <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
@@ -214,7 +214,7 @@ export default function PublicProfileScreen() {
                 <div 
                   key={gig.id}
                   onClick={() => navigate(`/gigs/${gig.id}`)}
-                  className="bg-edu-surface border border-edu-border rounded-[28px] p-5 shadow-ios active:scale-[0.98] transition-all cursor-pointer group"
+                  className="bg-edu-surface border border-edu-border rounded-xl p-5 shadow-ios active:scale-[0.98] transition-all cursor-pointer group"
                 >
                   <div className="flex justify-between items-start gap-4 mb-3">
                     <div className="space-y-1">

@@ -70,7 +70,7 @@ export default function ReportScreen() {
           <label className="block text-sm font-medium text-edu-text mb-2 opacity-80">Shikoyat turi</label>
           <div className="space-y-2">
             {REPORT_TYPES.map(type => (
-              <label key={type.value} className="flex items-center p-3 border border-edu-border/50 rounded-xl bg-edu-surface cursor-pointer press-scale">
+              <label key={type.value} className="flex items-center p-3 border border-edu-border/50 rounded-xl bg-edu-surface cursor-pointer active:scale-95 duration-[120ms]">
                 <input 
                   type="radio" 
                   name="reportType" 

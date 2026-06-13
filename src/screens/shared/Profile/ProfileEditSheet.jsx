@@ -83,7 +83,7 @@ export function ProfileEditSheet({ me, updateMe, isOpen, onClose }) {
               type="button"
               onClick={() => { setEditTab('client'); }}
               className={cn(
-                "flex-1 py-2 text-xs font-bold rounded-lg transition-all press-scale",
+                "flex-1 py-2 text-xs font-bold rounded-lg transition-all active:scale-95 duration-[120ms]",
                 editTab === 'client' ? "bg-white text-edu-text shadow-sm" : "text-edu-muted"
               )}
             >
@@ -93,7 +93,7 @@ export function ProfileEditSheet({ me, updateMe, isOpen, onClose }) {
               type="button"
               onClick={() => { setEditTab('freelancer'); }}
               className={cn(
-                "flex-1 py-2 text-xs font-bold rounded-lg transition-all press-scale",
+                "flex-1 py-2 text-xs font-bold rounded-lg transition-all active:scale-95 duration-[120ms]",
                 editTab === 'freelancer' ? "bg-white text-edu-text shadow-sm" : "text-edu-muted"
               )}
             >

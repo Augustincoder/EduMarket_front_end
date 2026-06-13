@@ -113,7 +113,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   if (message.isDeleted) {
     return (
       <div className={cn('flex items-end gap-2 max-w-[85%] animate-fade-in', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
-        <div className={cn('px-3 py-2 text-[14px] italic relative rounded-[22px]', isMe ? 'bg-edu-border/30 rounded-br-[4px] text-edu-muted' : 'bg-edu-border/30 rounded-bl-[4px] text-edu-muted border border-edu-border/50')}>
+        <div className={cn('px-3 py-2 text-[14px] italic relative rounded-xl', isMe ? 'bg-edu-border/30 rounded-br-[4px] text-edu-muted' : 'bg-edu-border/30 rounded-bl-[4px] text-edu-muted border border-edu-border/50')}>
           <div className="flex items-center gap-2">
             <Ban size={14} className="opacity-50" />
             <span>Ushbu xabar o'chirildi</span>

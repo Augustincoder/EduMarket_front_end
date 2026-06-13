@@ -1,20 +1,20 @@
 // src/lib/constants.js
 
 export const STATUS_CONFIG = {
-  OPEN:        { label: 'Ochiq',         bg: '#E1F5EE', text: '#0F6E56', dot: '#1D9E75' },
-  ASSIGNED:    { label: 'Biriktirildi', bg: '#EEEDFE', text: '#3C3489', dot: '#534AB7' },
-  IN_PROGRESS: { label: 'Jarayonda',    bg: '#E6F1FB', text: '#0C447C', dot: '#185FA5' },
-  IN_REVIEW:   { label: 'Tekshiruvda', bg: '#FAEEDA', text: '#633806', dot: '#BA7517' },
-  COMPLETED:   { label: 'Yakunlandi',  bg: '#EAF3DE', text: '#27500A', dot: '#3B6D11' },
-  CANCELED:    { label: 'Bekor',        bg: '#F1EFE8', text: '#5F5E5A', dot: '#888780' },
-  DISPUTED:    { label: 'Nizo',         bg: '#FCEBEB', text: '#791F1F', dot: '#A32D2D' },
+  OPEN:        { label: 'Ochiq',         bg: 'var(--edu-primary-l)', text: 'var(--edu-primary-h)', dot: 'var(--status-open)' },
+  ASSIGNED:    { label: 'Biriktirildi', bg: 'var(--edu-accent-l)', text: 'var(--edu-accent-h)', dot: 'var(--status-assigned)' },
+  IN_PROGRESS: { label: 'Jarayonda',    bg: 'var(--edu-info-l)', text: 'var(--edu-info)', dot: 'var(--status-progress)' },
+  IN_REVIEW:   { label: 'Tekshiruvda', bg: 'var(--edu-warn-l)', text: 'var(--edu-vip)', dot: 'var(--status-review)' },
+  COMPLETED:   { label: 'Yakunlandi',  bg: 'var(--edu-primary-l)', text: 'var(--edu-primary-h)', dot: 'var(--status-completed)' },
+  CANCELED:    { label: 'Bekor',        bg: 'var(--edu-surface-3)', text: 'var(--edu-muted)', dot: 'var(--status-canceled)' },
+  DISPUTED:    { label: 'Nizo',         bg: 'var(--edu-urgent-l)', text: 'var(--edu-urgent)', dot: 'var(--status-disputed)' },
 };
 
 export const BADGE_CONFIG = {
-  YANGI:      { label: 'Yangi',      color: '#888780', bg: '#F1EFE8' },
-  ISHONCHLI:  { label: 'Ishonchli', color: '#185FA5', bg: '#E6F1FB' },
-  PRO:        { label: 'Pro ⭐',    color: '#0F6E56', bg: '#E1F5EE' },
-  ELITE:      { label: 'Elite 👑',  color: '#BA7517', bg: '#FAEEDA' },
+  YANGI:      { label: 'Yangi',      color: 'var(--edu-muted)', bg: 'var(--edu-surface-3)' },
+  ISHONCHLI:  { label: 'Ishonchli', color: 'var(--edu-info)', bg: 'var(--edu-info-l)' },
+  PRO:        { label: 'Pro ⭐',    color: 'var(--edu-primary-h)', bg: 'var(--edu-primary-l)' },
+  ELITE:      { label: 'Elite 👑',  color: 'var(--edu-vip)', bg: 'var(--edu-vip-l)' },
 };
 
 export const VIP_PACKAGES = [

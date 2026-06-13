@@ -37,7 +37,7 @@ export default function LeaderboardScreen() {
               <Card
                 isPressable
                 onClick={() => { navigate(`/profile/${users[0].id}`); }}
-                className="bg-gradient-to-br from-[#FFD700] to-[#FDB931] border border-[#FFF8B0]/50 shadow-[0_8px_30px_rgba(255,215,0,0.4)] relative overflow-hidden active-bounce"
+                className="bg-gradient-to-br from-amber-400 to-amber-500 border border-amber-200/50 shadow-lg shadow-amber-500/40 relative overflow-hidden active-bounce"
                 radius="2xl"
               >
                 {/* Metallic shine overlay */}

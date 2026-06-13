@@ -58,7 +58,7 @@ export function Step2Budget() {
         )}
       </div>
 
-      <div className="bg-edu-bg rounded-[28px] p-6 border border-edu-border/20">
+      <div className="bg-edu-bg rounded-xl p-6 border border-edu-border/20">
         <ToggleSwitch
           label="⚡ Shoshilinch?"
           description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"

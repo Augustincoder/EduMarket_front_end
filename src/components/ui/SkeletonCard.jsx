@@ -2,7 +2,7 @@
 import { cn } from '../../lib/utils';
 
 function Bone({ className }) {
-  return <div className={cn('bg-black/[0.05] dark:bg-white/[0.05] rounded-md shimmer relative overflow-hidden', className)} />;
+  return <div className={cn('skeleton rounded-md', className)} />;
 }
 
 export function TaskCardSkeleton() {
@@ -69,7 +69,7 @@ export function ChatBubbleSkeleton() {
 
 export function GigCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-[24px] p-6 shadow-premium-md space-y-4 animate-in fade-in duration-500">
+    <div className="bg-edu-surface rounded-xl p-6 shadow-premium-md space-y-4 animate-in fade-in duration-500">
       <div className="flex items-center gap-3">
         <Bone className="w-12 h-12 rounded-full" />
         <div className="space-y-2 flex-1">
@@ -100,7 +100,7 @@ export function TaskDetailSkeleton() {
         <Bone className="w-full h-10 rounded-2xl" />
         <Bone className="w-[60%] h-10 rounded-2xl" />
       </div>
-      <div className="bg-edu-bg rounded-[24px] p-6 flex items-center gap-4 border border-black/[0.02] dark:border-white/5">
+      <div className="bg-edu-bg rounded-xl p-6 flex items-center gap-4 border border-black/[0.02] dark:border-white/5">
         <Bone className="w-16 h-16 rounded-full" />
         <div className="space-y-2 flex-1">
           <Bone className="w-48 h-5 rounded-full" />
@@ -114,7 +114,7 @@ export function TaskDetailSkeleton() {
 
 export function TaskStatusSkeleton() {
   return (
-    <div className="mb-10 bg-edu-surface rounded-[24px] p-6 shadow-premium-md border border-black/[0.02] dark:border-white/[0.03] space-y-6 animate-in fade-in duration-500">
+    <div className="mb-10 bg-edu-surface rounded-xl p-6 shadow-premium-md border border-black/[0.02] dark:border-white/[0.03] space-y-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center px-1">
         <Bone className="w-24 h-4 rounded-full" />
         <Bone className="w-16 h-4 rounded-full opacity-50" />
@@ -137,7 +137,7 @@ export function LeaderboardSkeleton() {
       </div>
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-edu-surface rounded-[24px] p-4 flex items-center gap-4 shadow-premium-sm">
+          <div key={i} className="bg-edu-surface rounded-xl p-4 flex items-center gap-4 shadow-premium-sm">
             <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
             <div className="space-y-2 flex-1">
               <Bone className="w-32 h-4 rounded-full" />
@@ -156,7 +156,7 @@ export function ChatSkeleton() {
       <div className="flex justify-between items-center mb-4 px-1">
         <Bone className="w-28 h-4 rounded-full" />
       </div>
-      <div className="bg-white/80 dark:bg-edu-surface/80 rounded-[28px] p-4 flex items-center gap-4 shadow-premium-md">
+      <div className="bg-white/80 dark:bg-edu-surface/80 rounded-xl p-4 flex items-center gap-4 shadow-premium-md">
         <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-2">
           <Bone className="w-32 h-4 rounded-full" />

@@ -52,7 +52,7 @@ function NotificationItem({ notif, onMarkRead }) {
           }
         }}
         className={cn(
-          "p-4 rounded-2xl border transition-colors active-spring relative z-10 w-full",
+          "p-4 rounded-2xl border transition-colors active:scale-[0.97] transition-transform duration-[120ms] relative z-10 w-full",
           isRead ? "bg-edu-surface border-edu-border" : "bg-edu-bg border-edu-primary/30 shadow-ios"
         )}
       >
@@ -142,7 +142,7 @@ export default function NotificationInboxScreen() {
           allNotifications.some(n => !n.isRead && n.status !== 'READ') ? (
             <button 
               onClick={() => markAllAsRead.mutate()}
-              className="w-9 h-9 rounded-full bg-edu-primary/10 flex items-center justify-center press-scale"
+              className="w-9 h-9 rounded-full bg-edu-primary/10 flex items-center justify-center active:scale-95 duration-[120ms]"
             >
               <Check size={18} className="text-edu-primary" />
             </button>
@@ -170,7 +170,7 @@ export default function NotificationInboxScreen() {
         {hasNextPage && (
           <button 
             onClick={() => fetchNextPage()}
-            className="w-full py-3 text-xs font-semibold text-edu-primary uppercase tracking-wider active-spring"
+            className="w-full py-3 text-xs font-semibold text-edu-primary uppercase tracking-wider active:scale-[0.97] transition-transform duration-[120ms]"
           >
             Yana yuklash
           </button>

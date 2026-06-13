@@ -75,7 +75,7 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
                 <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
                 
                 <button
-                  className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center press-scale hover:bg-red-200 transition-colors border border-red-500/10 z-10 after:absolute after:-inset-3 after:content-['']"
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-red-200 transition-colors border border-red-500/10 z-10 after:absolute after:-inset-3 after:content-['']"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {
@@ -92,7 +92,7 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
           {(me?.portfolioItems?.length ?? 0) < portfolioLimit && (
             <button
               onClick={() => { setPortfolioTitle(''); setPortfolioFiles([]); setPortfolioError(''); setAddPortfolioOpen(true); }}
-              className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[128px] group press-scale"
+              className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[128px] group active:scale-95 duration-[120ms]"
             >
               <div className="w-8 h-8 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
                 <Plus size={18} className="text-edu-muted group-hover:text-edu-primary" />

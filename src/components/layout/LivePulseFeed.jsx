@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Activity } from 'lucide-react';
 import { useSocket } from '../../hooks/useSocket';
 import { useCategoryStore } from '../../store/categoryStore';
@@ -6,7 +6,9 @@ import { useCategoryStore } from '../../store/categoryStore';
 export function LivePulseFeed() {
   const { socket } = useSocket();
   const [pulseEvents, setPulseEvents] = useState([]);
-  const categoryStore = useCategoryStore(s => s.categories) || [];
+  
+  const categoryStoreRaw = useCategoryStore(s => s.categories);
+  const categoryStore = useMemo(() => categoryStoreRaw || [], [categoryStoreRaw]);
 
   useEffect(() => {
     if (!socket) return;

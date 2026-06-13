@@ -191,7 +191,7 @@ export default function AdminVerificationScreen() {
             </CardContent>
           </Card>
         )) : (
-          <div className="py-24 text-center bg-gray-50 rounded-[24px] border-2 border-dashed border-gray-200">
+          <div className="py-24 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
             <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-4">
               <ShieldCheck size={40} className="text-gray-300" />
             </div>

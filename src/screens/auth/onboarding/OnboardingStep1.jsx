@@ -38,46 +38,46 @@ export default function OnboardingStep1() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 p-4">
+    <div className="flex flex-col h-full bg-edu-bg p-4">
       <div className="flex-1">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Shaxsiy ma'lumotlar</h1>
-        <p className="text-slate-500 dark:text-slate-400 mb-6">Profilingizni to'ldirib ishonchlilikni oshiring.</p>
+        <h1 className="text-2xl font-bold text-edu-text mb-2">Shaxsiy ma'lumotlar</h1>
+        <p className="text-edu-muted mb-6">Profilingizni to'ldirib ishonchlilikni oshiring.</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">To'liq ismingiz</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">To'liq ismingiz</label>
             <input 
               type="text"
               value={formData.fullname}
               onChange={(e) => setFormData({ fullname: e.target.value })}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary transition-colors shadow-sm"
               placeholder="Masalan, Alisher Navoiy"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Username</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">Username</label>
             <div className="relative">
-              <span className="absolute left-4 top-3 text-slate-400">@</span>
+              <span className="absolute left-4 top-3 text-edu-muted">@</span>
               <input 
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                className={`w-full bg-white dark:bg-slate-800 border ${usernameStatus === 'taken' ? 'border-red-500' : usernameStatus === 'available' ? 'border-green-500' : 'border-slate-200 dark:border-slate-700'} rounded-xl pl-9 pr-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full bg-edu-surface border ${usernameStatus === 'taken' ? 'border-red-500' : usernameStatus === 'available' ? 'border-green-500' : 'border-edu-border'} rounded-xl pl-9 pr-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary transition-colors shadow-sm`}
                 placeholder="username"
               />
             </div>
-            {usernameStatus === 'checking' && <p className="text-sm text-blue-500 mt-1">Tekshirilmoqda...</p>}
+            {usernameStatus === 'checking' && <p className="text-sm text-edu-info mt-1">Tekshirilmoqda...</p>}
             {usernameStatus === 'taken' && <p className="text-sm text-red-500 mt-1">Bu username band</p>}
             {usernameStatus === 'available' && <p className="text-sm text-green-500 mt-1">Username bo'sh</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Bio (Siz haqingizda)</label>
+            <label className="block text-sm font-medium text-edu-text-2 mb-1">Bio (Siz haqingizda)</label>
             <textarea 
               value={formData.bio}
               onChange={(e) => setFormData({ bio: e.target.value })}
-              className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+              className="w-full bg-edu-surface border border-edu-border rounded-xl px-4 py-3 text-edu-text focus:outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary min-h-[100px] transition-colors shadow-sm"
               placeholder="Qisqacha o'zingiz haqingizda..."
             />
           </div>
@@ -87,7 +87,7 @@ export default function OnboardingStep1() {
       <div className="pt-4 pb-6">
         <Button 
           variant="primary" 
-          className="w-full" 
+          className="w-full shadow-btn rounded-xl h-12 text-[15px] font-bold" 
           onClick={handleNext}
           disabled={!formData.fullname || !formData.username || usernameStatus !== 'available'}
         >

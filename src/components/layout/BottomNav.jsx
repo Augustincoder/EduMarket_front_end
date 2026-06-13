@@ -42,7 +42,7 @@ export function BottomNav() {
   return (
     <nav className={cn(
       'fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px]',
-      'ios-glass border-t border-edu-border shadow-nav',
+      'bg-edu-surface/60 backdrop-blur-md border-t border-edu-border',
       'pb-safe z-40'
     )}>
       <div className="flex items-center justify-around h-[64px] px-3">
@@ -61,12 +61,12 @@ export function BottomNav() {
                 key={route}
                 onClick={() => handleNav(route)}
                 className={cn(
-                  'relative -top-5 w-[60px] h-[60px] rounded-full',
-                  'shadow-premium-btn flex items-center justify-center',
-                  'active-spring transition-all duration-300',
-                  'border-[4px] border-edu-surface shadow-premium-lg',
+                  'relative -top-[20px] w-[56px] h-[56px] rounded-full',
+                  'flex items-center justify-center',
+                  'transition-transform duration-220 ease-in-out active:scale-[0.92]',
+                  'border-[4px] border-edu-bg shadow-btn',
                   isActive 
-                    ? 'bg-gradient-to-tr from-edu-primary to-edu-accent scale-105' 
+                    ? 'bg-edu-primary-h scale-105' 
                     : 'bg-edu-primary'
                 )}
               >
@@ -88,26 +88,26 @@ export function BottomNav() {
               onClick={() => handleNav(route)}
               className={cn(
                 'flex flex-col items-center gap-1 py-1 rounded-md relative',
-                'transition-all duration-300 min-w-[50px] flex-1',
-                'active-spring',
-                isActive ? 'text-edu-primary scale-105' : 'text-edu-muted hover:text-edu-text/60'
+                'transition-all duration-220 min-w-[50px] flex-1',
+                'active:scale-[0.92]',
+                isActive ? 'text-edu-primary' : 'text-edu-muted hover:text-edu-text/60'
               )}
             >
               <div className="relative">
                 <Icon 
-                  size={23} 
-                  className="transition-transform duration-300"
+                  size={24} 
+                  className="transition-transform duration-220"
                   strokeWidth={isActive ? 2.5 : 2} 
                 />
                 {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-edu-urgent text-white text-[10px] font-bold min-w-[17px] h-[17px] px-1 rounded-full flex items-center justify-center border-2 border-edu-surface shadow-premium-sm">
+                  <span className="absolute -top-1.5 -right-2 bg-edu-urgent text-white text-[10px] font-bold min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center border-[1.5px] border-edu-bg shadow-sm">
                     {badge > 99 ? '99+' : badge}
                   </span>
                 )}
               </div>
               <span className={cn(
-                'text-[10px] font-bold tracking-tight transition-all duration-300',
-                isActive ? 'opacity-100' : 'opacity-60'
+                'text-[10px] font-bold tracking-[0.02em] transition-all duration-220',
+                isActive ? 'opacity-100' : 'opacity-70'
               )}>
                 {label}
               </span>

@@ -14,7 +14,7 @@ export function Modal({ isOpen, onClose, title, footer, children }) {
                 {title}
               </Dialog.Title>
               <Dialog.Close asChild>
-                <button aria-label="Yopish" className="w-11 h-11 rounded-full bg-edu-bg flex items-center justify-center active-spring transition-all text-edu-muted hover:text-edu-text">
+                <button aria-label="Yopish" className="w-11 h-11 rounded-full bg-edu-bg flex items-center justify-center active:scale-[0.97] transition-transform duration-[120ms] transition-all text-edu-muted hover:text-edu-text">
                   <X size={20} strokeWidth={3} />
                 </button>
               </Dialog.Close>

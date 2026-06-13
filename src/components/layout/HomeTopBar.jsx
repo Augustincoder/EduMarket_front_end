@@ -34,7 +34,7 @@ export function HomeTopBar({ greeting }) {
           </h1>
         </div>
         
-        <div className="relative shrink-0 active-spring cursor-pointer" onClick={handleOpen}>
+        <div className="relative shrink-0 active:scale-[0.97] transition-transform duration-[120ms] cursor-pointer" onClick={handleOpen}>
           <div className="relative">
             <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="lg" className="ring-4 ring-edu-surface shadow-ios" />
             {unreadNotifications > 0 && (
@@ -56,7 +56,7 @@ export function HomeTopBar({ greeting }) {
       >
         <div className="flex flex-col gap-3 py-2 px-1">
           {/* User Profile Summary Header */}
-          <div className="flex items-center gap-4 bg-edu-surface p-4 rounded-[20px] border border-edu-border/50 shadow-sm mb-2">
+          <div className="flex items-center gap-4 bg-edu-surface p-4 rounded-xl border border-edu-border/50 shadow-sm mb-2">
             <Avatar name={user?.fullname} avatarUrl={user?.avatarUrl} size="md" />
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-bold text-edu-text truncate">{user?.fullname}</h3>
@@ -71,7 +71,7 @@ export function HomeTopBar({ greeting }) {
 
           <button
             onClick={() => navigateTo('/notifications')}
-            className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-[20px] active-spring hover:border-edu-primary/50 transition-colors"
+            className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-xl active:scale-[0.97] transition-transform duration-[120ms] hover:border-edu-primary/50 transition-colors"
           >
             <div className="w-12 h-12 rounded-2xl bg-edu-primary/10 text-edu-primary flex items-center justify-center relative shrink-0">
               <Bell size={24} />
@@ -90,7 +90,7 @@ export function HomeTopBar({ greeting }) {
 
           <button
             onClick={() => navigateTo('/profile')}
-            className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-[20px] active-spring hover:border-edu-primary/50 transition-colors"
+            className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-xl active:scale-[0.97] transition-transform duration-[120ms] hover:border-edu-primary/50 transition-colors"
           >
             <div className="w-12 h-12 rounded-2xl bg-edu-accent/10 text-edu-accent flex items-center justify-center shrink-0">
               <User size={24} />
