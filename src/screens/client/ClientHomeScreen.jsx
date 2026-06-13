@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { usersApi } from '../../services/users.service';
 import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
@@ -242,8 +243,8 @@ export default function ClientHomeScreen() {
 
       {/* ── Categories (Expandable Grid) ─────── */}
       <div className="mb-8 px-1">
-        <div className="p-3 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-sm flex flex-col transition-all duration-500 overflow-hidden">
-          <div className="flex items-center justify-between px-2 mb-3">
+        <motion.div layout className="p-3 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-sm flex flex-col overflow-hidden">
+          <motion.div layout className="flex items-center justify-between px-2 mb-3">
             <h3 className="text-xs font-bold text-edu-muted uppercase tracking-widest">Yo'nalishlar</h3>
             <button 
               onClick={() => { hapticLight(); setCategoriesExpanded(!categoriesExpanded); }}
@@ -251,29 +252,37 @@ export default function ClientHomeScreen() {
             >
               {categoriesExpanded ? 'Yashirish' : 'Barchasi...'}
             </button>
-          </div>
+          </motion.div>
           
-          <div className="grid grid-cols-2 gap-2">
-            <button
+          <motion.div layout className="grid grid-cols-2 gap-2">
+            <motion.button
+              layout
               onClick={() => handleCategoryClick('')}
               className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
             >
               <span className="text-base leading-none">🌐</span>
               <span className="truncate">Barchasi</span>
-            </button>
+            </motion.button>
             
-            {(categoriesExpanded ? useCategoryStore.getState().categories : useCategoryStore.getState().categories.slice(0, 5)).map(cat => (
-              <button
-                key={cat.value}
-                onClick={() => handleCategoryClick(cat.value)}
-                className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
-              >
-                <span className="text-base leading-none">{cat.emoji}</span>
-                <span className="truncate">{cat.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+            <AnimatePresence>
+              {(categoriesExpanded ? useCategoryStore.getState().categories : useCategoryStore.getState().categories.slice(0, 5)).map(cat => (
+                <motion.button
+                  layout
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  key={cat.value}
+                  onClick={() => handleCategoryClick(cat.value)}
+                  className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+                >
+                  <span className="text-base leading-none">{cat.emoji}</span>
+                  <span className="truncate">{cat.label}</span>
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* ── Top Freelancers ───────────────────────────── */}
