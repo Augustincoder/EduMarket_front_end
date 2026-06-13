@@ -47,7 +47,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); !isUploading && upload(Array.from(e.dataTransfer.files)); }}
         className={cn(
-          'border-2 border-dashed border-edu-border rounded-lg p-6',
+          'border-2 border-dashed border-edu-border rounded-2xl p-6',
           'flex flex-col items-center gap-2 cursor-pointer',
           'transition-all duration-200 relative overflow-hidden',
           'hover:border-edu-primary/50 hover:bg-edu-primary/5',
@@ -61,7 +61,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
           />
         )}
 
-        <div className="w-12 h-12 rounded-lg bg-edu-primary/10 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-edu-primary/10 flex items-center justify-center">
           {isUploading
             ? <Loader2 size={22} className="text-edu-primary animate-spin" />
             : <Paperclip size={22} className="text-edu-primary" />
@@ -91,7 +91,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
               key={file.fileId || file.id}
               onClick={() => onPreview?.(file)}
               className={cn(
-                "flex items-center gap-3 bg-edu-surface rounded-md px-3 py-2.5 border border-edu-border/60 animate-in fade-in slide-in-from-left-2 transition-all",
+                "flex items-center gap-3 bg-edu-surface rounded-xl px-3 py-2.5 border border-edu-border/60 animate-in fade-in slide-in-from-left-2 transition-all",
                 onPreview && "cursor-pointer hover:border-edu-primary/30 hover:bg-edu-primary/5 active:scale-[0.98]"
               )}
             >
@@ -110,7 +110,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
                 <CheckCircle2 size={14} className="text-emerald-500" />
                 <button
                   onClick={(e) => remove(e, file.fileId || file.id)}
-                  className="w-6 h-6 rounded-sm bg-red-50 dark:bg-red-500/10 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
+                  className="w-7 h-7 rounded-lg bg-red-50 dark:bg-red-500/10 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
                 >
                   <X size={12} className="text-red-500" />
                 </button>

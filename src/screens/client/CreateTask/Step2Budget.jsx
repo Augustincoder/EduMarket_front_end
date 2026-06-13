@@ -43,6 +43,7 @@ export function Step2Budget() {
             className="flex-1"
             placeholder="Min"
             type="number"
+            min="1000"
             value={priceMin}
             onValueChange={(val) => updateField('priceMin', val)}
             error={errors.priceMin?.[0]}
@@ -52,6 +53,7 @@ export function Step2Budget() {
             className="flex-1"
             placeholder="Max"
             type="number"
+            min="1000"
             value={priceMax}
             onValueChange={(val) => updateField('priceMax', val)}
             error={errors.priceMax?.[0]}

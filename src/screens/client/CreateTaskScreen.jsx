@@ -62,9 +62,15 @@ export default function CreateTaskScreen() {
     }
     if (step === 2) {
       if (!priceMin) errs.priceMin = ['Majburiy'];
+      else if (Number(priceMin) < 1000) errs.priceMin = ["Kamida 1,000 so'm"];
+      
       if (!priceMax) errs.priceMax = ['Majburiy'];
+      
       if (!deadline) errs.deadline = ['Muddat tanlang'];
-      if (Number(priceMin) >= Number(priceMax) && priceMin && priceMax) errs.priceMin = ["Max dan kichik bo'lishi shart"];
+      
+      if (Number(priceMin) >= Number(priceMax) && priceMin && priceMax) {
+        errs.priceMin = ["Max dan kichik bo'lishi shart"];
+      }
     }
     
     if (Object.keys(errs).length > 0) {
