@@ -8,7 +8,7 @@ import { Avatar } from '../../components/ui/Avatar';
 import { UserBadge, VerifiedBadge } from '../../components/ui/Badge';
 import { SkillChip } from '../../components/ui/Chip';
 import { ProfileSkeleton } from '../../components/ui/SkeletonCard';
-import { ReputationPassportCard } from '../../components/cards/ReputationPassportCard';
+import { ReputationRadarChart } from '../../components/profile/ReputationRadarChart';
 import { usersApi } from '../../services/users.service';
 import { filesApi } from '../../services/other.service';
 import { gigsApi } from '../../services/gigs.service';
@@ -28,6 +28,12 @@ export default function PublicProfileScreen() {
     queryKey: ['users', userId],
     queryFn:  () => usersApi.getUser(userId).then((r) => r.data.data),
     staleTime: 60 * 1000,
+  });
+
+  const { data: dnaData } = useQuery({
+    queryKey: ['users', userId, 'reputation'],
+    queryFn: () => usersApi.getUserReputationDNA(userId).then((r) => r.data.data),
+    enabled: !!profile,
   });
 
   const { data: gigsData } = useQuery({
@@ -127,7 +133,7 @@ export default function PublicProfileScreen() {
         </div>
 
         {/* ── REPUTATION PASSPORT ── */}
-        <ReputationPassportCard profile={profile} />
+        {dnaData && <ReputationRadarChart dna={dnaData} />}
 
         {/* ── ABOUT & SKILLS (CV STYLE) ── */}
         <Card className="bg-edu-surface shadow-ios border border-edu-border" radius="2xl">

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Sparkles, Loader2, ArrowRight } from 'lucide-react';
-import { cn } from '../../../lib/utils';
-import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
-import { hapticImpact } from '../../../lib/telegram';
+import { cn } from '../../../../lib/utils';
+import { useCreateTaskStore } from '../../../../store/useCreateTaskStore';
+import { hapticImpact } from '../../../../lib/telegram';
 import toast from 'react-hot-toast';
-import { aiService } from '../../../services/ai.service'; 
+import { aiService } from '../../../../services/ai.service'; 
 import { AnimatePresence } from 'framer-motion';
 
 export function SmartBriefInput() {

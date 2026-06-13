@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0] - 2026-06-13
+### Added
+- Phase 10: "Reputation DNA" feature (Radar Chart using recharts).
+- `ReputationRadarChart` component in profile screens.
+
+### Fixed
+- Fixed unresolved module import paths in `SmartBriefInput.jsx` and `ai.service.js` which caused pipeline build failures.
+
 ### [2.4.0](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.3.0...v2.4.0) (2026-06-13)
 
 ### Features

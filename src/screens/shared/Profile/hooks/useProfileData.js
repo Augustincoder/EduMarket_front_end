@@ -63,9 +63,17 @@ export function useProfileData() {
     }
   });
 
+  // Fetch DNA
+  const { data: dnaData } = useQuery({
+    queryKey: ['users', me?.id, 'reputation'],
+    queryFn: () => usersApi.getUserReputationDNA(me.id).then((r) => r.data.data),
+    enabled: !!me,
+  });
+
   return {
     me,
     clientStats,
+    dnaData,
     activeRole,
     meLoading,
     clientStatsLoading,

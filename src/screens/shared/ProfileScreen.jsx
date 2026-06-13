@@ -22,6 +22,7 @@ import { ProfileStats } from './Profile/ProfileStats';
 import { ProfilePortfolio } from './Profile/ProfilePortfolio';
 import { ProfileEditSheet } from './Profile/ProfileEditSheet';
 import { ProfileSettings } from './Profile/ProfileSettings';
+import { ReputationRadarChart } from '../../components/profile/ReputationRadarChart';
 
 export default function ProfileScreen() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function ProfileScreen() {
   const toggleActiveRole = useAuthStore((s) => s.toggleActiveRole);
   const logout = useAuthStore((s) => s.logout);
 
-  const { me, clientStats, activeRole, isLoading, clientStatsLoading, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
+  const { me, clientStats, dnaData, activeRole, isLoading, clientStatsLoading, updateMe, addPortfolio, delPortfolio, deleteMe } = useProfileData();
 
   const [editOpen, setEditOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -143,6 +144,12 @@ export default function ProfileScreen() {
           <SectionErrorBoundary fallbackTitle="Statistikani yuklashda xatolik">
             <ProfileStats me={me} activeRole={activeRole} clientStats={clientStats} isLoading={clientStatsLoading} />
           </SectionErrorBoundary>
+
+          {activeRole === 'FREELANCER' && dnaData && (
+            <div className="animate-fade-up" style={{ animationDelay: '0.1s' }}>
+              <ReputationRadarChart dna={dnaData} />
+            </div>
+          )}
 
           {activeRole === 'CLIENT' && (
             <>

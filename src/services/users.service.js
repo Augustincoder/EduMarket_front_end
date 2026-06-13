@@ -9,6 +9,8 @@ export const usersApi = {
   getMyReferrals: ()         => api.get('/users/me/referrals'),
   updatePushToken: (token)   => api.post('/users/me/push-token', { token }),
   deleteMe:     ()           => api.delete('/users/me'),
+  getUserReputationDNA: (userId) => api.get(`/users/${userId}/reputation`),
+  recalculateReputationDNA: ()   => api.post('/users/me/reputation/recalculate'),
 };
 
 export const onboardingApi = {
