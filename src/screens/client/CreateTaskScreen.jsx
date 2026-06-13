@@ -198,7 +198,16 @@ export default function CreateTaskScreen() {
       <div className="flex-1 flex flex-col min-h-0">
         {step > 0 && (
           <div className="mb-6 px-6 pt-4">
-            <ProgressStepper steps={STEPS} current={step} />
+            <ProgressStepper 
+              steps={STEPS} 
+              current={step} 
+              onStepClick={(targetStep) => {
+                if (targetStep < step) {
+                  hapticLight();
+                  useCreateTaskStore.setState({ step: targetStep });
+                }
+              }} 
+            />
           </div>
         )}
 

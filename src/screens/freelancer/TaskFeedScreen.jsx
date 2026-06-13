@@ -278,7 +278,7 @@ export default function TaskFeedScreen() {
                 </div>
                 <h3 className="text-sm font-bold text-edu-text mb-1">Xatolik yuz berdi</h3>
                 <p className="text-[11px] text-edu-muted font-medium mb-4 max-w-[200px]">E'lonlarni yuklashda tarmoq xatosi yuz berdi.</p>
-                <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="rounded-xl h-9 text-xs font-bold border-edu-border">
+                <Button variant="outline" size="sm" onClick={() => refetch()} className="rounded-xl h-9 text-xs font-bold border-edu-border">
                   Qayta urinish
                 </Button>
              </div>

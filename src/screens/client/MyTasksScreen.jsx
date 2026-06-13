@@ -11,11 +11,11 @@ import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
 
 // Extracted List component to allow Error Boundary to catch its errors
 function TaskListWidget({ activeRole, statusFilter }) {
-  const { data: tasks, isLoading, error } = useMyTasks(activeRole, statusFilter);
+  const { data: tasks, isLoading, error, refetch } = useMyTasks(activeRole, statusFilter);
 
-  // Manually throw error so SectionErrorBoundary catches it
+  // Return WidgetError locally to allow retrying without destroying layout
   if (error) {
-    throw error;
+    return <WidgetError fallbackTitle="Vazifalarni yuklashda xatolik" onRetry={refetch} />;
   }
 
   if (isLoading) {
@@ -89,9 +89,7 @@ export default function MyTasksScreen() {
 
         {/* Tasks List */}
         <div className="flex-1 overflow-y-auto space-y-3 pb-4 scrollbar-hide">
-          <SectionErrorBoundary fallbackTitle="Vazifalarni yuklashda xatolik">
             <TaskListWidget activeRole={activeRole} statusFilter={statusFilter} />
-          </SectionErrorBoundary>
         </div>
       </div>
     </PageLayout>

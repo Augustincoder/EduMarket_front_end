@@ -5,7 +5,7 @@ import { Avatar } from '../../components/ui/Avatar';
 import { useChatStore } from '../../store/chatStore';
 import { timeAgo, cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
-import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
+import { SectionErrorBoundary, WidgetError } from '../../components/ui/SectionErrorBoundary';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MessageSquare, Check, CheckCheck } from 'lucide-react';
 
@@ -20,16 +20,23 @@ function ChatListWidget({ searchTerm }) {
     loadConversations()
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
-
-    const timer = setInterval(() => {
-      loadConversations().catch(console.error); // Silent catch for polling
-    }, 10000);
-    
-    return () => clearInterval(timer);
+      
+    // Note: Real-time updates are handled by useSocket/websocket events instead of manual polling
   }, [loadConversations]);
 
   if (error) {
-    throw error;
+    return (
+      <div className="py-10">
+        <WidgetError 
+          fallbackTitle="Chatlarni yuklashda xatolik" 
+          onRetry={() => {
+            setLoading(true);
+            setError(null);
+            loadConversations().catch(setError).finally(() => setLoading(false));
+          }} 
+        />
+      </div>
+    );
   }
 
   const handleOpenChat = (taskId) => {

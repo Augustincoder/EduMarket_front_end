@@ -1,7 +1,7 @@
 // src/components/ui/ProgressStepper.jsx
 import { cn } from '../../lib/utils';
 
-export function ProgressStepper({ steps, current }) {
+export function ProgressStepper({ steps, current, onStepClick }) {
   // Mobile-first minimalistic premium stepper
   return (
     <div className="w-full flex flex-col items-center">
@@ -20,12 +20,15 @@ export function ProgressStepper({ steps, current }) {
           const isActive = stepNum === current;
 
           return (
-            <div
+            <button
               key={i}
+              onClick={() => onStepClick && onStepClick(stepNum)}
+              disabled={!onStepClick || stepNum >= current}
+              aria-label={`O'tish: ${steps[i]}`}
               className={cn(
                 'h-1.5 rounded-full transition-all duration-700 ease-in-out',
                 isActive ? 'w-12 bg-edu-primary shadow-lg shadow-edu-primary/30' : 
-                isDone ? 'w-6 bg-edu-primary/40' : 'w-6 bg-black/[0.05] dark:bg-white/10'
+                isDone ? 'w-6 bg-edu-primary/40 cursor-pointer hover:bg-edu-primary/60 active:scale-95' : 'w-6 bg-black/[0.05] dark:bg-white/10 opacity-50 cursor-not-allowed'
               )}
             />
           );

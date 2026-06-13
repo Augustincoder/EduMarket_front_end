@@ -191,10 +191,19 @@ export default function ClientHomeScreen() {
     navigate('/tasks/create', { state: { category: catValue } });
   };
 
+// Dynamic greeting based on time
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Xayrli tong 🌅';
+    if (hour >= 12 && hour < 18) return 'Xayrli kun ☀️';
+    if (hour >= 18 && hour < 22) return 'Xayrli kech 🌆';
+    return 'Xayrli tun 🌙';
+  };
+
   return (
     <div className="flex flex-col h-full bg-edu-bg pb-24 px-4 py-4 overflow-y-auto scrollbar-hide">
       
-      <HomeTopBar greeting="Xush kelibsiz 👋" />
+      <HomeTopBar greeting={getGreeting()} />
 
       {/* ── Stats Bar (Horizontal scroll) ─────────────── */}
       <SectionErrorBoundary fallbackTitle="Loyiha holatini yuklashda xatolik">
@@ -237,7 +246,7 @@ export default function ClientHomeScreen() {
       </div>
 
       {/* ── Recent Activity ───────────────────────────── */}
-      <SectionErrorBoundary fallbackTitle="Chatlarni yuklashda xatolik">
+      <SectionErrorBoundary fallbackTitle="Chatlarni yuklashda xatolik" onRetry={() => useChatStore.getState().loadConversations()}>
         <ActiveChatWidget />
       </SectionErrorBoundary>
 
