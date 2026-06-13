@@ -14,16 +14,18 @@ import { Card, CardContent } from '../../components/ui/Card';
 import { Plus, ClipboardList, ChevronRight } from 'lucide-react';
 import { TaskStatusSkeleton, LeaderboardSkeleton, ChatSkeleton } from '../../components/ui/SkeletonCard';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
-import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
+import { SectionErrorBoundary, WidgetError } from '../../components/ui/SectionErrorBoundary';
 import { cn } from '../../lib/utils';
 
 // --- Extracted Widgets for Error Boundaries ---
 
 function MyTasksStatusWidget() {
   const navigate = useNavigate();
-  const { data: myTasks } = useMyTasks('CLIENT');
+  const { data: myTasks, isLoading, error, refetch } = useMyTasks('CLIENT');
   
-  if (!myTasks) return <TaskStatusSkeleton />;
+  if (isLoading) return <TaskStatusSkeleton />;
+  if (error) return <WidgetError fallbackTitle="Loyiha holatini yuklashda xatolik" onRetry={refetch} />;
+  if (!myTasks) return null;
   
   const openCount = myTasks.filter(t => t.status === 'OPEN').length || 0;
   const inProgressCount = myTasks.filter(t => t.status === 'IN_PROGRESS').length || 0;
@@ -121,14 +123,15 @@ function ActiveChatWidget() {
 
 function TopFreelancersWidget() {
   const navigate = useNavigate();
-  const { data: leaderboardData, isLoading } = useQuery({
+  const { data: leaderboardData, isLoading, error, refetch } = useQuery({
     queryKey: ['users', 'leaderboard'],
     queryFn: () => usersApi.leaderboard().then(r => r.data.data),
     staleTime: 5 * 60 * 1000,
-    useErrorBoundary: true,
+    useErrorBoundary: false,
   });
 
   if (isLoading) return <LeaderboardSkeleton />;
+  if (error) return <WidgetError fallbackTitle="Reytingni yuklashda xatolik" onRetry={refetch} />;
 
   const topFreelancers = Array.isArray(leaderboardData) ? leaderboardData.slice(0, 3) : (leaderboardData?.users?.slice(0, 3) || []);
 

@@ -114,15 +114,21 @@ export function TaskDetailSkeleton() {
 
 export function TaskStatusSkeleton() {
   return (
-    <div className="mb-10 bg-edu-surface rounded-xl p-6 shadow-md border border-black/[0.02] dark:border-white/[0.03] space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center px-1">
+    <div className="mb-8 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center mb-3 px-1">
         <Bone className="w-24 h-4 rounded-full" />
         <Bone className="w-16 h-4 rounded-full opacity-50" />
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        <div className="flex flex-col items-center gap-3"><Bone className="w-14 h-14 rounded-full" /><Bone className="w-12 h-3 rounded-full opacity-50" /></div>
-        <div className="flex flex-col items-center gap-3"><Bone className="w-14 h-14 rounded-full" /><Bone className="w-12 h-3 rounded-full opacity-50" /></div>
-        <div className="flex flex-col items-center gap-3"><Bone className="w-14 h-14 rounded-full" /><Bone className="w-12 h-3 rounded-full opacity-50" /></div>
+      <div className="flex overflow-x-hidden gap-3 pb-2 px-1">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="flex-shrink-0 w-[140px] h-[80px] flex items-center gap-3 bg-edu-surface rounded-lg p-3 border border-edu-border shadow-sm">
+            <Bone className="w-12 h-12 rounded-md" />
+            <div className="flex flex-col gap-2">
+              <Bone className="w-8 h-5 rounded-sm" />
+              <Bone className="w-16 h-3 rounded-full opacity-60" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -130,14 +136,14 @@ export function TaskStatusSkeleton() {
 
 export function LeaderboardSkeleton() {
   return (
-    <div className="mb-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center mb-4 px-1">
+    <div className="mb-6 px-1 animate-in fade-in duration-500">
+      <div className="flex justify-between items-center mb-3">
         <Bone className="w-32 h-4 rounded-full" />
         <Bone className="w-16 h-4 rounded-full opacity-50" />
       </div>
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-edu-surface rounded-xl p-4 flex items-center gap-4 shadow-sm">
+          <div key={i} className="bg-edu-surface rounded-lg p-3 flex items-center gap-3 border border-edu-border shadow-sm">
             <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
             <div className="space-y-2 flex-1">
               <Bone className="w-32 h-4 rounded-full" />
@@ -152,15 +158,18 @@ export function LeaderboardSkeleton() {
 
 export function ChatSkeleton() {
   return (
-    <div className="mb-10 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center mb-4 px-1">
+    <div className="mb-8 px-1 animate-in fade-in duration-500">
+      <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.05em] mb-3">
         <Bone className="w-28 h-4 rounded-full" />
-      </div>
-      <div className="bg-white/80 dark:bg-edu-surface/80 rounded-xl p-4 flex items-center gap-4 shadow-md">
+      </h3>
+      <div className="bg-edu-surface rounded-2xl border border-edu-border p-4 flex items-center gap-3 shadow-sm">
         <Bone className="w-12 h-12 rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-2">
-          <Bone className="w-32 h-4 rounded-full" />
-          <Bone className="w-full h-3 rounded-full opacity-50" />
+          <div className="flex justify-between">
+            <Bone className="w-24 h-4 rounded-full" />
+            <Bone className="w-12 h-3 rounded-full opacity-50" />
+          </div>
+          <Bone className="w-[80%] h-3 rounded-full opacity-50" />
         </div>
       </div>
     </div>
