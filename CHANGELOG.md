@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.0](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.3.0...v2.4.0) (2026-06-13)
+
+### Features
+
+* **ai:** Integrate Smart Brief (AI-Powered Task Creation) via Groq LLM API and `SmartBriefInput` component in task wizard (Phase 10, Idea 1)
+
+### Bug Fixes
+
+* **ui:** Remove redundant wrapper and double-padding around `ToggleSwitch` in `Step2Budget`
+* **config:** Fix incorrect tailwind.config.js relative path in `src/index.css` causing build failures
 ### [2.3.0](https://github.com/Augustincoder/EduMarket_front_end/compare/v2.2.14...v2.3.0) (2026-06-13)
 
 ### Features

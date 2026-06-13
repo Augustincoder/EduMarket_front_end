@@ -58,14 +58,12 @@ export function Step2Budget() {
         )}
       </div>
 
-      <div className="bg-edu-bg rounded-xl p-6 border border-edu-border/20">
-        <ToggleSwitch
-          label="⚡ Shoshilinch?"
-          description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
-          checked={isUrgent}
-          onChange={(v) => { hapticLight(); updateField('isUrgent', v); }}
-        />
-      </div>
+      <ToggleSwitch
+        label="⚡ Shoshilinch?"
+        description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
+        checked={isUrgent}
+        onChange={(v) => { hapticLight(); updateField('isUrgent', v); }}
+      />
 
       <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/20 shadow-ios">
         <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-3">Tugash muddati (Deadline) *</p>

@@ -4,6 +4,7 @@ import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { hapticLight } from '../../../lib/telegram';
 import { Search } from 'lucide-react';
 import { cn } from '../../../lib/utils';
+import { SmartBriefInput } from './components/SmartBriefInput';
 
 export function Step0Category() {
   const categoryStoreRaw = useCategoryStore(s => s.categories);
@@ -35,6 +36,8 @@ export function Step0Category() {
         <h2 className="text-2xl font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
         <p className="text-[13px] text-edu-muted font-medium mb-4">Kerakli mutaxassisni topish uchun toifa tanlang</p>
         
+        <SmartBriefInput />
+
         {/* Search Bar */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
