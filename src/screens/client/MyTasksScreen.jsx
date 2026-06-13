@@ -70,7 +70,7 @@ export default function MyTasksScreen() {
   };
 
   return (
-    <PageLayout scrollable={false}>
+    <PageLayout scrollable={false} className="flex flex-col min-h-0">
       <Header 
         title={activeRole === 'FREELANCER' ? "Mening ishlarim" : "Mening e'lonlarim"} 
         subtitle={activeRole === 'FREELANCER' ? "Ijrochi ish joyi" : "Mijoz ish joyi"}

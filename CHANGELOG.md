@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.1] - 2026-06-13
+### Added
+- Redesigned `TaskFeedScreen` header to mimic Telegram Mobile's chat folder tabs UI. Search bar now scrolls out of view naturally, while the categories selector transforms into a sticky, floating glassmorphism pill (`backdrop-blur-2xl`, `rounded-[24px]`).
+- Added animated "Back to Top" floating action button in `TaskFeedScreen`.
+- Universal `safe-area-inset-top` padding across all header components (`Header`, `HomeTopBar`, `TaskFeedScreen`) to prevent UI elements from overlapping with mobile device status bars.
+
+### Fixed
+- Fixed an issue where `MyTasksScreen`'s layout `div` lacked `flex-col`, breaking height boundaries and causing the task list to overflow without scrolling.
+
 ## [2.6.0] - 2026-06-13
 ### Added
 - Study Buddy (Co-working mode) Phase 11.

@@ -1,7 +1,8 @@
 // src/screens/TaskFeedScreen.jsx
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Search, SlidersHorizontal, X, AlertOctagon } from 'lucide-react';
+import { Search, SlidersHorizontal, X, AlertOctagon, ArrowUp } from 'lucide-react';
 import { PageLayout } from '../../components/layout/PageLayout';
+import { motion, AnimatePresence } from 'framer-motion';
 import TaskCard from '../../components/cards/TaskCard';
 import { FilterChip } from '../../components/ui/Chip';
 import { BottomSheet } from '../../components/ui/BottomSheet';
@@ -25,6 +26,7 @@ export default function TaskFeedScreen() {
   const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const filterState = useUiStore((s) => s.filterState);
   const setFilter = useUiStore((s) => s.setFilter);
   const resetFilters = useUiStore((s) => s.resetFilters);
@@ -74,6 +76,13 @@ export default function TaskFeedScreen() {
     const handleScroll = () => {
       if (!parentRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+      
+      if (scrollTop > 250) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+
       if (scrollHeight - scrollTop <= clientHeight + 200 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
       }
@@ -83,33 +92,39 @@ export default function TaskFeedScreen() {
     return () => el?.removeEventListener('scroll', handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  return (
-    <PageLayout className="flex flex-col min-h-0 relative" scrollable={false}>
-      {/* ── Fixed Header (Search + Category) ── */}
-      <div className="z-30 bg-edu-surface/95 backdrop-blur-xl border-b border-edu-border shadow-sm shrink-0">
-        
-        {/* Top Row: Title & Filter */}
-        <div className="px-4 pt-5 pb-2 flex items-center justify-between">
-          <h1 className="text-[26px] font-bold font-display text-edu-text tracking-tight">
-            Vazifalar
-          </h1>
-          <button
-            onClick={() => { setFilterOpen(true); hapticLight(); }}
-            className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 border",
-              (filterState.category || filterState.minPrice || filterState.maxPrice < 200000 || filterState.sort !== 'newest')
-                ? "bg-edu-primary/10 border-edu-primary/20 text-edu-primary shadow-sm"
-                : "bg-edu-bg border-transparent text-edu-muted hover:text-gray-600"
-            )}
-          >
-            <SlidersHorizontal size={20} />
-          </button>
-        </div>
+  const scrollToTop = () => {
+    hapticLight();
+    parentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-        {/* Search Bar Row */}
-        <div className="px-4 pb-3 pt-1">
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors">
+  return (
+    <PageLayout className="flex flex-col min-h-0 relative bg-edu-bg" scrollable={false}>
+      {/* ── Scrollable Container ── */}
+      <div 
+        ref={parentRef}
+        className="flex-1 overflow-y-auto scrollbar-hide relative"
+      >
+        {/* Title and Search (Scrolls away) */}
+        <div className="px-4 pt-[calc(env(safe-area-inset-top)+20px)] pb-4 bg-edu-bg">
+          <div className="flex items-center justify-between mb-5">
+            <h1 className="text-[28px] font-bold font-display text-edu-text tracking-tight">
+              Vazifalar
+            </h1>
+            <button
+              onClick={() => { setFilterOpen(true); hapticLight(); }}
+              className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border shadow-sm active:scale-95",
+                (filterState.category || filterState.minPrice || filterState.maxPrice < 200000 || filterState.sort !== 'newest')
+                  ? "bg-edu-primary text-white border-transparent"
+                  : "bg-edu-surface border-edu-border text-edu-text"
+              )}
+            >
+              <SlidersHorizontal size={18} />
+            </button>
+          </div>
+
+          <div className="relative group z-10">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors">
               <Search size={18} />
             </div>
             <input
@@ -120,53 +135,51 @@ export default function TaskFeedScreen() {
               onChange={(e) => setLocalQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              className="w-full h-11 bg-edu-surface-2 border-none rounded-xl pl-11 pr-11 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/10 transition-all text-edu-text"
+              className="w-full h-12 bg-edu-surface border border-edu-border rounded-[20px] pl-12 pr-12 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary/50 transition-all text-edu-text shadow-sm"
             />
             {localQuery && (
               <button 
                 onClick={() => { setLocalQuery(''); hapticLight(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-edu-border rounded-full flex items-center justify-center text-edu-muted active:scale-90 transition-all after:absolute after:-inset-3 after:content-['']"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-edu-surface-2 rounded-full flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all"
               >
-                <X size={14} strokeWidth={3} />
+                <X size={16} strokeWidth={3} />
               </button>
             )}
           </div>
         </div>
 
-        {/* Categories Row (Minimalist) */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-4">
-          <FilterChip
-            label="Barchasi"
-            active={!filterState.category}
-            onClick={() => { setFilter('category', ''); hapticLight(); }}
-            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent"
-          />
-          {getTrendingCategories().map((cat) => (
+        {/* Categories Floating Glassmorphism Bar (Sticky) */}
+        <div className="sticky top-[calc(env(safe-area-inset-top)+12px)] z-30 mb-6 px-4">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-lg">
             <FilterChip
-              key={cat.value}
-              label={`${cat.emoji} ${cat.label}`}
-              active={filterState.category === cat.value}
-              onClick={() => { setFilter('category', cat.value); hapticLight(); }}
-              className={cn(
-                "rounded-xl px-4 h-8 text-[12px] font-bold border-transparent",
-                filterState.category === cat.value ? "bg-edu-text text-edu-bg" : "bg-edu-surface-2 text-edu-text-2"
-              )}
+              label="Barchasi"
+              active={!filterState.category}
+              onClick={() => { setFilter('category', ''); hapticLight(); }}
+              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300"
             />
-          ))}
-          <button
-            onClick={() => { setFilterOpen(true); hapticLight(); }}
-            className="rounded-xl px-4 h-8 text-[12px] font-bold border-transparent bg-edu-surface-2 text-edu-text-2 whitespace-nowrap shrink-0"
-          >
-            Barchasini ko'rish
-          </button>
+            {getTrendingCategories().map((cat) => (
+              <FilterChip
+                key={cat.value}
+                label={`${cat.emoji} ${cat.label}`}
+                active={filterState.category === cat.value}
+                onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+                className={cn(
+                  "rounded-full px-5 h-9 text-[13px] font-bold border-transparent transition-all duration-300",
+                  filterState.category === cat.value ? "bg-edu-text text-edu-bg shadow-sm scale-100" : "bg-transparent text-edu-text-2 hover:bg-black/5 dark:hover:bg-white/5"
+                )}
+              />
+            ))}
+            <button
+              onClick={() => { setFilterOpen(true); hapticLight(); }}
+              className="rounded-full px-5 h-9 text-[13px] font-bold border-transparent bg-transparent text-edu-primary whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
+            >
+              Barchasi...
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* ── Task List Container ── */}
-      <div 
-        ref={parentRef}
-        className="flex-1 overflow-y-auto px-4 pt-4 pb-nav bg-edu-bg scrollbar-hide relative"
-      >
+        {/* Main List Container */}
+        <div className="px-4 pb-nav relative min-h-[60vh]">
         {/* Recent Searches Overlay */}
         {isFocused && !localQuery && recentSearches.length > 0 && (
           <div className="absolute inset-0 z-40 bg-edu-bg/80 backdrop-blur-md animate-fade-in px-4 py-4">
@@ -284,6 +297,24 @@ export default function TaskFeedScreen() {
           </div>
         )}
       </div>
+      {/* End of Main List Container */}
+      </div>
+      {/* End of Scrollable Container */}
+      {/* Back to Top Button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            onClick={scrollToTop}
+            className="fixed bottom-[calc(env(safe-area-inset-bottom)+80px)] right-4 w-12 h-12 rounded-full bg-edu-surface/80 backdrop-blur-md border border-edu-border shadow-lg flex items-center justify-center text-edu-text active:scale-95 transition-transform z-40"
+          >
+            <ArrowUp size={24} />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* ── Filter BottomSheet ── */}
       <BottomSheet

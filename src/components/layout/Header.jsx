@@ -23,12 +23,12 @@ export function Header({
 
   return (
     <header className={cn(
-      'sticky top-0 z-30 w-full max-w-[768px]',
-      !transparent && 'bg-edu-surface/60 backdrop-blur-md border-b border-edu-border',
+      'sticky top-0 z-30 w-full max-w-[768px] pt-[env(safe-area-inset-top)]',
+      !transparent && 'bg-edu-surface/80 backdrop-blur-xl border-b border-edu-border',
       transparent && 'bg-transparent',
       className
     )}>
-      <div className="flex items-center min-h-[56px] px-4 py-2 gap-3">
+      <div className="flex items-center min-h-[56px] px-4 py-2 gap-3 mt-1">
         {showBack && (
           <button
             onClick={handleBack}
