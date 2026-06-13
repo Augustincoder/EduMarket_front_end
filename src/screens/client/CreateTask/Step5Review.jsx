@@ -26,7 +26,7 @@ export function Step5Review() {
         <p className="text-sm text-edu-muted">Barchasi to'g'riligini tekshiring va e'lon qiling</p>
       </div>
 
-      <div className="bg-edu-surface rounded-2xl p-5 border border-edu-border/20 shadow-ios space-y-4">
+      <div className="bg-edu-surface rounded-xl p-5 border border-edu-border/20 shadow-ios space-y-4">
         <div className="flex items-start gap-3">
           <div className="w-12 h-12 rounded-xl bg-edu-bg flex items-center justify-center text-2xl shrink-0">
             {catObj?.emoji}

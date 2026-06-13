@@ -38,19 +38,19 @@ export function Step0Category() {
         {/* AI Action Button */}
         <button 
           onClick={() => { hapticLight(); setIsAiModalOpen(true); }}
-          className="w-full mb-4 relative overflow-hidden rounded-2xl p-[2px] bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-[0.98] transition-transform shadow-sm group"
+          className="w-full mb-4 relative overflow-hidden rounded-xl p-0.5 bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-95 transition-transform shadow-sm group"
         >
-          <div className="bg-edu-surface w-full rounded-[14px] px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all">
+          <div className="bg-edu-surface w-full rounded-xl px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
                 <Sparkles size={20} className="text-edu-primary" />
               </div>
               <div className="text-left">
-                <p className="text-[15px] font-bold text-edu-text leading-tight">AI bilan yaratish</p>
-                <p className="text-[12px] text-edu-muted font-medium mt-0.5">Tez va aqlli yordamchi</p>
+                <p className="text-base font-bold text-edu-text leading-tight">AI bilan yaratish</p>
+                <p className="text-xs text-edu-muted font-medium mt-0.5">Tez va aqlli yordamchi</p>
               </div>
             </div>
-            <div className="px-2 py-1 bg-edu-primary/10 rounded-lg text-[10px] font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
+            <div className="px-2 py-1 bg-edu-primary/10 rounded-lg text-xs font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
           </div>
         </button>
 
@@ -97,7 +97,7 @@ export function Step0Category() {
                   <div className="text-2xl mb-1.5 leading-none bg-black/5 dark:bg-white/5 w-10 h-10 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
                     {cat.emoji}
                   </div>
-                  <div className={cn("text-[13px] leading-tight", isSelected ? "font-bold" : "font-semibold")}>
+                  <div className={cn("text-sm leading-tight", isSelected ? "font-bold" : "font-semibold")}>
                     {cat.label}
                   </div>
                 </button>

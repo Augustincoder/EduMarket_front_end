@@ -231,12 +231,12 @@ export default function ClientHomeScreen() {
 
       {/* ── Categories (Expandable Grid) ─────── */}
       <div className="mb-8 px-1">
-        <div className="p-3 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-sm flex flex-col transition-all duration-500 overflow-hidden">
+        <div className="p-3 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-sm flex flex-col transition-all duration-500 overflow-hidden">
           <div className="flex items-center justify-between px-2 mb-3">
-            <h3 className="text-[10px] font-bold text-edu-muted uppercase tracking-[0.15em]">Yo'nalishlar</h3>
+            <h3 className="text-xs font-bold text-edu-muted uppercase tracking-widest">Yo'nalishlar</h3>
             <button 
               onClick={() => { hapticLight(); setCategoriesExpanded(!categoriesExpanded); }}
-              className="text-edu-primary text-[11px] font-bold flex items-center gap-1 active:scale-95 transition-transform bg-edu-primary/10 px-2 py-1 rounded-full"
+              className="text-edu-primary text-xs font-bold flex items-center gap-1 active:scale-95 transition-transform bg-edu-primary/10 px-2 py-1 rounded-full"
             >
               {categoriesExpanded ? 'Yashirish' : 'Barchasi...'}
             </button>
@@ -245,7 +245,7 @@ export default function ClientHomeScreen() {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleCategoryClick('')}
-              className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+              className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
             >
               <span className="text-base leading-none">🌐</span>
               <span className="truncate">Barchasi</span>
@@ -255,7 +255,7 @@ export default function ClientHomeScreen() {
               <button
                 key={cat.value}
                 onClick={() => handleCategoryClick(cat.value)}
-                className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-[12px] font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
+                className="rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold transition-all border bg-edu-bg/60 border-edu-border/50 text-edu-text hover:bg-black/5 dark:hover:bg-white/5 active:scale-95"
               >
                 <span className="text-base leading-none">{cat.emoji}</span>
                 <span className="truncate">{cat.label}</span>

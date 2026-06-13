@@ -47,7 +47,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); !isUploading && upload(Array.from(e.dataTransfer.files)); }}
         className={cn(
-          'border-2 border-dashed border-edu-border rounded-2xl p-6',
+          'border-2 border-dashed border-edu-border rounded-xl p-6',
           'flex flex-col items-center gap-2 cursor-pointer',
           'transition-all duration-200 relative overflow-hidden',
           'hover:border-edu-primary/50 hover:bg-edu-primary/5',

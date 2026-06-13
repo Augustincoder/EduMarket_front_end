@@ -135,7 +135,7 @@ export default function TaskFeedScreen() {
               onChange={(e) => setLocalQuery(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-              className="w-full h-12 bg-edu-surface border border-edu-border rounded-[20px] pl-12 pr-12 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary/50 transition-all text-edu-text shadow-sm"
+              className="w-full h-12 bg-edu-surface border border-edu-border rounded-xl pl-12 pr-12 text-[15px] font-medium outline-none focus:ring-2 focus:ring-edu-primary/20 focus:border-edu-primary/50 transition-all text-edu-text shadow-sm"
             />
             {localQuery && (
               <button 
@@ -150,7 +150,7 @@ export default function TaskFeedScreen() {
 
         {/* Categories Floating Glassmorphism Bar (Sticky) */}
         <div className="sticky top-[calc(env(safe-area-inset-top)_+_12px)] z-30 mb-6 px-4">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-lg">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-lg">
             <FilterChip
               label="Barchasi"
               active={!filterState.category}

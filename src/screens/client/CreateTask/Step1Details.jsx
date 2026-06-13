@@ -51,7 +51,7 @@ export function Step1Details() {
       <NLPWarning text={title + ' ' + description} />
       
       <div className="bg-edu-primary/5 rounded-xl p-4 border border-edu-primary/20 relative overflow-hidden shadow-sm">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 rounded-full blur-xl -mr-10 -mt-10 pointer-events-none" />
         <p className="text-sm text-edu-primary font-bold mb-2 flex items-center gap-2 relative">
           <span className="text-lg">💡</span> 
           Yaxshi tavsif qanday bo'ladi?
