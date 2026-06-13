@@ -42,9 +42,9 @@ export function SmartBriefModal({ isOpen, onClose }) {
       toast.success('Vazifa shakllantirildi! Ko\'rib chiqing.');
       onClose();
       
-      // Jump to step 5 (Review)
+      // Jump to step 3 (Files) so they can add files or edit
       setTimeout(() => {
-        setStep(5);
+        setStep(3);
       }, 300);
 
     } catch (err) {

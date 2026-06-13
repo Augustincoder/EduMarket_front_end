@@ -186,11 +186,15 @@ export default function CreateTaskScreen() {
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col pb-32"
               >
                 {step === 0 && <Step0Category />}
-                {step === 1 && <Step1Details />}
-                {step === 2 && <Step2Budget />}
-                {step === 3 && <Step3Files />}
-                {step === 4 && <Step4Targeting />}
-                {step === 5 && <Step5Review />}
+                {step > 0 && (
+                  <div className="px-5 pb-8">
+                    {step === 1 && <Step1Details />}
+                    {step === 2 && <Step2Budget />}
+                    {step === 3 && <Step3Files />}
+                    {step === 4 && <Step4Targeting />}
+                    {step === 5 && <Step5Review />}
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </SectionErrorBoundary>

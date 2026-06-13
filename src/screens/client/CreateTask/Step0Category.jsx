@@ -31,7 +31,7 @@ export function Step0Category() {
   }, [categoryStore, searchQuery]);
 
   return (
-    <div className="flex flex-col h-full bg-edu-bg animate-fade-in">
+    <div className="flex flex-col bg-edu-bg animate-fade-in">
       {/* Header Area (Sticky/Unscrollable) */}
       <div className="px-5 pt-6 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
         <div className="flex justify-between items-start mb-4">
@@ -78,8 +78,8 @@ export function Step0Category() {
         </div>
       </div>
 
-      {/* Scrollable Category List */}
-      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32 scrollbar-hide">
+      {/* Category List */}
+      <div className="px-5 pt-4">
         {filteredCategories.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 opacity-60">
             <Search className="w-10 h-10 mb-3 text-edu-muted" />
