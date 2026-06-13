@@ -53,29 +53,31 @@ export default function CreateTaskScreen() {
   const validateStep = () => {
     let errs = {};
     if (step === 1) {
-      if (!title || title.trim().length < 10) errs.title = ['Kamida 10 ta belgi shart'];
-      if (!description || description.trim().length < 20) errs.description = ['Kamida 20 ta belgi shart'];
+      if (!title || title.trim().length < 10) errs.title = ["Sarlavha qisqa bo'lib qoldi, yana biroz yozing (kamida 10 ta belgi)"];
+      if (!description || description.trim().length < 20) errs.description = ["Tavsif tushunarsiz bo'lishi mumkin, iltimos to'liqroq yozing (kamida 20 ta belgi)"];
       if (nlpSeverity === 'block') {
+        toast.error("Siz yozgan matn tizim qoidalariga mos kelmayapti. Iltimos o'zgartiring.");
         hapticError();
         return false;
       }
     }
     if (step === 2) {
-      if (!priceMin) errs.priceMin = ['Majburiy'];
-      else if (Number(priceMin) < 1000) errs.priceMin = ["Kamida 1,000 so'm"];
+      if (!priceMin) errs.priceMin = ["Iltimos, minimal narxni kiriting"];
+      else if (Number(priceMin) < 1000) errs.priceMin = ["Eng kamida 1,000 so'm bo'lishi kerak"];
       
-      if (!priceMax) errs.priceMax = ['Majburiy'];
+      if (!priceMax) errs.priceMax = ["Iltimos, maksimal narxni kiriting"];
       
-      if (!deadline) errs.deadline = ['Muddat tanlang'];
+      if (!deadline) errs.deadline = ["Qachongacha tayyor bo'lishini belgilang"];
       
       if (Number(priceMin) >= Number(priceMax) && priceMin && priceMax) {
-        errs.priceMin = ["Max dan kichik bo'lishi shart"];
+        errs.priceMin = ["Minimal narx maksimaldan kichik bo'lishi kerak"];
       }
     }
     
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       hapticError();
+      toast.error("Ba'zi ma'lumotlar to'liq emas, iltimos to'ldiring");
       return false;
     }
     return true;
@@ -145,8 +147,6 @@ export default function CreateTaskScreen() {
   } else {
     mainBtnText = "DAVOM ETISH →";
   }
-
-  if (step === 1 && nlpSeverity === 'block') isVisible = false;
 
   useMainButton({
     text: mainBtnText,

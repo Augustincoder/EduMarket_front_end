@@ -23,10 +23,17 @@ export const useCreateTaskStore = create((set) => ({
   nextStep: () => set((state) => ({ step: state.step + 1, errors: {} })),
   prevStep: () => set((state) => ({ step: Math.max(0, state.step - 1), errors: {} })),
 
-  updateField: (field, value) => set((state) => ({
-    [field]: value,
-    errors: { ...state.errors, [field]: null }, // clear error when field updates
-  })),
+  updateField: (field, value) => set((state) => {
+    const newErrors = { ...state.errors, [field]: null };
+    if (field === 'priceMin' || field === 'priceMax') {
+      newErrors.priceMin = null;
+      newErrors.priceMax = null;
+    }
+    return {
+      [field]: value,
+      errors: newErrors,
+    };
+  }),
 
   updateMeta: (key, val) => set((state) => ({
     meta: { ...state.meta, [key]: val }
