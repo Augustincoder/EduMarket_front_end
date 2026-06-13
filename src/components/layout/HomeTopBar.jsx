@@ -26,7 +26,7 @@ export function HomeTopBar({ greeting }) {
 
   return (
     <>
-      <div className="flex justify-between items-center gap-4 mb-8 pt-[calc(env(safe-area-inset-top)+16px)]">
+      <div className="flex justify-between items-center gap-4 mb-8 pt-[calc(env(safe-area-inset-top)_+_16px)]">
         <div className="flex-1 min-w-0 space-y-0.5">
           <p className="text-[11px] font-bold text-edu-muted uppercase tracking-[0.12em] opacity-80">{greeting}</p>
           <h1 className="text-2xl sm:text-3xl font-bold font-display text-edu-text tracking-tight truncate">

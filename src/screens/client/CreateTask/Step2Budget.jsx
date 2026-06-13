@@ -6,7 +6,10 @@ import { ToggleSwitch } from '../../../components/forms/ToggleSwitch';
 import { hapticLight } from '../../../lib/telegram';
 
 export function Step2Budget() {
-  const { category, priceMin, priceMax, isUrgent, deadline, errors, updateField } = useCreateTaskStore();
+  const { 
+    category, priceMin, priceMax, isUrgent, deadline, errors, updateField,
+    isCoWorking, maxCollaborators, paymentSplitType
+  } = useCreateTaskStore();
 
   const [now] = useState(() => Date.now());
   const minDate = new Date(now - new Date().getTimezoneOffset() * 60000 + 10 * 60 * 1000).toISOString().slice(0, 16);
@@ -85,11 +88,11 @@ export function Step2Budget() {
         <ToggleSwitch
           label="🤝 Jamoaviy vazifa (Study Buddy)"
           description="Bir nechta frilanser bilan ishlashni xohlaysizmi?"
-          checked={useCreateTaskStore(s => s.isCoWorking)}
+          checked={isCoWorking}
           onChange={(v) => { hapticLight(); updateField('isCoWorking', v); }}
         />
 
-        {useCreateTaskStore(s => s.isCoWorking) && (
+        {isCoWorking && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -103,7 +106,7 @@ export function Step2Budget() {
                     key={num}
                     onClick={() => { hapticLight(); updateField('maxCollaborators', num); }}
                     className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
-                      useCreateTaskStore(s => s.maxCollaborators) === num
+                      maxCollaborators === num
                         ? 'bg-edu-primary text-white shadow-md'
                         : 'bg-edu-bg text-edu-text hover:bg-edu-primary/10'
                     }`}
@@ -117,7 +120,7 @@ export function Step2Budget() {
             <div>
               <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-2">To'lov taqsimoti</p>
               <select
-                value={useCreateTaskStore(s => s.paymentSplitType)}
+                value={paymentSplitType}
                 onChange={(e) => updateField('paymentSplitType', e.target.value)}
                 className="w-full bg-edu-bg border border-edu-border/40 rounded-xl px-4 py-3 text-edu-text text-sm font-medium outline-none focus:border-edu-primary transition-all"
               >

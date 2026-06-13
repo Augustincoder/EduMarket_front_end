@@ -2,15 +2,16 @@ import { useState, useMemo } from 'react';
 import { useCategoryStore } from '../../../store/categoryStore';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { hapticLight } from '../../../lib/telegram';
-import { Search } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import { SmartBriefInput } from './components/SmartBriefInput';
+import { SmartBriefModal } from './components/SmartBriefModal';
 
 export function Step0Category() {
   const categoryStoreRaw = useCategoryStore(s => s.categories);
   const categoryStore = useMemo(() => categoryStoreRaw || [], [categoryStoreRaw]);
   const { category, updateField, nextStep } = useCreateTaskStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   const handleSelect = (val) => {
     hapticLight();
@@ -33,10 +34,34 @@ export function Step0Category() {
     <div className="flex flex-col h-full bg-edu-bg animate-fade-in">
       {/* Header Area (Sticky/Unscrollable) */}
       <div className="px-5 pt-6 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
-        <h2 className="text-2xl font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
-        <p className="text-[13px] text-edu-muted font-medium mb-4">Kerakli mutaxassisni topish uchun toifa tanlang</p>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-2xl font-extrabold font-display text-edu-text tracking-tight mb-1.5">Yordam yo'nalishi</h2>
+            <p className="text-[13px] text-edu-muted font-medium">Kerakli mutaxassisni topish uchun toifa tanlang</p>
+          </div>
+        </div>
         
-        <SmartBriefInput />
+        {/* AI Action Button */}
+        <button 
+          onClick={() => { hapticLight(); setIsAiModalOpen(true); }}
+          className="w-full mb-4 relative overflow-hidden rounded-xl p-[1px] bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-[0.98] transition-transform shadow-sm group"
+        >
+          <div className="bg-edu-surface w-full rounded-[11px] px-4 py-3 flex items-center justify-between group-hover:bg-opacity-95 transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
+                <Sparkles size={18} className="text-edu-primary" />
+              </div>
+              <div className="text-left">
+                <p className="text-[14px] font-bold text-edu-text leading-tight">AI bilan yaratish</p>
+                <p className="text-[11px] text-edu-muted font-medium mt-0.5">Bitta gap yozing, AI o'zi to'ldiradi</p>
+              </div>
+            </div>
+            <div className="px-2 py-1 bg-edu-primary/10 rounded text-[10px] font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
+          </div>
+        </button>
+
+        {/* Modal instance */}
+        <SmartBriefModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
 
         {/* Search Bar */}
         <div className="relative">

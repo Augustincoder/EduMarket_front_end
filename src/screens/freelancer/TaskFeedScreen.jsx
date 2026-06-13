@@ -105,7 +105,7 @@ export default function TaskFeedScreen() {
         className="flex-1 overflow-y-auto scrollbar-hide relative"
       >
         {/* Title and Search (Scrolls away) */}
-        <div className="px-4 pt-[calc(env(safe-area-inset-top)+20px)] pb-4 bg-edu-bg">
+        <div className="px-4 pt-[calc(env(safe-area-inset-top)_+_20px)] pb-4 bg-edu-bg">
           <div className="flex items-center justify-between mb-5">
             <h1 className="text-[28px] font-bold font-display text-edu-text tracking-tight">
               Vazifalar
@@ -149,7 +149,7 @@ export default function TaskFeedScreen() {
         </div>
 
         {/* Categories Floating Glassmorphism Bar (Sticky) */}
-        <div className="sticky top-[calc(env(safe-area-inset-top)+12px)] z-30 mb-6 px-4">
+        <div className="sticky top-[calc(env(safe-area-inset-top)_+_12px)] z-30 mb-6 px-4">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-2xl border border-white/40 dark:border-white/10 rounded-[24px] shadow-lg">
             <FilterChip
               label="Barchasi"
@@ -309,7 +309,7 @@ export default function TaskFeedScreen() {
             exit={{ opacity: 0, y: 20, scale: 0.8 }}
             transition={{ duration: 0.2 }}
             onClick={scrollToTop}
-            className="fixed bottom-[calc(env(safe-area-inset-bottom)+80px)] right-4 w-12 h-12 rounded-full bg-edu-surface/80 backdrop-blur-md border border-edu-border shadow-lg flex items-center justify-center text-edu-text active:scale-95 transition-transform z-40"
+            className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_80px)] right-4 w-12 h-12 rounded-full bg-edu-surface/80 backdrop-blur-md border border-edu-border shadow-lg flex items-center justify-center text-edu-text active:scale-95 transition-transform z-40"
           >
             <ArrowUp size={24} />
           </motion.button>
