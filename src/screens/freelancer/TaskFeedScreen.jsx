@@ -149,7 +149,7 @@ export default function TaskFeedScreen() {
         </div>
 
         {/* Categories Floating Glassmorphism Bar (Sticky) */}
-        <div className="sticky top-[calc(env(safe-area-inset-top)_+_12px)] z-30 mb-6 px-4">
+        <div className="sticky top-0 pt-3 z-30 mb-6 px-4" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}>
           <div className="flex gap-2 overflow-x-auto scrollbar-hide p-1.5 bg-edu-surface/70 backdrop-blur-xl border border-white/40 dark:border-white/10 rounded-xl shadow-lg">
             <FilterChip
               label="Barchasi"

@@ -25,7 +25,6 @@ export function PageLayout({
             'flex-1 w-full',
             showNav && scrollable && 'pb-nav',
             scrollable && 'overflow-y-auto overflow-x-hidden scrollbar-hide',
-            !scrollable && 'overflow-hidden',
             className
           )}
         >
