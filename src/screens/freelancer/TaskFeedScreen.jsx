@@ -23,7 +23,6 @@ const SORT_OPTIONS = [
 ];
 
 export default function TaskFeedScreen() {
-  const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
