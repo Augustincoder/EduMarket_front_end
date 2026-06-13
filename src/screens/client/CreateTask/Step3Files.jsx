@@ -11,7 +11,7 @@ export function Step3Files() {
         <p className="text-sm text-edu-muted">Vazifa uchun kerakli namunalar yoki materiallarni yuklang</p>
       </div>
 
-      <div className="bg-edu-primary/5 p-4 rounded-lg border border-edu-primary/10">
+      <div className="bg-edu-primary/5 p-4 rounded-2xl border border-edu-primary/10">
         <p className="text-[13px] text-edu-primary font-medium flex items-start gap-2">
           <span>💡</span> 
           <span>Statistikaga ko'ra, fayl va namuna biriktirilgan vazifalar 3 marta ko'proq taklif oladi.</span>

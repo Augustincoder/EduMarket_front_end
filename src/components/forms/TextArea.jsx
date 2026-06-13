@@ -28,7 +28,7 @@ export const TextArea = forwardRef(({
         </label>
       )}
       <div className={cn(
-        "relative flex bg-edu-surface-2 border-[1.5px] border-edu-border rounded-md px-4 py-3 transition-all duration-220 ease-in-out",
+        "relative flex bg-edu-surface-2 border-[1.5px] border-edu-border rounded-xl px-4 py-3 transition-all duration-220 ease-in-out",
         "focus-within:bg-edu-surface focus-within:border-edu-primary focus-within:ring-[3px] focus-within:ring-edu-primary-l",
         error && "border-edu-urgent focus-within:border-edu-urgent focus-within:ring-[3px] focus-within:ring-edu-urgent-l"
       )}>

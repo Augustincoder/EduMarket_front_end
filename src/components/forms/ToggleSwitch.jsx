@@ -4,7 +4,7 @@ import * as Switch from '@radix-ui/react-switch';
 export function ToggleSwitch({ label, description, checked, onChange }) {
   const switchId = label ? label.replace(/\s+/g, '-').toLowerCase() : 'switch';
   return (
-    <div className="flex flex-row-reverse w-full justify-between items-center bg-edu-surface rounded-lg px-4 py-3.5 border border-edu-border gap-4 shadow-sm active-bounce">
+    <div className="flex flex-row-reverse w-full justify-between items-center bg-edu-surface rounded-xl px-4 py-3.5 border border-edu-border gap-4 shadow-sm active-bounce">
       <Switch.Root
         id={switchId}
         aria-label={label}
@@ -16,9 +16,9 @@ export function ToggleSwitch({ label, description, checked, onChange }) {
           className="block w-[26px] h-[26px] bg-white rounded-full transition-transform translate-x-[2px] data-[state=checked]:translate-x-[22px] shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
         />
       </Switch.Root>
-      <div className="flex flex-col gap-0.5 cursor-pointer" onClick={() => onChange?.(!checked)}>
+      <div className="flex flex-col gap-0.5">
         {label && <label htmlFor={switchId} className="text-sm font-semibold text-edu-text cursor-pointer">{label}</label>}
-        {description && <p className="text-xs text-edu-muted">{description}</p>}
+        {description && <p className="text-xs text-edu-muted cursor-pointer" onClick={() => onChange?.(!checked)}>{description}</p>}
       </div>
     </div>
   );

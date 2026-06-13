@@ -50,13 +50,17 @@ export function Step1Details() {
 
       <NLPWarning text={title + ' ' + description} />
       
-      <div className="bg-edu-primary/5 rounded-lg p-4 border border-edu-primary/10">
-        <p className="text-sm text-edu-primary font-semibold mb-2">💡 Yaxshi tavsif nimalarni o'z ichiga oladi?</p>
-        <ul className="text-xs text-edu-muted space-y-1 list-disc list-inside">
-          <li>Fan nomi va mavzusi</li>
-          <li>Hajmi (sahifa yoki so'z soni)</li>
-          <li>Format talablari (GOST, APA, va hk)</li>
-          <li>Antiplagiatura talabi (agar bo'lsa)</li>
+      <div className="bg-edu-primary/5 rounded-xl p-4 border border-edu-primary/20 relative overflow-hidden shadow-sm">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-edu-primary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+        <p className="text-sm text-edu-primary font-bold mb-2 flex items-center gap-2 relative">
+          <span className="text-lg">💡</span> 
+          Yaxshi tavsif qanday bo'ladi?
+        </p>
+        <ul className="text-[13px] text-edu-text/80 space-y-1.5 font-medium ml-7 list-[circle] marker:text-edu-primary/50 relative">
+          <li>Fan nomi va asosiy mavzusi</li>
+          <li>Kutilayotgan hajm (sahifa yoki so'z)</li>
+          <li>Format va standartlar (masalan: GOST, APA)</li>
+          <li>Antiplagiat talabi (agar zarur bo'lsa)</li>
         </ul>
       </div>
     </div>

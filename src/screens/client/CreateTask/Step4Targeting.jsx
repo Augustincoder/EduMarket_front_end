@@ -24,7 +24,7 @@ export function Step4Targeting() {
       </div>
 
       {targetFreelancerId ? (
-        <div className="bg-edu-primary/10 border border-edu-primary/20 rounded-lg p-4 flex gap-4">
+        <div className="bg-edu-primary/10 border border-edu-primary/20 rounded-2xl p-4 flex gap-4">
           <div className="w-12 h-12 rounded-full bg-edu-primary/20 flex items-center justify-center text-2xl shrink-0">🎯</div>
           <div>
             <h3 className="font-bold text-edu-primary">Shaxsiy Yollash (Direct Hire)</h3>
@@ -40,7 +40,7 @@ export function Step4Targeting() {
               <button
                 key={t.id}
                 onClick={() => handleSelect(t.id)}
-                className={`w-full flex items-center gap-4 p-4 rounded-lg border text-left transition-all active:scale-95 ${
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all active:scale-95 ${
                   isSelected 
                     ? 'bg-edu-primary/5 border-edu-primary shadow-sm' 
                     : 'bg-edu-surface border-edu-border/20'
