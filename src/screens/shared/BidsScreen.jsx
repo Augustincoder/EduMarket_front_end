@@ -10,7 +10,7 @@ import { BottomSheet } from '../../components/ui/BottomSheet';
 import { Button } from '../../components/ui/Button';
 import { TextInput } from '../../components/forms/TextInput';
 import { TaskCardSkeleton } from '../../components/ui/SkeletonCard';
-import { useTaskBids, useAcceptBid, useTask } from '../../hooks/useTasks';
+import { useTaskBids, useAcceptBid, useAssembleTeam, useTask } from '../../hooks/useTasks';
 import { useAuthStore } from '../../store/authStore';
 import { hapticSuccess, hapticLight } from '../../lib/telegram';
 import { trackEvent } from '../../lib/observability';
@@ -29,9 +29,11 @@ export default function BidsScreen() {
   const { data: bids, isLoading: isBidsLoading } = useTaskBids(id);
   const { data: task, isLoading: isTaskLoading } = useTask(id);
   const acceptBid = useAcceptBid(id);
+  const assembleTeam = useAssembleTeam(id);
   
   const [confirming, setConfirming] = useState(null);
   const [countering, setCountering] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState([]); // array of { bidId, freelancerId, sharePercent }
   const [counterPrice, setCounterPrice] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   
@@ -47,6 +49,42 @@ export default function BidsScreen() {
       price: confirming.proposedPrice,
     });
     setConfirming(null);
+  };
+
+  const handleAssembleTeam = async () => {
+    if (selectedTeam.length === 0) return toast.error("Kamida bitta frilanserni tanlang");
+    
+    // Auto-calculate share if EQUAL
+    let teamData = [...selectedTeam];
+    if (task.paymentSplitType === 'EQUAL') {
+      const share = Math.floor(100 / teamData.length);
+      teamData = teamData.map((t, i) => {
+        // give remainder to first one if uneven
+        const remainder = 100 - (share * teamData.length);
+        return { ...t, sharePercent: i === 0 ? share + remainder : share };
+      });
+    } else {
+      // Check if custom sum is 100
+      const total = teamData.reduce((acc, t) => acc + t.sharePercent, 0);
+      if (total !== 100) return toast.error("Foizlar yig'indisi 100% ga teng bo'lishi kerak");
+    }
+
+    await assembleTeam.mutateAsync(teamData);
+    hapticSuccess();
+    trackEvent('Team Assembled', { taskId: id, size: teamData.length });
+    setSelectedTeam([]);
+  };
+
+  const toggleTeamSelection = (bid) => {
+    hapticLight();
+    if (selectedTeam.some(t => t.bidId === bid.id)) {
+      setSelectedTeam(prev => prev.filter(t => t.bidId !== bid.id));
+    } else {
+      if (selectedTeam.length >= task.maxCollaborators) {
+        return toast.error(`Maksimal jamoa a'zolari: ${task.maxCollaborators}`);
+      }
+      setSelectedTeam(prev => [...prev, { bidId: bid.id, freelancerId: bid.freelancerId, sharePercent: 0 }]);
+    }
   };
 
   const handleCounterSubmit = () => {
@@ -120,21 +158,28 @@ export default function BidsScreen() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {displayedBids.map((bid) => (
-                  <BidCard
-                    key={bid.id}
-                    bid={bid}
-                    task={task}
-                    isSelected={!!bid.isAccepted}
-                    isDisabled={bids.some(b => b.isAccepted)}
-                    isClient={user?.id === task?.clientId}
-                    onAccept={(bid) => { setConfirming(bid); hapticLight(); }}
-                    onCounter={(bid) => { setCountering(bid); setCounterPrice(String(bid.proposedPrice)); hapticLight(); }}
-                  />
-                ))}
+                {displayedBids.map((bid) => {
+                  const isSelectedForTeam = selectedTeam.some(t => t.bidId === bid.id);
+                  return (
+                    <BidCard
+                      key={bid.id}
+                      bid={bid}
+                      task={task}
+                      isSelected={task?.isCoWorking ? isSelectedForTeam : !!bid.isAccepted}
+                      isDisabled={bids.some(b => b.isAccepted) && !task?.isCoWorking}
+                      isClient={user?.id === task?.clientId}
+                      onAccept={(bid) => { 
+                        if (task?.isCoWorking) toggleTeamSelection(bid);
+                        else { setConfirming(bid); hapticLight(); }
+                      }}
+                      onCounter={(bid) => { setCountering(bid); setCounterPrice(String(bid.proposedPrice)); hapticLight(); }}
+                      customAcceptLabel={task?.isCoWorking ? (isSelectedForTeam ? 'Tanlandi' : 'Tanlash') : undefined}
+                    />
+                  );
+                })}
               </div>
               {hasMore && (
-                <div className="flex justify-center pt-6 pb-10">
+                <div className="flex justify-center pt-6 pb-20">
                   <Button variant="secondary" onClick={() => setDisplayLimit(p => p + 10)} className="rounded-2xl px-8 font-bold uppercase tracking-widest text-[12px] h-11">
                     Ko'proq ko'rsatish
                   </Button>
@@ -144,6 +189,19 @@ export default function BidsScreen() {
           )}
         </div>
       </div>
+
+      {/* Assemble Team Floating Action */}
+      {task?.isCoWorking && selectedTeam.length > 0 && user?.id === task?.clientId && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pb-8 z-40">
+          <Button 
+            className="w-full shadow-2xl h-14 text-base font-bold" 
+            onClick={handleAssembleTeam}
+            loading={assembleTeam.isPending}
+          >
+            {selectedTeam.length} nafar a'zo bilan jamoani yig'ish
+          </Button>
+        </div>
+      )}
 
       {/* Defensive Confirmation Modal */}
       <Modal

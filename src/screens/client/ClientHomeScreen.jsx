@@ -47,9 +47,9 @@ function MyTasksStatusWidget() {
           <div 
             key={item.label}
             onClick={() => navigate(`/my-tasks?status=${item.status}`)}
-            className="flex-shrink-0 w-[140px] h-[80px] flex items-center gap-3 bg-edu-surface rounded-[16px] p-3 snap-center cursor-pointer border border-edu-border shadow-sm active:scale-95 transition-transform"
+            className="flex-shrink-0 w-[140px] h-[80px] flex items-center gap-3 bg-edu-surface rounded-lg p-3 snap-center cursor-pointer border border-edu-border shadow-sm active:scale-95 transition-transform"
           >
-            <div className={cn("w-12 h-12 rounded-[12px] flex items-center justify-center text-[20px]", item.bg)}>
+            <div className={cn("w-12 h-12 rounded-md flex items-center justify-center text-[20px]", item.bg)}>
               {item.emoji}
             </div>
             <div className="flex flex-col">

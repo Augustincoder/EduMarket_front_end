@@ -56,7 +56,7 @@ export default function AdminComplaints() {
     <div className="space-y-6 animate-fade-in text-slate-100">
       
       {/* ── Filter Bar ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/40 border border-slate-800/60 p-5 rounded-3xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-950/40 border border-slate-800/60 p-5 rounded-md">
         <div>
           <Select
             value={statusFilter}
@@ -89,7 +89,7 @@ export default function AdminComplaints() {
       </div>
 
       {/* ── Table Grid ────────────────────────────────────── */}
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-md overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -128,7 +128,7 @@ export default function AdminComplaints() {
                       )}
                     </td>
                     <td className="py-4 px-6">
-                      <span className="bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase tracking-wider">
+                      <span className="bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">
                         ⚠️ {rep.reportType}
                       </span>
                     </td>
@@ -147,7 +147,7 @@ export default function AdminComplaints() {
                       <div className="flex justify-end">
                         <button
                           onClick={() => openReport(rep)}
-                          className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-750"
+                          className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white rounded-md text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-750"
                         >
                           <Eye size={14} /> Tekshirish
                         </button>
@@ -174,7 +174,7 @@ export default function AdminComplaints() {
           </DialogDescription>
           
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-2xl border border-slate-850">
+            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-950/60 p-4 rounded-sm border border-slate-850">
               <div>
                 <p className="text-slate-500 font-bold uppercase tracking-wider">Ariza beruvchi</p>
                 <p className="text-slate-100 font-bold mt-1">{selectedReport?.reporter?.fullname}</p>
@@ -193,7 +193,7 @@ export default function AdminComplaints() {
               </div>
             </div>
 
-            <div className="bg-slate-950/40 border border-slate-850 p-4 rounded-2xl space-y-1.5">
+            <div className="bg-slate-950/40 border border-slate-850 p-4 rounded-sm space-y-1.5">
               <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Shikoyat sababi / Matni</h4>
               <p className="text-xs text-slate-200 leading-relaxed font-mono">{selectedReport?.reason}</p>
             </div>
@@ -201,12 +201,12 @@ export default function AdminComplaints() {
             {selectedReport?.evidenceFileId && (
               <div className="space-y-2">
                 <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Dalil (Fayl/Rasm)</h4>
-                <div className="border border-slate-850 rounded-2xl overflow-hidden bg-slate-950 p-2 flex justify-center">
+                <div className="border border-slate-850 rounded-sm overflow-hidden bg-slate-950 p-2 flex justify-center">
                   {filesApi.getPublicUrl(selectedReport.evidenceFileId) ? (
                     <img 
                       src={filesApi.getPublicUrl(selectedReport.evidenceFileId)} 
                       alt="Dalil" 
-                      className="max-h-[250px] object-contain rounded-lg"
+                      className="max-h-[250px] object-contain rounded-sm"
                     />
                   ) : (
                     <button
@@ -214,7 +214,7 @@ export default function AdminComplaints() {
                         const res = await filesApi.getUrl(selectedReport.evidenceFileId);
                         window.open(res.data.data.url, '_blank');
                       }}
-                      className="px-4 py-2 bg-slate-800 text-slate-300 text-[11px] font-bold rounded-xl flex items-center gap-2"
+                      className="px-4 py-2 bg-slate-800 text-slate-300 text-[11px] font-bold rounded-md flex items-center gap-2"
                     >
                       <Eye size={14} /> Faylni ko'rish
                     </button>
@@ -224,7 +224,7 @@ export default function AdminComplaints() {
             )}
 
             {selectedReport?.task && (
-              <div className="p-3.5 bg-slate-900 border border-slate-850 rounded-2xl flex items-center justify-between text-xs">
+              <div className="p-3.5 bg-slate-900 border border-slate-850 rounded-sm flex items-center justify-between text-xs">
                 <div>
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Biriktirilgan topshiriq</p>
                   <p className="text-slate-100 font-bold mt-0.5">{selectedReport.task.title}</p>
@@ -241,7 +241,7 @@ export default function AdminComplaints() {
                   placeholder="Admin tomonidan shikoyat bo'yicha ko'rilgan chora yoki yechim izohi..."
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl p-3 text-xs outline-none min-h-[90px] text-slate-100"
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-md p-3 text-xs outline-none min-h-[90px] text-slate-100"
                   disabled={selectedReport?.status !== 'PENDING'}
                 />
               </div>
@@ -251,20 +251,20 @@ export default function AdminComplaints() {
                   <button
                     disabled={resolveMutation.isLoading}
                     onClick={() => resolveMutation.mutate({ id: selectedReport.id, status: 'DISMISSED', adminNotes })}
-                    className="py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-slate-750"
+                    className="py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-slate-750"
                   >
                     <X size={16} /> Rad etish (Dismiss)
                   </button>
                   <button
                     disabled={resolveMutation.isLoading}
                     onClick={() => resolveMutation.mutate({ id: selectedReport.id, status: 'RESOLVED', adminNotes })}
-                    className="py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                    className="py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5"
                   >
                     <Check size={16} /> Shikoyatni hal qilish
                   </button>
                 </div>
               ) : (
-                <div className="bg-slate-950/60 p-3.5 border border-slate-850 rounded-2xl flex justify-between text-[11px] text-slate-400 font-bold uppercase tracking-wide">
+                <div className="bg-slate-950/60 p-3.5 border border-slate-850 rounded-sm flex justify-between text-[11px] text-slate-400 font-bold uppercase tracking-wide">
                   <span>Yechim holati: {selectedReport?.status}</span>
                   <span>Tekshirgan Admin ID: {selectedReport?.resolvedById}</span>
                 </div>

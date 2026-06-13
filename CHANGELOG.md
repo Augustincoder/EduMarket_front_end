@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0] - 2026-06-13
+### Added
+- Study Buddy (Co-working mode) Phase 11.
+- `useAssembleTeam` hook to create team out of multiple freelancers.
+- `BidsScreen` now supports multi-select and auto-share calculation for co-working tasks.
+- Chat UI supports Study Buddy team grouping.
+- `TaskDetailScreen` displays list of active task collaborators instead of a single freelancer.
+
 ## [2.5.0] - 2026-06-13
 ### Added
 - Phase 10: "Reputation DNA" feature (Radar Chart using recharts).

@@ -28,13 +28,13 @@ export default function AdminAuditLogs() {
               toast.error("Eksport qilish uchun loglar topilmadi");
             }
           }}
-          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+          className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2"
         >
           <Download size={16} /> Export CSV
         </button>
       </div>
 
-      <div className="bg-slate-950/40 border border-slate-800/60 rounded-3xl overflow-hidden">
+      <div className="bg-slate-950/40 border border-slate-800/60 rounded-xl overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin" />
@@ -61,7 +61,7 @@ export default function AdminAuditLogs() {
                       {log.adminId}
                     </td>
                     <td className="py-4 px-6">
-                      <span className={`px-2.5 py-1 rounded-xl text-[9px] font-bold uppercase tracking-wider border ${
+                      <span className={`px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider border ${
                         log.action.includes('BAN') ? 'bg-red-500/10 text-red-500 border-red-500/20' :
                         log.action.includes('VIP') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                         'bg-slate-800 text-slate-400 border-slate-700'

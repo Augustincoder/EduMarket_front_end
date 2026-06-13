@@ -14,6 +14,9 @@ export const useCreateTaskStore = create((set) => ({
   targetFreelancerId: null,
   nlpSeverity: 'none',
   meta: {}, // Category-specific metadata
+  isCoWorking: false,
+  maxCollaborators: 1,
+  paymentSplitType: 'EQUAL',
   errors: {},
 
   setStep: (step) => set({ step, errors: {} }),
@@ -46,6 +49,9 @@ export const useCreateTaskStore = create((set) => ({
     targetFreelancerId: null,
     nlpSeverity: 'none',
     meta: {},
+    isCoWorking: false,
+    maxCollaborators: 1,
+    paymentSplitType: 'EQUAL',
     errors: {},
   })
 }));

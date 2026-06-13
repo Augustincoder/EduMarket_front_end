@@ -14,7 +14,7 @@ export function ReputationRadarChart({ dna }) {
   ];
 
   return (
-    <div className="bg-edu-surface p-5 rounded-3xl border border-edu-border/30 shadow-ios relative overflow-hidden">
+    <div className="bg-edu-surface p-5 rounded-xl border border-edu-border/30 shadow-ios relative overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120px] h-[120px] bg-edu-primary/20 blur-[40px] rounded-full pointer-events-none" />
 

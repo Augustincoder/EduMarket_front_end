@@ -38,7 +38,7 @@ export default function AdminBroadcast() {
   return (
     <div className="max-w-3xl space-y-6 animate-fade-in text-slate-100">
       
-      <form onSubmit={handleSubmit} className="bg-slate-950/40 border border-slate-800/60 rounded-3xl p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-slate-950/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
         
         <div>
           <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Qabul Qiluvchilar Guruhi</label>
@@ -61,7 +61,7 @@ export default function AdminBroadcast() {
             placeholder="Xabarni yozing...\nMasalan:\n📢 Yangi xizmatlar!\n\nTizimda yangi giglar paydo bo'ldi. O'tib ko'ring! ⚡"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-850 focus:border-indigo-500 rounded-2xl p-4 text-xs outline-none min-h-[180px] font-mono leading-relaxed text-slate-100"
+            className="w-full bg-slate-900 border border-slate-850 focus:border-indigo-500 rounded-lg p-4 text-xs outline-none min-h-[180px] font-mono leading-relaxed text-slate-100"
             required
           />
         </div>
@@ -69,7 +69,7 @@ export default function AdminBroadcast() {
         <button
           type="submit"
           disabled={broadcastMutation.isLoading || !text.trim()}
-          className="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/10 active:scale-[0.98] disabled:opacity-50"
+          className="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/10 active:scale-[0.98] disabled:opacity-50"
         >
           <Send size={14} />
           {broadcastMutation.isLoading ? 'Yuborilmoqda...' : 'Telegram orqali tarqatish'}
@@ -77,7 +77,7 @@ export default function AdminBroadcast() {
 
       </form>
 
-      <div className="p-5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-3xl flex gap-3 text-xs">
+      <div className="p-5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-xl flex gap-3 text-xs">
         <ShieldAlert size={20} className="shrink-0 mt-0.5" />
         <div>
           <h5 className="font-bold uppercase tracking-wider">Eslatma</h5>

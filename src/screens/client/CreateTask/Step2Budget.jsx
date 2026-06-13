@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { TextInput } from '../../../components/forms/TextInput';
 import { ToggleSwitch } from '../../../components/forms/ToggleSwitch';
@@ -26,7 +27,7 @@ export function Step2Budget() {
         <p className="text-sm text-edu-muted">Qancha to'lashni va qachongacha tayyor bo'lishini belgilang</p>
       </div>
 
-      <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/20 shadow-ios">
+      <div className="bg-edu-surface p-4 rounded-lg border border-edu-border/20 shadow-ios">
         <div className="flex justify-between items-center mb-3">
           <p className="text-xs font-bold text-edu-muted uppercase tracking-widest">Byudjet oralig'i (UZS) *</p>
           <span className="text-xs text-edu-primary font-semibold bg-edu-primary/10 px-2 py-1 rounded-lg">
@@ -65,7 +66,7 @@ export function Step2Budget() {
         onChange={(v) => { hapticLight(); updateField('isUrgent', v); }}
       />
 
-      <div className="bg-edu-surface p-4 rounded-2xl border border-edu-border/20 shadow-ios">
+      <div className="bg-edu-surface p-4 rounded-lg border border-edu-border/20 shadow-ios">
         <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-3">Tugash muddati (Deadline) *</p>
         <div className="relative">
           <input
@@ -77,6 +78,55 @@ export function Step2Budget() {
           />
         </div>
         {errors.deadline && <p className="text-xs text-edu-urgent mt-2 px-1">{errors.deadline[0]}</p>}
+      </div>
+
+      {/* Study Buddy: Co-working Mode */}
+      <div className="bg-edu-surface p-4 rounded-lg border border-edu-border/20 shadow-ios space-y-4">
+        <ToggleSwitch
+          label="🤝 Jamoaviy vazifa (Study Buddy)"
+          description="Bir nechta frilanser bilan ishlashni xohlaysizmi?"
+          checked={useCreateTaskStore(s => s.isCoWorking)}
+          onChange={(v) => { hapticLight(); updateField('isCoWorking', v); }}
+        />
+
+        {useCreateTaskStore(s => s.isCoWorking) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="pt-4 border-t border-edu-border/20 space-y-4"
+          >
+            <div>
+              <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-2">Jamoa a'zolari soni (max 4)</p>
+              <div className="flex items-center gap-2">
+                {[2, 3, 4].map(num => (
+                  <button
+                    key={num}
+                    onClick={() => { hapticLight(); updateField('maxCollaborators', num); }}
+                    className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                      useCreateTaskStore(s => s.maxCollaborators) === num
+                        ? 'bg-edu-primary text-white shadow-md'
+                        : 'bg-edu-bg text-edu-text hover:bg-edu-primary/10'
+                    }`}
+                  >
+                    {num} kishi
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-2">To'lov taqsimoti</p>
+              <select
+                value={useCreateTaskStore(s => s.paymentSplitType)}
+                onChange={(e) => updateField('paymentSplitType', e.target.value)}
+                className="w-full bg-edu-bg border border-edu-border/40 rounded-xl px-4 py-3 text-edu-text text-sm font-medium outline-none focus:border-edu-primary transition-all"
+              >
+                <option value="EQUAL">Teng taqsimlash</option>
+                <option value="CUSTOM">Maxsus taqsimot</option>
+              </select>
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

@@ -38,7 +38,8 @@ export default function CreateTaskScreen() {
   const { 
     step, nextStep, prevStep, resetStore,
     category, title, description, priceMin, priceMax, deadline, 
-    files, targeting, isUrgent, nlpSeverity, setErrors, updateField, meta 
+    files, targeting, isUrgent, nlpSeverity, setErrors, updateField, meta,
+    isCoWorking, maxCollaborators, paymentSplitType
   } = useCreateTaskStore();
 
   const targetFreelancerId = new URLSearchParams(location.search).get('freelancerId');
@@ -96,6 +97,9 @@ export default function CreateTaskScreen() {
       targetType: targeting,
       targetFreelancerId,
       metadata: meta,
+      isCoWorking,
+      maxCollaborators,
+      paymentSplitType,
     };
 
     try {

@@ -107,13 +107,17 @@ export default function ChatScreen() {
 
   const counterpart = isClient ? task?.freelancer : task?.client;
   const isCounterpartOnline = useChatStore((s) => s.userPresence[counterpart?.id]) ?? counterpart?.isOnline ?? false;
+  
+  const title = task?.isCoWorking 
+    ? "Study Buddy Jamoasi" 
+    : (counterpart?.fullname || 'Chat');
 
   return (
     <div className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full grid grid-rows-[auto_1fr_auto] h-[100dvh]">
       {/* Row 1: Header Area */}
       <div className="flex flex-col z-30">
         <Header
-          title={counterpart?.fullname || 'Chat'}
+          title={title}
           subtitle={task?.title}
           showBack
           className="!border-b-0"
@@ -139,7 +143,7 @@ export default function ChatScreen() {
               >
                 <LayoutDashboard className="w-4 h-4" />
               </button>
-              {task && (
+              {task && !task.isCoWorking && (
                 <button 
                   onClick={() => navigate(`/report?targetId=${isClient ? task.freelancerId : task.clientId}&targetType=USER`)}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-urgent/10 text-edu-urgent hover:bg-edu-urgent/20 transition-colors"

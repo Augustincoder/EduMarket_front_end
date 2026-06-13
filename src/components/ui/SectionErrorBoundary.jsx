@@ -29,7 +29,7 @@ export class SectionErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className={cn(
-          "w-full bg-edu-surface border border-red-500/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center shadow-sm",
+          "w-full bg-edu-surface border border-red-500/20 rounded-lg p-6 flex flex-col items-center justify-center text-center shadow-sm",
           this.props.className
         )}>
           <div className="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-3">

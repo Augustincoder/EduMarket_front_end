@@ -202,3 +202,16 @@ export function useAcceptBid(taskId) {
     onError: (err) => toast.error(err.serverMsg || 'Xato yuz berdi'),
   });
 }
+
+export function useAssembleTeam(taskId) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (teamMembers) => bidsApi.assembleTeam(taskId, teamMembers).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['task', taskId] });
+      qc.invalidateQueries({ queryKey: ['tasks', taskId, 'bids'] });
+      toast.success('Jamoa yig\'ildi!');
+    },
+    onError: (err) => toast.error(err.serverMsg || 'Xato yuz berdi'),
+  });
+}

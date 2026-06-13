@@ -155,7 +155,7 @@ export default function AdminCategories() {
         {categories?.map((cat) => (
           <div 
             key={cat.id} 
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-5 relative overflow-hidden group"
+            className="bg-slate-900 border border-slate-800 rounded-lg p-5 relative overflow-hidden group"
           >
             {/* Background Glow based on Category Color */}
             <div 

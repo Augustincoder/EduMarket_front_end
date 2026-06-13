@@ -69,7 +69,7 @@ export function Step0Category() {
                   key={cat.value}
                   onClick={() => handleSelect(cat.value)}
                   className={cn(
-                    "flex flex-col p-3.5 rounded-2xl border text-left transition-all active:scale-95 group",
+                    "flex flex-col p-3.5 rounded-lg border text-left transition-all active:scale-95 group",
                     isSelected 
                       ? "bg-edu-primary/10 border-edu-primary/50 text-edu-primary shadow-sm" 
                       : "bg-edu-surface border-edu-border/40 text-edu-text hover:border-edu-primary/30 hover:shadow-sm"

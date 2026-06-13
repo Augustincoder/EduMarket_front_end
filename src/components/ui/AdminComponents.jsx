@@ -16,7 +16,7 @@ export function DialogContent({ children, className = '' }) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 transition-opacity" />
-      <DialogPrimitive.Content className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl z-50 focus:outline-none max-h-[90vh] overflow-y-auto ${className}`}>
+      <DialogPrimitive.Content className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-2xl z-50 focus:outline-none max-h-[90vh] overflow-y-auto ${className}`}>
         {children}
         <DialogPrimitive.Close className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full p-1 focus:outline-none transition-colors">
           <X size={18} />

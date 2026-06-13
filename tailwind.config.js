@@ -18,12 +18,12 @@ export default {
     },
     borderRadius: {
       'none': '0px',
-      'sm':   '8px',
-      'md':   '12px',
-      'lg':   '16px',
-      'xl':   '20px',
-      'full': '9999px',
-      DEFAULT: '16px',
+      'sm':   'var(--r-sm)',   /* 8px */
+      'md':   'var(--r-md)',   /* 12px */
+      'lg':   'var(--r-lg)',   /* 16px */
+      'xl':   'var(--r-xl)',   /* 20px */
+      'full': 'var(--r-full)',
+      DEFAULT: 'var(--r-lg)',
     },
     extend: {
       colors: {

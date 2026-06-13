@@ -194,7 +194,7 @@ export default function EduViewer({
             <p className="text-sm">Xavfsiz ulanish o'rnatilmoqda...</p>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center text-red-400 bg-red-400/10 p-6 rounded-3xl max-w-sm text-center border border-red-500/20">
+          <div className="flex flex-col items-center text-red-400 bg-red-400/10 p-6 rounded-xl max-w-sm text-center border border-red-500/20">
             <AlertTriangle size={48} className="mb-4 text-red-500" />
             <p className="font-bold text-lg mb-2">Ruxsat etilmadi</p>
             <p className="text-sm opacity-80">{error}</p>

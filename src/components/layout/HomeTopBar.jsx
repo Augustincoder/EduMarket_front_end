@@ -73,7 +73,7 @@ export function HomeTopBar({ greeting }) {
             onClick={() => navigateTo('/notifications')}
             className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-xl active:scale-[0.97] transition-transform duration-[120ms] hover:border-edu-primary/50 transition-colors"
           >
-            <div className="w-12 h-12 rounded-2xl bg-edu-primary/10 text-edu-primary flex items-center justify-center relative shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-edu-primary/10 text-edu-primary flex items-center justify-center relative shrink-0">
               <Bell size={24} />
               {unreadNotifications > 0 && (
                 <span className="absolute -top-1 -right-1 bg-edu-urgent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-edu-surface">
@@ -92,7 +92,7 @@ export function HomeTopBar({ greeting }) {
             onClick={() => navigateTo('/profile')}
             className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-xl active:scale-[0.97] transition-transform duration-[120ms] hover:border-edu-primary/50 transition-colors"
           >
-            <div className="w-12 h-12 rounded-2xl bg-edu-accent/10 text-edu-accent flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-edu-accent/10 text-edu-accent flex items-center justify-center shrink-0">
               <User size={24} />
             </div>
             <div className="flex-1 text-left min-w-0">

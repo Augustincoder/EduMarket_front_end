@@ -82,7 +82,7 @@ export const MediaPreview = ({ file, type }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full p-6">
-      <div className={`relative flex flex-col items-center overflow-hidden bg-black/40 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl ${isAudio ? 'w-full max-w-md p-8' : 'w-full max-w-4xl'}`}>
+      <div className={`relative flex flex-col items-center overflow-hidden bg-black/40 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl ${isAudio ? 'w-full max-w-md p-8' : 'w-full max-w-4xl'}`}>
         
         {isAudio ? (
           <div className="w-32 h-32 mb-8 bg-gradient-to-tr from-edu-primary to-purple-600 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.3)] animate-pulse-slow">

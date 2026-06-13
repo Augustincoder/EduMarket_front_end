@@ -83,7 +83,7 @@ export function GigCardSkeleton() {
       </div>
       <div className="flex items-center justify-between pt-2">
         <Bone className="w-24 h-6 rounded-xl" />
-        <Bone className="w-28 h-12 rounded-2xl" />
+        <Bone className="w-28 h-12 rounded-lg" />
       </div>
     </div>
   );
@@ -97,8 +97,8 @@ export function TaskDetailSkeleton() {
         <Bone className="w-32 h-7 rounded-full" />
       </div>
       <div className="space-y-3">
-        <Bone className="w-full h-10 rounded-2xl" />
-        <Bone className="w-[60%] h-10 rounded-2xl" />
+        <Bone className="w-full h-10 rounded-lg" />
+        <Bone className="w-[60%] h-10 rounded-lg" />
       </div>
       <div className="bg-edu-bg rounded-xl p-6 flex items-center gap-4 border border-black/[0.02] dark:border-white/5">
         <Bone className="w-16 h-16 rounded-full" />

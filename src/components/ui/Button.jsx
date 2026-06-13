@@ -36,7 +36,7 @@ export function Button({
   const sizeClass = {
     sm: 'h-[36px] px-[14px] text-[13px] rounded-sm after:absolute after:inset-x-0 after:-inset-y-[4px]', // Touch target compensation
     md: 'h-[44px] px-[20px] text-[14px] rounded-md',
-    lg: 'h-[52px] px-[28px] text-[15px] rounded-xl',
+    lg: 'h-[52px] px-[28px] text-[15px] rounded-md',
   }[size] || 'h-[44px] px-[20px] text-[14px] rounded-md';
 
   const variantClass = {

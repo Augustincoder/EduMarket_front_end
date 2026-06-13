@@ -50,7 +50,7 @@ export function Step1Details() {
 
       <NLPWarning text={title + ' ' + description} />
       
-      <div className="bg-edu-primary/5 rounded-2xl p-4 border border-edu-primary/10">
+      <div className="bg-edu-primary/5 rounded-lg p-4 border border-edu-primary/10">
         <p className="text-sm text-edu-primary font-semibold mb-2">💡 Yaxshi tavsif nimalarni o'z ichiga oladi?</p>
         <ul className="text-xs text-edu-muted space-y-1 list-disc list-inside">
           <li>Fan nomi va mavzusi</li>

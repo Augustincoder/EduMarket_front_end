@@ -29,6 +29,7 @@ export const bidsApi = {
   },
   getByTask:(taskId)       => api.get(`/bids/task/${taskId}`),
   accept:   (taskId, body) => api.post(`/bids/task/${taskId}/accept/${body.bidId}`),
+  assembleTeam: (taskId, teamMembers) => api.post(`/bids/task/${taskId}/assemble-team`, { teamMembers }),
 };
 
 export const milestonesApi = {

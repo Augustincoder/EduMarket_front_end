@@ -65,7 +65,7 @@ export const CodePreview = ({ file, allowDownload = true }) => {
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#1e1e1e] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+    <div className="w-full h-full flex flex-col bg-[#1e1e1e] rounded-lg overflow-hidden border border-white/10 shadow-2xl relative">
       {/* Code Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-black/40 border-b border-white/10">
         <div className="flex items-center gap-2">
