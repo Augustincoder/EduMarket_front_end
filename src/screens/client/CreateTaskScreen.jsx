@@ -50,14 +50,16 @@ export default function CreateTaskScreen() {
     if (targetFreelancerId) updateField('targetFreelancerId', targetFreelancerId);
   }, [location, resetStore, updateField, targetFreelancerId]);
 
-  const validateStep = () => {
+  const validateStep = (showToast = true) => {
     let errs = {};
     if (step === 1) {
       if (!title || title.trim().length < 10) errs.title = ["Sarlavha qisqa bo'lib qoldi, yana biroz yozing (kamida 10 ta belgi)"];
       if (!description || description.trim().length < 20) errs.description = ["Tavsif tushunarsiz bo'lishi mumkin, iltimos to'liqroq yozing (kamida 20 ta belgi)"];
       if (nlpSeverity === 'block') {
-        toast.error("Siz yozgan matn tizim qoidalariga mos kelmayapti. Iltimos o'zgartiring.");
-        hapticError();
+        if (showToast) {
+          toast.error("Siz yozgan matn tizim qoidalariga mos kelmayapti. Iltimos o'zgartiring.");
+          hapticError();
+        }
         return false;
       }
     }
@@ -74,17 +76,37 @@ export default function CreateTaskScreen() {
       }
     }
     
-    if (Object.keys(errs).length > 0) {
+    // Only update errors in the store if we are either explicitly validating (showToast=true) 
+    // or if there are already errors present (real-time correction feedback).
+    if (showToast) {
       setErrors(errs);
-      hapticError();
-      toast.error("Ba'zi ma'lumotlar to'liq emas, iltimos to'ldiring");
-      return false;
+      if (Object.keys(errs).length > 0) {
+        hapticError();
+        toast.error("Ba'zi ma'lumotlar to'liq emas, iltimos to'ldiring");
+        return false;
+      }
+      return true;
+    } else {
+      // Passive real-time validation: only update if there are existing errors we are trying to fix
+      const currentErrors = useCreateTaskStore.getState().errors;
+      if (Object.keys(currentErrors).length > 0) {
+        setErrors(errs);
+      }
+      return Object.keys(errs).length === 0;
     }
-    return true;
   };
 
+  // Real-time validation trigger
+  useEffect(() => {
+    const currentErrors = useCreateTaskStore.getState().errors;
+    if (Object.keys(currentErrors).length > 0) {
+      validateStep(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, description, priceMin, priceMax, deadline, nlpSeverity, step]);
+
   const handleNext = () => {
-    if (validateStep()) {
+    if (validateStep(true)) {
       hapticLight();
       nextStep();
     }
@@ -190,7 +212,7 @@ export default function CreateTaskScreen() {
                 animate="animate"
                 exit="exit"
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col pb-32"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col pb-[50vh]"
               >
                 {step === 0 && <Step0Category />}
                 {step > 0 && (

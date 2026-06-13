@@ -1,11 +1,12 @@
 // src/screens/client/ClientHomeScreen.jsx
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usersApi } from '../../services/users.service';
 import { chatApi } from '../../services/chat.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { useCategoryStore } from '../../store/categoryStore';
+import { useChatStore } from '../../store/chatStore';
 import { Avatar } from '../../components/ui/Avatar';
 import { hapticLight } from '../../lib/telegram';
 import { VerifiedBadge } from '../../components/ui/Badge';
@@ -67,15 +68,22 @@ function MyTasksStatusWidget() {
 
 function ActiveChatWidget() {
   const navigate = useNavigate();
-  const { data: conversations } = useQuery({
-    queryKey: ['conversations'],
-    queryFn: () => chatApi.getConversations().then(r => r.data.data),
-    staleTime: 30 * 1000,
-    useErrorBoundary: true,
-  });
+  const conversations = useChatStore((s) => s.conversations);
+  const [loading, setLoading] = useState(true);
 
-  if (!conversations) return <ChatSkeleton />;
-  if (conversations.length === 0) return null;
+  useEffect(() => {
+    const load = async () => {
+      try {
+        await useChatStore.getState().loadConversations();
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  if (loading) return <ChatSkeleton />;
+  if (!conversations || conversations.length === 0) return null;
 
   const activeChat = conversations[0];
 
