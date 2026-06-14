@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { cn } from '../../lib/utils';
 
 export function ChatListSkeleton() {
   const skeletons = Array(6).fill(null);

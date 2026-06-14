@@ -7,7 +7,6 @@ import { cn } from '../../../../lib/utils';
 export function TaskSearchHeader({
   localQuery,
   setLocalQuery,
-  isFocused,
   setIsFocused,
   filterState,
   setFilter,

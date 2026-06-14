@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { io } from 'socket.io-client';
 import { chatApi } from '../services/chat.service';
 import { useAuthStore } from './authStore';
+import { db } from '../lib/db';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
 
@@ -17,6 +18,7 @@ export const useChatStore = create((set, get) => ({
   userPresence: {},      // Record<userId, boolean>
   totalUnread:  0,
   retryCount:  0,
+  isConversationsLoading: true,
   loadConversationsTimeout: null,
 
   connect: (token) => {
@@ -46,12 +48,12 @@ export const useChatStore = create((set, get) => ({
         if (roomMsgs.some(m => m.id === msg.id)) return s;
 
         // 2. Optimization: Check if this message from socket is actually our own optimistic message
-        // returning from the server. If so, replace the 'isSending' one to avoid jumpy UI.
+        // returning from the server. Match exactly by clientId to avoid race conditions.
         const user = useAuthStore.getState().user;
         const isMyOwn = msg.senderId === user?.id;
         
-        if (isMyOwn) {
-          const optIndex = roomMsgs.findLastIndex(m => m.isSending && m.content === msg.content);
+        if (isMyOwn && msg.clientId) {
+          const optIndex = roomMsgs.findIndex(m => m.isSending && m.clientId === msg.clientId);
           if (optIndex !== -1) {
             const newMsgs = [...roomMsgs];
             newMsgs[optIndex] = msg;
@@ -85,22 +87,31 @@ export const useChatStore = create((set, get) => ({
           
           const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
           
-          return {
-            messages: {
-              ...s.messages,
-              [chatRoomId]: [...roomMsgs, msg],
-            },
-            conversations,
-            totalUnread
-          };
-        }
+        const newConversations = [...conversations];
+        db.saveConversations(newConversations);
+
+        const newMessagesState = {
+          ...s.messages,
+          [chatRoomId]: [...roomMsgs, msg],
+        };
+        db.saveMessages(chatRoomId, newMessagesState[chatRoomId]);
 
         return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: [...roomMsgs, msg],
-          },
+          messages: newMessagesState,
+          conversations: newConversations,
+          totalUnread
         };
+      }
+
+      const newMessagesState = {
+        ...s.messages,
+        [chatRoomId]: [...roomMsgs, msg],
+      };
+      db.saveMessages(chatRoomId, newMessagesState[chatRoomId]);
+
+      return {
+        messages: newMessagesState,
+      };
       });
     });
 
@@ -145,10 +156,12 @@ export const useChatStore = create((set, get) => ({
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
+        const updatedRoomMsgs = roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m);
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m)
+            [chatRoomId]: updatedRoomMsgs
           }
         };
       });
@@ -158,10 +171,12 @@ export const useChatStore = create((set, get) => ({
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
+        const updatedRoomMsgs = roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m);
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m)
+            [chatRoomId]: updatedRoomMsgs
           }
         };
       });
@@ -179,6 +194,7 @@ export const useChatStore = create((set, get) => ({
             : msg
         );
 
+        db.saveMessages(chatRoomId, updatedMessages);
         return {
           messages: {
             ...s.messages,
@@ -192,10 +208,12 @@ export const useChatStore = create((set, get) => ({
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
+        const updatedRoomMsgs = roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m);
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m)
+            [chatRoomId]: updatedRoomMsgs
           }
         };
       });
@@ -226,16 +244,30 @@ export const useChatStore = create((set, get) => ({
   },
 
   loadConversations: async () => {
+    // 1. Optimistically load from IndexedDB first
+    const cached = await db.getConversations();
+    if (cached) {
+      const totalUnread = cached.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+      set(() => ({
+        conversations: cached,
+        totalUnread,
+        // Optional: only update if we haven't loaded API yet
+      }));
+    }
+
     const prev = get().loadConversationsTimeout;
     if (prev) clearTimeout(prev);
     
+    set({ isConversationsLoading: true });
+
     const timeout = setTimeout(async () => {
       try {
         const res = await chatApi.getConversations();
         const allConversations = res.data.data || [];
-        
-        // No role filtering needed since we fetch per userId in backend now for chatRoom
         const conversations = allConversations;
+        
+        // Save fresh data to IndexedDB
+        db.saveConversations(conversations);
 
         const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
         
@@ -255,6 +287,7 @@ export const useChatStore = create((set, get) => ({
         set((s) => ({
           conversations,
           totalUnread,
+          isConversationsLoading: false,
           userPresence: {
             ...s.userPresence,
             ...presence
@@ -262,6 +295,7 @@ export const useChatStore = create((set, get) => ({
         }));
       } catch (err) {
         console.error('Failed to load conversations:', err);
+        set({ isConversationsLoading: false });
       }
     }, 500);
     set({ loadConversationsTimeout: timeout });
@@ -273,6 +307,7 @@ export const useChatStore = create((set, get) => ({
         c.chatRoomId === chatRoomId ? { ...c, unreadCount: 0 } : c
       );
       const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+      db.saveConversations(conversations);
       return { conversations, totalUnread };
     });
   },
@@ -292,6 +327,7 @@ export const useChatStore = create((set, get) => ({
     // Create optimistic message
     const tempMsg = {
       id: tempId,
+      clientId: tempId, // Pass it to be returned
       chatRoomId,
       senderId: user?.id,
       sender: user,
@@ -313,7 +349,7 @@ export const useChatStore = create((set, get) => ({
     });
 
     try {
-      const res = await chatApi.sendMessage(chatRoomId, { content, fileId, fileType, fileName, replyToId, isSecureFile });
+      const res = await chatApi.sendMessage(chatRoomId, { content, fileId, fileType, fileName, replyToId, isSecureFile, clientId: tempId });
       const realMsg = res.data.data;
       
       set((s) => {
@@ -453,24 +489,64 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  setMessages: (chatRoomId, msgs) =>
-    set((s) => ({ messages: { ...s.messages, [chatRoomId]: msgs } })),
+  setMessages: (chatRoomId, msgs) => {
+    db.saveMessages(chatRoomId, msgs);
+    set((s) => ({ messages: { ...s.messages, [chatRoomId]: msgs } }));
+  },
 
-  addMessage: (msg) =>
+  mergeMessages: (chatRoomId, fetchedMsgs) => {
     set((s) => {
-      const chatRoomId = msg.chatRoomId;
+      const currentMsgs = s.messages[chatRoomId] || [];
+      if (currentMsgs.length === 0) {
+        db.saveMessages(chatRoomId, fetchedMsgs);
+        return { messages: { ...s.messages, [chatRoomId]: fetchedMsgs } };
+      }
+
+      // We have existing messages (like ones received via socket during fetch)
+      // We want to combine them, removing duplicates, and sort by createdAt
+      const msgMap = new Map();
+      fetchedMsgs.forEach(m => msgMap.set(m.id, m));
+      currentMsgs.forEach(m => msgMap.set(m.id, m)); // socket messages overwrite fetched ones if duplicate ID
+
+      const merged = Array.from(msgMap.values()).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      db.saveMessages(chatRoomId, merged);
+      return { messages: { ...s.messages, [chatRoomId]: merged } };
+    });
+  },
+
+  prependMessages: (chatRoomId, msgs) => {
+    set((s) => {
+      const newRoomMsgs = [...msgs, ...(s.messages[chatRoomId] || [])];
+      db.saveMessages(chatRoomId, newRoomMsgs);
       return {
         messages: {
           ...s.messages,
-          [chatRoomId]: [...(s.messages[chatRoomId] || []), msg],
+          [chatRoomId]: newRoomMsgs,
         },
       };
-    }),
+    });
+  },
 
-  clearRoom: (chatRoomId) =>
+  addMessage: (msg) => {
+    set((s) => {
+      const chatRoomId = msg.chatRoomId;
+      const newRoomMsgs = [...(s.messages[chatRoomId] || []), msg];
+      db.saveMessages(chatRoomId, newRoomMsgs);
+      return {
+        messages: {
+          ...s.messages,
+          [chatRoomId]: newRoomMsgs,
+        },
+      };
+    });
+  },
+
+  clearRoom: (chatRoomId) => {
+    db.saveMessages(chatRoomId, []);
     set((s) => {
       const msgs = { ...s.messages };
       delete msgs[chatRoomId];
       return { messages: msgs };
-    }),
+    });
+  },
 }));

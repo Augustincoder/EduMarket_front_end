@@ -12,6 +12,7 @@ import { ChatBubbleSkeleton } from '../../components/ui/SkeletonCard';
 import { useChatStore } from '../../store/chatStore';
 import { useAuthStore } from '../../store/authStore';
 import { useTask, useTaskTransition } from '../../hooks/useTasks';
+import { useQuery } from '@tanstack/react-query';
 import { chatApi } from '../../services/chat.service';
 import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
@@ -19,6 +20,7 @@ import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
 import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert, Settings2 } from 'lucide-react';
 import { AcceptDeliveryModal } from './TaskDetail/components/AcceptDeliveryModal';
+import { Virtuoso } from 'react-virtuoso';
 
 import { ChatInfoDrawer } from './Chat/ChatInfoDrawer';
 
@@ -29,7 +31,6 @@ export default function ChatScreen() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
-  const bottomRef = useRef(null);
   
   const conversations = useChatStore((s) => s.conversations);
   const messages = useChatStore((s) => s.messages);
@@ -39,9 +40,26 @@ export default function ChatScreen() {
   const deleteMessage = useChatStore((s) => s.deleteMessage);
   const emitTyping = useChatStore((s) => s.emitTyping);
   
-  const conversation = conversations.find(c => c.chatRoomId === chatRoomId);
-  const taskId = conversation?.taskId;
-  const isGroup = conversation?.type === 'CUSTOM_GROUP';
+  const storeConversation = conversations.find(c => c.chatRoomId === chatRoomId);
+  
+  const { data: roomInfoData } = useQuery({
+    queryKey: ['chatRoomInfo', chatRoomId],
+    queryFn: () => chatApi.getChatRoomInfo(chatRoomId).then(r => r.data.data),
+    enabled: !!chatRoomId && !storeConversation,
+    retry: 1,
+  });
+
+  const conversation = storeConversation || {
+    chatRoomId,
+    type: roomInfoData?.room?.type || 'DIRECT',
+    taskId: roomInfoData?.room?.taskId,
+    title: roomInfoData?.room?.name || '',
+    avatarUrl: roomInfoData?.room?.avatarUrl,
+    otherUser: roomInfoData?.room?.type === 'DIRECT' ? roomInfoData?.participants?.find(p => p.user?.id !== user?.id)?.user : null
+  };
+
+  const taskId = conversation.taskId;
+  const isGroup = conversation.type === 'CUSTOM_GROUP';
 
   const { data: task } = useTask(taskId, { enabled: !!taskId });
   const transitions = useTaskTransition(taskId);
@@ -78,20 +96,14 @@ export default function ChatScreen() {
   };
 
   const roomMessages = useMemo(() => messages[chatRoomId] || [], [messages, chatRoomId]);
-  const lastMessageId = roomMessages[roomMessages.length - 1]?.id;
-  const typingCount = typingUsers?.[chatRoomId]?.length || 0;
-
-  // Auto-Scroll
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [lastMessageId, typingCount, chatRoomId]);
+  
+  const virtuosoRef = useRef(null);
 
   // Read receipt
   useEffect(() => {
-    const hasUnread = roomMessages.some(m => !m.isRead && m.senderId !== user?.id);
+    // Optimization: only scan the last 20 messages instead of potentially 10,000
+    const recentMessages = roomMessages.slice(-20);
+    const hasUnread = recentMessages.some(m => !m.isRead && m.senderId !== user?.id);
     if (hasUnread) {
       chatApi.markAsRead(chatRoomId).catch(() => {});
       useChatStore.getState().markConversationRead(chatRoomId);
@@ -119,8 +131,19 @@ export default function ChatScreen() {
   const userPresence = useChatStore((s) => s.userPresence);
   const isCounterpartOnline = conversation?.otherUser && userPresence[conversation.otherUser.id];
   
-  const title = conversation ? conversation.title : 'Chat';
-  const subtitle = isGroup ? 'Guruh suhbati' : (task?.title || 'Shaxsiy suhbat');
+  let title;
+  let subtitle;
+
+  if (isGroup) {
+    title = conversation?.title || 'Guruh suhbati';
+    subtitle = `${roomInfoData?.participants?.length || 0} a'zo`;
+  } else if (conversation?.type === 'TASK_ROOM') {
+    title = task?.title || conversation?.title || 'Topshiriq suhbati';
+    subtitle = conversation?.otherUser?.fullname || 'Foydalanuvchi bilan';
+  } else {
+    title = conversation?.otherUser?.fullname || 'Foydalanuvchi';
+    subtitle = conversation?.otherUser?.username ? `@${conversation.otherUser.username}` : 'Shaxsiy suhbat';
+  }
 
   return (
     <div className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full grid grid-rows-[auto_1fr_auto] h-[100dvh]">
@@ -129,11 +152,13 @@ export default function ChatScreen() {
         <Header
           title={
             <div 
-              className="flex flex-col cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => setIsGroupSettingsOpen(true)}
+              className={cn("flex flex-col transition-opacity", isGroup || conversation?.type === 'DIRECT' ? "cursor-pointer hover:opacity-80" : "")}
+              onClick={() => {
+                if (isGroup || conversation?.type === 'DIRECT') setIsGroupSettingsOpen(true);
+              }}
             >
-              <span className="font-bold">{title}</span>
-              <span className="text-[11px] text-edu-muted">{subtitle}</span>
+              <span className="font-bold leading-tight">{title}</span>
+              <span className="text-[11px] text-edu-muted leading-tight truncate max-w-[200px]">{subtitle}</span>
             </div>
           }
           showBack
@@ -200,94 +225,109 @@ export default function ChatScreen() {
       </div>
 
       {/* Row 2: Main Chat Area */}
-      <div className="overflow-y-auto px-3 py-4 space-y-4 min-h-0 bg-mesh-aurora flex flex-col relative overscroll-none" id="chat-scroll-container">
-        {/* System Message Card (Auto-Chat Initialization) */}
-        {task && !isGroup && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
-          <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 shadow-sm mb-6 mt-2 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-                <CheckCircle size={16} />
-              </div>
-              <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
-            </div>
-            
-            <div className="bg-white/60 dark:bg-black/20 rounded-xl p-3 mb-3 border border-blue-100/50 dark:border-blue-800/20 grid grid-cols-2 gap-3">
-              <div>
-                <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Kelishilgan narx</span>
-                <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
-                  {task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} UZS` : 'Kelishilmagan'}
-                </strong>
-              </div>
-              <div>
-                <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Muddat</span>
-                <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
-                  {new Date(task.deadline).toLocaleDateString('uz-UZ')}
-                </strong>
-              </div>
-            </div>
+      <div className="flex-1 min-h-0 bg-mesh-aurora relative px-2">
+        <Virtuoso
+          ref={virtuosoRef}
+          data={roomMessages}
+          firstItemIndex={Math.max(0, 100000 - roomMessages.length)}
+          initialTopMostItemIndex={roomMessages.length - 1}
+          followOutput="auto"
+          alignToBottom
+          className="h-full scrollbar-hide"
+          components={{
+            Header: () => (
+              <div className="flex flex-col gap-4 mb-4 pt-4 px-1">
+                {task && !isGroup && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
+                  <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <CheckCircle size={16} />
+                      </div>
+                      <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
+                    </div>
+                    
+                    <div className="bg-white/60 dark:bg-black/20 rounded-xl p-3 mb-3 border border-blue-100/50 dark:border-blue-800/20 grid grid-cols-2 gap-3">
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Kelishilgan narx</span>
+                        <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
+                          {task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} UZS` : 'Kelishilmagan'}
+                        </strong>
+                      </div>
+                      <div>
+                        <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Muddat</span>
+                        <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
+                          {new Date(task.deadline).toLocaleDateString('uz-UZ')}
+                        </strong>
+                      </div>
+                    </div>
 
-            <p className="text-[11px] leading-relaxed text-blue-800/70 dark:text-blue-200/70 font-medium bg-blue-500/5 p-2 rounded-lg">
-              <ShieldAlert size={12} className="inline mr-1 -mt-0.5" />
-              Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring.
-            </p>
-          </div>
-        )}
-        
-        {task && task.status === 'ASSIGNED' && !isClient && !isGroup && (
-          <Button size="md" variant="accent" fullWidth className="mt-3 shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
-            Vazifani boshlash
-          </Button>
-        )}
+                    <p className="text-[11px] leading-relaxed text-blue-800/70 dark:text-blue-200/70 font-medium bg-blue-500/5 p-2 rounded-lg">
+                      <ShieldAlert size={12} className="inline mr-1 -mt-0.5" />
+                      Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring.
+                    </p>
+                  </div>
+                )}
+                
+                {task && task.status === 'ASSIGNED' && !isClient && !isGroup && (
+                  <Button size="md" variant="accent" fullWidth className="shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
+                    Vazifani boshlash
+                  </Button>
+                )}
 
-        {isLoading ? <ChatBubbleSkeleton /> : null}
-        
-        {hasMore && !isLoading && (
-          <div className="flex justify-center my-4">
-            <Button size="sm" variant="secondary" onClick={loadMore} isLoading={isLoadingMore} className="bg-edu-surface/50 border-edu-border/50">
-              Eski xabarlarni yuklash
-            </Button>
-          </div>
-        )}
-        
-        {!isLoading && roomMessages.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 opacity-40">
-            <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center mb-4">
-              <Hand size={40} className="text-edu-primary opacity-50" />
+                {isLoading ? <ChatBubbleSkeleton /> : null}
+                
+                {hasMore && !isLoading && (
+                  <div className="flex justify-center my-2">
+                    <Button size="sm" variant="secondary" onClick={loadMore} isLoading={isLoadingMore} className="bg-edu-surface/50 border-edu-border/50">
+                      Eski xabarlarni yuklash
+                    </Button>
+                  </div>
+                )}
+                
+                {!isLoading && roomMessages.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-16 opacity-40">
+                    <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center mb-4">
+                      <Hand size={40} className="text-edu-primary opacity-50" />
+                    </div>
+                    <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang!</p>
+                  </div>
+                )}
+              </div>
+            ),
+            Footer: () => (
+              <div className="flex flex-col gap-1 mt-1 px-1">
+                {typingUsers?.[chatRoomId]?.length > 0 && (
+                  <div className="flex items-center gap-1.5 text-edu-muted text-[11px] font-bold animate-pulse px-3 py-1 opacity-70">
+                    <div className="flex gap-0.5">
+                      <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+                      <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+                      <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
+                    </div>
+                    <span className="ml-1 uppercase tracking-wider">Yozmoqda...</span>
+                  </div>
+                )}
+                <div className="h-4" />
+              </div>
+            )
+          }}
+          itemContent={(index, msg) => (
+            <div className="mb-1.5 px-1">
+              <MessageBubble 
+                message={msg} 
+                isMe={msg.senderId === user?.id} 
+                onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
+                onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
+                onDelete={(id) => { 
+                  showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
+                    if (ok) deleteMessage(id);
+                  });
+                }}
+                onViewFile={handleViewFile}
+              />
             </div>
-            <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang!</p>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-1">
-          {Array.isArray(roomMessages) ? roomMessages.map((msg) => (
-            <MessageBubble 
-              key={msg.id} 
-              message={msg} 
-              isMe={msg.senderId === user?.id} 
-              onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
-              onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
-              onDelete={(id) => { 
-                showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
-                  if (ok) deleteMessage(id);
-                });
-              }}
-              onViewFile={handleViewFile}
-            />
-          )) : null}
-        </div>
-        
-        {typingUsers?.[chatRoomId]?.length > 0 && (
-          <div className="flex items-center gap-1.5 text-edu-muted text-[11px] font-bold animate-pulse px-3 py-1 opacity-70">
-            <div className="flex gap-0.5">
-              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
-              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
-              <span className="w-1 h-1 bg-edu-muted rounded-full"></span>
-            </div>
-            <span className="ml-1 uppercase tracking-wider">Yozmoqda...</span>
-          </div>
-        )}
-        <div ref={bottomRef} className="h-2" />
+          )}
+        />
       </div>
 
       {/* Input */}
@@ -328,7 +368,7 @@ export default function ChatScreen() {
         isOpen={isGroupSettingsOpen} 
         onClose={() => setIsGroupSettingsOpen(false)} 
         chatRoomId={chatRoomId} 
-        conversation={conversation}
+        conversation={{ ...conversation, displayTitle: title }}
         currentUser={user}
       />
 

@@ -152,9 +152,9 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
                   <Users size={40} />
                 </div>
               ) : (
-                <Avatar name={conversation?.title} avatarUrl={conversation?.otherUser?.avatarUrl} size="xl" className="mb-3 shadow-lg w-24 h-24 text-3xl" />
+                <Avatar name={conversation?.displayTitle || conversation?.title} avatarUrl={conversation?.otherUser?.avatarUrl} size="xl" className="mb-3 shadow-lg w-24 h-24 text-3xl" />
               )}
-              <h1 className="text-xl font-bold text-edu-text tracking-tight">{conversation?.title}</h1>
+              <h1 className="text-xl font-bold text-edu-text tracking-tight">{conversation?.displayTitle || conversation?.title}</h1>
               {isGroup && (
                 <p className="text-sm text-edu-muted mt-1">{participants.length} a'zo</p>
               )}

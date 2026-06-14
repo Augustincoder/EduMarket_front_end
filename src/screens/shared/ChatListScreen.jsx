@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MessageSquare, Check, CheckCheck, Users, Plus, X } from 'lucide-react';
 import { chatApi } from '../../services/chat.service';
 import { ChatListSkeleton } from '../../components/ui/ChatListSkeleton';
+import { useQuery } from '@tanstack/react-query';
 
 function CreateGroupModal({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState('');
@@ -88,14 +89,24 @@ function ChatListWidget({ searchTerm }) {
   const conversations = useChatStore((s) => s.conversations);
   const loadConversations = useChatStore((s) => s.loadConversations);
   const userPresence = useChatStore((s) => s.userPresence);
-  const [loading, setLoading] = useState(true);
+  const isConversationsLoading = useChatStore((s) => s.isConversationsLoading);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadConversations()
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+    loadConversations().catch((err) => setError(err));
   }, [loadConversations]);
+
+  // Global search hook
+  const { data: globalSearchResults, isLoading: isSearchLoading } = useQuery({
+    queryKey: ['globalSearch', searchTerm],
+    queryFn: async () => {
+      if (!searchTerm || searchTerm.trim().length < 2) return [];
+      const res = await chatApi.searchGlobalMessages(searchTerm);
+      return res.data?.data || [];
+    },
+    enabled: searchTerm.trim().length >= 2,
+    staleTime: 1000 * 60,
+  });
 
   const filteredConversations = useMemo(() => {
     if (!conversations) return [];
@@ -113,9 +124,8 @@ function ChatListWidget({ searchTerm }) {
         <WidgetError 
           fallbackTitle="Chatlarni yuklashda xatolik" 
           onRetry={() => {
-            setLoading(true);
             setError(null);
-            loadConversations().catch(setError).finally(() => setLoading(false));
+            loadConversations().catch(setError);
           }} 
         />
       </div>
@@ -128,7 +138,8 @@ function ChatListWidget({ searchTerm }) {
     navigate(`/chat/${chatRoomId}`);
   };
 
-  if (loading) {
+  // If no cached conversations and still loading API
+  if (isConversationsLoading && (!conversations || conversations.length === 0)) {
     return <ChatListSkeleton />;
   }
 
@@ -150,7 +161,7 @@ function ChatListWidget({ searchTerm }) {
     );
   }
 
-  if (filteredConversations.length === 0) {
+  if (filteredConversations.length === 0 && (!globalSearchResults || globalSearchResults.length === 0)) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}
@@ -184,8 +195,11 @@ function ChatListWidget({ searchTerm }) {
       animate="show"
       className="w-full flex flex-col gap-3"
     >
-      <AnimatePresence mode="popLayout">
-        {filteredConversations.map((conv) => {
+      {filteredConversations.length > 0 && (
+        <div className="mb-2">
+          {searchTerm && <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-3 px-1">Suhbatlar</h3>}
+          <AnimatePresence mode="popLayout">
+            {filteredConversations.map((conv) => {
           const isGroup = conv.type === 'CUSTOM_GROUP';
           const isOnline = conv.otherUser && userPresence[conv.otherUser.id];
           
@@ -255,7 +269,7 @@ function ChatListWidget({ searchTerm }) {
                       {conv.lastMessage ? (
                         conv.lastMessage.type === 'SYSTEM_EVENT' 
                           ? conv.lastMessage.content 
-                          : (conv.lastMessage.content || '📁 Fayl yuborildi')
+                          : (conv.lastMessage.content || (conv.lastMessage.fileType === 'voice' ? '🎤 Ovozli xabar' : '📁 Fayl yuborildi'))
                       ) : (
                         'Hali xabar yo\'q'
                       )}
@@ -267,6 +281,55 @@ function ChatListWidget({ searchTerm }) {
           );
         })}
       </AnimatePresence>
+      </div>
+      )}
+
+      {/* Global Message Search Results */}
+      {searchTerm.trim().length >= 2 && (
+        <div className="mt-4">
+          <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-3 px-1">Xabarlar orqali</h3>
+          
+          {isSearchLoading ? (
+            <div className="flex justify-center p-4"><div className="w-6 h-6 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" /></div>
+          ) : globalSearchResults?.length > 0 ? (
+            <AnimatePresence mode="popLayout">
+              {globalSearchResults.map((msg) => (
+                <motion.div 
+                  key={`msg_${msg.id}`}
+                  variants={item}
+                  layout
+                  onClick={() => handleOpenChat(msg.chatRoomId)}
+                  className="group relative card-base p-4 mb-2 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden cursor-pointer"
+                >
+                  <div className="flex items-start gap-3">
+                    <Avatar name={msg.sender?.fullname} avatarUrl={msg.sender?.avatarUrl} size="md" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className="text-[14px] font-bold text-edu-text truncate pr-2">
+                          {msg.sender?.fullname || 'Foydalanuvchi'}
+                        </h3>
+                        <span className="text-[10px] font-bold text-edu-muted whitespace-nowrap">
+                          {timeAgo(msg.createdAt)}
+                        </span>
+                      </div>
+                      <div className="text-[13px] text-edu-text opacity-90 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 p-2 rounded-lg border-l-2 border-edu-primary/50">
+                        {msg.content || (msg.fileId ? '📁 Biriktirma' : '')}
+                      </div>
+                      <div className="text-[11px] font-bold text-edu-muted mt-2 flex items-center gap-1">
+                        <Users size={12} /> {msg.chatRoom?.name || 'Shaxsiy suhbat'}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-[13px] text-edu-muted font-medium">Boshqa xabar topilmadi</p>
+            </div>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 }

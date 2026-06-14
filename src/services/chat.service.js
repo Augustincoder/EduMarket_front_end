@@ -26,6 +26,7 @@ export const chatApi = {
   editMessage: (messageId, data) => api.put(`/chat/messages/${messageId}`, data), // { content }
   deleteMessage: (messageId) => api.delete(`/chat/messages/${messageId}`),
   toggleReaction: (messageId, icon) => api.post(`/chat/messages/${messageId}/reaction`, { icon }),
+  searchGlobalMessages: (query) => api.get(`/chat/search/messages`, { params: { query } }),
 };
 
 export default chatApi;

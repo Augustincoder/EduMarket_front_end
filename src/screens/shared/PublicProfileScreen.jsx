@@ -256,7 +256,7 @@ export default function PublicProfileScreen() {
               try {
                 const res = await chatApi.getOrCreateDirect(userId);
                 navigate(`/chat/${res.data.data.id}`);
-              } catch (e) {
+              } catch {
                 toast.error("Chatni ochishda xatolik yuz berdi");
               }
             }}

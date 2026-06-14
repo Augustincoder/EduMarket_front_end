@@ -3,36 +3,55 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { chatApi } from '../services/chat.service';
 import { useChatStore } from '../store/chatStore';
+import { db } from '../lib/db';
 
 export function useChatHistory(chatRoomId) {
   const [cursor, setCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   
-  const messages = useChatStore((s) => s.messages);
   const setMessages = useChatStore((s) => s.setMessages);
+  const mergeMessages = useChatStore((s) => s.mergeMessages);
+  const prependMessages = useChatStore((s) => s.prependMessages);
 
-  const { data: history, isLoading } = useQuery({
+  // Load from local storage initially
+  useEffect(() => {
+    async function loadLocal() {
+      const cachedMsgs = await db.getMessages(chatRoomId);
+      if (cachedMsgs && cachedMsgs.length > 0) {
+        // If we don't have them in store yet
+        const currentStoreMsgs = useChatStore.getState().messages[chatRoomId];
+        if (!currentStoreMsgs || currentStoreMsgs.length === 0) {
+          setMessages(chatRoomId, cachedMsgs);
+        }
+      }
+    }
+    loadLocal();
+  }, [chatRoomId, setMessages]);
+
+  const { data: historyData, isLoading } = useQuery({
     queryKey: ['messages', chatRoomId],
-    queryFn:  () => chatApi.getMessages(chatRoomId).then((r) => {
+    queryFn:  async () => {
+      const r = await chatApi.getMessages(chatRoomId);
       const data = r.data.data;
       const msgs = Array.isArray(data) ? data : (data?.messages || []);
       
-      if (data?.nextCursor) {
-        setCursor(data.nextCursor);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
-      
-      return msgs.slice().reverse();
-    }),
+      return {
+        messages: msgs.slice().reverse(),
+        nextCursor: data?.nextCursor || null
+      };
+    },
     enabled: !!chatRoomId,
   });
 
   useEffect(() => {
-    if (history) setMessages(chatRoomId, history);
-  }, [history, chatRoomId, setMessages]);
+    if (historyData) {
+      mergeMessages(chatRoomId, historyData.messages);
+      // eslint-disable-next-line
+      setCursor(historyData.nextCursor);
+      setHasMore(!!historyData.nextCursor);
+    }
+  }, [historyData, chatRoomId, mergeMessages]);
 
   const loadMore = async () => {
     if (!cursor || isLoadingMore) return;
@@ -46,7 +65,7 @@ export function useChatHistory(chatRoomId) {
       setCursor(nextCursor);
       
       const reversedMsgs = msgs.slice().reverse();
-      setMessages(chatRoomId, [...reversedMsgs, ...(messages[chatRoomId] || [])]);
+      prependMessages(chatRoomId, reversedMsgs);
     } catch (e) {
       console.error(e);
     } finally {
