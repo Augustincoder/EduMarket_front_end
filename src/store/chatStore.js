@@ -47,36 +47,32 @@ export const useChatStore = create((set, get) => ({
         // 1. If we already have this message (real ID), ignore duplicate
         if (roomMsgs.some(m => m.id === msg.id)) return s;
 
-        // 2. Optimization: Check if this message from socket is actually our own optimistic message
-        // returning from the server. Match exactly by clientId to avoid race conditions.
+        // 2. Handle optimistic message replacement
         const user = useAuthStore.getState().user;
         const isMyOwn = msg.senderId === user?.id;
+        let updatedRoomMsgs = [...roomMsgs];
         
         if (isMyOwn && msg.clientId) {
-          const optIndex = roomMsgs.findIndex(m => m.isSending && m.clientId === msg.clientId);
+          const optIndex = updatedRoomMsgs.findIndex(m => m.isSending && m.clientId === msg.clientId);
           if (optIndex !== -1) {
-            const newMsgs = [...roomMsgs];
-            newMsgs[optIndex] = msg;
-            return {
-              messages: { ...s.messages, [chatRoomId]: newMsgs }
-            };
+            updatedRoomMsgs[optIndex] = msg;
+          } else {
+            updatedRoomMsgs.push(msg);
           }
+        } else {
+          updatedRoomMsgs.push(msg);
         }
-        
-        // Update conversation sidebar locally without HTTP request
+
+        // 3. Update conversation sidebar locally
         const conversations = [...s.conversations];
         const convIndex = conversations.findIndex(c => c.chatRoomId === chatRoomId);
-        
+        let newConversations = conversations;
+        let totalUnread = s.totalUnread;
+
         if (convIndex !== -1) {
           const conv = { ...conversations[convIndex] };
           conv.lastMessage = msg;
           
-          // Increment unread if message is from someone else and room is not actively read right now
-          const user = useAuthStore.getState().user;
-          const isMyOwn = msg.senderId === user?.id;
-          
-          // Note: if user is currently looking at this chat room, `isRead` would be handled by Read Receipt logic,
-          // but for now, we just increment if it's not our own message. The chat UI marks read automatically.
           if (!isMyOwn) {
             conv.unreadCount = (conv.unreadCount || 0) + 1;
           }
@@ -84,34 +80,19 @@ export const useChatStore = create((set, get) => ({
           // Move to top
           conversations.splice(convIndex, 1);
           conversations.unshift(conv);
-          
-          const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-          
-        const newConversations = [...conversations];
-        db.saveConversations(newConversations);
+          newConversations = [...conversations];
+          totalUnread = newConversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+          db.saveConversations(newConversations);
+        }
 
-        const newMessagesState = {
-          ...s.messages,
-          [chatRoomId]: [...roomMsgs, msg],
-        };
-        db.saveMessages(chatRoomId, newMessagesState[chatRoomId]);
+        // 4. Save and Update State
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
 
         return {
-          messages: newMessagesState,
+          messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs },
           conversations: newConversations,
           totalUnread
         };
-      }
-
-      const newMessagesState = {
-        ...s.messages,
-        [chatRoomId]: [...roomMsgs, msg],
-      };
-      db.saveMessages(chatRoomId, newMessagesState[chatRoomId]);
-
-      return {
-        messages: newMessagesState,
-      };
       });
     });
 
@@ -218,6 +199,20 @@ export const useChatStore = create((set, get) => ({
         };
       });
     });
+
+    socket.on('participant_added', ({ chatRoomId, participant }) => {
+      // Invalidate react-query cache via custom event or global queryClient if we had access
+      // For now, we can just trigger a reload if we are in this room
+      window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
+    });
+
+    socket.on('participant_removed', ({ chatRoomId, userId }) => {
+      window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
+    });
+
+    socket.on('participant_updated', ({ chatRoomId, participant }) => {
+      window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
+    });
     
     socket.on('message_pinned', () => {
       // Just emit a system event instead of full reload, or locally update room if we stored pinnedMsg
@@ -278,6 +273,11 @@ export const useChatStore = create((set, get) => ({
       if (presenceIds.length > 0) {
         get().socket?.emit('subscribe_presence', presenceIds);
       }
+
+      // Join all chat rooms for real-time updates across the app
+      conversations.forEach(c => {
+        get().socket?.emit('join_chat_room', c.chatRoomId);
+      });
 
       set((s) => ({
         conversations,
@@ -449,14 +449,18 @@ export const useChatStore = create((set, get) => ({
       const res = await chatApi.toggleReaction(messageId, icon);
       // Socket will broadcast the true state, so we don't strictly need to set it here, 
       // but we can update it just in case to be safe.
-      const updatedMsg = res.data.data;
+      const result = res.data.data;
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
+        const updatedRoomMsgs = roomMsgs.map(m => 
+          m.id === messageId ? { ...m, reactions: result.reactions } : m
+        );
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
+            [chatRoomId]: updatedRoomMsgs
           }
         };
       });

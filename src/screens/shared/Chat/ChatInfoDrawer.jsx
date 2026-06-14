@@ -41,7 +41,9 @@ function MediaItem({ media }) {
 export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, currentUser }) {
   const navigate = useNavigate();
   const isGroup = conversation?.type === 'CUSTOM_GROUP' || conversation?.type === 'TASK_ROOM';
-  const [activeTab, setActiveTab] = useState(isGroup ? 'members' : 'media'); // members, media, invite
+  const isCustomGroup = conversation?.type === 'CUSTOM_GROUP';
+
+  const [activeTab, setActiveTab] = useState('media'); // default to media, sync below
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -53,9 +55,27 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
     enabled: isOpen
   });
 
+  // Real-time info refresh listener
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e.detail?.chatRoomId === chatRoomId) {
+        refetch();
+      }
+    };
+    window.addEventListener('chat_info_update', handleUpdate);
+    return () => window.removeEventListener('chat_info_update', handleUpdate);
+  }, [chatRoomId, refetch]);
+
+  // Sync tab when group status is detected
+  useEffect(() => {
+    if (isGroup && activeTab === 'media') {
+      setActiveTab('members');
+    }
+  }, [isGroup]);
+
   useEffect(() => {
     if (!isOpen) return;
-    if (activeTab === 'invite' && searchQuery.trim().length > 2) {
+    if (activeTab === 'invite' && searchQuery.trim().length > 1) {
       Promise.resolve().then(() => setLoadingSearch(true));
       chatApi.searchUsersForInvite(chatRoomId, searchQuery)
         .then(res => setSearchResults(res.data.data))
@@ -122,7 +142,7 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
   };
 
   const myRole = participants.find(p => p.userId === currentUser?.id)?.role;
-  const canManage = myRole === 'OWNER' || myRole === 'ADMIN';
+  const canManage = isCustomGroup && (myRole === 'OWNER' || myRole === 'ADMIN');
 
   return (
     <AnimatePresence>
@@ -181,7 +201,7 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
               >
                 Media
               </button>
-              {isGroup && canManage && (
+              {canManage && (
                 <button 
                   onClick={() => setActiveTab('invite')}
                   className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'invite' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
