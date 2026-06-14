@@ -2,34 +2,36 @@
 import { cn } from '../../lib/utils';
 
 function Bone({ className }) {
-  return <div className={cn('skeleton rounded-md', className)} />;
+  return <div className={cn('bg-black/5 dark:bg-white/10 rounded-md', className)} />;
 }
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-lg p-6 shadow-md space-y-5 animate-in fade-in duration-500 border border-edu-border/30">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex gap-2">
-          <Bone className="w-16 h-7 rounded-sm" />
-          <Bone className="w-24 h-7 rounded-sm" />
+    <div className="bg-edu-surface rounded-xl p-4 mb-3 shadow-sm border border-edu-border/30 animate-pulse flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Bone className="w-20 h-7 rounded-full" />
         </div>
-        <Bone className="w-10 h-10 rounded-md" />
+        <Bone className="w-8 h-8 rounded-full" />
       </div>
-      <div className="space-y-3">
-        <Bone className="w-full h-6 rounded-md" />
-        <Bone className="w-[80%] h-6 rounded-md" />
+
+      {/* Content */}
+      <div className="flex flex-col gap-2">
+        <Bone className="w-full h-5 rounded-md" />
+        <Bone className="w-[70%] h-5 rounded-md" />
+        <Bone className="w-32 h-6 rounded-md mt-1" />
       </div>
-      <div className="flex items-center justify-between pt-4 border-t border-edu-border/20">
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3 border-t border-edu-border/50 mt-1">
+        <div className="flex items-center gap-2">
+          <Bone className="w-6 h-6 rounded-full" />
+          <Bone className="w-20 h-3 rounded-md" />
+        </div>
         <div className="flex items-center gap-3">
-          <Bone className="w-10 h-10 rounded-md" />
-          <div className="space-y-2">
-            <Bone className="w-24 h-3.5 rounded-full" />
-            <Bone className="w-16 h-2.5 rounded-full opacity-60" />
-          </div>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          <Bone className="w-20 h-6 rounded-sm" />
-          <Bone className="w-28 h-3 rounded-full opacity-60" />
+          <Bone className="w-12 h-3 rounded-md" />
+          <Bone className="w-16 h-3 rounded-md" />
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ import ProfileScreen from '../screens/shared/ProfileScreen';
 
 // Lazy load remaining screens
 const TaskDetailScreen  = lazy(() => import('../screens/shared/TaskDetail/TaskDetailScreen'));
+const TaskChatRedirect  = lazy(() => import('../screens/shared/TaskChatRedirect'));
 const CreateTaskScreen  = lazy(() => import('../screens/client/CreateTaskScreen'));
 const BidsScreen        = lazy(() => import('../screens/shared/BidsScreen'));
 const ChatScreen        = lazy(() => import('../screens/shared/ChatScreen'));
@@ -75,6 +76,7 @@ const routes = [
   { path: '/tasks/create',      element: <Screen element={<ProtectedRoute><CreateTaskScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id',         element: <Screen element={<ProtectedRoute><TaskDetailScreen /></ProtectedRoute>} /> },
   { path: '/tasks/:id/bids',    element: <Screen element={<ProtectedRoute><BidsScreen /></ProtectedRoute>} /> },
+  { path: '/tasks/:id/chat',    element: <Screen element={<ProtectedRoute><TaskChatRedirect /></ProtectedRoute>} /> },
   { path: '/chats',             element: <ProtectedRoute><ChatListScreen /></ProtectedRoute> },
   { path: '/chat/:chatRoomId',  element: <Screen element={<ProtectedRoute><ChatScreen /></ProtectedRoute>} /> },
   { path: '/earnings',          element: <Screen element={<RoleGuard require="FREELANCER"><EarningsScreen /></RoleGuard>} /> },

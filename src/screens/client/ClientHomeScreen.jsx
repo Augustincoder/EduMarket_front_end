@@ -94,7 +94,7 @@ function ActiveChatWidget() {
       <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.05em] mb-3">So'nggi muloqot</h3>
       <Card 
         isPressable
-        onClick={() => { navigate(`/tasks/${activeChat.taskId}/chat`); }}
+        onClick={() => { navigate(`/chat/${activeChat.id}`); }}
         className="border-edu-border"
       >
         <CardContent className="p-4 flex items-center gap-3">

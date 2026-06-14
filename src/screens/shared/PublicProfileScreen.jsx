@@ -12,6 +12,7 @@ import { ReputationRadarChart } from '../../components/profile/ReputationRadarCh
 import { usersApi } from '../../services/users.service';
 import { filesApi } from '../../services/other.service';
 import { gigsApi } from '../../services/gigs.service';
+import { chatApi } from '../../services/chat.service';
 
 import { Heart, Zap, Trophy, Star, Clock, ChevronRight, FileText, MessageCircle } from 'lucide-react';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
@@ -250,7 +251,15 @@ export default function PublicProfileScreen() {
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[768px] p-4 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-t border-black/[0.05] dark:border-white/[0.05] pb-safe z-50">
         <div className="flex gap-3">
           <button
-            onClick={() => { hapticLight(); navigate(`/tasks/${userId}/chat`); }}
+            onClick={async () => {
+              hapticLight();
+              try {
+                const res = await chatApi.getOrCreateDirect(userId);
+                navigate(`/chat/${res.data.data.id}`);
+              } catch (e) {
+                toast.error("Chatni ochishda xatolik yuz berdi");
+              }
+            }}
             className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center justify-center shrink-0 active:scale-90 transition-all border border-black/[0.02] dark:border-white/[0.05]"
           >
             <MessageCircle size={22} />
