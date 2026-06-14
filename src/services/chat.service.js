@@ -5,6 +5,7 @@ export const chatApi = {
   // ROOMS & GROUPS
   getConversations: () => api.get('/chat'),
   getOrCreateDirect: (targetUserId) => api.post('/chat/direct', { targetUserId }),
+  getOrCreateTaskRoom: (taskId) => api.get(`/chat/task/${taskId}`),
   createCustomGroup: (data) => api.post('/chat/group', data), // { name, avatarUrl }
   updateGroupSettings: (chatRoomId, data) => api.put(`/chat/${chatRoomId}/settings`, data), // { name, avatarUrl }
   removeParticipant: (chatRoomId, targetUserId) => api.delete(`/chat/${chatRoomId}/participants/${targetUserId}`),

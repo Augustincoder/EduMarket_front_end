@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { chatApi } from '../../../services/chat.service';
@@ -38,7 +38,7 @@ function MediaItem({ media }) {
   );
 }
 
-export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, currentUser }) {
+export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, currentUser, onViewFile, _onJumpToMessage }) {
   const navigate = useNavigate();
   const isGroup = conversation?.type === 'CUSTOM_GROUP' || conversation?.type === 'TASK_ROOM';
   const isCustomGroup = conversation?.type === 'CUSTOM_GROUP';
@@ -66,12 +66,22 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
     return () => window.removeEventListener('chat_info_update', handleUpdate);
   }, [chatRoomId, refetch]);
 
+  const hasSyncedTab = useRef(false);
+
   // Sync tab when group status is detected
   useEffect(() => {
-    if (isGroup && activeTab === 'media') {
+    if (isOpen && isGroup && activeTab === 'media' && !hasSyncedTab.current) {
       setActiveTab('members');
+      hasSyncedTab.current = true;
     }
-  }, [isGroup]);
+  }, [isGroup, isOpen, activeTab]);
+
+  // Reset sync ref when drawer closes
+  useEffect(() => {
+    if (!isOpen) {
+      hasSyncedTab.current = false;
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -262,7 +272,17 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {mediaFiles.map(media => (
-                      <MediaItem key={media.id} media={media} />
+                      <div 
+                        key={media.id} 
+                        className="cursor-pointer active:scale-95 transition-transform"
+                        onClick={() => {
+                          const ext = media.fileName?.split('.').pop().toLowerCase();
+                          const isImg = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
+                          onViewFile?.(media.fileId, media.fileName, false, isImg ? 'image/jpeg' : '');
+                        }}
+                      >
+                        <MediaItem media={media} />
+                      </div>
                     ))}
                   </div>
                 )

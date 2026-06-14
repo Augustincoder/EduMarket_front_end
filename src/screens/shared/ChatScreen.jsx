@@ -30,7 +30,6 @@ export default function ChatScreen() {
   const { chatRoomId } = useParams();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
   
   const conversations = useChatStore((s) => s.conversations);
   const messages = useChatStore((s) => s.messages);
@@ -66,7 +65,7 @@ export default function ChatScreen() {
   const { data: task } = useTask(taskId, { enabled: !!taskId });
   const transitions = useTaskTransition(taskId);
 
-  useChatSocket(chatRoomId, token);
+  useChatSocket(chatRoomId);
   const { isLoading, hasMore, isLoadingMore, loadMore } = useChatHistory(chatRoomId);
 
   const [revisionOpen, setRevisionOpen] = useState(false);
@@ -102,6 +101,17 @@ export default function ChatScreen() {
   const roomMessages = useMemo(() => messages[chatRoomId] || [], [messages, chatRoomId]);
   
   const virtuosoRef = useRef(null);
+
+  const handleJumpToMessage = useCallback((messageId) => {
+    const index = roomMessages.findIndex(m => m.id === messageId);
+    if (index !== -1 && virtuosoRef.current) {
+      virtuosoRef.current.scrollToIndex({
+        index,
+        align: 'center',
+        behavior: 'smooth'
+      });
+    }
+  }, [roomMessages]);
 
   // Read receipt with throttle
   useEffect(() => {
@@ -240,14 +250,22 @@ export default function ChatScreen() {
           components={{
             Header: () => (
               <div className="flex flex-col gap-4 mb-4 pt-4 px-1">
-                {task && !isGroup && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
+                {task && (conversation.type === 'TASK_ROOM' || conversation.type === 'DIRECT') && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
                   <div className="mx-auto w-full max-w-[90%] md:max-w-md bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/30 rounded-xl p-4 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-                        <CheckCircle size={16} />
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                          <CheckCircle size={16} />
+                        </div>
+                        <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
                       </div>
-                      <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
+                      <button 
+                        onClick={() => navigate(`/tasks/${task.id}`)}
+                        className="text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-1 rounded-lg"
+                      >
+                        Batafsil
+                      </button>
                     </div>
                     
                     <div className="bg-white/60 dark:bg-black/20 rounded-xl p-3 mb-3 border border-blue-100/50 dark:border-blue-800/20 grid grid-cols-2 gap-3">
@@ -272,7 +290,7 @@ export default function ChatScreen() {
                   </div>
                 )}
                 
-                {task && task.status === 'ASSIGNED' && !isClient && !isGroup && (
+                {task && task.status === 'ASSIGNED' && !isClient && conversation.type === 'DIRECT' && (
                   <Button size="md" variant="accent" fullWidth className="shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
                     Vazifani boshlash
                   </Button>
@@ -327,6 +345,7 @@ export default function ChatScreen() {
                   });
                 }}
                 onViewFile={handleViewFile}
+                onJumpToMessage={handleJumpToMessage}
               />
             </div>
           )}
@@ -373,6 +392,8 @@ export default function ChatScreen() {
         chatRoomId={chatRoomId} 
         conversation={{ ...conversation, displayTitle: title }}
         currentUser={user}
+        onViewFile={handleViewFile}
+        onJumpToMessage={handleJumpToMessage}
       />
 
       {taskId && isWorkspaceOpen && (

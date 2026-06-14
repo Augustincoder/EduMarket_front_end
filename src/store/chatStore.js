@@ -83,6 +83,9 @@ export const useChatStore = create((set, get) => ({
           newConversations = [...conversations];
           totalUnread = newConversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
           db.saveConversations(newConversations);
+        } else {
+          // New conversation not in sidebar yet, fetch all to be sure we have metadata
+          setTimeout(() => get().loadConversations(), 500);
         }
 
         // 4. Save and Update State
@@ -200,17 +203,17 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
-    socket.on('participant_added', ({ chatRoomId, participant }) => {
+    socket.on('participant_added', ({ chatRoomId, _participant }) => {
       // Invalidate react-query cache via custom event or global queryClient if we had access
       // For now, we can just trigger a reload if we are in this room
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
 
-    socket.on('participant_removed', ({ chatRoomId, userId }) => {
+    socket.on('participant_removed', ({ chatRoomId, _userId }) => {
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
 
-    socket.on('participant_updated', ({ chatRoomId, participant }) => {
+    socket.on('participant_updated', ({ chatRoomId, _participant }) => {
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
     

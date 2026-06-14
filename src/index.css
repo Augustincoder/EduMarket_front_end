@@ -315,3 +315,8 @@ html {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+.active-bounce:active {
+  transform: scale(0.96);
+  transition: transform var(--dur-fast) var(--ease-press);
+}

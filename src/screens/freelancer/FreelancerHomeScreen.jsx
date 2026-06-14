@@ -3,17 +3,66 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
+import { useChatStore } from '../../store/chatStore';
 import { analyticsApi } from '../../services/other.service';
 import { tasksApi } from '../../services/tasks.service';
 import { formatPrice } from '../../lib/utils';
+import { Avatar } from '../../components/ui/Avatar';
 import { Card, CardContent } from '../../components/ui/Card';
 import { ArrowRight, Search, Clock } from 'lucide-react';
 import { HomeTopBar } from '../../components/layout/HomeTopBar';
 import { SectionErrorBoundary } from '../../components/ui/SectionErrorBoundary';
-import { TaskStatusSkeleton } from '../../components/ui/SkeletonCard';
+import { TaskStatusSkeleton, ChatSkeleton } from '../../components/ui/SkeletonCard';
 import { cn } from '../../lib/utils';
 
 // --- Extracted Widgets for Error Boundaries ---
+
+function ActiveChatWidget() {
+  const navigate = useNavigate();
+  const conversations = useChatStore((s) => s.conversations);
+  const isLoading = useChatStore((s) => s.isConversationsLoading);
+  const user = useAuthStore((s) => s.user);
+
+  if (isLoading && conversations.length === 0) return <ChatSkeleton />;
+  if (!conversations || conversations.length === 0) return null;
+
+  const activeChat = conversations[0];
+  const isGroup = activeChat.type === 'CUSTOM_GROUP' || activeChat.type === 'TASK_ROOM';
+  const displayTitle = isGroup ? activeChat.title : (activeChat.otherUser?.fullname || activeChat.title);
+  const avatarUrl = isGroup ? activeChat.avatarUrl : activeChat.otherUser?.avatarUrl;
+
+  return (
+    <div className="mb-8 px-1">
+      <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.05em] mb-3">So'nggi muloqot</h3>
+      <Card 
+        isPressable
+        onClick={() => { navigate(`/chat/${activeChat.chatRoomId}`); }}
+        className="border-edu-border"
+      >
+        <CardContent className="p-4 flex items-center gap-3">
+          <Avatar name={displayTitle} avatarUrl={avatarUrl} size="md" />
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-baseline mb-0.5">
+              <p className="text-[14px] font-bold text-edu-text truncate">{displayTitle}</p>
+              <span className="text-[11px] text-edu-muted font-medium">
+                {activeChat.lastMessage ? new Date(activeChat.lastMessage.createdAt).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }) : ''}
+              </span>
+            </div>
+            <p className="text-[13px] text-edu-muted truncate font-medium">
+              {activeChat.lastMessage?.senderId === user?.id && <span className="text-edu-primary mr-1">Siz:</span>}
+              {activeChat.lastMessage?.content || 'Fayl yuborildi'}
+            </p>
+          </div>
+          {activeChat.unreadCount > 0 && (
+            <div className="w-5 h-5 bg-edu-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+              {activeChat.unreadCount}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 function StatisticsWidget({ user }) {
   const navigate = useNavigate();
@@ -205,6 +254,11 @@ export default function FreelancerHomeScreen() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ── Recent Activity ───────────────────────────── */}
+      <SectionErrorBoundary fallbackTitle="Chatlarni yuklashda xatolik" onRetry={() => useChatStore.getState().loadConversations()}>
+        <ActiveChatWidget />
+      </SectionErrorBoundary>
 
       {/* ── Active Tasks ──────────────────────────────── */}
       <SectionErrorBoundary fallbackTitle="Faol topshiriqlarni yuklashda xatolik">

@@ -69,7 +69,7 @@ function ImageAttachment({ fileId, onClick }) {
   );
 }
 
-export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onViewFile }) {
+export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onViewFile, onJumpToMessage }) {
   const hasFile = !!message.fileId;
   const isImage = message.fileType === 'photo' || (message.fileName && /\.(jpg|jpeg|png|gif|webp)$/i.test(message.fileName));
 
@@ -209,8 +209,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
             {/* Reply Preview */}
             {message.replyTo && !message.replyTo.isDeleted && (
               <div 
+                onClick={(e) => { e.stopPropagation(); onJumpToMessage?.(message.replyTo.id); }}
                 className={cn(
-                  "mb-2 p-1.5 px-2.5 rounded-lg text-xs border-l-2",
+                  "mb-2 p-1.5 px-2.5 rounded-lg text-xs border-l-2 cursor-pointer hover:bg-black/10 transition-colors",
                   isMe ? "bg-black/10 border-white/40" : "bg-black/5 dark:bg-white/5 border-edu-primary"
                 )}
               >

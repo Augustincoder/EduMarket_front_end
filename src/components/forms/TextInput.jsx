@@ -6,6 +6,7 @@ export const TextInput = forwardRef(({
   label,
   placeholder,
   error,
+  hideErrorMessage,
   maxLength,
   currentLength,
   type = 'text',
@@ -55,7 +56,7 @@ export const TextInput = forwardRef(({
           </span>
         )}
       </div>
-      {error && (
+      {error && typeof error === 'string' && !hideErrorMessage && (
         <span id={`${props.id || props.name}-error`} className="text-edu-urgent text-xs mt-1 px-1" role="alert">
           {error}
         </span>

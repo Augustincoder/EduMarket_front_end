@@ -46,7 +46,8 @@ export function Step2Budget() {
             min="1000"
             value={priceMin}
             onValueChange={(val) => updateField('priceMin', val)}
-            error={errors.priceMin?.[0]}
+            error={!!(errors.priceMin || errors.priceMax || hasRangeError)} // Only highlight border
+            hideErrorMessage // Hypothetical prop or we just pass boolean
           />
           <div className="w-4 h-[2px] bg-edu-border/50 rounded-full" />
           <TextInput
@@ -56,20 +57,47 @@ export function Step2Budget() {
             min="1000"
             value={priceMax}
             onValueChange={(val) => updateField('priceMax', val)}
-            error={errors.priceMax?.[0]}
+            error={!!(errors.priceMin || errors.priceMax || hasRangeError)}
+            hideErrorMessage
           />
         </div>
-        {hasRangeError && (
-          <p className="text-xs font-bold text-edu-urgent mt-2 px-1">Minimal narx maksimaldan kichik bo'lishi kerak</p>
+        {(hasRangeError || errors.priceMin || errors.priceMax) && (
+          <p className="text-xs font-bold text-edu-urgent mt-2 px-1 animate-fade-in">
+            {hasRangeError 
+              ? 'Minimal narx maksimaldan kichik bo\'lishi kerak' 
+              : (errors.priceMin?.[0] || errors.priceMax?.[0])}
+          </p>
         )}
       </div>
 
-      <ToggleSwitch
-        label="⚡ Shoshilinch?"
-        description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi (+20%)"
-        checked={isUrgent}
-        onChange={(v) => { hapticLight(); updateField('isUrgent', v); }}
-      />
+      <div className="bg-edu-surface p-4 rounded-xl border border-edu-border/20 shadow-ios space-y-4">
+        <ToggleSwitch
+          label="⚡ Shoshilinch?"
+          description="Tizimda vazifangiz yuqori o'rinlarda ko'rinadi"
+          checked={isUrgent}
+          onChange={(v) => { hapticLight(); updateField('isUrgent', v); }}
+        />
+
+        {isUrgent && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="pt-4 border-t border-edu-border/20 space-y-3"
+          >
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-edu-muted font-medium">Shoshilinch xizmati (20%)</span>
+              <span className="text-edu-urgent font-bold">
+                +{priceMin ? (Number(priceMin) * 0.2).toLocaleString('uz-UZ') : '0'} UZS
+              </span>
+            </div>
+            <div className="bg-edu-urgent/5 p-3 rounded-lg border border-edu-urgent/10">
+              <p className="text-[11px] text-edu-urgent font-semibold leading-relaxed">
+                Vazifangiz barcha mutaxassislarga "Shoshilinch" belgisi bilan ko'rsatiladi va Smart Match tizimi orqali eng yuqori reytingli frilanserlarga birinchi bo'lib yuboriladi.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </div>
 
       <div className="bg-edu-surface p-4 rounded-xl border border-edu-border/20 shadow-ios">
         <p className="text-xs font-bold text-edu-muted uppercase tracking-widest mb-3">Tugash muddati (Deadline) *</p>

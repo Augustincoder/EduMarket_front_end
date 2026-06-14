@@ -1,11 +1,12 @@
 // src/screens/client/ClientHomeScreen.jsx
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usersApi } from '../../services/users.service';
 import { useMyTasks } from '../../hooks/useTasks';
 import { useCategoryStore } from '../../store/categoryStore';
+import { useAuthStore } from '../../store/authStore';
 import { useChatStore } from '../../store/chatStore';
 import { Avatar } from '../../components/ui/Avatar';
 import { hapticLight } from '../../lib/telegram';
@@ -71,42 +72,36 @@ function MyTasksStatusWidget() {
 function ActiveChatWidget() {
   const navigate = useNavigate();
   const conversations = useChatStore((s) => s.conversations);
-  const [loading, setLoading] = useState(true);
+  const isLoading = useChatStore((s) => s.isConversationsLoading);
+  const user = useAuthStore((s) => s.user);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        await useChatStore.getState().loadConversations();
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  if (loading) return <ChatSkeleton />;
+  if (isLoading && conversations.length === 0) return <ChatSkeleton />;
   if (!conversations || conversations.length === 0) return null;
 
   const activeChat = conversations[0];
+  const isGroup = activeChat.type === 'CUSTOM_GROUP' || activeChat.type === 'TASK_ROOM';
+  const displayTitle = isGroup ? activeChat.title : (activeChat.otherUser?.fullname || activeChat.title);
+  const avatarUrl = isGroup ? activeChat.avatarUrl : activeChat.otherUser?.avatarUrl;
 
   return (
     <div className="mb-8 px-1">
       <h3 className="text-[12px] font-bold text-edu-muted uppercase tracking-[0.05em] mb-3">So'nggi muloqot</h3>
       <Card 
         isPressable
-        onClick={() => { navigate(`/chat/${activeChat.id}`); }}
+        onClick={() => { navigate(`/chat/${activeChat.chatRoomId}`); }}
         className="border-edu-border"
       >
         <CardContent className="p-4 flex items-center gap-3">
-          <Avatar name={activeChat.otherUser?.fullname} avatarUrl={activeChat.otherUser?.avatarUrl} size="md" />
+          <Avatar name={displayTitle} avatarUrl={avatarUrl} size="md" />
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-baseline mb-0.5">
-              <p className="text-[14px] font-bold text-edu-text truncate">{activeChat.otherUser?.fullname}</p>
+              <p className="text-[14px] font-bold text-edu-text truncate">{displayTitle}</p>
               <span className="text-[11px] text-edu-muted font-medium">
                 {activeChat.lastMessage ? new Date(activeChat.lastMessage.createdAt).toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }) : ''}
               </span>
             </div>
             <p className="text-[13px] text-edu-muted truncate font-medium">
+              {activeChat.lastMessage?.senderId === user?.id && <span className="text-edu-primary mr-1">Siz:</span>}
               {activeChat.lastMessage?.content || 'Fayl yuborildi'}
             </p>
           </div>

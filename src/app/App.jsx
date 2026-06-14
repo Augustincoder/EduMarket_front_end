@@ -8,13 +8,9 @@ import { useCategoryStore } from '../store/categoryStore';
 import { useAuthStore } from '../store/authStore';
 import { Analytics } from '@vercel/analytics/react';
 
-import { useChatStore } from '../store/chatStore';
-
 export default function App() {
   const checkTokenStatus = useAuthStore((state) => state.checkTokenStatus);
   const fetchCategories = useCategoryStore((state) => state.fetchCategories);
-  const loadConversations = useChatStore((state) => state.loadConversations);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
     checkTokenStatus();

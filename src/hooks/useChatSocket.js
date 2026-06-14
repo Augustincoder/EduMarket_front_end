@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useChatStore } from '../store/chatStore';
 
-export function useChatSocket(chatRoomId, token) {
+export function useChatSocket(chatRoomId) {
   const connected = useChatStore((s) => s.connected);
   const joinRoom = useChatStore((s) => s.joinRoom);
   const leaveRoom = useChatStore((s) => s.leaveRoom);

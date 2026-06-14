@@ -60,41 +60,42 @@ export function TaskSearchHeader({
       </div>
 
       <div 
-        className="sticky top-[-1px] z-30 mb-4 bg-edu-bg/80 backdrop-blur-xl border-b border-edu-border supports-[backdrop-filter]:bg-edu-bg/60 shadow-sm"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+        className="sticky top-0 z-30 mb-2 py-4 pointer-events-none"
       >
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-3 items-center">
-          <FilterChip
-            label="Barchasi"
-            active={!filterState.category}
-            onClick={() => { setFilter('category', ''); hapticLight(); }}
-            className={cn(
-              "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border",
-              !filterState.category 
-                ? "bg-edu-text text-edu-bg border-transparent shadow-sm" 
-                : "bg-edu-surface/50 text-edu-text border-edu-border hover:bg-edu-surface"
-            )}
-          />
-          {getTrendingCategories().map((cat) => (
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 items-center pointer-events-auto">
+          <div className="flex gap-2 p-1.5 bg-edu-surface/60 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-full shadow-lg items-center min-w-max">
             <FilterChip
-              key={cat.value}
-              label={`${cat.emoji} ${cat.label}`}
-              active={filterState.category === cat.value}
-              onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+              label="Barchasi"
+              active={!filterState.category}
+              onClick={() => { setFilter('category', ''); hapticLight(); }}
               className={cn(
-                "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border flex-shrink-0",
-                filterState.category === cat.value 
-                  ? "bg-edu-text text-edu-bg border-transparent shadow-sm" 
-                  : "bg-edu-surface/50 text-edu-text border-edu-border hover:bg-edu-surface"
+                "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border-none",
+                !filterState.category 
+                  ? "bg-edu-primary text-white shadow-ios-primary" 
+                  : "bg-transparent text-edu-text hover:bg-black/5"
               )}
             />
-          ))}
-          <button
-            onClick={() => { setFilterOpen(true); hapticLight(); }}
-            className="rounded-full px-5 h-9 text-[13px] font-bold bg-edu-surface/50 text-edu-primary border border-edu-border whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
-          >
-            Barchasi...
-          </button>
+            {getTrendingCategories().map((cat) => (
+              <FilterChip
+                key={cat.value}
+                label={`${cat.emoji} ${cat.label}`}
+                active={filterState.category === cat.value}
+                onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+                className={cn(
+                  "rounded-full px-5 h-9 text-[13px] font-bold transition-all duration-300 border-none flex-shrink-0",
+                  filterState.category === cat.value 
+                    ? "bg-edu-primary text-white shadow-ios-primary" 
+                    : "bg-transparent text-edu-text hover:bg-black/5"
+                )}
+              />
+            ))}
+            <button
+              onClick={() => { setFilterOpen(true); hapticLight(); }}
+              className="rounded-full px-5 h-9 text-[13px] font-bold text-edu-primary whitespace-nowrap shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-all"
+            >
+              Barchasi...
+            </button>
+          </div>
         </div>
       </div>
     </>
