@@ -251,54 +251,47 @@ export const useChatStore = create((set, get) => ({
       set(() => ({
         conversations: cached,
         totalUnread,
-        // Optional: only update if we haven't loaded API yet
       }));
     }
 
-    const prev = get().loadConversationsTimeout;
-    if (prev) clearTimeout(prev);
-    
     set({ isConversationsLoading: true });
 
-    const timeout = setTimeout(async () => {
-      try {
-        const res = await chatApi.getConversations();
-        const allConversations = res.data.data || [];
-        const conversations = allConversations;
-        
-        // Save fresh data to IndexedDB
-        db.saveConversations(conversations);
+    try {
+      const res = await chatApi.getConversations();
+      const allConversations = res.data.data || [];
+      const conversations = allConversations;
+      
+      // Save fresh data to IndexedDB
+      db.saveConversations(conversations);
 
-        const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-        
-        const presence = {};
-        const presenceIds = [];
-        allConversations.forEach((c) => {
-          if (c.otherUser) {
-            presence[c.otherUser.id] = c.otherUser.isOnline;
-            presenceIds.push(c.otherUser.id);
-          }
-        });
-
-        if (presenceIds.length > 0) {
-          get().socket?.emit('subscribe_presence', presenceIds);
+      const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
+      
+      const presence = {};
+      const presenceIds = [];
+      allConversations.forEach((c) => {
+        if (c.otherUser) {
+          presence[c.otherUser.id] = c.otherUser.isOnline;
+          presenceIds.push(c.otherUser.id);
         }
+      });
 
-        set((s) => ({
-          conversations,
-          totalUnread,
-          isConversationsLoading: false,
-          userPresence: {
-            ...s.userPresence,
-            ...presence
-          }
-        }));
-      } catch (err) {
-        console.error('Failed to load conversations:', err);
-        set({ isConversationsLoading: false });
+      if (presenceIds.length > 0) {
+        get().socket?.emit('subscribe_presence', presenceIds);
       }
-    }, 500);
-    set({ loadConversationsTimeout: timeout });
+
+      set((s) => ({
+        conversations,
+        totalUnread,
+        isConversationsLoading: false,
+        userPresence: {
+          ...s.userPresence,
+          ...presence
+        }
+      }));
+    } catch (err) {
+      console.error('Failed to load conversations:', err);
+      set({ isConversationsLoading: false });
+    }
   },
 
   markConversationRead: (chatRoomId) => {

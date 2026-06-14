@@ -143,7 +143,7 @@ function ChatListWidget({ searchTerm }) {
     return <ChatListSkeleton />;
   }
 
-  if (!conversations || conversations.length === 0) {
+  if (!isConversationsLoading && (!conversations || conversations.length === 0)) {
     return (
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
@@ -196,8 +196,8 @@ function ChatListWidget({ searchTerm }) {
       className="w-full flex flex-col gap-3"
     >
       {filteredConversations.length > 0 && (
-        <div className="mb-2">
-          {searchTerm && <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-3 px-1">Suhbatlar</h3>}
+        <div className="flex flex-col gap-3">
+          {searchTerm && <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-1 px-1">Suhbatlar</h3>}
           <AnimatePresence mode="popLayout">
             {filteredConversations.map((conv) => {
           const isGroup = conv.type === 'CUSTOM_GROUP';
@@ -286,8 +286,8 @@ function ChatListWidget({ searchTerm }) {
 
       {/* Global Message Search Results */}
       {searchTerm.trim().length >= 2 && (
-        <div className="mt-4">
-          <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-3 px-1">Xabarlar orqali</h3>
+        <div className="mt-6 flex flex-col gap-2">
+          <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-1 px-1">Xabarlar orqali</h3>
           
           {isSearchLoading ? (
             <div className="flex justify-center p-4"><div className="w-6 h-6 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" /></div>
@@ -299,7 +299,7 @@ function ChatListWidget({ searchTerm }) {
                   variants={item}
                   layout
                   onClick={() => handleOpenChat(msg.chatRoomId)}
-                  className="group relative card-base p-4 mb-2 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden cursor-pointer"
+                  className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden cursor-pointer"
                 >
                   <div className="flex items-start gap-3">
                     <Avatar name={msg.sender?.fullname} avatarUrl={msg.sender?.avatarUrl} size="md" />

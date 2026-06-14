@@ -21,16 +21,6 @@ export default function App() {
     fetchCategories();
   }, [checkTokenStatus, fetchCategories]);
 
-  useEffect(() => {
-    if (isAuthenticated()) {
-      const token = useAuthStore.getState().token;
-      if (token) {
-        useChatStore.getState().connect(token);
-      }
-      loadConversations().catch(() => {});
-    }
-  }, [isAuthenticated, loadConversations]);
-
   return (
     <Providers>
       <NetworkBanner />

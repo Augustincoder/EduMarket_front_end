@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FullPageSpinner } from '../../components/ui/Spinner';
-import api from '../../services/client';
+import { chatApi } from '../../services/chat.service';
 import toast from 'react-hot-toast';
 
 export default function TaskChatRedirect() {
@@ -11,7 +11,7 @@ export default function TaskChatRedirect() {
   useEffect(() => {
     async function fetchAndRedirect() {
       try {
-        const response = await api.get(`/chat/task/${taskId}`);
+        const response = await chatApi.getOrCreateTaskRoom(taskId);
         if (response.data && response.data.data) {
           navigate(`/chat/${response.data.data.id}`, { replace: true });
         } else {

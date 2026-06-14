@@ -7,6 +7,7 @@ import { Users, UserPlus, Image as ImageIcon, FileText, ChevronLeft, LogOut, Tra
 import { Avatar } from '../../../components/ui/Avatar';
 import { cn } from '../../../lib/utils';
 import { filesApi } from '../../../services/other.service';
+import { showAlert, showConfirm } from '../../../lib/telegram';
 
 function MediaItem({ media }) {
   const [url, setUrl] = useState(null);
@@ -39,7 +40,7 @@ function MediaItem({ media }) {
 
 export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, currentUser }) {
   const navigate = useNavigate();
-  const isGroup = conversation?.type === 'CUSTOM_GROUP';
+  const isGroup = conversation?.type === 'CUSTOM_GROUP' || conversation?.type === 'TASK_ROOM';
   const [activeTab, setActiveTab] = useState(isGroup ? 'members' : 'media'); // members, media, invite
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -75,34 +76,38 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
     try {
       await chatApi.sendInvite(chatRoomId, userId);
       setSearchResults(prev => prev.filter(u => u.id !== userId));
-      alert('Taklif yuborildi!');
+      showAlert('Taklif yuborildi!');
     } catch (err) {
-      alert(err.response?.data?.message || 'Xatolik');
+      showAlert(err.response?.data?.message || 'Xatolik');
     } finally {
       setInvitingId(null);
     }
   };
 
   const handleLeave = async () => {
-    if (window.confirm("Rostdan ham guruhni tark etmoqchimisiz?")) {
-      try {
-        await chatApi.leaveGroup(chatRoomId);
-        window.location.href = '/chats';
-      } catch (err) {
-        alert("Xatolik: " + err.message);
+    showConfirm("Rostdan ham guruhni tark etmoqchimisiz?", async (ok) => {
+      if (ok) {
+        try {
+          await chatApi.leaveGroup(chatRoomId);
+          window.location.href = '/chats';
+        } catch (err) {
+          showAlert("Xatolik: " + err.message);
+        }
       }
-    }
+    });
   };
 
   const handleKick = async (userId) => {
-    if (window.confirm("Bu ishtirokchini guruhdan chetlatmoqchimisiz?")) {
-      try {
-        await chatApi.removeParticipant(chatRoomId, userId);
-        refetch();
-      } catch (err) {
-        alert("Xatolik: " + (err.response?.data?.message || err.message));
+    showConfirm("Bu ishtirokchini guruhdan chetlatmoqchimisiz?", async (ok) => {
+      if (ok) {
+        try {
+          await chatApi.removeParticipant(chatRoomId, userId);
+          refetch();
+        } catch (err) {
+          showAlert("Xatolik: " + (err.response?.data?.message || err.message));
+        }
       }
-    }
+    });
   };
 
   const handleOpenDirectChat = async (userId) => {
@@ -112,7 +117,7 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
       onClose(); // Drawer ni yopamiz
       navigate(`/chat/${res.data.data.id}`);
     } catch (err) {
-      alert("Chat ochishda xatolik: " + (err.response?.data?.message || err.message));
+      showAlert("Chat ochishda xatolik: " + (err.response?.data?.message || err.message));
     }
   };
 

@@ -4,20 +4,28 @@ import { Play, Pause } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { filesApi } from '../../services/other.service';
 
+const urlCache = new Map();
+
 export function VoicePlayer({ fileId, isMe }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [url, setUrl] = useState(null);
+  const [url, setUrl] = useState(urlCache.get(fileId) || null);
   const audioRef = useRef(null);
 
   useEffect(() => {
+    if (url) return;
+    
     let isMounted = true;
     filesApi.getUrl(fileId).then(res => {
-      if (isMounted) setUrl(res.data.data.url);
+      if (isMounted) {
+        const newUrl = res.data.data.url;
+        urlCache.set(fileId, newUrl);
+        setUrl(newUrl);
+      }
     }).catch(err => console.error(err));
     return () => { isMounted = false; };
-  }, [fileId]);
+  }, [fileId, url]);
 
   const togglePlay = (e) => {
     e.stopPropagation();

@@ -51,15 +51,17 @@ export default function ChatScreen() {
 
   const conversation = storeConversation || {
     chatRoomId,
-    type: roomInfoData?.room?.type || 'DIRECT',
-    taskId: roomInfoData?.room?.taskId,
-    title: roomInfoData?.room?.name || '',
-    avatarUrl: roomInfoData?.room?.avatarUrl,
-    otherUser: roomInfoData?.room?.type === 'DIRECT' ? roomInfoData?.participants?.find(p => p.user?.id !== user?.id)?.user : null
+    type: roomInfoData?.room?.type || roomInfoData?.type || 'DIRECT',
+    taskId: roomInfoData?.room?.taskId || roomInfoData?.taskId,
+    title: roomInfoData?.room?.name || roomInfoData?.name || '',
+    avatarUrl: roomInfoData?.room?.avatarUrl || roomInfoData?.avatarUrl,
+    otherUser: (roomInfoData?.room?.type === 'DIRECT' || roomInfoData?.type === 'DIRECT') 
+      ? roomInfoData?.participants?.find(p => p.user?.id !== user?.id)?.user 
+      : null
   };
 
   const taskId = conversation.taskId;
-  const isGroup = conversation.type === 'CUSTOM_GROUP';
+  const isGroup = conversation.type === 'CUSTOM_GROUP' || conversation.type === 'TASK_ROOM';
 
   const { data: task } = useTask(taskId, { enabled: !!taskId });
   const transitions = useTaskTransition(taskId);
@@ -77,6 +79,8 @@ export default function ChatScreen() {
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [viewerFile, setViewerFile] = useState(null);
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
+
+  const lastReadCall = useRef(0);
 
   const handleViewFile = (fileId, fileName, isSecureFile, mimeType) => {
     setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile, mimeType });
@@ -99,12 +103,17 @@ export default function ChatScreen() {
   
   const virtuosoRef = useRef(null);
 
-  // Read receipt
+  // Read receipt with throttle
   useEffect(() => {
+    const now = Date.now();
+    // Throttle: max 1 call per 2 seconds
+    if (now - lastReadCall.current < 2000) return;
+
     // Optimization: only scan the last 20 messages instead of potentially 10,000
     const recentMessages = roomMessages.slice(-20);
     const hasUnread = recentMessages.some(m => !m.isRead && m.senderId !== user?.id);
     if (hasUnread) {
+      lastReadCall.current = now;
       chatApi.markAsRead(chatRoomId).catch(() => {});
       useChatStore.getState().markConversationRead(chatRoomId);
     }

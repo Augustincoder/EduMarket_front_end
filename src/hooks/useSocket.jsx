@@ -24,6 +24,7 @@ export function useSocket() {
   useEffect(() => {
     if (token) {
       connect(token);
+      useChatStore.getState().loadConversations().catch(() => {});
       useNotificationStore.getState().fetchNotifications();
     } else {
       disconnect();
