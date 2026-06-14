@@ -26,6 +26,7 @@ export function TaskActionButtons({
   hoursToAutoAccept
 }) {
   const navigate = useNavigate();
+  const hasReviewed = task?.reviews?.some(r => r.fromUserId === user?.id);
 
   if (!user) {
     return (
@@ -279,6 +280,19 @@ export function TaskActionButtons({
 
   // 6. Task is COMPLETED
   if (task.status === 'COMPLETED' && isMember) {
+    if (hasReviewed) {
+      return (
+        <div className="flex w-full animate-fade-in">
+          <Button
+            fullWidth variant="secondary" size="lg" className="rounded-xl h-14 text-[15px] font-bold border border-edu-border shadow-sm"
+            icon={<MessageSquare size={16} />}
+            onClick={() => navigate(`/tasks/${task.id}/chat`)}
+          >
+            Chatga o'tish
+          </Button>
+        </div>
+      );
+    }
     return (
       <div className="flex flex-col gap-3 w-full animate-fade-in">
         <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-5 text-center shadow-sm relative overflow-hidden">
