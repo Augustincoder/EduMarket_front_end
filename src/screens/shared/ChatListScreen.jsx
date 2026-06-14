@@ -9,6 +9,7 @@ import { SectionErrorBoundary, WidgetError } from '../../components/ui/SectionEr
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MessageSquare, Check, CheckCheck, Users, Plus, X } from 'lucide-react';
 import { chatApi } from '../../services/chat.service';
+import { ChatListSkeleton } from '../../components/ui/ChatListSkeleton';
 
 function CreateGroupModal({ isOpen, onClose, onSuccess }) {
   const [name, setName] = useState('');
@@ -128,12 +129,7 @@ function ChatListWidget({ searchTerm }) {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 gap-4 opacity-50">
-        <div className="w-8 h-8 border-3 border-edu-primary/30 border-t-edu-primary rounded-full animate-spin" />
-        <p className="text-[15px] font-bold text-gray-400">Xabarlar yuklanmoqda...</p>
-      </div>
-    );
+    return <ChatListSkeleton />;
   }
 
   if (!conversations || conversations.length === 0) {

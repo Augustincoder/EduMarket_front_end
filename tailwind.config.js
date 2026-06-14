@@ -16,16 +16,15 @@ export default {
       '3xl': ['26px', { lineHeight: '34px', letterSpacing: '-0.03em' }],
       '4xl': ['32px', { lineHeight: '40px', letterSpacing: '-0.035em' }],
     },
-    borderRadius: {
-      'none': '0px',
-      'sm':   'var(--r-sm)',   /* 8px */
-      'md':   'var(--r-md)',   /* 12px */
-      'lg':   'var(--r-lg)',   /* 16px */
-      'xl':   'var(--r-xl)',   /* 20px */
-      'full': 'var(--r-full)',
-      DEFAULT: 'var(--r-lg)',
-    },
+
     extend: {
+      borderRadius: {
+        'sm':   'var(--r-sm)',   /* 8px */
+        'md':   'var(--r-md)',   /* 12px */
+        'lg':   'var(--r-lg)',   /* 16px */
+        'xl':   'var(--r-xl)',   /* 20px */
+        DEFAULT: 'var(--r-lg)',
+      },
       colors: {
         'edu-bg':        'var(--edu-bg)',
         'edu-surface':   'var(--edu-surface)',

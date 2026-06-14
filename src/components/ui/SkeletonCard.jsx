@@ -7,31 +7,31 @@ function Bone({ className }) {
 
 export function TaskCardSkeleton() {
   return (
-    <div className="bg-edu-surface rounded-xl p-4 mb-3 shadow-sm border border-edu-border/30 animate-pulse flex flex-col gap-3">
+    <div className="bg-edu-surface rounded-[var(--r-xl)] p-4 mb-3 shadow-sm border border-edu-border/40 animate-pulse flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Bone className="w-20 h-7 rounded-full" />
+          <Bone className="w-[100px] h-[28px] rounded-full" />
         </div>
         <Bone className="w-8 h-8 rounded-full" />
       </div>
 
       {/* Content */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 mb-3">
         <Bone className="w-full h-5 rounded-md" />
-        <Bone className="w-[70%] h-5 rounded-md" />
-        <Bone className="w-32 h-6 rounded-md mt-1" />
+        <Bone className="w-[60%] h-5 rounded-md" />
+        <Bone className="w-[120px] h-[24px] rounded-md mt-1" />
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-3 border-t border-edu-border/50 mt-1">
+      <div className="flex items-center justify-between pt-3 border-t border-edu-border/50">
         <div className="flex items-center gap-2">
           <Bone className="w-6 h-6 rounded-full" />
-          <Bone className="w-20 h-3 rounded-md" />
+          <Bone className="w-[100px] h-3 rounded-md" />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Bone className="w-14 h-3 rounded-md" />
           <Bone className="w-12 h-3 rounded-md" />
-          <Bone className="w-16 h-3 rounded-md" />
         </div>
       </div>
     </div>
@@ -40,17 +40,54 @@ export function TaskCardSkeleton() {
 
 export function ProfileSkeleton() {
   return (
-    <div className="space-y-6 p-4 animate-in fade-in duration-500">
-      <div className="flex flex-col items-center gap-4 py-8">
-        <Bone className="w-24 h-24 rounded-full" />
-        <div className="space-y-2 flex flex-col items-center">
-          <Bone className="w-48 h-6 rounded-full" />
-          <Bone className="w-32 h-4 rounded-full opacity-60" />
+    <div className="w-full min-h-screen bg-edu-bg animate-in fade-in duration-500">
+      <div className="px-4 pt-4 space-y-5 pb-6 mt-14">
+        {/* Workspace Switcher Skeleton */}
+        <div className="bg-edu-surface rounded-2xl p-4 border border-edu-border shadow-sm relative overflow-hidden">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent z-10" />
+          <div className="flex justify-between items-center">
+            <div className="flex gap-4 items-center">
+              <Bone className="w-12 h-12 rounded-xl" />
+              <div className="space-y-2">
+                <Bone className="w-32 h-4 rounded-full" />
+                <Bone className="w-24 h-3 rounded-full opacity-60" />
+              </div>
+            </div>
+            <Bone className="w-8 h-8 rounded-full" />
+          </div>
         </div>
-      </div>
-      <Bone className="w-full h-32 rounded-lg" />
-      <div className="grid grid-cols-2 gap-4">
-        {[...Array(4)].map((_, i) => <Bone key={i} className="h-28 rounded-lg" />)}
+
+        {/* Profile Header Skeleton */}
+        <div className="flex flex-col items-center gap-4 py-4 relative overflow-hidden">
+          <Bone className="w-24 h-24 rounded-full shadow-md" />
+          <div className="space-y-3 flex flex-col items-center w-full">
+            <Bone className="w-48 h-6 rounded-full" />
+            <Bone className="w-32 h-4 rounded-full opacity-60" />
+            <div className="flex gap-2 mt-2">
+              <Bone className="w-20 h-7 rounded-full" />
+              <Bone className="w-20 h-7 rounded-full" />
+            </div>
+          </div>
+        </div>
+        
+        {/* Stats Grid Skeleton */}
+        <div className="grid grid-cols-2 gap-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-edu-surface rounded-2xl p-4 border border-edu-border shadow-sm relative overflow-hidden">
+               <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent z-10" />
+               <Bone className="w-8 h-8 rounded-full mb-3" />
+               <Bone className="w-16 h-6 rounded-md mb-2" />
+               <Bone className="w-24 h-3 rounded-full opacity-60" />
+            </div>
+          ))}
+        </div>
+
+        {/* Radar/Portfolio Skeleton */}
+        <div className="bg-edu-surface rounded-2xl p-5 h-64 border border-edu-border shadow-sm relative overflow-hidden flex flex-col items-center justify-center">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent z-10" />
+          <Bone className="w-32 h-32 rounded-full opacity-20" />
+          <Bone className="w-48 h-4 mt-6 rounded-full opacity-40" />
+        </div>
       </div>
     </div>
   );
