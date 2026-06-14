@@ -12,6 +12,7 @@ export function Header({
   right,
   transparent = false,
   className,
+  onTitleClick,
 }) {
   const navigate = useNavigate();
 
@@ -42,7 +43,10 @@ export function Header({
           </button>
         )}
 
-        <div className="flex-1 min-w-0">
+        <div 
+          className={cn("flex-1 min-w-0", onTitleClick && "cursor-pointer hover:opacity-80 transition-opacity")}
+          onClick={onTitleClick}
+        >
           {title && (
             <h1 className="text-lg font-bold font-display text-edu-text tracking-ios-display truncate leading-tight">
               {title}

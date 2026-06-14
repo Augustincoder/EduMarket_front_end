@@ -150,17 +150,11 @@ export default function ChatScreen() {
       {/* Row 1: Header Area */}
       <div className="flex flex-col z-30">
         <Header
-          title={
-            <div 
-              className={cn("flex flex-col transition-opacity", isGroup || conversation?.type === 'DIRECT' ? "cursor-pointer hover:opacity-80" : "")}
-              onClick={() => {
-                if (isGroup || conversation?.type === 'DIRECT') setIsGroupSettingsOpen(true);
-              }}
-            >
-              <span className="font-bold leading-tight">{title}</span>
-              <span className="text-[11px] text-edu-muted leading-tight truncate max-w-[200px]">{subtitle}</span>
-            </div>
-          }
+          title={title}
+          subtitle={subtitle}
+          onTitleClick={() => {
+            if (isGroup || conversation?.type === 'DIRECT') setIsGroupSettingsOpen(true);
+          }}
           showBack
           className="!border-b-0"
           right={
