@@ -5,16 +5,7 @@ import { chatApi } from '../services/chat.service';
 import { useAuthStore } from './authStore';
 import { db } from '../lib/db';
 
-// Helper to determine default socket URL for local network testing (mobile)
-const getFallbackSocketUrl = () => {
-  if (typeof window !== 'undefined') {
-    // Usually backend is on port 3000 locally
-    return `http://${window.location.hostname}:3000`;
-  }
-  return 'http://localhost:3000';
-};
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || getFallbackSocketUrl();
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || '';
 
 const typingTimers = new Map();
 
