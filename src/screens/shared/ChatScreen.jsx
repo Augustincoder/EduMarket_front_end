@@ -44,7 +44,7 @@ export default function ChatScreen() {
   const { data: roomInfoData } = useQuery({
     queryKey: ['chatRoomInfo', chatRoomId],
     queryFn: () => chatApi.getChatRoomInfo(chatRoomId).then(r => r.data.data),
-    enabled: !!chatRoomId && !storeConversation,
+    enabled: !!chatRoomId,
     retry: 1,
   });
 

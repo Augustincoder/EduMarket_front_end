@@ -166,14 +166,14 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
-    socket.on('messages_read', ({ chatRoomId, readerId, messageIds }) => {
+    socket.on('read_receipt', ({ chatRoomId, userId, lastReadMessageId }) => {
       set((s) => {
         const roomMessages = s.messages[chatRoomId];
         if (!roomMessages) return s;
 
         // Update messages that were read
         const updatedMessages = roomMessages.map(msg => 
-          (messageIds && messageIds.includes(msg.id)) || (!messageIds && !msg.isRead && msg.senderId !== readerId)
+          (!msg.isRead && msg.senderId !== userId)
             ? { ...msg, isRead: true } 
             : msg
         );
@@ -217,18 +217,17 @@ export const useChatStore = create((set, get) => ({
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
     
-    socket.on('message_pinned', () => {
-      // Just emit a system event instead of full reload, or locally update room if we stored pinnedMsg
-      // get().loadConversations(); // Avoiding this heavy call
+    socket.on('message_pinned', ({ chatRoomId, message }) => {
+      // Dispatch a custom event so ChatInfoDrawer or ChatScreen can react
+      window.dispatchEvent(new CustomEvent('chat_pin_updated', { detail: { chatRoomId, pinnedMsg: message } }));
     });
 
     set({ socket });
-    // Also load initial conversations upon connecting
-    get().loadConversations();
   },
 
   disconnect: () => {
     get().socket?.disconnect();
+    if (db && typeof db.clearAll === 'function') db.clearAll().catch(() => {});
     set({
       socket: null,
       connected: false,

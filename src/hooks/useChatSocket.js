@@ -8,17 +8,19 @@ export function useChatSocket(chatRoomId) {
   const leaveRoom = useChatStore((s) => s.leaveRoom);
 
   useEffect(() => {
+    if (!chatRoomId) return;
+    joinRoom(chatRoomId);
     return () => {
-      if (chatRoomId) leaveRoom(chatRoomId);
+      leaveRoom(chatRoomId);
     };
-  }, [chatRoomId, leaveRoom]);
+  }, [chatRoomId, joinRoom, leaveRoom]);
 
   // Rejoin room automatically if socket reconnects
   useEffect(() => {
     if (connected && chatRoomId) {
       joinRoom(chatRoomId);
     }
-  }, [connected, chatRoomId, joinRoom]);
+  }, [connected]);
 
   return { connected };
 }
