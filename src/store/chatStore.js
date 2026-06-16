@@ -5,7 +5,16 @@ import { chatApi } from '../services/chat.service';
 import { useAuthStore } from './authStore';
 import { db } from '../lib/db';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || '';
+// SOCKET_URL: must be the backend Render URL.
+// Set VITE_SOCKET_URL in Vercel environment variables.
+// e.g.: VITE_SOCKET_URL=https://your-backend.onrender.com
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL
+  || import.meta.env.VITE_API_URL?.replace('/api/v1', '')
+  || '';
+
+if (!SOCKET_URL && import.meta.env.DEV) {
+  console.warn('[Chat] VITE_SOCKET_URL belgilanmagan! Socket ulanishi ishlamasligi mumkin.');
+}
 
 const typingTimers = new Map();
 
@@ -32,11 +41,15 @@ export const useChatStore = create((set, get) => ({
 
     const socket = io(SOCKET_URL, {
       auth:              { token },
+      // FIX: Prefer WebSocket directly to avoid long-polling delays
+      // Render supports WebSocket natively, polling adds latency
       transports:        ['websocket', 'polling'],
+      upgrade:           true,
       reconnection:      true,
       reconnectionDelay: 1000,
-      reconnectionDelayMax: 16000,
+      reconnectionDelayMax: 5000,
       reconnectionAttempts: Infinity,
+      timeout:           20000,
     });
 
     socket.on('connect', () => {
