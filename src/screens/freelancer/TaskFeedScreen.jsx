@@ -1,3 +1,4 @@
+// src/screens/freelancer/TaskFeedScreen.jsx
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 import { PageLayout } from '../../components/layout/PageLayout';
@@ -15,6 +16,7 @@ export default function TaskFeedScreen() {
   const [isFocused, setIsFocused] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   
   const filterState = useUiStore((s) => s.filterState);
   const setFilter = useUiStore((s) => s.setFilter);
@@ -64,18 +66,17 @@ export default function TaskFeedScreen() {
       if (!parentRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
       
-      if (scrollTop > 250) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
+      setScrollY(scrollTop);
+
+      if (scrollTop > 250) setShowBackToTop(true);
+      else setShowBackToTop(false);
 
       if (scrollHeight - scrollTop <= clientHeight + 200 && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
       }
     };
     const el = parentRef.current;
-    el?.addEventListener('scroll', handleScroll);
+    el?.addEventListener('scroll', handleScroll, { passive: true });
     return () => el?.removeEventListener('scroll', handleScroll);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
@@ -98,6 +99,7 @@ export default function TaskFeedScreen() {
           filterState={filterState}
           setFilter={setFilter}
           setFilterOpen={setFilterOpen}
+          scrollY={scrollY}
         />
 
         <TaskFeedList
@@ -121,14 +123,14 @@ export default function TaskFeedScreen() {
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            initial={{ opacity: 0, y: 16, scale: 0.85 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: 16, scale: 0.85 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             onClick={scrollToTop}
-            className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_80px)] right-4 w-12 h-12 rounded-full bg-edu-surface/80 backdrop-blur-md border border-edu-border shadow-lg flex items-center justify-center text-edu-text active:scale-95 transition-transform z-40"
+            className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_76px)] right-4 w-11 h-11 rounded-full bg-edu-surface/85 backdrop-blur-md border border-edu-border shadow-lg flex items-center justify-center text-edu-text active:scale-95 transition-transform z-40"
           >
-            <ArrowUp size={24} />
+            <ArrowUp size={20} />
           </motion.button>
         )}
       </AnimatePresence>

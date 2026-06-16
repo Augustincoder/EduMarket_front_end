@@ -168,10 +168,10 @@ export default function ChatScreen() {
 
   return (
     <motion.div 
-      initial={{ x: '100%', opacity: 0.5 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: '100%', opacity: 0.5 }}
-      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 24 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full grid grid-rows-[auto_1fr_auto] h-[100dvh] z-50"
     >
       {/* Row 1: Header Area */}
@@ -187,8 +187,16 @@ export default function ChatScreen() {
           right={
             <div className="flex items-center gap-2">
               {!isGroup && (
-                <div className={cn("flex items-center justify-center w-5 h-5 rounded-full", isCounterpartOnline ? "bg-edu-primary/20" : "bg-edu-muted/20")}>
-                  <div className={cn("w-2.5 h-2.5 rounded-full", isCounterpartOnline ? "bg-edu-primary shadow-[0_0_6px_rgba(34,197,94,0.6)]" : "bg-edu-muted")} />
+                <div className="flex items-center gap-1.5">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full transition-colors duration-500",
+                    isCounterpartOnline
+                      ? "bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.7)]"
+                      : "bg-slate-400 dark:bg-slate-600"
+                  )} />
+                  {isCounterpartOnline && (
+                    <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">Online</span>
+                  )}
                 </div>
               )}
 
@@ -345,32 +353,29 @@ export default function ChatScreen() {
             ),
             Footer: () => (
               <div className="flex flex-col gap-1 mt-1 px-1">
-                {typingUsers?.[chatRoomId]?.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-edu-muted text-[11px] font-bold px-3 py-1 opacity-70">
-                    <div className="flex gap-[3px] items-center">
-                      {[0, 1, 2].map((i) => (
-                        <motion.span
-                          key={i}
-                          animate={{ y: [0, -4, 0] }}
-                          transition={{
-                            duration: 0.6,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: i * 0.15
-                          }}
-                          className="w-1.5 h-1.5 bg-edu-primary/70 rounded-full"
-                        />
-                      ))}
-                    </div>
-                    <motion.span 
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                      className="ml-1 uppercase tracking-wider text-edu-primary/80"
+                <AnimatePresence>
+                  {typingUsers?.[chatRoomId]?.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center gap-2 text-edu-muted text-[12px] font-medium px-3 py-1"
                     >
-                      Yozmoqda...
-                    </motion.span>
-                  </div>
-                )}
+                      <div className="flex gap-[3px] items-end">
+                        {[0, 1, 2].map((i) => (
+                          <motion.span
+                            key={i}
+                            animate={{ scaleY: [1, 1.8, 1] }}
+                            transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut', delay: i * 0.12 }}
+                            className="w-1 h-2.5 bg-edu-primary/60 rounded-full origin-bottom block"
+                          />
+                        ))}
+                      </div>
+                      <span className="text-edu-muted/80">Yozmoqda...</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 <div className="h-4" />
               </div>
             )

@@ -55,18 +55,27 @@ export const useChatStore = create((set, get) => ({
     socket.on('connect', () => {
       set({ connected: true, retryCount: 0 });
 
-      // FIX: On reconnect, re-subscribe to presence and re-join all rooms
-      // This is critical: socket rooms are NOT preserved across reconnects
-      const state = get();
-      const presenceIds = [];
-      state.conversations.forEach((c) => {
-        // Re-join every chat room on reconnect
-        socket.emit('join_chat_room', c.chatRoomId);
-        if (c.otherUser) presenceIds.push(c.otherUser.id);
-      });
-      if (presenceIds.length > 0) {
-        socket.emit('subscribe_presence', presenceIds);
-      }
+      // Re-subscribe to presence and re-join all rooms on (re)connect.
+      // Use a small delay to handle the case where conversations haven't loaded yet
+      // on the very first connect — loadConversations will also call subscribe_presence
+      // after fetching, so this handles the reconnect case.
+      const resubscribe = () => {
+        const state = get();
+        const presenceIds = [];
+        state.conversations.forEach((c) => {
+          socket.emit('join_chat_room', c.chatRoomId);
+          if (c.otherUser) presenceIds.push(c.otherUser.id);
+        });
+        if (presenceIds.length > 0) {
+          socket.emit('subscribe_presence', presenceIds);
+        }
+      };
+
+      // Immediate attempt (for reconnects where conversations are already loaded)
+      resubscribe();
+
+      // Delayed attempt in case this is the first connect and loadConversations is still in flight
+      setTimeout(resubscribe, 1500);
     });
 
     socket.on('disconnect', (reason) => {
