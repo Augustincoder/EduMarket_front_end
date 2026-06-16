@@ -31,14 +31,36 @@ export function Step2Budget() {
       </div>
 
       <div className="bg-edu-surface p-4 rounded-xl border border-edu-border/20 shadow-ios">
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-6">
           <p className="text-xs font-bold text-edu-muted uppercase tracking-widest">Byudjet oralig'i (UZS) *</p>
           <span className="text-xs text-edu-primary font-semibold bg-edu-primary/10 px-2 py-1 rounded-xl">
             Tavsiya: {aiSuggestedPrice}
           </span>
         </div>
+
+        {/* Giant visual budget display (Odometer feel) */}
+        <div className="flex items-baseline justify-center gap-2 mb-6 overflow-hidden h-10">
+           <motion.div 
+             key={priceMin} 
+             initial={{ y: 20, opacity: 0 }} 
+             animate={{ y: 0, opacity: 1 }} 
+             className="text-3xl font-black text-edu-text"
+           >
+             {priceMin ? Number(priceMin).toLocaleString('uz-UZ') : '0'}
+           </motion.div>
+           <span className="text-xl text-edu-muted font-bold">-</span>
+           <motion.div 
+             key={priceMax} 
+             initial={{ y: -20, opacity: 0 }} 
+             animate={{ y: 0, opacity: 1 }} 
+             className="text-3xl font-black text-edu-text"
+           >
+             {priceMax ? Number(priceMax).toLocaleString('uz-UZ') : '0'}
+           </motion.div>
+           <span className="text-sm font-bold text-edu-primary ml-1">UZS</span>
+        </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 relative z-10">
           <TextInput
             className="flex-1"
             placeholder="Min"

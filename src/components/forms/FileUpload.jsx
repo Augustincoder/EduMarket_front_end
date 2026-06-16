@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { Paperclip, X, Loader2, FileText, Image, CheckCircle2 } from 'lucide-react';
 import { useFileUpload } from '../../hooks/useFileUpload';
 import { ACCEPTED_MIME_TYPES, MAX_FILE_SIZE_MB } from '../../lib/constants';
+import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 function FileIcon({ type }) {
@@ -42,15 +43,17 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
       {label && <p className="text-sm font-semibold text-edu-text">{label}</p>}
 
       {/* Drop zone */}
-      <div
+      <motion.div
+        whileHover={{ scale: 1.01, borderRadius: ["16px", "24px", "16px"] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         onClick={() => !isUploading && inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); !isUploading && upload(Array.from(e.dataTransfer.files)); }}
         className={cn(
-          'border-2 border-dashed border-edu-border rounded-xl p-6',
+          'border-2 border-dashed border-edu-border rounded-2xl p-6',
           'flex flex-col items-center gap-2 cursor-pointer',
-          'transition-all duration-200 relative overflow-hidden',
-          'hover:border-edu-primary/50 hover:bg-edu-primary/5',
+          'relative overflow-hidden',
+          'hover:border-edu-primary/50 hover:bg-edu-primary/5 shadow-sm',
           isUploading && 'bg-edu-primary/5 cursor-wait'
         )}
       >
@@ -81,7 +84,7 @@ export function FileUpload({ value = [], onChange, onPreview, maxFiles = 5, labe
           className="hidden"
           onChange={handleFiles}
         />
-      </div>
+      </motion.div>
 
       {/* Uploaded files list */}
       {value.length > 0 && (

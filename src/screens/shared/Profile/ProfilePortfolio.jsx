@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Card, CardContent } from '../../../components/ui/Card';
+import { CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { BottomSheet } from '../../../components/ui/BottomSheet';
 import { TextInput } from '../../../components/forms/TextInput';
 import { FileUpload } from '../../../components/forms/FileUpload';
 import { Briefcase, Trash2, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { hapticSuccess } from '../../../lib/telegram';
 
 export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFile }) {
@@ -58,24 +59,27 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
           </span>
         </div>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
           {me?.portfolioItems?.map((item) => (
-            <Card 
+            <motion.div 
               key={item.id} 
-              className="bg-edu-surface border border-edu-border/40 relative group overflow-hidden cursor-pointer active:scale-[0.98] transition-all" 
-              radius="lg"
+              layoutId={item.fileId}
+              className="min-w-[160px] w-[160px] snap-center bg-edu-surface border border-edu-border/40 relative group overflow-hidden cursor-pointer active:scale-[0.98] transition-all rounded-2xl" 
               onClick={() => handleViewFile(item.fileId, item.title)}
             >
-              <CardContent className="p-3 flex flex-col h-full justify-between">
-                <div className="w-full h-20 bg-gradient-to-br from-edu-primary/5 to-edu-accent/5 rounded-xl flex items-center justify-center mb-2 border border-edu-border/30 relative">
-                  <div className="w-10 h-10 rounded-full bg-white dark:bg-edu-bg flex items-center justify-center shadow-sm">
+              <CardContent className="p-3 flex flex-col h-full justify-between relative overflow-hidden">
+                <div className="w-full h-24 bg-gradient-to-br from-edu-primary/5 to-edu-accent/5 rounded-xl flex items-center justify-center mb-2 border border-edu-border/30 relative">
+                  <motion.div 
+                    whileHover={{ scale: 1.2, rotate: [0, -10, 10, 0] }}
+                    className="w-10 h-10 rounded-full bg-white dark:bg-edu-bg flex items-center justify-center shadow-sm relative z-10"
+                  >
                     <Briefcase size={18} className="text-edu-primary" />
-                  </div>
+                  </motion.div>
                 </div>
                 <p className="text-xs font-bold text-edu-text truncate px-0.5">{item.title}</p>
                 
                 <button
-                  className="absolute top-2 right-2 w-6 h-6 bg-red-100 dark:bg-red-950/50 rounded-full flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-red-200 transition-colors border border-red-500/10 z-10 after:absolute after:-inset-3 after:content-['']"
+                  className="absolute top-2 right-2 w-7 h-7 bg-red-100 dark:bg-red-950/80 rounded-full flex items-center justify-center active:scale-95 duration-[120ms] hover:bg-red-200 transition-colors border border-red-500/20 z-20"
                   onClick={(e) => {
                     e.stopPropagation();
                     if (window.confirm("Bu ishni portfoliodan o'chirmoqchimisiz?")) {
@@ -83,19 +87,19 @@ export function ProfilePortfolio({ me, addPortfolio, delPortfolio, handleViewFil
                     }
                   }}
                 >
-                  <Trash2 size={11} className="text-red-500" />
+                  <Trash2 size={12} className="text-red-500" />
                 </button>
               </CardContent>
-            </Card>
+            </motion.div>
           ))}
           
           {(me?.portfolioItems?.length ?? 0) < portfolioLimit && (
             <button
               onClick={() => { setPortfolioTitle(''); setPortfolioFiles([]); setPortfolioError(''); setAddPortfolioOpen(true); }}
-              className="bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-xl flex flex-col items-center justify-center p-4 min-h-[128px] group active:scale-95 duration-[120ms]"
+              className="min-w-[160px] w-[160px] snap-center bg-edu-surface/50 border-2 border-dashed border-edu-border/60 hover:border-edu-primary/60 hover:bg-edu-primary/5 transition-all duration-300 rounded-2xl flex flex-col items-center justify-center p-4 min-h-[148px] group active:scale-95 duration-[120ms]"
             >
-              <div className="w-8 h-8 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
-                <Plus size={18} className="text-edu-muted group-hover:text-edu-primary" />
+              <div className="w-10 h-10 rounded-full bg-edu-bg group-hover:bg-edu-primary/10 flex items-center justify-center transition-all duration-300">
+                <Plus size={20} className="text-edu-muted group-hover:text-edu-primary" />
               </div>
               <span className="text-xs font-bold text-edu-muted group-hover:text-edu-primary mt-2">Ish qo'shish</span>
             </button>

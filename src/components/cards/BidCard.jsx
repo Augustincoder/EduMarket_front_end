@@ -4,6 +4,7 @@ import { Avatar } from '../ui/Avatar';
 import { UserBadge } from '../ui/Badge';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import { cn } from '../../lib/utils';
 import { useMemo } from 'react';
 
@@ -30,10 +31,15 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
   }, [bid.proposedPrice, task, isRedacted]);
 
   return (
-    <div className={cn(
-      'group relative card-base p-5 transition-all duration-300',
-      isSelected && 'border-edu-primary/30 ring-4 ring-edu-primary/5',
-    )}>
+    <Card 
+      tilt
+      glare
+      variant="base"
+      className={cn(
+        'p-5 transition-all duration-300',
+        isSelected && 'border-edu-primary/30 ring-4 ring-edu-primary/5',
+      )}
+    >
       {/* VIP Badge Overlay */}
       {isVip && (
         <div className="absolute -top-3 left-6 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full shadow-ios flex items-center gap-1.5 border border-white/20">
@@ -150,7 +156,7 @@ export function BidCard({ bid, task, isSelected, isDisabled, isClient, onAccept,
           </div>
         ) : null}
       </div>
-    </div>
+    </Card>
   );
 }
 

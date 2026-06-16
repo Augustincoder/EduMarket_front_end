@@ -55,6 +55,8 @@ function TaskCard({ task, className }) {
     <Card 
       variant="base" 
       isPressable 
+      tilt
+      glare
       onClick={handleClick} 
       className={cn("mb-3 p-4", className)}
     >

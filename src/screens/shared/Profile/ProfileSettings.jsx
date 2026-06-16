@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BottomSheet } from '../../../components/ui/BottomSheet';
 import { User, Bell, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
@@ -11,8 +12,21 @@ export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
   return (
     <>
       <BottomSheet isOpen={isOpen} onClose={onClose} title="Sozlamalar">
-        <div className="space-y-2 py-4">
-          <button 
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.1 } }
+          }}
+          className="space-y-2 py-4"
+        >
+          <motion.button 
+            variants={{
+              hidden: { opacity: 0, y: -20, rotateX: -20 },
+              visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+            }}
             className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             onClick={() => { onClose(); onOpenEdit(); }}
           >
@@ -20,9 +34,13 @@ export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
               <User size={18} />
             </div>
             <span className="font-bold text-edu-text">Profilni tahrirlash</span>
-          </button>
+          </motion.button>
           
-          <button 
+          <motion.button 
+            variants={{
+              hidden: { opacity: 0, y: -20, rotateX: -20 },
+              visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+            }}
             className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             onClick={() => { onClose(); navigate('/settings/notifications'); }}
           >
@@ -30,9 +48,13 @@ export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
               <Bell size={18} />
             </div>
             <span className="font-bold text-edu-text">Bildirishnomalar (Push)</span>
-          </button>
+          </motion.button>
 
-          <button 
+          <motion.button 
+            variants={{
+              hidden: { opacity: 0, y: -20, rotateX: -20 },
+              visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+            }}
             className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             onClick={() => { 
               onClose(); 
@@ -43,18 +65,27 @@ export function ProfileSettings({ isOpen, onClose, onOpenEdit, deleteMe }) {
               <span className="text-[16px]">🇺🇿</span>
             </div>
             <span className="font-bold text-edu-text">Til (O'zbek)</span>
-          </button>
+          </motion.button>
           
-          <button 
-            className="w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors mt-2"
+          <motion.button 
+            variants={{
+              hidden: { opacity: 0, y: -20, rotateX: -20 },
+              visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+            }}
+            className="relative w-full flex items-center gap-3 p-4 bg-edu-surface rounded-xl border border-edu-border hover:bg-black/5 dark:hover:bg-white/5 transition-colors mt-2 overflow-hidden group"
             onClick={() => { onClose(); setDeleteProfileOpen(true); }}
           >
-            <div className="w-8 h-8 rounded-full bg-edu-urgent/10 flex items-center justify-center text-edu-urgent">
+            <motion.div 
+              animate={{ opacity: [0, 0.1, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              className="absolute inset-0 bg-edu-urgent"
+            />
+            <div className="w-8 h-8 rounded-full bg-edu-urgent/10 flex items-center justify-center text-edu-urgent relative z-10">
               <Trash2 size={18} />
             </div>
-            <span className="font-semibold text-edu-urgent">Profilni o'chirish</span>
-          </button>
-        </div>
+            <span className="font-semibold text-edu-urgent relative z-10">Profilni o'chirish</span>
+          </motion.button>
+        </motion.div>
       </BottomSheet>
 
       <BottomSheet isOpen={deleteProfileOpen} onClose={() => setDeleteProfileOpen(false)} title="Profilni O'chirish">

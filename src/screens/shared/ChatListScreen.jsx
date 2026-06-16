@@ -227,7 +227,13 @@ function ChatListWidget({ searchTerm }) {
                   )}
                   
                   {isOnline && !isGroup && (
-                    <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-edu-surface rounded-full shadow-sm" />
+                    <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-edu-surface rounded-full shadow-sm z-10">
+                      <motion.div 
+                        animate={{ scale: [1, 2.5], opacity: [0.5, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                        className="absolute inset-0 bg-green-500 rounded-full -z-10"
+                      />
+                    </div>
                   )}
 
                   {conv.unreadCount > 0 && (

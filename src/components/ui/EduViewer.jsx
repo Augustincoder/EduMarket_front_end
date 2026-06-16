@@ -165,7 +165,7 @@ export default function EduViewer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col">
+    <motion.div layoutId={actualFileId} className="fixed inset-0 z-[100] bg-black/95 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-black/50 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-3">
@@ -278,6 +278,6 @@ export default function EduViewer({
           </AnimatePresence>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

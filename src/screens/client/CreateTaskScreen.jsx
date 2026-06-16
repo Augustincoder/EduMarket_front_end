@@ -25,9 +25,9 @@ import { Step5Review } from './CreateTask/Step5Review';
 const STEPS = ['Tur', 'Tafsilot', 'Narx', 'Fayllar', 'Kimga', 'Tasdiq'];
 
 const variants = {
-  initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -20 },
+  initial: { opacity: 0, scale: 0.9, rotateX: 15, y: 40 },
+  animate: { opacity: 1, scale: 1, rotateX: 0, y: 0 },
+  exit: { opacity: 0, scale: 1.05, rotateX: -15, y: -40 },
 };
 
 export default function CreateTaskScreen() {
@@ -135,7 +135,33 @@ export default function CreateTaskScreen() {
     try {
       const res = await createTask.mutateAsync(payload);
       hapticSuccess();
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      
+      // Massive premium confetti blast
+      const duration = 3000;
+      const end = Date.now() + duration;
+      const colors = ['#0A84FF', '#5E5CE6', '#30D158', '#FF9F0A', '#FF375F'];
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: colors
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: colors
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+
       toast.success("Vazifangiz muvaffaqiyatli e'lon qilindi!");
       
       trackEvent('Task Created', { category, isUrgent, priceMin, target: targeting });
@@ -220,8 +246,8 @@ export default function CreateTaskScreen() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col pb-[50vh]"
+                transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 25 }}
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden flex flex-col pb-[50vh] perspective-[1000px]"
               >
                 {step === 0 && <Step0Category />}
                 {step > 0 && (

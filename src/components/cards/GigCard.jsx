@@ -5,6 +5,7 @@ import { UserBadge } from '../ui/Badge';
 import { DisplayRating } from '../ui/StarRating';
 import { formatPrice } from '../../lib/utils';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import { hapticLight } from '../../lib/telegram';
 import { cn } from '../../lib/utils';
 
@@ -12,10 +13,14 @@ export function GigCard({ gig, onOrder }) {
   const { freelancer } = gig;
 
   return (
-    <div className={cn(
-      'bg-edu-surface rounded-xl p-5 shadow-ios border border-edu-border/30',
-      'transition-all duration-300 hover:border-edu-primary/30'
-    )}>
+    <Card
+      tilt
+      glare
+      variant="elevated"
+      className={cn(
+        'p-5 transition-all duration-300 hover:border-edu-primary/30'
+      )}
+    >
       {/* Freelancer */}
       <div className="flex items-center gap-3 mb-4">
         <Avatar name={freelancer?.fullname} avatarUrl={freelancer?.avatarUrl} size="md" className="shadow-sm" />
@@ -64,7 +69,7 @@ export function GigCard({ gig, onOrder }) {
           Buyurtma
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }
 

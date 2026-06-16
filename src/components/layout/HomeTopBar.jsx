@@ -6,6 +6,7 @@ import { Avatar } from '../ui/Avatar';
 import { BottomSheet } from '../ui/BottomSheet';
 import { Bell, User, ChevronRight } from 'lucide-react';
 import { hapticLight } from '../../lib/telegram';
+import { motion } from 'framer-motion';
 
 export function HomeTopBar({ greeting }) {
   const navigate = useNavigate();
@@ -74,11 +75,19 @@ export function HomeTopBar({ greeting }) {
             className="flex items-center gap-4 bg-edu-surface border border-edu-border/50 p-4 rounded-xl active:scale-[0.97] transition-transform duration-[120ms] hover:border-edu-primary/50 transition-colors"
           >
             <div className="w-12 h-12 rounded-lg bg-edu-primary/10 text-edu-primary flex items-center justify-center relative shrink-0">
-              <Bell size={24} />
+              <motion.div
+                animate={unreadNotifications > 0 ? { rotate: [0, -15, 15, -15, 15, 0] } : {}}
+                transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 3 }}
+              >
+                <Bell size={24} />
+              </motion.div>
               {unreadNotifications > 0 && (
-                <span className="absolute -top-1 -right-1 bg-edu-urgent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-edu-surface">
+                <motion.span 
+                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  className="absolute -top-1 -right-1 bg-edu-urgent text-white text-[10px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-edu-surface"
+                >
                   {unreadNotifications}
-                </span>
+                </motion.span>
               )}
             </div>
             <div className="flex-1 text-left min-w-0">

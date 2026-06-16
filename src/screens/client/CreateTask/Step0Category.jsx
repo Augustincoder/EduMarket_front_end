@@ -3,6 +3,7 @@ import { useCategoryStore } from '../../../store/categoryStore';
 import { useCreateTaskStore } from '../../../store/useCreateTaskStore';
 import { hapticLight } from '../../../lib/telegram';
 import { Search, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
 import { SmartBriefModal } from './components/SmartBriefModal';
 
@@ -36,11 +37,19 @@ export function Step0Category() {
       <div className="px-5 pt-4 pb-4 shrink-0 bg-edu-bg/95 backdrop-blur-xl z-10 sticky top-0 border-b border-edu-border/50">
         
         {/* AI Action Button */}
-        <button 
+        <motion.button 
+          whileHover={{ scale: 0.98 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => { hapticLight(); setIsAiModalOpen(true); }}
-          className="w-full mb-4 relative overflow-hidden rounded-xl p-0.5 bg-gradient-to-r from-edu-primary via-edu-accent to-blue-500 active:scale-95 transition-transform shadow-sm group"
+          className="w-full mb-4 relative overflow-hidden rounded-xl p-[2px] bg-gradient-to-r from-edu-primary via-purple-500 to-blue-500 shadow-[0_4px_20px_rgba(10,132,255,0.2)] group"
         >
-          <div className="bg-edu-surface w-full rounded-xl px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all">
+          {/* Hologram glitch layer */}
+          <motion.div 
+            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent bg-[length:200%_auto] z-0 pointer-events-none"
+          />
+          <div className="bg-edu-surface w-full rounded-[10px] px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all relative z-10">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
                 <Sparkles size={20} className="text-edu-primary" />
@@ -52,7 +61,7 @@ export function Step0Category() {
             </div>
             <div className="px-2 py-1 bg-edu-primary/10 rounded-lg text-xs font-extrabold text-edu-primary uppercase tracking-wider">Beta</div>
           </div>
-        </button>
+        </motion.button>
 
         {/* Modal instance */}
         <SmartBriefModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
@@ -80,30 +89,44 @@ export function Step0Category() {
             <p className="text-[14px] font-semibold text-edu-text">Natija topilmadi</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-2.5">
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.05 } }
+            }}
+            className="grid grid-cols-2 gap-3"
+          >
             {filteredCategories.map((cat) => {
               const isSelected = category === cat.value;
               return (
-                <button
+                <motion.button
+                  variants={{
+                    hidden: { opacity: 0, y: 40, scale: 0.9 },
+                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 20 } }
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.9, borderRadius: "24px" }}
                   key={cat.value}
                   onClick={() => handleSelect(cat.value)}
                   className={cn(
-                    "flex flex-col p-3.5 rounded-lg border text-left transition-all active:scale-95 group",
+                    "flex flex-col p-4 rounded-xl border text-left transition-colors group",
                     isSelected 
-                      ? "bg-edu-primary/10 border-edu-primary/50 text-edu-primary shadow-sm" 
+                      ? "bg-edu-primary/10 border-edu-primary/50 text-edu-primary shadow-[0_4px_12px_rgba(10,132,255,0.1)]" 
                       : "bg-edu-surface border-edu-border/40 text-edu-text hover:border-edu-primary/30 hover:shadow-sm"
                   )}
                 >
-                  <div className="text-2xl mb-1.5 leading-none bg-black/5 dark:bg-white/5 w-10 h-10 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform">
+                  <div className="text-3xl mb-2 leading-none bg-black/5 dark:bg-white/5 w-12 h-12 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform origin-center">
                     {cat.emoji}
                   </div>
                   <div className={cn("text-sm leading-tight", isSelected ? "font-bold" : "font-semibold")}>
                     {cat.label}
                   </div>
-                </button>
+                </motion.button>
               );
             })}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

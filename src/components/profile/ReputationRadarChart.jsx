@@ -16,7 +16,11 @@ export function ReputationRadarChart({ dna }) {
   return (
     <div className="bg-edu-surface p-5 rounded-xl border border-edu-border/30 shadow-ios relative overflow-hidden">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120px] h-[120px] bg-edu-primary/20 blur-[40px] rounded-full pointer-events-none" />
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120px] h-[120px] bg-edu-primary/20 blur-[40px] rounded-full pointer-events-none" 
+      />
 
       <div className="flex justify-between items-center mb-2">
         <div>
@@ -56,6 +60,10 @@ export function ReputationRadarChart({ dna }) {
               strokeWidth={2}
               fill="url(#colorUv)"
               fillOpacity={0.5}
+              isAnimationActive={true}
+              animationBegin={200}
+              animationDuration={2500}
+              animationEasing="ease-out"
             />
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">

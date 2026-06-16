@@ -5,7 +5,16 @@ import { chatApi } from '../services/chat.service';
 import { useAuthStore } from './authStore';
 import { db } from '../lib/db';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
+// Helper to determine default socket URL for local network testing (mobile)
+const getFallbackSocketUrl = () => {
+  if (typeof window !== 'undefined') {
+    // Usually backend is on port 3000 locally
+    return `http://${window.location.hostname}:3000`;
+  }
+  return 'http://localhost:3000';
+};
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || getFallbackSocketUrl();
 
 const typingTimers = new Map();
 
@@ -24,7 +33,9 @@ export const useChatStore = create((set, get) => ({
   connect: (token) => {
     const existing = get().socket;
     if (existing) {
-      if (existing.auth?.token === token) return;
+      // FIX: Compare token properly — auth.token may be undefined on first connect
+      if (existing.auth?.token === token && existing.connected) return;
+      existing.removeAllListeners(); // FIX: Remove all listeners before reconnecting
       existing.disconnect();
     }
 
@@ -34,28 +45,63 @@ export const useChatStore = create((set, get) => ({
       reconnection:      true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 16000,
+      reconnectionAttempts: Infinity,
     });
 
-    socket.on('connect',    () => { set({ connected: true, retryCount: 0 }); });
-    socket.on('disconnect', () => { set({ connected: false }); });
+    socket.on('connect', () => {
+      set({ connected: true, retryCount: 0 });
 
+      // FIX: On reconnect, re-subscribe to presence and re-join all rooms
+      // This is critical: socket rooms are NOT preserved across reconnects
+      const state = get();
+      const presenceIds = [];
+      state.conversations.forEach((c) => {
+        // Re-join every chat room on reconnect
+        socket.emit('join_chat_room', c.chatRoomId);
+        if (c.otherUser) presenceIds.push(c.otherUser.id);
+      });
+      if (presenceIds.length > 0) {
+        socket.emit('subscribe_presence', presenceIds);
+      }
+    });
+
+    socket.on('disconnect', (reason) => {
+      set({ connected: false });
+      // If server disconnected us (e.g., server restart), socket.io will auto-reconnect
+      // Only log unexpected disconnections
+      if (reason === 'io server disconnect') {
+        console.warn('[Chat] Server disconnected socket, reconnecting...');
+        socket.connect();
+      }
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('[Chat] Connection error:', err.message);
+      set((s) => ({ retryCount: s.retryCount + 1 }));
+    });
+
+    // ─── new_message ─────────────────────────────────────────────────
     socket.on('new_message', (msg) => {
       const chatRoomId = msg.chatRoomId;
       set((s) => {
         const roomMsgs = s.messages[chatRoomId] || [];
         
-        // 1. If we already have this message (real ID), ignore duplicate
+        // 1. Deduplicate: If we already have this message by real ID, ignore
         if (roomMsgs.some(m => m.id === msg.id)) return s;
 
-        // 2. Handle optimistic message replacement
+        // 2. Handle optimistic message replacement by clientId
         const user = useAuthStore.getState().user;
         const isMyOwn = msg.senderId === user?.id;
         let updatedRoomMsgs = [...roomMsgs];
         
         if (isMyOwn && msg.clientId) {
-          const optIndex = updatedRoomMsgs.findIndex(m => m.isSending && m.clientId === msg.clientId);
+          // FIX: Also check by clientId (not just isSending) in case optimistic
+          // message was updated before socket event arrives
+          const optIndex = updatedRoomMsgs.findIndex(
+            m => (m.isSending || m.clientId === msg.clientId) && m.clientId === msg.clientId
+          );
           if (optIndex !== -1) {
-            updatedRoomMsgs[optIndex] = msg;
+            updatedRoomMsgs[optIndex] = { ...msg, isSending: false };
           } else {
             updatedRoomMsgs.push(msg);
           }
@@ -63,7 +109,7 @@ export const useChatStore = create((set, get) => ({
           updatedRoomMsgs.push(msg);
         }
 
-        // 3. Update conversation sidebar locally
+        // 3. Update conversation sidebar
         const conversations = [...s.conversations];
         const convIndex = conversations.findIndex(c => c.chatRoomId === chatRoomId);
         let newConversations = conversations;
@@ -84,11 +130,11 @@ export const useChatStore = create((set, get) => ({
           totalUnread = newConversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
           db.saveConversations(newConversations);
         } else {
-          // New conversation not in sidebar yet, fetch all to be sure we have metadata
+          // New conversation not in sidebar yet — fetch all
           setTimeout(() => get().loadConversations(), 500);
         }
 
-        // 4. Save and Update State
+        // 4. Persist and update state
         db.saveMessages(chatRoomId, updatedRoomMsgs);
 
         return {
@@ -99,22 +145,35 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
+    // ─── typing ──────────────────────────────────────────────────────
     socket.on('user_typing', ({ chatRoomId, userId }) => {
       set((s) => {
         const cur = s.typingUsers[chatRoomId] || [];
-        if (cur.includes(userId)) return s;
-        const updated = { ...s.typingUsers, [chatRoomId]: [...cur, userId] };
-        
-        const timerKey = `${chatRoomId}_${userId}`;
-        if (typingTimers.has(timerKey)) {
-          clearTimeout(typingTimers.get(timerKey));
+        if (cur.includes(userId)) {
+          // FIX: Reset the timer even if user is already in typing list
+          const timerKey = `${chatRoomId}_${userId}`;
+          if (typingTimers.has(timerKey)) clearTimeout(typingTimers.get(timerKey));
+          const timerId = setTimeout(() => {
+            set((s2) => ({
+              typingUsers: {
+                ...s2.typingUsers,
+                [chatRoomId]: (s2.typingUsers[chatRoomId] || []).filter(u => u !== userId),
+              },
+            }));
+            typingTimers.delete(timerKey);
+          }, 3000);
+          typingTimers.set(timerKey, timerId);
+          return s; // No state change needed, just reset timer
         }
+
+        const timerKey = `${chatRoomId}_${userId}`;
+        if (typingTimers.has(timerKey)) clearTimeout(typingTimers.get(timerKey));
 
         const timerId = setTimeout(() => {
           set((s2) => ({
             typingUsers: {
               ...s2.typingUsers,
-              [chatRoomId]: (s2.typingUsers[chatRoomId] || []).filter((u) => u !== userId),
+              [chatRoomId]: (s2.typingUsers[chatRoomId] || []).filter(u => u !== userId),
             },
           }));
           typingTimers.delete(timerKey);
@@ -122,103 +181,91 @@ export const useChatStore = create((set, get) => ({
         
         typingTimers.set(timerKey, timerId);
 
-        return { typingUsers: updated };
+        return { typingUsers: { ...s.typingUsers, [chatRoomId]: [...cur, userId] } };
       });
     });
 
+    // ─── user_status_changed ─────────────────────────────────────────
     socket.on('user_status_changed', ({ userId, isOnline }) => {
       set((s) => ({
-        userPresence: {
-          ...s.userPresence,
-          [userId]: isOnline
-        }
+        userPresence: { ...s.userPresence, [userId]: isOnline }
       }));
     });
 
+    // ─── message_edited ──────────────────────────────────────────────
     socket.on('message_edited', (updatedMsg) => {
       const chatRoomId = updatedMsg.chatRoomId;
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
-        const updatedRoomMsgs = roomMsgs.map(m => m.id === updatedMsg.id ? updatedMsg : m);
+        const updatedRoomMsgs = roomMsgs.map(m => m.id === updatedMsg.id ? { ...m, ...updatedMsg } : m);
         db.saveMessages(chatRoomId, updatedRoomMsgs);
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: updatedRoomMsgs
-          }
-        };
+        return { messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs } };
       });
     });
 
+    // ─── message_deleted ─────────────────────────────────────────────
     socket.on('message_deleted', ({ messageId, chatRoomId }) => {
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
-        const updatedRoomMsgs = roomMsgs.map(m => m.id === messageId ? { ...m, isDeleted: true, content: null } : m);
+        const updatedRoomMsgs = roomMsgs.map(m =>
+          m.id === messageId ? { ...m, isDeleted: true, content: null, fileId: null } : m
+        );
         db.saveMessages(chatRoomId, updatedRoomMsgs);
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: updatedRoomMsgs
-          }
-        };
+        return { messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs } };
       });
     });
 
-    socket.on('read_receipt', ({ chatRoomId, userId, lastReadMessageId }) => {
+    // ─── read_receipt ────────────────────────────────────────────────
+    socket.on('read_receipt', ({ chatRoomId, _userId }) => {
       set((s) => {
         const roomMessages = s.messages[chatRoomId];
         if (!roomMessages) return s;
 
-        // Update messages that were read
-        const updatedMessages = roomMessages.map(msg => 
-          (!msg.isRead && msg.senderId !== userId)
-            ? { ...msg, isRead: true } 
+        // FIX: Mark messages as read only for messages sent BY current user
+        // that were read BY the other user (userId is the reader)
+        const currentUser = useAuthStore.getState().user;
+        const updatedMessages = roomMessages.map(msg =>
+          (!msg.isRead && msg.senderId === currentUser?.id)
+            ? { ...msg, isRead: true }
             : msg
         );
 
         db.saveMessages(chatRoomId, updatedMessages);
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: updatedMessages
-          }
-        };
+        return { messages: { ...s.messages, [chatRoomId]: updatedMessages } };
       });
     });
 
+    // ─── message_reaction_updated ────────────────────────────────────
     socket.on('message_reaction_updated', ({ messageId, chatRoomId, reactions }) => {
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
+        // FIX: Don't bail if roomMsgs is undefined — room might not be loaded yet
+        // In that case just skip (reaction will be correct when room loads)
         if (!roomMsgs) return s;
-        const updatedRoomMsgs = roomMsgs.map(m => m.id === messageId ? { ...m, reactions } : m);
+        const updatedRoomMsgs = roomMsgs.map(m =>
+          m.id === messageId ? { ...m, reactions } : m
+        );
         db.saveMessages(chatRoomId, updatedRoomMsgs);
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: updatedRoomMsgs
-          }
-        };
+        return { messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs } };
       });
     });
 
-    socket.on('participant_added', ({ chatRoomId, _participant }) => {
-      // Invalidate react-query cache via custom event or global queryClient if we had access
-      // For now, we can just trigger a reload if we are in this room
+    // ─── participant events ──────────────────────────────────────────
+    socket.on('participant_added', ({ chatRoomId }) => {
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
 
-    socket.on('participant_removed', ({ chatRoomId, _userId }) => {
+    socket.on('participant_removed', ({ chatRoomId }) => {
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
 
-    socket.on('participant_updated', ({ chatRoomId, _participant }) => {
+    socket.on('participant_updated', ({ chatRoomId }) => {
       window.dispatchEvent(new CustomEvent('chat_info_update', { detail: { chatRoomId } }));
     });
     
     socket.on('message_pinned', ({ chatRoomId, message }) => {
-      // Dispatch a custom event so ChatInfoDrawer or ChatScreen can react
       window.dispatchEvent(new CustomEvent('chat_pin_updated', { detail: { chatRoomId, pinnedMsg: message } }));
     });
 
@@ -226,7 +273,15 @@ export const useChatStore = create((set, get) => ({
   },
 
   disconnect: () => {
-    get().socket?.disconnect();
+    const sock = get().socket;
+    if (sock) {
+      sock.removeAllListeners(); // FIX: Clean up all listeners before disconnect
+      sock.disconnect();
+    }
+    // Clear typing timers on disconnect
+    typingTimers.forEach(t => clearTimeout(t));
+    typingTimers.clear();
+
     if (db && typeof db.clearAll === 'function') db.clearAll().catch(() => {});
     set({
       socket: null,
@@ -241,14 +296,11 @@ export const useChatStore = create((set, get) => ({
   },
 
   loadConversations: async () => {
-    // 1. Optimistically load from IndexedDB first
+    // 1. Optimistically load from IndexedDB first for instant display
     const cached = await db.getConversations();
-    if (cached) {
+    if (cached && cached.length > 0) {
       const totalUnread = cached.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
-      set(() => ({
-        conversations: cached,
-        totalUnread,
-      }));
+      set(() => ({ conversations: cached, totalUnread }));
     }
 
     set({ isConversationsLoading: true });
@@ -258,7 +310,7 @@ export const useChatStore = create((set, get) => ({
       const allConversations = res.data.data || [];
       const conversations = allConversations;
       
-      // Save fresh data to IndexedDB
+      // Persist fresh data
       db.saveConversations(conversations);
 
       const totalUnread = conversations.reduce((acc, c) => acc + (c.unreadCount || 0), 0);
@@ -272,11 +324,12 @@ export const useChatStore = create((set, get) => ({
         }
       });
 
+      // Subscribe to presence updates
       if (presenceIds.length > 0) {
         get().socket?.emit('subscribe_presence', presenceIds);
       }
 
-      // Join all chat rooms for real-time updates across the app
+      // Join all chat rooms for real-time updates
       conversations.forEach(c => {
         get().socket?.emit('join_chat_room', c.chatRoomId);
       });
@@ -285,13 +338,10 @@ export const useChatStore = create((set, get) => ({
         conversations,
         totalUnread,
         isConversationsLoading: false,
-        userPresence: {
-          ...s.userPresence,
-          ...presence
-        }
+        userPresence: { ...s.userPresence, ...presence }
       }));
     } catch (err) {
-      console.error('Failed to load conversations:', err);
+      console.error('[Chat] Failed to load conversations:', err);
       set({ isConversationsLoading: false });
     }
   },
@@ -308,7 +358,11 @@ export const useChatStore = create((set, get) => ({
   },
 
   joinRoom: (chatRoomId) => {
-    get().socket?.emit('join_chat_room', chatRoomId);
+    const socket = get().socket;
+    if (socket?.connected) {
+      socket.emit('join_chat_room', chatRoomId);
+    }
+    // FIX: If not connected yet, will be handled in connect() on reconnect
   },
 
   leaveRoom: (chatRoomId) => {
@@ -322,7 +376,7 @@ export const useChatStore = create((set, get) => ({
     // Create optimistic message
     const tempMsg = {
       id: tempId,
-      clientId: tempId, // Pass it to be returned
+      clientId: tempId,
       chatRoomId,
       senderId: user?.id,
       sender: user,
@@ -350,33 +404,34 @@ export const useChatStore = create((set, get) => ({
       set((s) => {
         const roomMsgs = s.messages[chatRoomId] || [];
         
-        // If the socket event already added this message (real ID is present), 
-        // just remove the temp one to clean up.
+        // If the socket event already replaced this message (real ID present), just remove temp
         if (roomMsgs.some(m => m.id === realMsg.id)) {
-           return {
-             messages: {
-               ...s.messages,
-               [chatRoomId]: roomMsgs.filter(m => m.id !== tempId)
-             }
-           };
+          return {
+            messages: {
+              ...s.messages,
+              [chatRoomId]: roomMsgs.filter(m => m.id !== tempId)
+            }
+          };
         }
 
-        // Otherwise replace the temp one
+        // Otherwise replace temp with real message
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === tempId ? realMsg : m),
+            [chatRoomId]: roomMsgs.map(m => m.id === tempId ? { ...realMsg, isSending: false } : m),
           }
         };
       });
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error('[Chat] Failed to send message:', err);
       set((s) => {
         const roomMsgs = s.messages[chatRoomId] || [];
         return {
           messages: {
             ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === tempId ? { ...m, isError: true, isSending: false } : m),
+            [chatRoomId]: roomMsgs.map(m =>
+              m.id === tempId ? { ...m, isError: true, isSending: false } : m
+            ),
           }
         };
       });
@@ -384,30 +439,61 @@ export const useChatStore = create((set, get) => ({
   },
 
   editMessage: async (messageId, content) => {
+    // Optimistic update
+    set((s) => {
+      for (const [chatRoomId, roomMsgs] of Object.entries(s.messages)) {
+        const idx = roomMsgs.findIndex(m => m.id === messageId);
+        if (idx !== -1) {
+          const updatedMsgs = roomMsgs.map(m =>
+            m.id === messageId ? { ...m, content, isEdited: true } : m
+          );
+          db.saveMessages(chatRoomId, updatedMsgs);
+          return { messages: { ...s.messages, [chatRoomId]: updatedMsgs } };
+        }
+      }
+      return s;
+    });
+
     try {
       const res = await chatApi.editMessage(messageId, { content });
       const updatedMsg = res.data.data;
+      // Socket will broadcast message_edited, which will update state again
+      // But apply API response immediately for accuracy
       set((s) => {
         const chatRoomId = updatedMsg.chatRoomId;
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: roomMsgs.map(m => m.id === messageId ? updatedMsg : m)
-          }
-        };
+        const updatedRoomMsgs = roomMsgs.map(m => m.id === messageId ? { ...m, ...updatedMsg } : m);
+        db.saveMessages(chatRoomId, updatedRoomMsgs);
+        return { messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs } };
       });
     } catch (err) {
-      console.error('Failed to edit message', err);
+      console.error('[Chat] Failed to edit message:', err);
     }
   },
 
   deleteMessage: async (messageId) => {
+    // Optimistic soft-delete
+    set((s) => {
+      for (const [chatRoomId, roomMsgs] of Object.entries(s.messages)) {
+        const idx = roomMsgs.findIndex(m => m.id === messageId);
+        if (idx !== -1) {
+          const updatedMsgs = roomMsgs.map(m =>
+            m.id === messageId ? { ...m, isDeleted: true, content: null, fileId: null } : m
+          );
+          db.saveMessages(chatRoomId, updatedMsgs);
+          return { messages: { ...s.messages, [chatRoomId]: updatedMsgs } };
+        }
+      }
+      return s;
+    });
+
     try {
       await chatApi.deleteMessage(messageId);
+      // Socket will broadcast message_deleted to confirm
     } catch (err) {
-      console.error('Failed to delete message:', err);
+      console.error('[Chat] Failed to delete message:', err);
+      // TODO: Revert optimistic delete on failure
     }
   },
 
@@ -419,9 +505,10 @@ export const useChatStore = create((set, get) => ({
     const prevMsgs = get().messages[chatRoomId];
     if (!prevMsgs) return;
 
-    // Optimistically update
+    // Optimistic update
     set((s) => {
       const roomMsgs = s.messages[chatRoomId];
+      if (!roomMsgs) return s;
       return {
         messages: {
           ...s.messages,
@@ -433,12 +520,14 @@ export const useChatStore = create((set, get) => ({
             
             if (existingIndex !== -1) {
               if (reactions[existingIndex].icon === icon) {
+                // Toggle off same reaction
                 reactions.splice(existingIndex, 1);
               } else {
-                reactions[existingIndex].icon = icon;
+                // Change reaction
+                reactions[existingIndex] = { ...reactions[existingIndex], icon };
               }
             } else {
-              reactions.push({ icon, userId: user.id });
+              reactions.push({ icon, userId: user.id, user: { id: user.id, fullname: user.fullname } });
             }
             
             return { ...m, reactions };
@@ -449,37 +538,28 @@ export const useChatStore = create((set, get) => ({
 
     try {
       const res = await chatApi.toggleReaction(messageId, icon);
-      // Socket will broadcast the true state, so we don't strictly need to set it here, 
-      // but we can update it just in case to be safe.
       const result = res.data.data;
+      // FIX: Apply API response directly — socket may also send reaction_updated
+      // but applying API result here ensures instant accuracy even if socket is slow
       set((s) => {
         const roomMsgs = s.messages[chatRoomId];
         if (!roomMsgs) return s;
-        const updatedRoomMsgs = roomMsgs.map(m => 
+        const updatedRoomMsgs = roomMsgs.map(m =>
           m.id === messageId ? { ...m, reactions: result.reactions } : m
         );
         db.saveMessages(chatRoomId, updatedRoomMsgs);
-        return {
-          messages: {
-            ...s.messages,
-            [chatRoomId]: updatedRoomMsgs
-          }
-        };
+        return { messages: { ...s.messages, [chatRoomId]: updatedRoomMsgs } };
       });
     } catch (err) {
-      console.error('Failed to toggle reaction:', err);
+      console.error('[Chat] Failed to toggle reaction:', err);
       // Revert optimistic update
       set((s) => ({
-        messages: {
-          ...s.messages,
-          [chatRoomId]: prevMsgs
-        }
+        messages: { ...s.messages, [chatRoomId]: prevMsgs }
       }));
     }
   },
 
   emitTyping: (chatRoomId) => {
-    // Basic throttle using a store variable
     const now = Date.now();
     const last = get().lastTypingTime || 0;
     if (now - last > 1500) {
@@ -496,18 +576,30 @@ export const useChatStore = create((set, get) => ({
   mergeMessages: (chatRoomId, fetchedMsgs) => {
     set((s) => {
       const currentMsgs = s.messages[chatRoomId] || [];
+      
       if (currentMsgs.length === 0) {
         db.saveMessages(chatRoomId, fetchedMsgs);
         return { messages: { ...s.messages, [chatRoomId]: fetchedMsgs } };
       }
 
-      // We have existing messages (like ones received via socket during fetch)
-      // We want to combine them, removing duplicates, and sort by createdAt
+      // Merge fetched + current (socket) messages, removing duplicates
+      // FIX: Current (socket) messages take priority over fetched for same ID
       const msgMap = new Map();
       fetchedMsgs.forEach(m => msgMap.set(m.id, m));
-      currentMsgs.forEach(m => msgMap.set(m.id, m)); // socket messages overwrite fetched ones if duplicate ID
+      
+      // Socket messages override fetched — they have latest reactions/edits
+      currentMsgs.forEach(m => {
+        if (!m.isSending) { // Don't let optimistic messages override real fetched data
+          msgMap.set(m.id, m);
+        } else {
+          // Keep sending messages that aren't in fetched
+          if (!msgMap.has(m.id)) msgMap.set(m.id, m);
+        }
+      });
 
-      const merged = Array.from(msgMap.values()).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      const merged = Array.from(msgMap.values()).sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
       db.saveMessages(chatRoomId, merged);
       return { messages: { ...s.messages, [chatRoomId]: merged } };
     });
@@ -515,28 +607,25 @@ export const useChatStore = create((set, get) => ({
 
   prependMessages: (chatRoomId, msgs) => {
     set((s) => {
-      const newRoomMsgs = [...msgs, ...(s.messages[chatRoomId] || [])];
+      const current = s.messages[chatRoomId] || [];
+      // Deduplicate prepended messages
+      const currentIds = new Set(current.map(m => m.id));
+      const uniqueNew = msgs.filter(m => !currentIds.has(m.id));
+      const newRoomMsgs = [...uniqueNew, ...current];
       db.saveMessages(chatRoomId, newRoomMsgs);
-      return {
-        messages: {
-          ...s.messages,
-          [chatRoomId]: newRoomMsgs,
-        },
-      };
+      return { messages: { ...s.messages, [chatRoomId]: newRoomMsgs } };
     });
   },
 
   addMessage: (msg) => {
     set((s) => {
       const chatRoomId = msg.chatRoomId;
-      const newRoomMsgs = [...(s.messages[chatRoomId] || []), msg];
+      const current = s.messages[chatRoomId] || [];
+      // Deduplicate
+      if (current.some(m => m.id === msg.id)) return s;
+      const newRoomMsgs = [...current, msg];
       db.saveMessages(chatRoomId, newRoomMsgs);
-      return {
-        messages: {
-          ...s.messages,
-          [chatRoomId]: newRoomMsgs,
-        },
-      };
+      return { messages: { ...s.messages, [chatRoomId]: newRoomMsgs } };
     });
   },
 

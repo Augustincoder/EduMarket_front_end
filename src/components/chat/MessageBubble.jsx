@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
 import { 
   Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, 
-  Edit2, Trash2, Ban, Clock, AlertCircle, FileType, Lock,
+  Edit2, Trash2, Clock, AlertCircle, FileType, Lock,
   ThumbsUp, ThumbsDown, Heart, Flame, Star, Zap, Smile, Coffee, Gift, Trophy
 } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
@@ -12,6 +12,8 @@ import DOMPurify from 'dompurify';
 import { VoicePlayer } from './VoicePlayer';
 import { useAuthStore } from '../../store/authStore';
 import { useChatStore } from '../../store/chatStore';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { hapticLight, hapticSuccess } from '../../lib/telegram';
 
 const REACTION_ICONS = {
   ThumbsUp, ThumbsDown, Heart, Flame, Star, Zap, Smile, Coffee, Gift, Trophy
@@ -110,16 +112,34 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
     return acc;
   }, {});
 
+  // Swipe-to-reply physics
+  const dragX = useMotionValue(0);
+  const replyIconOpacity = useTransform(dragX, [0, -30, -60], [0, 0, 1]);
+  const replyIconScale = useTransform(dragX, [0, -60], [0.5, 1.2]);
+  
+  const handleDragEnd = (event, info) => {
+    if (info.offset.x < -60) {
+      onReply?.(message);
+      hapticSuccess();
+    }
+  };
+
   if (message.isDeleted) {
     return (
-      <div className={cn('flex items-end gap-2 max-w-[85%] animate-fade-in', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}>
-        <div className={cn('px-3 py-2 text-[14px] italic relative rounded-xl', isMe ? 'bg-edu-border/30 rounded-br-[4px] text-edu-muted' : 'bg-edu-border/30 rounded-bl-[4px] text-edu-muted border border-edu-border/50')}>
-          <div className="flex items-center gap-2">
-            <Ban size={14} className="opacity-50" />
-            <span>Ushbu xabar o'chirildi</span>
-          </div>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
+        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className={cn('flex items-end gap-2 max-w-[85%] my-2', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto')}
+      >
+        <div className={cn(
+          "px-4 py-2.5 rounded-2xl border border-dashed flex items-center gap-2",
+          isMe ? "bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 rounded-br-[4px]" : "bg-edu-surface dark:bg-edu-surface border-edu-border/50 rounded-bl-[4px]"
+        )}>
+          <Trash2 size={14} className="text-edu-muted/50" />
+          <p className="text-[13px] italic font-medium text-edu-muted/70">Xabar o'chirildi</p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -136,21 +156,37 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
   return (
     <>
-      {showMenu && (
-        <div 
-          className="fixed inset-0 z-[60] cursor-default bg-black/5" 
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMenu(false);
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] cursor-default bg-black/10 backdrop-blur-[2px]" 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMenu(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
 
-      <div className={cn('group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-2 animate-slide-up relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto', showMenu && 'z-[70]')}>
+      <motion.div 
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={{ left: 0.2, right: 0 }}
+        onDragEnd={handleDragEnd}
+        style={{ x: dragX }}
+        initial={{ opacity: 0, scale: 0.5, y: 40, transformOrigin: isMe ? "bottom right" : "bottom left" }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 550, damping: 28, mass: 0.8 }}
+        className={cn('group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-2 relative', isMe ? 'flex-row-reverse ml-auto' : 'mr-auto', showMenu && 'z-[70]')}
+      >
         <div className="flex flex-col gap-1 w-full relative">
-          <div
+          <motion.div
+            whileTap={{ scale: 0.97 }}
+            animate={showMenu ? { scale: 0.95 } : { scale: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className={cn(
-              'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-all shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110 active:scale-[0.99]',
+              'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative transition-shadow shadow-sm cursor-pointer hover:brightness-98 dark:hover:brightness-110',
               isMe
                 ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px] shadow-edu-primary/10'
                 : 'bg-edu-surface dark:bg-edu-surface text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
@@ -163,20 +199,26 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
               if (hasFile && message.fileType !== 'voice' && (!isImage || message.isSecureFile)) {
                 handleFileClick();
               } else {
+                hapticLight();
                 setShowMenu(!showMenu);
               }
             }}
-            onContextMenu={(e) => { e.preventDefault(); setShowMenu(true); }}
+            onContextMenu={(e) => { e.preventDefault(); hapticLight(); setShowMenu(true); }}
           >
             {/* Actions Menu */}
-            {showMenu && (
-              <div 
-                className={cn(
-                  "absolute bottom-full mb-2 z-[80] bg-edu-surface dark:bg-edu-surface border border-edu-border rounded-xl shadow-lg py-1 animate-ios-pop flex flex-col min-w-[180px] max-w-[240px]",
-                  isMe ? "right-0" : "left-0"
-                )} 
-                onClick={(e) => e.stopPropagation()}
-              >
+            <AnimatePresence>
+              {showMenu && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 10, transformOrigin: isMe ? "bottom right" : "bottom left" }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className={cn(
+                    "absolute bottom-full mb-2 z-[80] bg-edu-surface/90 backdrop-blur-xl border border-edu-border rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] py-1 flex flex-col min-w-[180px] max-w-[240px] overflow-hidden",
+                    isMe ? "right-0" : "left-0"
+                  )} 
+                  onClick={(e) => e.stopPropagation()}
+                >
                 {/* Reactions Row */}
                 <div className="flex items-center gap-1 px-2 py-2 border-b border-edu-border/50 overflow-x-auto scrollbar-hide">
                   {Object.entries(REACTION_ICONS).map(([name, Icon]) => (
@@ -203,8 +245,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                     <Trash2 size={15} /> O'chirish
                   </button>
                 )}
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Reply Preview */}
             {message.replyTo && !message.replyTo.isDeleted && (
@@ -280,7 +323,15 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                 )
               )}
             </div>
-          </div>
+          </motion.div>
+
+          {/* Swipe to reply icon indicator */}
+          <motion.div 
+            className="absolute top-1/2 -translate-y-1/2 -right-12 flex items-center justify-center w-8 h-8 rounded-full bg-edu-surface/80 backdrop-blur-md shadow-sm border border-edu-border pointer-events-none"
+            style={{ opacity: replyIconOpacity, scale: replyIconScale }}
+          >
+            <CornerDownRight size={14} className="text-edu-primary" />
+          </motion.div>
 
           {/* Render Reactions */}
           {Object.keys(groupedReactions).length > 0 && (
@@ -290,19 +341,24 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                 if (!Icon) return null;
                 const hasReacted = users.includes(user?.id);
                 return (
-                  <button
-                    key={iconName}
+                  <motion.button
+                    key={`${iconName}-${users.length}`} // Key triggers remount pop animation
+                    initial={{ scale: 0.5, y: 10, opacity: 0 }}
+                    animate={{ scale: 1, y: 0, opacity: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
                     onClick={() => handleReact(iconName)}
                     className={cn(
-                      "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold transition-all active:scale-95 shadow-sm border",
+                      "group flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold shadow-sm border",
                       hasReacted 
                         ? "bg-edu-primary/10 border-edu-primary/30 text-edu-primary dark:bg-edu-primary/20" 
                         : "bg-edu-surface dark:bg-slate-800 border-edu-border/60 text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5"
                     )}
                   >
-                    <Icon size={14} className={cn("transition-transform group-hover:scale-110", hasReacted ? "text-edu-primary fill-edu-primary/20" : "")} />
+                    <Icon size={14} className={cn("transition-transform", hasReacted ? "text-edu-primary fill-edu-primary/20" : "")} />
                     <span className={hasReacted ? "text-edu-primary font-extrabold" : "font-medium"}>{users.length}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -319,7 +375,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
         >
           <MoreVertical size={16} />
         </button>
-      </div>
+      </motion.div>
     </>
   );
 }

@@ -1,5 +1,5 @@
-// src/components/ui/ProgressStepper.jsx
 import { cn } from '../../lib/utils';
+import { motion } from 'framer-motion';
 
 export function ProgressStepper({ steps, current, onStepClick }) {
   // Mobile-first minimalistic premium stepper
@@ -26,11 +26,19 @@ export function ProgressStepper({ steps, current, onStepClick }) {
               disabled={!onStepClick || stepNum >= current}
               aria-label={`O'tish: ${steps[i]}`}
               className={cn(
-                'h-1.5 rounded-full transition-all duration-700 ease-in-out',
-                isActive ? 'w-12 bg-edu-primary shadow-lg shadow-edu-primary/30' : 
+                'h-1.5 rounded-full transition-all duration-700 ease-in-out relative overflow-hidden',
+                isActive ? 'w-16 bg-edu-primary shadow-[0_0_12px_rgba(10,132,255,0.4)]' : 
                 isDone ? 'w-6 bg-edu-primary/40 cursor-pointer hover:bg-edu-primary/60 active:scale-95' : 'w-6 bg-black/[0.05] dark:bg-white/10 opacity-50 cursor-not-allowed'
               )}
-            />
+            >
+              {isActive && (
+                <motion.div 
+                  className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-transparent via-white to-transparent opacity-80 z-10"
+                  animate={{ x: ["-150%", "350%"] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                />
+              )}
+            </button>
           );
         })}
       </div>

@@ -2,6 +2,33 @@ import { Trophy, Star, TrendingUp, Zap, Flame, ClipboardList, Wallet } from 'luc
 import { calculateLevel, calculateStreak } from '../../../lib/gamification';
 import { formatPrice } from '../../../lib/utils';
 import { WidgetError } from '../../../components/ui/SectionErrorBoundary';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useEffect } from 'react';
+
+function CountUp({ value, duration = 2, isPrice = false, suffix = '' }) {
+  const count = useMotionValue(0);
+  
+  const rounded = useTransform(count, (latest) => {
+    if (isPrice) return formatPrice(Math.floor(latest));
+    if (value % 1 !== 0 || (typeof value === 'string' && value.includes('.'))) {
+      return latest.toFixed(1) + suffix;
+    }
+    return Math.floor(latest) + suffix;
+  });
+  
+  useEffect(() => {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(numValue)) {
+      count.set(0);
+      return;
+    }
+    const controls = animate(count, numValue, { duration, ease: "easeOut" });
+    return controls.stop;
+  }, [value, duration, count]);
+
+  if (typeof value === 'string' && isNaN(parseFloat(value))) return <span>{value}</span>;
+  return <motion.span>{rounded}</motion.span>;
+}
 
 export function ProfileStats({ me, activeRole, clientStats, isLoading, error, onRetry }) {
   if (error) {
@@ -23,14 +50,18 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading, error, on
         <div className="bg-edu-surface border border-edu-border/30 rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
           <ClipboardList size={22} className="text-edu-primary" />
           <div className="mt-2">
-            <p className="text-lg font-bold font-display text-edu-text leading-none">{clientStats?.createdTasks ?? 0}</p>
+            <p className="text-lg font-bold font-display text-edu-text leading-none">
+              <CountUp value={clientStats?.createdTasks ?? 0} />
+            </p>
             <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">E'lon qilingan</p>
           </div>
         </div>
         <div className="bg-edu-surface border border-edu-border/30 rounded-xl p-3 flex flex-col justify-between min-h-[82px] shadow-sm relative overflow-hidden">
           <Wallet size={22} className="text-indigo-500" />
           <div className="mt-2">
-            <p className="text-lg font-bold font-display text-edu-text leading-none truncate">{formatPrice(clientStats?.totalSpent ?? 0)}</p>
+            <p className="text-lg font-bold font-display text-edu-text leading-none truncate">
+              <CountUp value={clientStats?.totalSpent ?? 0} isPrice />
+            </p>
             <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">Sarflandi</p>
           </div>
         </div>
@@ -38,7 +69,7 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading, error, on
           <Zap size={22} className="text-orange-500" />
           <div className="mt-2">
             <p className="text-lg font-bold font-display text-edu-text leading-none">
-              {(clientStats?.openTasks ?? 0) + (clientStats?.inProgressTasks ?? 0) + (clientStats?.inReviewTasks ?? 0)}
+              <CountUp value={(clientStats?.openTasks ?? 0) + (clientStats?.inProgressTasks ?? 0) + (clientStats?.inReviewTasks ?? 0)} />
             </p>
             <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-1 leading-snug">Faol ishlar</p>
           </div>
@@ -107,7 +138,9 @@ export function ProfileStats({ me, activeRole, clientStats, isLoading, error, on
             <div key={i} className={`bg-edu-surface bg-gradient-to-br ${item.color} border p-5 rounded-md flex flex-col justify-between h-full min-h-[110px] shadow-sm transition-all hover:border-edu-text/10`}>
               <span>{item.icon}</span>
               <div className="mt-4">
-                <p className="text-2xl font-bold font-display text-edu-text leading-none">{item.value}</p>
+                <p className="text-2xl font-bold font-display text-edu-text leading-none">
+                  <CountUp value={item.value} suffix={typeof item.value === 'string' && item.value.includes('%') ? '%' : typeof item.value === 'string' && item.value.includes('s') ? 's' : ''} />
+                </p>
                 <p className="text-[9px] font-bold text-edu-muted uppercase tracking-wider mt-2 leading-snug opacity-70">{item.label}</p>
               </div>
             </div>
