@@ -82,7 +82,8 @@ export function useAuth() {
     const handler = () => {
       resetAllCachesAndStores();
       navigate('/', { replace: true });
-      toast.error(i18n.t('system.auth.sessionExpired'));
+      // Use unique ID to prevent notification flood
+      toast.error(i18n.t('system.auth.sessionExpired'), { id: 'session-expired' });
     };
     window.addEventListener('auth:logout', handler);
     return () => window.removeEventListener('auth:logout', handler);

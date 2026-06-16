@@ -71,7 +71,7 @@ export function BottomNav() {
         borderRadius: hidden ? '28px' : '0px',
         opacity: hidden ? 0.92 : 1,
       }}
-      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       className={cn(
         'fixed left-1/2 -translate-x-1/2 max-w-[768px]',
         'bg-edu-surface/90 backdrop-blur-2xl border-t border-edu-border/60',
@@ -145,7 +145,7 @@ export function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="nav-indicator"
-                    className="absolute top-1 inset-x-2 h-[3px] bg-edu-primary rounded-b-full"
+                    className="absolute bottom-0 inset-x-3 h-[3px] bg-edu-primary rounded-t-full"
                     transition={{ type: 'spring', stiffness: 420, damping: 30 }}
                   />
                 )}

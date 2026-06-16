@@ -56,7 +56,7 @@ export default function ChatScreen() {
     taskId: roomInfoData?.room?.taskId || roomInfoData?.taskId,
     title: roomInfoData?.room?.name || roomInfoData?.name || '',
     avatarUrl: roomInfoData?.room?.avatarUrl || roomInfoData?.avatarUrl,
-    otherUser: (roomInfoData?.room?.type === 'DIRECT' || roomInfoData?.type === 'DIRECT') 
+    otherUser: (roomInfoData?.room?.type === 'DIRECT' || roomInfoData?.type === 'DIRECT' || roomInfoData?.room?.type === 'TASK_ROOM' || roomInfoData?.type === 'TASK_ROOM') 
       ? roomInfoData?.participants?.find(p => p.user?.id !== user?.id)?.user 
       : null
   };
@@ -80,6 +80,7 @@ export default function ChatScreen() {
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
   const [viewerFile, setViewerFile] = useState(null);
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const lastReadCall = useRef(0);
 
@@ -171,11 +172,11 @@ export default function ChatScreen() {
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 24 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full grid grid-rows-[auto_1fr_auto] h-[100dvh] z-50"
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full flex flex-col h-[100dvh] z-50 overflow-hidden"
     >
-      {/* Row 1: Header Area */}
-      <div className="flex flex-col z-30">
+      {/* Header Area */}
+      <div className="shrink-0 flex flex-col z-30 bg-edu-bg/90 backdrop-blur-xl border-b border-edu-border/50 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
         <Header
           title={title}
           subtitle={subtitle}
@@ -183,7 +184,7 @@ export default function ChatScreen() {
             if (isGroup || conversation?.type === 'DIRECT') setIsGroupSettingsOpen(true);
           }}
           showBack
-          className="!border-b-0"
+          className="!border-b-0 bg-transparent"
           right={
             <div className="flex items-center gap-2">
               {!isGroup && (
@@ -191,11 +192,11 @@ export default function ChatScreen() {
                   <div className={cn(
                     "w-2 h-2 rounded-full transition-colors duration-500",
                     isCounterpartOnline
-                      ? "bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.7)]"
-                      : "bg-slate-400 dark:bg-slate-600"
+                      ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+                      : "bg-slate-400/50 dark:bg-slate-600/50"
                   )} />
                   {isCounterpartOnline && (
-                    <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">Online</span>
+                    <span className="text-[11px] font-bold text-green-600 dark:text-green-400">Online</span>
                   )}
                 </div>
               )}
@@ -203,19 +204,17 @@ export default function ChatScreen() {
               {isGroup ? (
                 <button 
                   onClick={() => setIsGroupSettingsOpen(true)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 transition-colors"
-                  title="Guruh sozlamalari"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 active:scale-95 transition-all"
                 >
-                  <Settings2 size={16} />
+                  <Settings2 size={18} />
                 </button>
               ) : (
                 taskId && (
                   <button 
                     onClick={() => setIsWorkspaceOpen(true)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 transition-colors"
-                    title="Ish maydoni (Milestones)"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-primary/10 text-edu-primary hover:bg-edu-primary/20 active:scale-95 transition-all"
                   >
-                    <LayoutDashboard size={14} />
+                    <LayoutDashboard size={16} />
                   </button>
                 )
               )}
@@ -223,43 +222,39 @@ export default function ChatScreen() {
               {task && !task.isCoWorking && !isGroup && (
                 <button 
                   onClick={() => navigate(`/report?targetId=${isClient ? task.freelancerId : task.clientId}&targetType=USER`)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-urgent/10 text-edu-urgent hover:bg-edu-urgent/20 transition-colors"
-                  title="Shikoyat qilish"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-edu-urgent/10 text-edu-urgent hover:bg-edu-urgent/20 active:scale-95 transition-all"
                 >
-                  <Flag size={14} />
+                  <Flag size={16} />
                 </button>
               )}
             </div>
           }
         />
-        
-        {/* Divider */}
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-edu-border/50 to-transparent" />
 
         {/* IN_REVIEW sticky banner */}
         <AnimatePresence>
           {isInReview && isClient && !isGroup && (
             <motion.div 
-              initial={{ y: -100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -100, opacity: 0 }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="absolute top-full left-0 w-full px-4 pt-2 pb-1 z-20"
+              className="w-full px-3 pb-2 z-20 overflow-hidden"
             >
-              <Card tilt glare radius="xl" className="bg-edu-surface/90 backdrop-blur-xl border border-yellow-500/30 shadow-[0_8px_32px_rgba(234,179,8,0.15)] relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-yellow-500" />
+              <Card tilt glare radius="xl" className="bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/30 shadow-sm relative">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-yellow-500 rounded-l-xl" />
                 <CardContent className="p-3">
                   <p className="text-[13px] font-bold text-edu-text mb-2.5 flex items-center gap-2">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-600 text-[12px] shadow-sm">
-                      <Zap size={12} className="animate-pulse" />
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-600 text-[12px]">
+                      <Zap size={14} className="animate-pulse" />
                     </span>
                     Ish topshirildi, tekshiring!
                   </p>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="primary" fullWidth onClick={() => setAcceptDeliveryOpen(true)} className="shadow-sm">
+                    <Button size="sm" variant="primary" fullWidth onClick={() => setAcceptDeliveryOpen(true)} className="shadow-sm h-8 text-[12px]">
                       <CheckCircle size={14} className="mr-1" /> Qabul
                     </Button>
-                    <Button size="sm" variant="secondary" fullWidth onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }} className="bg-white/50 dark:bg-black/20 hover:bg-white/80 transition-colors">
+                    <Button size="sm" variant="secondary" fullWidth onClick={() => { setRevisionNote(''); setRevisionErrors({}); setRevisionOpen(true); }} className="h-8 text-[12px] bg-white/50 dark:bg-black/20">
                       <RefreshCw size={14} className="mr-1" /> Qaytarish
                     </Button>
                   </div>
@@ -270,118 +265,124 @@ export default function ChatScreen() {
         </AnimatePresence>
       </div>
 
-      {/* Row 2: Main Chat Area */}
-      <div className="flex-1 min-h-0 bg-mesh-aurora relative px-2">
+      {/* Main Chat Area */}
+      <div className="flex-1 min-h-0 bg-mesh-aurora relative px-2 w-full">
         <Virtuoso
           ref={virtuosoRef}
           data={roomMessages}
           firstItemIndex={Math.max(0, 100000 - roomMessages.length)}
           initialTopMostItemIndex={roomMessages.length - 1}
-          followOutput="auto"
+          followOutput="smooth"
           alignToBottom
+          atBottomStateChange={setIsAtBottom}
           className="h-full scrollbar-hide"
           components={{
             Header: () => (
-              <div className="flex flex-col gap-4 mb-4 pt-4 px-1">
+              <div className="flex flex-col gap-4 mb-4 pt-6 px-1">
                 {task && (conversation.type === 'TASK_ROOM' || conversation.type === 'DIRECT') && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
-                  <motion.div initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="mx-auto w-full max-w-[90%] md:max-w-md">
-                    <Card tilt glare radius="xl" className="bg-gradient-to-br from-blue-50/90 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/10 border border-blue-200/50 dark:border-blue-800/30 p-4 shadow-[0_8px_32px_rgba(59,130,246,0.1)] relative overflow-hidden backdrop-blur-md">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-500 to-indigo-500" />
+                  <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="mx-auto w-full max-w-[90%] md:max-w-md">
+                    <Card tilt glare radius="xl" className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-blue-200/60 dark:border-blue-800/60 p-4 shadow-lg relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                            <CheckCircle size={16} />
+                          <div className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                            <CheckCircle size={18} strokeWidth={2.5} />
                           </div>
-                          <h3 className="font-bold text-[14px] text-blue-900 dark:text-blue-100 tracking-tight">✅ Kelishuv Tasdiqlandi!</h3>
+                          <h3 className="font-bold text-[14px] text-edu-text tracking-tight">Kelishuv Tasdiqlandi</h3>
                         </div>
                         <button 
                           onClick={() => navigate(`/tasks/${task.id}`)}
-                          className="text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-2.5 py-1.5 rounded-lg transition-colors active:scale-95"
+                          className="text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 px-3 py-1.5 rounded-full transition-colors active:scale-95"
                         >
                           Batafsil
                         </button>
                       </div>
                       
-                      <div className="bg-white/80 dark:bg-black/30 rounded-xl p-3 mb-3 border border-blue-100/50 dark:border-blue-800/20 grid grid-cols-2 gap-3 backdrop-blur-sm">
-                      <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Kelishilgan narx</span>
-                        <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
-                          {task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} UZS` : 'Kelishilmagan'}
-                        </strong>
+                      <div className="bg-edu-bg rounded-xl p-3 mb-3 border border-edu-border/50 grid grid-cols-2 gap-3">
+                        <div>
+                          <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Kelishilgan narx</span>
+                          <strong className="text-[14px] text-edu-primary font-bold">
+                            {task.agreedPrice ? `${new Intl.NumberFormat('uz-UZ').format(task.agreedPrice)} UZS` : 'Kelishilmagan'}
+                          </strong>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Muddat</span>
+                          <strong className="text-[14px] text-edu-primary font-bold">
+                            {new Date(task.deadline).toLocaleDateString('uz-UZ')}
+                          </strong>
+                        </div>
                       </div>
-                      <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-widest text-edu-muted mb-0.5">Muddat</span>
-                        <strong className="text-[14px] text-blue-700 dark:text-blue-300 font-bold">
-                          {new Date(task.deadline).toLocaleDateString('uz-UZ')}
-                        </strong>
-                      </div>
-                    </div>
 
-                    <p className="text-[11px] leading-relaxed text-blue-800/70 dark:text-blue-200/70 font-medium bg-blue-500/5 p-2 rounded-lg">
-                      <ShieldAlert size={12} className="inline mr-1 -mt-0.5" />
-                      Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring.
-                    </p>
+                      <p className="text-[11px] leading-relaxed text-edu-muted font-medium bg-edu-surface p-2.5 rounded-xl border border-edu-border/50 flex gap-2">
+                        <ShieldAlert size={14} className="shrink-0 text-yellow-500 mt-0.5" />
+                        <span>Diqqat: Barcha yozishmalar va fayl almashinuvlarini platformada olib boring.</span>
+                      </p>
                     </Card>
                   </motion.div>
                 )}
                 
                 {task && task.status === 'ASSIGNED' && !isClient && conversation.type === 'DIRECT' && (
-                  <Button size="md" variant="accent" fullWidth className="shadow-lg" onClick={() => navigate(`/tasks/${task.id}`)}>
-                    Vazifani boshlash
-                  </Button>
+                  <div className="px-4">
+                    <Button size="md" variant="primary" fullWidth className="shadow-lg rounded-xl" onClick={() => navigate(`/tasks/${task.id}`)}>
+                      Vazifani boshlash
+                    </Button>
+                  </div>
                 )}
 
                 {isLoading ? <ChatBubbleSkeleton /> : null}
                 
                 {hasMore && !isLoading && (
                   <div className="flex justify-center my-2">
-                    <Button size="sm" variant="secondary" onClick={loadMore} isLoading={isLoadingMore} className="bg-edu-surface/50 border-edu-border/50">
-                      Eski xabarlarni yuklash
-                    </Button>
+                    <button onClick={loadMore} disabled={isLoadingMore} className="px-4 py-1.5 rounded-full bg-edu-surface border border-edu-border text-[12px] font-bold text-edu-muted hover:text-edu-text transition-colors">
+                      {isLoadingMore ? 'Yuklanmoqda...' : 'Eski xabarlarni yuklash'}
+                    </button>
                   </div>
                 )}
                 
                 {!isLoading && roomMessages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-16 opacity-40">
-                    <div className="w-20 h-20 rounded-full bg-edu-primary/5 flex items-center justify-center mb-4">
-                      <Hand size={40} className="text-edu-primary opacity-50" />
+                  <div className="flex flex-col items-center justify-center py-20 opacity-60">
+                    <div className="w-16 h-16 rounded-full bg-edu-primary/10 flex items-center justify-center mb-4">
+                      <Hand size={32} className="text-edu-primary" />
                     </div>
-                    <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang!</p>
+                    <p className="text-[15px] font-bold text-edu-text tracking-tight">Suhbatni boshlang</p>
+                    <p className="text-[12px] text-edu-muted mt-1">Birinchi xabarni yozing</p>
                   </div>
                 )}
               </div>
             ),
             Footer: () => (
-              <div className="flex flex-col gap-1 mt-1 px-1">
+              <div className="flex flex-col gap-1 mt-2 px-1">
                 <AnimatePresence>
                   {typingUsers?.[chatRoomId]?.length > 0 && (
                     <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 6 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex items-center gap-2 text-edu-muted text-[12px] font-medium px-3 py-1"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-2 px-3 py-2 max-w-fit bg-edu-surface/80 backdrop-blur-sm rounded-2xl rounded-bl-sm border border-edu-border/50 ml-1"
                     >
-                      <div className="flex gap-[3px] items-end">
+                      <div className="flex gap-[4px] items-center h-4">
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
-                            animate={{ scaleY: [1, 1.8, 1] }}
-                            transition={{ duration: 0.7, repeat: Infinity, ease: 'easeInOut', delay: i * 0.12 }}
-                            className="w-1 h-2.5 bg-edu-primary/60 rounded-full origin-bottom block"
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+                            className="w-1.5 h-1.5 bg-edu-primary rounded-full block"
                           />
                         ))}
                       </div>
-                      <span className="text-edu-muted/80">Yozmoqda...</span>
+                      <span className="text-edu-primary text-[11px] font-bold ml-1">Yozmoqda...</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <div className="h-4" />
+                {/* Spacer to ensure the last message has breathing room above the input area */}
+                {/* If the input is floating (88%), we need less extra padding, but it's safe to have enough */}
+                <div className="h-10" />
               </div>
             )
           }}
           itemContent={(index, msg) => (
-            <div className="mb-1.5 px-1">
+            <div className="mb-2 px-1">
               <MessageBubble 
                 message={msg} 
                 isMe={msg.senderId === user?.id} 
@@ -400,15 +401,40 @@ export default function ChatScreen() {
         />
       </div>
 
-      {/* Input */}
-      <div className="shrink-0 relative z-20 pb-4 pt-2 px-3 bg-gradient-to-t from-edu-bg via-edu-bg to-transparent">
-        <ChatInput 
-          onSend={handleSend} 
-          onTyping={() => emitTyping(chatRoomId)} 
-          replyingTo={replyingTo}
-          editingMessage={editingMessage}
-          onCancelAction={handleCancelAction}
-        />
+      {/* ── Dynamic Floating Input Island (Design Spells) ✨ ───────────── */}
+      <div className="shrink-0 relative z-30 w-full flex justify-center pointer-events-none">
+        <motion.div
+          animate={{
+            width: isAtBottom ? '100%' : '88%',
+            marginBottom: isAtBottom ? '0px' : '16px',
+            paddingBottom: isAtBottom ? 'calc(env(safe-area-inset-bottom) + 12px)' : '12px',
+            borderRadius: isAtBottom ? '0px' : '32px',
+            boxShadow: isAtBottom
+              ? '0 -4px 20px -10px rgba(0,0,0,0.05), 0 -1px 2px rgba(0,0,0,0.02)'
+              : '0 10px 40px -10px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.1)',
+          }}
+          transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+          className={cn(
+            'pointer-events-auto',
+            'relative overflow-hidden pt-2 px-3',
+            'bg-edu-bg/95 backdrop-blur-2xl border border-edu-border/40',
+            !isAtBottom && 'border border-white/20 dark:border-white/10'
+          )}
+          style={{
+            borderBottomWidth: isAtBottom ? '0px' : '1px',
+          }}
+        >
+          {/* Shimmer gloss line at top */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent pointer-events-none" />
+
+          <ChatInput 
+            onSend={handleSend} 
+            onTyping={() => emitTyping(chatRoomId)} 
+            replyingTo={replyingTo}
+            editingMessage={editingMessage}
+            onCancelAction={handleCancelAction}
+          />
+        </motion.div>
       </div>
 
       {/* ── Modals ─────────────────────────── */}

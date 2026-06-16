@@ -139,30 +139,42 @@ export function TaskSearchHeader({
       </div>
 
       {/* ── Sticky Category Island — iOS Telegram Folders style ───────────── */}
-      <div className="sticky top-0 z-30 py-2.5 px-4 pointer-events-none">
-        {/*
-          Floating glass island — 4 tarafdan uqmoqda,
-          backdrop-blur + subtle border + shadow
-        */}
-        <div
+      {/* ── Dynamic Category Island — Design Spells ✨ ───────────── */}
+      <div className="sticky top-0 z-30 pointer-events-none flex justify-center w-full">
+        <motion.div
+          animate={{
+            width: collapsed ? '88%' : '100%',
+            marginTop: collapsed ? '12px' : '0px',
+            borderRadius: collapsed ? '28px' : '0px',
+            opacity: collapsed ? 0.95 : 1,
+            boxShadow: collapsed 
+              ? '0 10px 30px -10px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.05)'
+              : '0 4px 20px -10px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02)'
+          }}
+          transition={{ type: 'spring', stiffness: 260, damping: 26 }}
           className={cn(
             'pointer-events-auto',
-            'relative rounded-2xl overflow-hidden',
+            'relative overflow-hidden',
             // Glass island container
-            'bg-edu-surface/70 dark:bg-edu-surface/60',
+            'bg-edu-surface/85 dark:bg-edu-surface/75',
             'backdrop-blur-2xl',
-            'border border-white/30 dark:border-white/10',
-            'shadow-[0_4px_24px_rgba(0,0,0,0.10),0_1px_4px_rgba(0,0,0,0.06)]',
-            'dark:shadow-[0_4px_24px_rgba(0,0,0,0.30)]'
+            'border-b border-edu-border/50',
+            collapsed && 'border border-white/30 dark:border-white/10'
           )}
+          style={{
+            borderBottomWidth: collapsed ? '1px' : '1px',
+            borderTopWidth: collapsed ? '1px' : '0px',
+            borderLeftWidth: collapsed ? '1px' : '0px',
+            borderRightWidth: collapsed ? '1px' : '0px',
+          }}
         >
           {/* Shimmer gloss line at top */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent pointer-events-none" />
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none" />
 
           {/* Scroll container */}
           <div
             ref={scrollRef}
-            className="flex gap-1 overflow-x-auto scrollbar-hide px-2 py-2 items-center"
+            className="flex gap-1.5 overflow-x-auto scrollbar-hide px-3 py-2 items-center"
           >
             {/* "Barchasi" chip */}
             <span data-active={!filterState.category ? 'true' : 'false'}>
@@ -198,8 +210,8 @@ export function TaskSearchHeader({
           </div>
 
           {/* Right fade — indicates scrollability */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-edu-surface/80 to-transparent pointer-events-none rounded-r-2xl" />
-        </div>
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-edu-surface/80 to-transparent pointer-events-none" />
+        </motion.div>
       </div>
     </>
   );

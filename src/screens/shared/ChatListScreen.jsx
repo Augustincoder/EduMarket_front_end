@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageLayout } from '../../components/layout/PageLayout';
 import { Avatar } from '../../components/ui/Avatar';
 import { useChatStore } from '../../store/chatStore';
+import { useAuthStore } from '../../store/authStore';
 import { timeAgo, cn } from '../../lib/utils';
 import { hapticLight } from '../../lib/telegram';
 import { SectionErrorBoundary, WidgetError } from '../../components/ui/SectionErrorBoundary';
@@ -86,9 +87,11 @@ function CreateGroupModal({ isOpen, onClose, onSuccess }) {
 
 function ChatListWidget({ searchTerm }) {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const conversations = useChatStore((s) => s.conversations);
   const loadConversations = useChatStore((s) => s.loadConversations);
   const userPresence = useChatStore((s) => s.userPresence);
+  const typingUsers = useChatStore((s) => s.typingUsers);
   const isConversationsLoading = useChatStore((s) => s.isConversationsLoading);
   const [error, setError] = useState(null);
 
@@ -200,87 +203,142 @@ function ChatListWidget({ searchTerm }) {
           {searchTerm && <h3 className="text-xs font-bold text-edu-muted uppercase tracking-wider mb-1 px-1">Suhbatlar</h3>}
           <AnimatePresence mode="popLayout">
             {filteredConversations.map((conv) => {
-          const isGroup = conv.type === 'CUSTOM_GROUP';
-          const isOnline = conv.otherUser && userPresence[conv.otherUser.id];
-          
-          return (
-            <motion.div 
-              key={conv.chatRoomId}
-              variants={item}
-              layout
-              onClick={() => handleOpenChat(conv.chatRoomId)}
-              className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden"
-            >
-              {/* Unread indicator glow */}
-              {conv.unreadCount > 0 && (
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-edu-primary shadow-[0_0_10px_rgba(59,130,246,0.6)]" />
-              )}
+              const isGroup = conv.type === 'CUSTOM_GROUP';
+              const isOnline = conv.otherUser && userPresence[conv.otherUser.id];
+              const isTyping = typingUsers?.[conv.chatRoomId]?.length > 0;
+              const hasUnread = conv.unreadCount > 0;
               
-              <div className="flex items-center gap-4">
-                <div className="relative shrink-0">
-                  {isGroup ? (
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
-                      <Users size={24} />
-                    </div>
-                  ) : (
-                    <Avatar name={conv.title} avatarUrl={conv.avatarUrl} size="lg" />
+              return (
+                <motion.div 
+                  key={conv.chatRoomId}
+                  variants={item}
+                  layout
+                  onClick={() => handleOpenChat(conv.chatRoomId)}
+                  whileTap={{ scale: 0.98, backgroundColor: 'rgba(0,0,0,0.03)' }}
+                  className={cn(
+                    "group relative flex items-center gap-3.5 p-2 rounded-2xl cursor-pointer transition-colors overflow-hidden mx-1",
+                    hasUnread ? "bg-blue-50/50 dark:bg-blue-900/10" : "hover:bg-black/5 dark:hover:bg-white/5"
                   )}
-                  
-                  {isOnline && !isGroup && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-edu-surface rounded-full shadow-sm z-10" />
-                  )}
+                >
+                  {/* Unread Left Dot Magic (Design Spells) */}
+                  <AnimatePresence>
+                    {hasUnread && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-r-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"
+                      />
+                    )}
+                  </AnimatePresence>
 
-                  {conv.unreadCount > 0 && (
-                    <motion.span 
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center border-2 border-edu-surface shadow-md"
-                    >
-                      {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
-                    </motion.span>
-                  )}
-                </div>
-                
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <div className="flex justify-between items-center mb-1">
-                    <h3 className="text-[16px] font-bold text-edu-text truncate tracking-tight pr-2 flex items-center gap-1.5">
-                      {isGroup && <Users size={14} className="text-edu-muted" />}
-                      {conv.title || 'Nomsiz Guruh'}
-                    </h3>
-                    {conv.lastMessage && (
-                      <span className="text-[11px] font-bold text-edu-muted whitespace-nowrap tabular-nums">
-                        {timeAgo(conv.lastMessage.createdAt)}
-                      </span>
+                  {/* Avatar Area */}
+                  <div className="relative shrink-0 ml-1.5">
+                    {isGroup ? (
+                      <div className="w-[52px] h-[52px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-sm border border-black/5">
+                        <Users size={24} strokeWidth={2.5} />
+                      </div>
+                    ) : (
+                      <Avatar name={conv.title} avatarUrl={conv.avatarUrl} size="lg" className="shadow-sm border border-black/5" />
                     )}
+                    
+                    {/* Online indicator with breathing magic */}
+                    <AnimatePresence>
+                      {isOnline && !isGroup && (
+                        <motion.div 
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          exit={{ scale: 0 }}
+                          className="absolute bottom-0 right-0 z-10"
+                        >
+                          <div className="w-[14px] h-[14px] bg-green-500 border-[2.5px] border-edu-bg rounded-full shadow-sm relative">
+                            <motion.div 
+                              animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                              className="absolute inset-0 bg-green-500 rounded-full"
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   
-                  {/* Tizim xabari yoki file yoki oddiy matn */}
-                  <div className="flex items-center gap-1.5">
-                    {conv.lastMessage && conv.lastMessage.senderId !== (conv.otherUser?.id || 'none') && conv.lastMessage.type !== 'SYSTEM_EVENT' && (
-                      <span className="text-edu-muted shrink-0">
-                        {conv.lastMessage.isRead ? <CheckCheck size={14} className="text-blue-500" /> : <Check size={14} />}
-                      </span>
-                    )}
-                    <p className={cn(
-                      "text-[14px] truncate flex-1",
-                      conv.unreadCount > 0 ? "text-edu-text font-bold" : "text-edu-muted font-medium",
-                      conv.lastMessage?.type === 'SYSTEM_EVENT' && "text-blue-500 italic text-[13px]"
-                    )}>
-                      {conv.lastMessage ? (
-                        conv.lastMessage.type === 'SYSTEM_EVENT' 
-                          ? conv.lastMessage.content 
-                          : (conv.lastMessage.content || (conv.lastMessage.fileType === 'voice' ? '🎤 Ovozli xabar' : '📁 Fayl yuborildi'))
-                      ) : (
-                        'Hali xabar yo\'q'
+                  {/* Text Content */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center h-[52px] border-b border-edu-border/40 pb-1 group-last:border-b-0">
+                    <div className="flex justify-between items-baseline mb-0.5">
+                      <h3 className="text-[16px] font-semibold text-edu-text truncate pr-2 flex items-center gap-1">
+                        {isGroup && <Users size={13} className="text-edu-muted shrink-0" />}
+                        {conv.title || 'Nomsiz Guruh'}
+                      </h3>
+                      {conv.lastMessage && (
+                        <span className={cn(
+                          "text-[12px] whitespace-nowrap tabular-nums shrink-0",
+                          hasUnread ? "text-blue-500 font-bold" : "text-edu-muted font-medium"
+                        )}>
+                          {timeAgo(conv.lastMessage.createdAt)}
+                        </span>
                       )}
-                    </p>
+                    </div>
+                    
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1 flex-1 min-w-0">
+                        {/* Read Receipt if I'm the sender */}
+                        {conv.lastMessage && conv.lastMessage.senderId === user?.id && conv.lastMessage.type !== 'SYSTEM_EVENT' && !isTyping && (
+                          <span className="shrink-0 mr-0.5">
+                            {conv.lastMessage.isRead ? (
+                              <CheckCheck size={14} className="text-blue-500" />
+                            ) : (
+                              <Check size={14} className="text-edu-muted" />
+                            )}
+                          </span>
+                        )}
+                        
+                        {/* Message Preview or Typing */}
+                        {isTyping ? (
+                          <motion.p 
+                            initial={{ opacity: 0, x: -5 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="text-[14px] text-blue-500 font-medium truncate italic"
+                          >
+                            Yozmoqda...
+                          </motion.p>
+                        ) : (
+                          <p className={cn(
+                            "text-[14px] truncate flex-1",
+                            hasUnread ? "text-edu-text font-semibold" : "text-edu-muted",
+                            conv.lastMessage?.type === 'SYSTEM_EVENT' && "text-blue-500 italic text-[13px]"
+                          )}>
+                            {conv.lastMessage ? (
+                              conv.lastMessage.type === 'SYSTEM_EVENT' 
+                                ? conv.lastMessage.content 
+                                : (conv.lastMessage.content || (conv.lastMessage.fileType === 'voice' ? '🎤 Ovozli xabar' : '📁 Fayl yuborildi'))
+                            ) : (
+                              'Hali xabar yo\'q'
+                            )}
+                          </p>
+                        )}
+                      </div>
+                      
+                      {/* Unread Badge Right Side (iOS Telegram style) */}
+                      <AnimatePresence>
+                        {hasUnread && (
+                          <motion.div 
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                            className="shrink-0 min-w-[20px] h-[20px] px-1.5 bg-blue-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-[0_2px_8px_rgba(59,130,246,0.4)]"
+                          >
+                            {conv.unreadCount > 99 ? '99+' : conv.unreadCount}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
       </div>
       )}
 
@@ -299,25 +357,29 @@ function ChatListWidget({ searchTerm }) {
                   variants={item}
                   layout
                   onClick={() => handleOpenChat(msg.chatRoomId)}
-                  className="group relative card-base p-4 card-pressable hover:bg-black/5 dark:hover:bg-white/5 transition-all overflow-hidden cursor-pointer"
+                  whileTap={{ scale: 0.98, backgroundColor: 'rgba(0,0,0,0.03)' }}
+                  className="group relative flex items-start gap-3.5 p-2 rounded-2xl cursor-pointer transition-colors overflow-hidden mx-1 hover:bg-black/5 dark:hover:bg-white/5"
                 >
-                  <div className="flex items-start gap-3">
-                    <Avatar name={msg.sender?.fullname} avatarUrl={msg.sender?.avatarUrl} size="md" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <h3 className="text-[14px] font-bold text-edu-text truncate pr-2">
-                          {msg.sender?.fullname || 'Foydalanuvchi'}
-                        </h3>
-                        <span className="text-[10px] font-bold text-edu-muted whitespace-nowrap">
-                          {timeAgo(msg.createdAt)}
-                        </span>
-                      </div>
-                      <div className="text-[13px] text-edu-text opacity-90 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 p-2 rounded-lg border-l-2 border-edu-primary/50">
-                        {msg.content || (msg.fileId ? '📁 Biriktirma' : '')}
-                      </div>
-                      <div className="text-[11px] font-bold text-edu-muted mt-2 flex items-center gap-1">
-                        <Users size={12} /> {msg.chatRoom?.name || 'Shaxsiy suhbat'}
-                      </div>
+                  <div className="relative shrink-0 ml-1.5 pt-1">
+                    <Avatar name={msg.sender?.fullname} avatarUrl={msg.sender?.avatarUrl} size="lg" className="shadow-sm border border-black/5" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0 flex flex-col justify-center border-b border-edu-border/40 pb-2 group-last:border-b-0">
+                    <div className="flex justify-between items-baseline mb-1">
+                      <h3 className="text-[16px] font-semibold text-edu-text truncate pr-2">
+                        {msg.sender?.fullname || 'Foydalanuvchi'}
+                      </h3>
+                      <span className="text-[12px] font-medium text-edu-muted whitespace-nowrap tabular-nums">
+                        {timeAgo(msg.createdAt)}
+                      </span>
+                    </div>
+                    
+                    <div className="text-[14px] text-edu-text font-medium line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 px-2.5 py-1.5 rounded-xl border-l-[3px] border-edu-primary/60 mb-1.5">
+                      {msg.content || (msg.fileId ? '📁 Biriktirma' : '')}
+                    </div>
+                    
+                    <div className="text-[12px] font-medium text-edu-muted flex items-center gap-1.5">
+                      <Users size={13} className="opacity-70" /> {msg.chatRoom?.name || 'Shaxsiy suhbat'}
                     </div>
                   </div>
                 </motion.div>
@@ -342,39 +404,36 @@ export default function ChatListScreen() {
   return (
     <PageLayout className="bg-edu-bg relative overflow-hidden">
       <div className="absolute inset-0 bg-mesh-aurora opacity-10 dark:opacity-30 pointer-events-none" />
-      <div className="relative z-10 h-full flex flex-col pt-6 pb-24">
-        <div className="px-5 mb-5 shrink-0">
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h1 className="text-[34px] font-extrabold text-edu-text tracking-tight leading-none">Xabarlar</h1>
-              <p className="text-[14px] font-bold text-edu-muted tracking-wide mt-2">Shaxsiy chatlar va guruhlar</p>
-            </div>
+      <div className="relative z-10 h-full flex flex-col pt-4 pb-24">
+        <div className="px-4 mb-4 shrink-0">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h1 className="text-[32px] font-bold text-edu-text tracking-tight">Xabarlar</h1>
             <button 
               onClick={() => {
                 hapticLight();
                 setIsModalOpen(true);
               }}
-              className="w-12 h-12 bg-edu-surface rounded-full flex items-center justify-center border border-edu-border shadow-sm hover:scale-105 active:scale-95 transition-transform text-edu-primary"
+              className="w-10 h-10 bg-black/5 dark:bg-white/10 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/20 active:scale-95 transition-all text-edu-primary"
             >
-              <Plus size={22} />
+              <Plus size={22} strokeWidth={2.5} />
             </button>
           </div>
           
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors z-10">
+          <div className="relative group mx-1">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-edu-muted group-focus-within:text-edu-primary transition-colors z-10">
               <Search size={18} strokeWidth={2.5} />
             </div>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Suhbatdosh yoki guruhni qidiring..."
-              className="w-full bg-edu-surface/60 backdrop-blur-md border border-edu-border text-edu-text text-[15px] font-medium rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all shadow-sm placeholder:font-medium placeholder:text-edu-muted"
+              placeholder="Qidirish"
+              className="w-full bg-black/5 dark:bg-white/10 text-edu-text text-[16px] font-medium rounded-[14px] pl-10 pr-4 py-2.5 focus:outline-none focus:bg-black/10 dark:focus:bg-white/20 transition-all placeholder:font-medium placeholder:text-edu-muted"
             />
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto scrollbar-hide px-5">
+        <div className="flex-1 overflow-y-auto scrollbar-hide px-2">
           <SectionErrorBoundary fallbackTitle="Chatlarni yuklashda xatolik">
             <ChatListWidget searchTerm={searchTerm} />
           </SectionErrorBoundary>
