@@ -1,6 +1,6 @@
 // src/components/layout/BottomNav.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Home, ClipboardList, Plus, Briefcase, User, MessageSquare, Wallet, Bell } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '../../lib/utils';

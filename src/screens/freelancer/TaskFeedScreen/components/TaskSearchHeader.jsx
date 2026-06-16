@@ -1,5 +1,5 @@
 // TaskSearchHeader.jsx — iOS Telegram Folders style sticky category island
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useCategoryStore } from '../../../../store/categoryStore';
 import { hapticLight } from '../../../../lib/telegram';
@@ -58,7 +58,6 @@ export function TaskSearchHeader({
   const collapsed = scrollY > COLLAPSE_AT;
   const headerOpacity = Math.max(0, 1 - scrollY / COLLAPSE_AT);
   const headerScale = Math.max(0.92, 1 - scrollY / (COLLAPSE_AT * 8));
-  const headerHeight = collapsed ? 0 : 'auto';
 
   const hasFilters = filterState.category || filterState.minPrice || filterState.maxPrice < 200000 || filterState.sort !== 'newest';
 

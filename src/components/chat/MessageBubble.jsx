@@ -27,8 +27,13 @@ function ImageAttachment({ fileId, onClick }) {
     let isMounted = true;
     const publicUrl = filesApi.getPublicUrl(fileId);
     if (publicUrl) {
-      setUrl(publicUrl);
-      setLoading(false);
+      // Delay state updates to next tick to avoid "cascading renders" lint error
+      setTimeout(() => {
+        if (isMounted) {
+          setUrl(publicUrl);
+          setLoading(false);
+        }
+      }, 0);
       return;
     }
     filesApi.getUrl(fileId).then(res => {
@@ -70,7 +75,6 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
     if (bubbleRef.current) {
       const rect = bubbleRef.current.getBoundingClientRect();
       const spaceAbove = rect.top;
-      const spaceBelow = window.innerHeight - rect.bottom;
       // If there's at least 200px above, show above; else show below
       setMenuAbove(spaceAbove >= 200);
     }

@@ -13,7 +13,6 @@ import { useChatStore } from '../store/chatStore';
 export function useChatSocket(chatRoomId) {
   const connected = useChatStore((s) => s.connected);
   const joinRoom = useChatStore((s) => s.joinRoom);
-  const leaveRoom = useChatStore((s) => s.leaveRoom);
 
   // Use ref to always have fresh chatRoomId in reconnect handler
   const chatRoomIdRef = useRef(chatRoomId);
