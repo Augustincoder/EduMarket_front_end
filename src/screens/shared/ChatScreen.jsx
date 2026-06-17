@@ -18,15 +18,12 @@ import { useChatSocket } from '../../hooks/useChatSocket';
 import { useChatHistory } from '../../hooks/useChatHistory';
 import { WorkspaceOverlay } from './Chat/WorkspaceOverlay';
 import EduViewer from '../../components/ui/EduViewer';
-import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert, Settings2 } from 'lucide-react';
+import { LayoutDashboard, Flag, Zap, CheckCircle, RefreshCw, Hand, ShieldAlert, Settings2, ChevronDown } from 'lucide-react';
 import { AcceptDeliveryModal } from './TaskDetail/components/AcceptDeliveryModal';
 import { Virtuoso } from 'react-virtuoso';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '../../components/ui/Card';
-
 import { ChatInfoDrawer } from './Chat/ChatInfoDrawer';
-
-// GroupSettingsModal removed, we now use ChatInfoDrawer.
 
 export default function ChatScreen() {
   const { chatRoomId } = useParams();
@@ -81,8 +78,11 @@ export default function ChatScreen() {
   const [viewerFile, setViewerFile] = useState(null);
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  // 🪄 track last message id to animate new arrivals
+  const [lastMsgId, setLastMsgId] = useState(null);
 
   const lastReadCall = useRef(0);
+  const virtuosoRef = useRef(null);
 
   const handleViewFile = (fileId, fileName, isSecureFile, mimeType) => {
     setViewerFile({ id: fileId, name: fileName || fileId.split('/').pop(), isSecureFile, mimeType });
@@ -102,27 +102,24 @@ export default function ChatScreen() {
   };
 
   const roomMessages = useMemo(() => messages[chatRoomId] || [], [messages, chatRoomId]);
-  
-  const virtuosoRef = useRef(null);
+
+  // 🪄 Detect new incoming message for entrance animation
+  useEffect(() => {
+    const last = roomMessages[roomMessages.length - 1];
+    if (last && last.id !== lastMsgId) setLastMsgId(last?.id);
+  }, [roomMessages]);
 
   const handleJumpToMessage = useCallback((messageId) => {
     const index = roomMessages.findIndex(m => m.id === messageId);
     if (index !== -1 && virtuosoRef.current) {
-      virtuosoRef.current.scrollToIndex({
-        index,
-        align: 'center',
-        behavior: 'smooth'
-      });
+      virtuosoRef.current.scrollToIndex({ index, align: 'center', behavior: 'smooth' });
     }
   }, [roomMessages]);
 
-  // Read receipt with throttle
+  // Read receipt
   useEffect(() => {
     const now = Date.now();
-    // Throttle: max 1 call per 2 seconds
     if (now - lastReadCall.current < 2000) return;
-
-    // Optimization: only scan the last 20 messages instead of potentially 10,000
     const recentMessages = roomMessages.slice(-20);
     const hasUnread = recentMessages.some(m => !m.isRead && m.senderId !== user?.id);
     if (hasUnread) {
@@ -153,9 +150,7 @@ export default function ChatScreen() {
   const userPresence = useChatStore((s) => s.userPresence);
   const isCounterpartOnline = conversation?.otherUser && userPresence[conversation.otherUser.id];
   
-  let title;
-  let subtitle;
-
+  let title, subtitle;
   if (isGroup) {
     title = conversation?.title || 'Guruh suhbati';
     subtitle = `${roomInfoData?.participants?.length || 0} a'zo`;
@@ -167,6 +162,11 @@ export default function ChatScreen() {
     subtitle = conversation?.otherUser?.username ? `@${conversation.otherUser.username}` : 'Shaxsiy suhbat';
   }
 
+  // 🪄 Scroll-to-bottom button handler
+  const scrollToBottom = () => {
+    virtuosoRef.current?.scrollToIndex({ index: roomMessages.length - 1, behavior: 'smooth' });
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, x: 24 }}
@@ -175,7 +175,7 @@ export default function ChatScreen() {
       transition={{ duration: 0.22, ease: 'easeOut' }}
       className="fixed inset-0 bg-edu-bg max-w-[768px] mx-auto w-full flex flex-col h-[100dvh] z-50 overflow-hidden"
     >
-      {/* Header Area */}
+      {/* ── Header ───────────────────────────────────────────────────────────── */}
       <div className="shrink-0 flex flex-col z-30 bg-edu-bg/90 backdrop-blur-xl border-b border-edu-border/50 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
         <Header
           title={title}
@@ -231,7 +231,7 @@ export default function ChatScreen() {
           }
         />
 
-        {/* IN_REVIEW sticky banner */}
+        {/* IN_REVIEW banner */}
         <AnimatePresence>
           {isInReview && isClient && !isGroup && (
             <motion.div 
@@ -265,8 +265,8 @@ export default function ChatScreen() {
         </AnimatePresence>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 min-h-0 bg-mesh-aurora relative px-2 w-full">
+      {/* ── Message List ─────────────────────────────────────────────────────── */}
+      <div className="flex-1 min-h-0 bg-mesh-aurora relative w-full">
         <Virtuoso
           ref={virtuosoRef}
           data={roomMessages}
@@ -278,7 +278,7 @@ export default function ChatScreen() {
           className="h-full scrollbar-hide"
           components={{
             Header: () => (
-              <div className="flex flex-col gap-4 mb-4 pt-6 px-1">
+              <div className="flex flex-col gap-4 mb-4 pt-6 px-3">
                 {task && (conversation.type === 'TASK_ROOM' || conversation.type === 'DIRECT') && (task.status === 'ASSIGNED' || task.status === 'IN_PROGRESS' || task.status === 'IN_REVIEW') && (
                   <motion.div initial={{ scale: 0.95, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 400, damping: 25 }} className="mx-auto w-full max-w-[90%] md:max-w-md">
                     <Card tilt glare radius="xl" className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-blue-200/60 dark:border-blue-800/60 p-4 shadow-lg relative overflow-hidden">
@@ -351,81 +351,107 @@ export default function ChatScreen() {
               </div>
             ),
             Footer: () => (
-              <div className="flex flex-col gap-1 mt-2 px-1">
+              <div className="flex flex-col gap-1 mt-1 px-2 pb-2">
                 <AnimatePresence>
                   {typingUsers?.[chatRoomId]?.length > 0 && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      initial={{ opacity: 0, y: 8, scale: 0.92 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center gap-2 px-3 py-2 max-w-fit bg-edu-surface/80 backdrop-blur-sm rounded-2xl rounded-bl-sm border border-edu-border/50 ml-1"
+                      exit={{ opacity: 0, y: 8, scale: 0.92 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex items-center gap-2 px-3 py-2 max-w-fit bg-edu-surface/90 backdrop-blur-sm rounded-2xl rounded-bl-sm border border-edu-border/40 ml-1"
                     >
-                      <div className="flex gap-[4px] items-center h-4">
+                      <div className="flex gap-[3px] items-center h-4">
                         {[0, 1, 2].map((i) => (
                           <motion.span
                             key={i}
                             animate={{ y: [0, -4, 0] }}
-                            transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+                            transition={{ duration: 0.55, repeat: Infinity, ease: 'easeInOut', delay: i * 0.14 }}
                             className="w-1.5 h-1.5 bg-edu-primary rounded-full block"
                           />
                         ))}
                       </div>
-                      <span className="text-edu-primary text-[11px] font-bold ml-1">Yozmoqda...</span>
+                      <span className="text-edu-primary text-[11px] font-bold ml-0.5">Yozmoqda...</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {/* Spacer to ensure the last message has breathing room above the input area */}
-                {/* If the input is floating (88%), we need less extra padding, but it's safe to have enough */}
-                <div className="h-10" />
+                {/* Space so last message isn't hidden behind input */}
+                <div className="h-2" />
               </div>
             )
           }}
-          itemContent={(index, msg) => (
-            <div className="mb-2 px-1">
-              <MessageBubble 
-                message={msg} 
-                isMe={msg.senderId === user?.id} 
-                onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
-                onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
-                onDelete={(id) => { 
-                  showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
-                    if (ok) deleteMessage(id);
-                  });
-                }}
-                onViewFile={handleViewFile}
-                onJumpToMessage={handleJumpToMessage}
-              />
-            </div>
-          )}
+          itemContent={(index, msg) => {
+            const isNewest = msg.id === lastMsgId && msg.senderId !== user?.id;
+            return (
+              // 🪄 Design Spell: new message floats up with spring
+              <motion.div
+                key={msg.id}
+                className="mb-1.5 px-2"
+                initial={isNewest ? { opacity: 0, y: 20, scale: 0.94 } : false}
+                animate={isNewest ? { opacity: 1, y: 0, scale: 1 } : {}}
+                transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+              >
+                <MessageBubble 
+                  message={msg} 
+                  isMe={msg.senderId === user?.id} 
+                  onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
+                  onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
+                  onDelete={(id) => { 
+                    showConfirm("Rostdan ham o'chirmoqchimisiz?", (ok) => {
+                      if (ok) deleteMessage(id);
+                    });
+                  }}
+                  onViewFile={handleViewFile}
+                  onJumpToMessage={handleJumpToMessage}
+                />
+              </motion.div>
+            );
+          }}
         />
+
+        {/* 🪄 Scroll-to-bottom FAB */}
+        <AnimatePresence>
+          {!isAtBottom && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.7, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.7, y: 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+              onClick={scrollToBottom}
+              className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-edu-surface/90 backdrop-blur-md border border-edu-border shadow-[0_4px_16px_rgba(0,0,0,0.12)] flex items-center justify-center text-edu-text active:scale-90 transition-transform z-10"
+            >
+              <ChevronDown size={18} />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* ── Dynamic Floating Input Island (Design Spells) ✨ ───────────── */}
+      {/* ── Input Bar — iOS glass island ─────────────────────────────────────── */}
+      {/* 🪄 Design Spell: morphs between docked & floating island based on scroll position */}
       <div className="shrink-0 relative z-30 w-full flex justify-center pointer-events-none">
         <motion.div
           animate={{
-            width: isAtBottom ? '100%' : '88%',
-            marginBottom: isAtBottom ? '0px' : '16px',
-            paddingBottom: isAtBottom ? 'calc(env(safe-area-inset-bottom) + 12px)' : '12px',
-            borderRadius: isAtBottom ? '0px' : '32px',
+            width: isAtBottom ? '100%' : '90%',
+            marginBottom: isAtBottom ? '0px' : '14px',
+            borderRadius: isAtBottom ? '0px' : '28px',
             boxShadow: isAtBottom
-              ? '0 -4px 20px -10px rgba(0,0,0,0.05), 0 -1px 2px rgba(0,0,0,0.02)'
-              : '0 10px 40px -10px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.1)',
+              ? '0 -1px 0 rgba(0,0,0,0.06)'
+              : '0 12px 40px -8px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08)',
           }}
-          transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           className={cn(
-            'pointer-events-auto',
-            'relative overflow-hidden pt-2 px-3',
-            'bg-edu-bg/95 backdrop-blur-2xl border border-edu-border/40',
-            !isAtBottom && 'border border-white/20 dark:border-white/10'
+            'pointer-events-auto relative overflow-hidden',
+            'bg-edu-bg/96 backdrop-blur-2xl',
+            'border-t border-edu-border/40',
+            !isAtBottom && 'border border-white/20 dark:border-white/10 border-t-white/20'
           )}
           style={{
-            borderBottomWidth: isAtBottom ? '0px' : '1px',
+            paddingBottom: isAtBottom ? 'calc(env(safe-area-inset-bottom) + 4px)' : '4px',
+            borderTopWidth: isAtBottom ? '1px' : '0px',
           }}
         >
-          {/* Shimmer gloss line at top */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent pointer-events-none" />
+          {/* glass shimmer top line */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none" />
 
           <ChatInput 
             onSend={handleSend} 
@@ -437,7 +463,7 @@ export default function ChatScreen() {
         </motion.div>
       </div>
 
-      {/* ── Modals ─────────────────────────── */}
+      {/* ── Modals ─────────────────────────────────────────────────────────── */}
       <Modal
         isOpen={revisionOpen}
         onClose={() => setRevisionOpen(false)}

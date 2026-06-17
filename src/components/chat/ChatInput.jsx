@@ -1,6 +1,10 @@
 // src/components/chat/ChatInput.jsx
-import { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, X, Image as ImageIcon, FileText, Check, Mic, Lock, File } from 'lucide-react';
+// iOS Telegram-style minimalist glass input — Design Spells ✨
+import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Paperclip, Send, X, Image as ImageIcon, FileText,
+  Check, Mic, Lock, File, CornerDownRight, Edit2
+} from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import toast from 'react-hot-toast';
 import { cn } from '../../lib/utils';
@@ -8,43 +12,63 @@ import { hapticLight, hapticSuccess } from '../../lib/telegram';
 import { VoiceRecorder } from './VoiceRecorder';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// ─── Attach Menu Item ──────────────────────────────────────────────────────────
+function AttachItem({ icon: Icon, label, color, bg, onClick }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.93 }}
+      onClick={onClick}
+      className="flex items-center gap-3 w-full px-4 py-3 text-left active:bg-black/5 dark:active:bg-white/5 transition-colors"
+    >
+      <span className={cn('w-9 h-9 rounded-2xl flex items-center justify-center shrink-0', bg)}>
+        <Icon size={18} className={color} />
+      </span>
+      <span className="text-[15px] font-semibold text-edu-text">{label}</span>
+    </motion.button>
+  );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessage, onCancelAction }) {
-  const [text, setText]       = useState('');
-  const [showMenu, setShowMenu] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [text, setText]             = useState('');
+  const [showMenu, setShowMenu]     = useState(false);
+  const [uploading, setUploading]   = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [isSending, setIsSending] = useState(false); // Used for recoil animation
-  
-  // Pending file state for preview before sending
-  const [pendingFile, setPendingFile] = useState(null);
+  const [isSending, setIsSending]   = useState(false);
+  const [pendingFile, setPendingFile]           = useState(null);
   const [pendingFilePreview, setPendingFilePreview] = useState(null);
   const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
 
-  const fileRef = useRef(null);
+  const fileRef     = useRef(null);
   const textareaRef = useRef(null);
 
+  // ── Sync with edit mode ───────────────────────────────────────────────────
   useEffect(() => {
     if (editingMessage) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setText(editingMessage.content || '');
+      setTimeout(() => textareaRef.current?.focus(), 50);
     } else if (!replyingTo) {
-      setText('');
+      // don't clear if we're just replying
     }
-  }, [editingMessage, replyingTo]);
+  }, [editingMessage]);
 
-  useEffect(() => {
-    if (!text && textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
-  }, [text]);
+  // Auto-grow textarea
+  const adjustHeight = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, []);
 
+  // ── Send ──────────────────────────────────────────────────────────────────
   const handleSend = async () => {
     const trimmed = text?.trim() || '';
     if (!trimmed && !pendingFile) return;
 
-    // Trigger visual recoil spell
+    // 🪄 Design Spell: recoil spring on send
     setIsSending(true);
-    setTimeout(() => setIsSending(false), 150);
+    setTimeout(() => setIsSending(false), 200);
+    hapticSuccess();
 
     if (pendingFile) {
       setUploading(true);
@@ -53,13 +77,10 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         fd.append('files', pendingFile);
         const res = await filesApi.upload(fd);
         const fileId = res.data.data.fileIds[0];
-        
-        // Determine fileType
         let fileType = 'document';
-        if (pendingFile.type.startsWith('image/')) fileType = 'photo';
+        if (pendingFile.type.startsWith('image/'))  fileType = 'photo';
         else if (pendingFile.type.startsWith('video/')) fileType = 'video';
         else if (pendingFile.type.startsWith('audio/')) fileType = 'voice';
-
         onSend?.(trimmed, fileId, fileType, pendingFile.name, isSelectingSecureFile);
       } catch {
         toast.error('Fayl yuklashda xato');
@@ -69,32 +90,25 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         if (pendingFilePreview) URL.revokeObjectURL(pendingFilePreview);
         setPendingFilePreview(null);
         setIsSelectingSecureFile(false);
-        if (!editingMessage) setText('');
-        textareaRef.current.style.height = 'auto';
+        if (!editingMessage) { setText(''); if (textareaRef.current) textareaRef.current.style.height = 'auto'; }
       }
     } else {
       onSend?.(trimmed, null);
-      if (!editingMessage) setText('');
-      textareaRef.current.style.height = 'auto';
+      if (!editingMessage) { setText(''); if (textareaRef.current) textareaRef.current.style.height = 'auto'; }
     }
   };
 
   const handleVoiceSend = async (blob) => {
     setUploading(true);
     try {
-      const extension = blob.type.includes('webm') ? 'webm' : 
-                        blob.type.includes('mp4')  ? 'm4a' : 
-                        blob.type.includes('ogg')  ? 'ogg' : 'wav';
-      
+      const ext = blob.type.includes('webm') ? 'webm' : blob.type.includes('mp4') ? 'm4a' : blob.type.includes('ogg') ? 'ogg' : 'wav';
       const fd = new FormData();
-      fd.append('files', blob, `voice_message.${extension}`);
+      fd.append('files', blob, `voice_message.${ext}`);
       const res = await filesApi.upload(fd);
       const fileId = res.data.data.fileIds[0];
       onSend?.(null, fileId, 'voice');
     } catch (err) {
-      const msg = err.serverMsg || err.response?.data?.message || 'Ovozli xabar yuborishda xato';
-      toast.error(msg);
-      console.error("Voice upload error:", err);
+      toast.error(err.serverMsg || err.response?.data?.message || 'Ovozli xabar yuborishda xato');
     } finally {
       setUploading(false);
       setIsVoiceMode(false);
@@ -102,32 +116,22 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
   const handleChange = (val) => {
     setText(val);
     onTyping?.();
+    adjustHeight();
   };
 
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setShowMenu(false);
-    
     setPendingFile(file);
-    if (file.type.startsWith('image/')) {
-      setPendingFilePreview(URL.createObjectURL(file));
-    } else {
-      setPendingFilePreview(null);
-    }
-    
-    // Clear input so same file can be selected again
+    setPendingFilePreview(file.type.startsWith('image/') ? URL.createObjectURL(file) : null);
     e.target.value = '';
-    // Focus text input
     setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
@@ -138,201 +142,221 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     setIsSelectingSecureFile(false);
   };
 
+  const hasContent = !!(text.trim() || editingMessage || pendingFile);
+
+  // ── VoiceRecorder mode ────────────────────────────────────────────────────
+  if (isVoiceMode) {
+    return (
+      <div className="px-2 pb-1">
+        <VoiceRecorder onSend={handleVoiceSend} onCancel={() => setIsVoiceMode(false)} />
+      </div>
+    );
+  }
+
   return (
-    <motion.div 
-      animate={isSending ? { y: 4, scale: 0.985 } : { y: 0, scale: 1 }}
-      transition={{ type: "spring", stiffness: 600, damping: 15 }}
-      className="relative rounded-xl border border-white/20 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex flex-col"
-    >
-      {/* File menu */}
+    <div className="flex flex-col w-full">
+      {/* ── Attach Menu (popup above input) ────────────────────── */}
       <AnimatePresence>
         {showMenu && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8, y: 10, transformOrigin: "bottom left" }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 10 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="absolute bottom-full left-4 mb-3 w-[240px] bg-edu-surface/80 backdrop-blur-xl rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-edu-border overflow-hidden z-10"
-          >
-          <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active:scale-[0.97] transition-transform duration-[120ms]"
-            onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='image/*'; fileRef.current.click(); }}
-          >
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-              <ImageIcon size={18} className="text-blue-500" />
-            </div>
-            Foto / Video
-          </button>
-          <div className="h-[1px] bg-edu-border mx-4" />
-          <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-edu-text active:scale-[0.97] transition-transform duration-[120ms]"
-            onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept='*'; fileRef.current.click(); }}
-          >
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center">
-              <FileText size={18} className="text-edu-accent" />
-            </div>
-            Fayl (Hujjat)
-          </button>
-          <div className="h-[1px] bg-edu-border mx-4" />
-          <button
-            className="flex items-center gap-3 px-4 py-3 w-full hover:bg-black/5 dark:hover:bg-white/5 text-[14px] font-bold text-red-500 active:scale-[0.97] transition-transform duration-[120ms]"
-            onClick={() => { setIsSelectingSecureFile(true); fileRef.current.accept='*'; fileRef.current.click(); }}
-          >
-            <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
-              <Lock size={18} className="text-red-500" />
-            </div>
-            Himoyalangan fayl (Namuna)
-          </button>
-          </motion.div>
+          <>
+            {/* backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[90]"
+              onClick={() => setShowMenu(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.94 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+              className="absolute bottom-[calc(100%+8px)] left-2 z-[100] w-[220px] rounded-2xl overflow-hidden bg-edu-surface/90 backdrop-blur-2xl border border-edu-border/60 shadow-[0_16px_48px_rgba(0,0,0,0.18)]"
+            >
+              {/* glass shimmer */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+              <AttachItem
+                icon={ImageIcon} label="Foto / Video"
+                color="text-blue-500" bg="bg-blue-500/10"
+                onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept = 'image/*,video/*'; fileRef.current.click(); }}
+              />
+              <div className="h-px bg-edu-border/50 mx-4" />
+              <AttachItem
+                icon={FileText} label="Fayl (Hujjat)"
+                color="text-indigo-500" bg="bg-indigo-500/10"
+                onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept = '*'; fileRef.current.click(); }}
+              />
+              <div className="h-px bg-edu-border/50 mx-4" />
+              <AttachItem
+                icon={Lock} label="Himoyalangan fayl"
+                color="text-red-500" bg="bg-red-500/10"
+                onClick={() => { setIsSelectingSecureFile(true); fileRef.current.accept = '*'; fileRef.current.click(); }}
+              />
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
-      {/* Reply / Edit Preview Bar */}
+      {/* ── Reply / Edit banner ─────────────────────────────────── */}
       <AnimatePresence>
         {(replyingTo || editingMessage) && !pendingFile && (
-          <motion.div 
+          <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-2 border-b border-edu-border/30 overflow-hidden"
+            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+            className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              <motion.div 
-                initial={{ height: 0 }} animate={{ height: '100%' }} transition={{ duration: 0.3 }}
-                className="w-1 h-8 bg-edu-primary rounded-full mt-0.5" 
-              />
+            <div className="flex items-center gap-2.5 px-4 py-2 border-b border-edu-border/30">
+              {/* accent stripe */}
+              <div className={cn('w-1 h-9 rounded-full shrink-0', replyingTo ? 'bg-edu-primary' : 'bg-blue-500')} />
               <div className="flex-1 min-w-0">
-                <div className={cn("text-[11px] font-bold uppercase tracking-wider", replyingTo ? "text-edu-primary" : "text-blue-500")}>
-                  {replyingTo ? `Javob: ${replyingTo.sender?.fullname || 'Foydalanuvchi'}` : 'Tahrirlash'}
+                <div className={cn('text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5', replyingTo ? 'text-edu-primary' : 'text-blue-500')}>
+                  {replyingTo ? <><CornerDownRight size={11} />{replyingTo.sender?.fullname || 'Javob'}</> : <><Edit2 size={11} />Tahrirlash</>}
                 </div>
-                <div className="text-[13px] truncate font-medium text-edu-text opacity-70">
-                  {replyingTo ? replyingTo.content : editingMessage?.content}
+                <div className="text-[13px] text-edu-text/70 truncate font-medium">
+                  {replyingTo ? (replyingTo.content || 'Biriktirma') : editingMessage?.content}
                 </div>
               </div>
+              <button
+                onClick={onCancelAction}
+                className="w-7 h-7 rounded-full bg-edu-muted/10 flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all shrink-0"
+              >
+                <X size={14} />
+              </button>
             </div>
-            <button aria-label="Bekor qilish" onClick={onCancelAction} className="w-9 h-9 rounded-full bg-black/5 flex items-center justify-center text-edu-muted hover:bg-black/10 transition-colors">
-              <X size={16} />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Selected File Preview Bar */}
-      {pendingFile && (
-        <div className="flex items-center justify-between bg-black/5 dark:bg-white/5 px-4 py-3 border-b border-edu-border/30 animate-fade-in">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            {pendingFilePreview ? (
-              <img src={pendingFilePreview} alt="preview" className="w-12 h-12 object-cover rounded-xl shadow-sm border border-black/10" />
-            ) : (
-              <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-black/10 flex items-center justify-center">
-                <File size={24} className="text-blue-500" />
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <div className="text-[14px] font-bold text-edu-text truncate">
+      {/* ── File Preview banner ──────────────────────────────────── */}
+      <AnimatePresence>
+        {pendingFile && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+            className="overflow-hidden"
+          >
+            <div className="flex items-center gap-3 px-4 py-2.5 border-b border-edu-border/30">
+              {pendingFilePreview ? (
+                <img src={pendingFilePreview} alt="preview" className="w-10 h-10 rounded-xl object-cover border border-black/10 shrink-0" />
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                  <File size={20} className="text-blue-500" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-bold text-edu-text truncate flex items-center gap-1.5">
+                  {isSelectingSecureFile && <Lock size={11} className="text-red-500 shrink-0" />}
                   {pendingFile.name}
                 </div>
-                {isSelectingSecureFile && (
-                  <Lock size={12} className="text-red-500 shrink-0" />
-                )}
+                <div className="text-[11px] text-edu-muted font-medium">
+                  {(pendingFile.size / 1024 / 1024).toFixed(2)} MB{isSelectingSecureFile ? ' · Himoyalangan' : ''}
+                </div>
               </div>
-              <div className="text-[12px] font-medium text-edu-muted">
-                {(pendingFile.size / 1024 / 1024).toFixed(2)} MB {isSelectingSecureFile ? '• Himoyalangan' : ''}
-              </div>
-            </div>
-          </div>
-          <button aria-label="Faylni bekor qilish" onClick={handleCancelFile} disabled={uploading} className="w-10 h-10 ml-2 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center text-edu-text active:scale-[0.97] transition-transform duration-[120ms]">
-            <X size={18} />
-          </button>
-        </div>
-      )}
-
-      <div className="flex items-end gap-2 px-3 py-3">
-        {/* Voice Mode */}
-        {isVoiceMode ? (
-          <VoiceRecorder 
-            onSend={handleVoiceSend} 
-            onCancel={() => setIsVoiceMode(false)} 
-          />
-        ) : (
-          <motion.div layout className="flex items-end flex-1 bg-edu-surface shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-none border border-edu-border/60 rounded-xl p-1 transition-colors focus-within:border-edu-primary/50 focus-within:ring-[3px] focus-within:ring-edu-primary/10">
-            {/* Attach button */}
-            <button
-              aria-label="Biriktirish"
-              onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
-              className={cn(
-                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 active:scale-[0.97] transition-transform duration-[120ms] transition-all ml-0.5 mb-0.5',
-                showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5'
-              )}
-              disabled={!!editingMessage || uploading}
-            >
-              {uploading
-                ? <div className="w-5 h-5 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
-                : <Paperclip size={20} className={showMenu ? 'text-white' : ''} />
-              }
-            </button>
-
-            {/* Text input */}
-            <div className="flex-1 overflow-hidden min-h-[44px] flex items-center py-1">
-              <textarea
-                ref={textareaRef}
-                value={text}
-                onChange={(e) => {
-                  handleChange(e.target.value);
-                  e.target.style.height = 'auto';
-                  e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder={pendingFile ? "Izoh yozing..." : "Xabar..."}
-                disabled={disabled || uploading}
-                rows={1}
-                className="w-full bg-transparent border-none px-3 text-[15px] font-medium text-edu-text placeholder:text-edu-muted focus:outline-none focus:ring-0 max-h-[120px] overflow-y-auto resize-none block leading-[1.4]"
-                style={{ height: '24px' }}
-              />
-            </div>
-
-            {/* Send or Mic button */}
-            <div className="mr-0.5 mb-0.5 flex-shrink-0 relative w-10 h-10 flex items-center justify-center">
-              <AnimatePresence mode="popLayout">
-                {text.trim() || editingMessage || pendingFile ? (
-                  <motion.button
-                    key="send_btn"
-                    initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    aria-label={editingMessage ? "Saqlash" : "Yuborish"}
-                    disabled={uploading}
-                    onClick={() => { hapticSuccess(); handleSend(); }}
-                    className="w-10 h-10 rounded-full bg-edu-primary flex items-center justify-center text-white shadow-btn outline-none active:scale-95 transition-transform"
-                  >
-                    {editingMessage ? <Check size={18} /> : <Send size={18} className="ml-0.5" />}
-                  </motion.button>
-                ) : (
-                  <motion.button
-                    key="mic_btn"
-                    initial={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    exit={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    aria-label="Ovozli xabar"
-                    onClick={() => { hapticLight(); setIsVoiceMode(true); }}
-                    disabled={uploading}
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-transparent text-edu-muted hover:text-edu-text hover:bg-black/5 dark:hover:bg-white/5 outline-none transition-colors active:scale-95 transition-transform"
-                  >
-                    <Mic size={20} />
-                  </motion.button>
-                )}
-              </AnimatePresence>
+              <button
+                onClick={handleCancelFile}
+                disabled={uploading}
+                className="w-7 h-7 rounded-full bg-edu-muted/10 flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all"
+              >
+                <X size={14} />
+              </button>
             </div>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      {/* ── Main Input Row ───────────────────────────────────────── */}
+      {/* 🪄 Design Spell: spring recoil on send */}
+      <motion.div
+        animate={isSending ? { y: 3, scale: 0.982 } : { y: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 700, damping: 18 }}
+        className="flex items-end gap-2 px-2 py-2"
+      >
+        {/* Attach button */}
+        <motion.button
+          whileTap={{ scale: 0.88, rotate: showMenu ? 0 : 45 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+          aria-label="Biriktirish"
+          onClick={() => { hapticLight(); setShowMenu(s => !s); }}
+          disabled={!!editingMessage || uploading}
+          className={cn(
+            'w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200',
+            showMenu
+              ? 'bg-edu-primary text-white shadow-[0_4px_12px_rgba(var(--color-primary-rgb,99,102,241),0.4)]'
+              : 'text-edu-muted hover:text-edu-text'
+          )}
+        >
+          {uploading
+            ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
+            : <Paperclip size={19} strokeWidth={2.2} className={cn('transition-transform duration-200', showMenu && 'rotate-45')} />
+          }
+        </motion.button>
+
+        {/* Textarea pill */}
+        <div className={cn(
+          'flex-1 flex items-end rounded-[22px] px-4 py-[9px] min-h-[42px]',
+          'bg-edu-surface/90 border border-edu-border/60',
+          'transition-all duration-200',
+          'focus-within:border-edu-primary/50 focus-within:shadow-[0_0_0_3px_rgba(var(--color-primary-rgb,99,102,241),0.1)]',
+        )}>
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => handleChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={pendingFile ? 'Izoh yozing...' : 'Xabar...'}
+            disabled={disabled || uploading}
+            rows={1}
+            className="flex-1 bg-transparent border-none text-[15px] font-medium text-edu-text placeholder:text-edu-muted/60 focus:outline-none focus:ring-0 resize-none overflow-hidden leading-[1.45] max-h-[120px] py-0"
+            style={{ height: '24px' }}
+          />
+        </div>
+
+        {/* Send / Mic button */}
+        <div className="relative w-9 h-9 shrink-0 flex items-center justify-center">
+          <AnimatePresence mode="popLayout">
+            {hasContent ? (
+              <motion.button
+                key="send"
+                initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.4, rotate: 30 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                aria-label={editingMessage ? 'Saqlash' : 'Yuborish'}
+                disabled={uploading}
+                onClick={handleSend}
+                className="w-9 h-9 rounded-full bg-edu-primary text-white flex items-center justify-center shadow-[0_4px_14px_rgba(var(--color-primary-rgb,99,102,241),0.45)] active:scale-90 transition-transform"
+              >
+                {editingMessage
+                  ? <Check size={17} strokeWidth={2.5} />
+                  : <Send size={16} strokeWidth={2.2} className="translate-x-[1px]" />
+                }
+              </motion.button>
+            ) : (
+              <motion.button
+                key="mic"
+                initial={{ opacity: 0, scale: 0.5, rotate: 30 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.4, rotate: -30 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                aria-label="Ovozli xabar"
+                disabled={uploading}
+                onClick={() => { hapticLight(); setIsVoiceMode(true); }}
+                className="w-9 h-9 rounded-full flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all"
+              >
+                <Mic size={19} strokeWidth={2} />
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
 
       <input ref={fileRef} type="file" className="hidden" onChange={handleFileSelect} />
-    </motion.div>
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 // TaskSearchHeader.jsx — iOS Telegram Folders style sticky category island
-import { useRef, useEffect } from 'react';
+// 🪄 Design Spells: spring-physics pill transition + floating island morph
+import { useRef, useEffect, useState } from 'react';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useCategoryStore } from '../../../../store/categoryStore';
 import { hapticLight } from '../../../../lib/telegram';
@@ -7,26 +8,25 @@ import { cn } from '../../../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Individual Category Chip ─────────────────────────────────────────────────
-function CategoryChip({ label, active, onClick }) {
+function CategoryChip({ label, active, onClick, chipRef }) {
   return (
     <motion.button
+      ref={chipRef}
       onClick={onClick}
-      whileTap={{ scale: 0.92 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      whileTap={{ scale: 0.90 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 22 }}
       className={cn(
-        'relative px-4 h-[34px] rounded-full text-[13px] font-bold whitespace-nowrap flex-shrink-0',
-        'transition-colors duration-200 outline-none select-none',
-        active
-          ? 'text-white'
-          : 'text-edu-text/75 hover:text-edu-text'
+        'relative px-4 h-[34px] rounded-full text-[13px] font-bold whitespace-nowrap shrink-0',
+        'outline-none select-none transition-colors duration-150',
+        active ? 'text-white' : 'text-edu-text/70 hover:text-edu-text'
       )}
     >
-      {/* Active background pill (layoutId animates between chips) */}
+      {/* 🪄 Shared layoutId pill morphs between chips */}
       {active && (
         <motion.span
-          layoutId="cat-pill"
-          className="absolute inset-0 rounded-full bg-edu-primary shadow-[0_2px_12px_rgba(var(--color-primary-rgb,59,130,246),0.4)]"
-          transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+          layoutId="cat-active-pill"
+          className="absolute inset-0 rounded-full bg-edu-primary shadow-[0_2px_10px_rgba(var(--color-primary-rgb,99,102,241),0.45)]"
+          transition={{ type: 'spring', stiffness: 420, damping: 30 }}
         />
       )}
       <span className="relative z-10">{label}</span>
@@ -34,6 +34,7 @@ function CategoryChip({ label, active, onClick }) {
   );
 }
 
+// ─── Main Component ────────────────────────────────────────────────────────────
 export function TaskSearchHeader({
   localQuery,
   setLocalQuery,
@@ -44,37 +45,37 @@ export function TaskSearchHeader({
   scrollY = 0,
 }) {
   const getTrendingCategories = useCategoryStore(s => s.getTrendingCategories);
-  const scrollRef = useRef(null);
+  const scrollRef  = useRef(null);
+  const activeRef  = useRef(null);
 
-  // Keep active chip in view when category changes
+  // Scroll active chip into view
   useEffect(() => {
-    if (!scrollRef.current) return;
-    const active = scrollRef.current.querySelector('[data-active="true"]');
-    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    if (!scrollRef.current || !activeRef.current) return;
+    activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }, [filterState.category]);
 
-  // Header collapse threshold
-  const COLLAPSE_AT = 60;
-  const collapsed = scrollY > COLLAPSE_AT;
-  const headerOpacity = Math.max(0, 1 - scrollY / COLLAPSE_AT);
-  const headerScale = Math.max(0.92, 1 - scrollY / (COLLAPSE_AT * 8));
+  const COLLAPSE_AT = 56;
+  const collapsed   = scrollY > COLLAPSE_AT;
+  // Clamp opacity/scale for the collapsible header block
+  const headerOpacity = Math.max(0, 1 - (scrollY / COLLAPSE_AT));
+  const headerScale   = Math.max(0.93, 1 - scrollY / (COLLAPSE_AT * 6));
 
   const hasFilters = filterState.category || filterState.minPrice || filterState.maxPrice < 200000 || filterState.sort !== 'newest';
-
   const categories = getTrendingCategories();
 
   return (
     <>
-      {/* ── Collapsible Header (title + search) ──────────────────────────── */}
+      {/* ── Collapsible Title + Search block ─────────────────────────────── */}
       <div
-        className="px-4 overflow-hidden"
+        className="px-4 overflow-hidden will-change-transform"
         style={{
           paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
           opacity: headerOpacity,
           transform: `scale(${headerScale})`,
           transformOrigin: 'top center',
           maxHeight: collapsed ? 0 : 200,
-          transition: 'max-height 0.25s ease, opacity 0.2s ease, transform 0.2s ease',
+          paddingBottom: collapsed ? 0 : undefined,
+          transition: 'max-height 0.28s cubic-bezier(.4,0,.2,1), opacity 0.22s ease, transform 0.22s ease, padding 0.22s ease',
           pointerEvents: collapsed ? 'none' : 'auto',
         }}
       >
@@ -89,10 +90,10 @@ export function TaskSearchHeader({
             </p>
           </div>
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.88 }}
             onClick={() => { setFilterOpen(true); hapticLight(); }}
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center border shadow-sm transition-colors',
+              'relative w-10 h-10 rounded-full flex items-center justify-center border shadow-sm transition-colors',
               hasFilters
                 ? 'bg-edu-primary text-white border-transparent'
                 : 'bg-edu-surface border-edu-border text-edu-text'
@@ -100,7 +101,7 @@ export function TaskSearchHeader({
           >
             <SlidersHorizontal size={18} />
             {hasFilters && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-edu-urgent rounded-full border border-edu-bg" />
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-edu-urgent rounded-full border-2 border-edu-bg" />
             )}
           </motion.button>
         </div>
@@ -137,79 +138,76 @@ export function TaskSearchHeader({
         </div>
       </div>
 
-      {/* ── Sticky Category Island — iOS Telegram Folders style ───────────── */}
-      {/* ── Dynamic Category Island — Design Spells ✨ ───────────── */}
-      <div className="sticky top-0 z-30 pointer-events-none flex justify-center w-full">
+      {/* ── Sticky Category Island — 🪄 morphs like iOS bottom nav when scrolled ─ */}
+      {/* 
+        KEY FIX: This MUST be `position: sticky` with `top: 0` and its parent
+        must be the scrollable container itself (not a child of it).
+        We use inline style for sticky positioning to guarantee browser compatibility.
+      */}
+      <div
+        style={{ position: 'sticky', top: 0, zIndex: 30 }}
+        className="pointer-events-none flex justify-center w-full"
+      >
         <motion.div
           animate={{
             width: collapsed ? '88%' : '100%',
-            marginTop: collapsed ? '12px' : '0px',
-            borderRadius: collapsed ? '28px' : '0px',
-            opacity: collapsed ? 0.95 : 1,
-            boxShadow: collapsed 
-              ? '0 10px 30px -10px rgba(0,0,0,0.2), 0 1px 4px rgba(0,0,0,0.05)'
-              : '0 4px 20px -10px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02)'
+            marginTop: collapsed ? '10px' : '0px',
+            borderRadius: collapsed ? '24px' : '0px',
           }}
-          transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           className={cn(
-            'pointer-events-auto',
-            'relative overflow-hidden',
-            // Glass island container
-            'bg-edu-surface/85 dark:bg-edu-surface/75',
+            'pointer-events-auto relative overflow-hidden',
+            // Glass surface
+            'bg-edu-surface/88 dark:bg-edu-surface/80',
             'backdrop-blur-2xl',
-            'border-b border-edu-border/50',
-            collapsed && 'border border-white/30 dark:border-white/10'
           )}
           style={{
-            borderBottomWidth: collapsed ? '1px' : '1px',
-            borderTopWidth: collapsed ? '1px' : '0px',
-            borderLeftWidth: collapsed ? '1px' : '0px',
-            borderRightWidth: collapsed ? '1px' : '0px',
+            boxShadow: collapsed
+              ? '0 8px 32px -8px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.04)'
+              : '0 1px 0 rgba(0,0,0,0.06)',
+            borderBottom: collapsed ? 'none' : '1px solid rgba(var(--color-border, 0,0,0),0.07)',
+            border: collapsed ? '1px solid rgba(255,255,255,0.18)' : undefined,
           }}
         >
-          {/* Shimmer gloss line at top */}
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none" />
+          {/* Shimmer top edge */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent pointer-events-none" />
 
-          {/* Scroll container */}
+          {/* Chips scroll row */}
           <div
             ref={scrollRef}
-            className="flex gap-1.5 overflow-x-auto scrollbar-hide px-3 py-2 items-center"
+            className="flex gap-1 overflow-x-auto scrollbar-hide items-center py-2 px-3"
           >
-            {/* "Barchasi" chip */}
-            <span data-active={!filterState.category ? 'true' : 'false'}>
-              <CategoryChip
-                label="Barchasi"
-                active={!filterState.category}
-                onClick={() => { setFilter('category', ''); hapticLight(); }}
-              />
-            </span>
+            {/* All chip */}
+            <CategoryChip
+              label="Barchasi"
+              active={!filterState.category}
+              onClick={() => { setFilter('category', ''); hapticLight(); }}
+              chipRef={!filterState.category ? activeRef : undefined}
+            />
 
             {/* Category chips */}
             {categories.map((cat) => (
-              <span
+              <CategoryChip
                 key={cat.value}
-                data-active={filterState.category === cat.value ? 'true' : 'false'}
-              >
-                <CategoryChip
-                  label={`${cat.emoji} ${cat.label}`}
-                  active={filterState.category === cat.value}
-                  onClick={() => { setFilter('category', cat.value); hapticLight(); }}
-                />
-              </span>
+                label={`${cat.emoji} ${cat.label}`}
+                active={filterState.category === cat.value}
+                onClick={() => { setFilter('category', cat.value); hapticLight(); }}
+                chipRef={filterState.category === cat.value ? activeRef : undefined}
+              />
             ))}
 
-            {/* "Ko'proq" button */}
+            {/* More button */}
             <motion.button
-              whileTap={{ scale: 0.92 }}
+              whileTap={{ scale: 0.90 }}
               onClick={() => { setFilterOpen(true); hapticLight(); }}
-              className="px-4 h-[34px] rounded-full text-[13px] font-bold text-edu-primary whitespace-nowrap flex-shrink-0 hover:bg-edu-primary/10 active:scale-95 transition-colors"
+              className="px-4 h-[34px] rounded-full text-[13px] font-bold text-edu-primary whitespace-nowrap shrink-0 hover:bg-edu-primary/8 transition-colors relative"
             >
               Ko'proq...
             </motion.button>
           </div>
 
-          {/* Right fade — indicates scrollability */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-edu-surface/80 to-transparent pointer-events-none" />
+          {/* Right-side fade gradient — hints at scrollability */}
+          <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-edu-surface/90 to-transparent pointer-events-none" />
         </motion.div>
       </div>
     </>

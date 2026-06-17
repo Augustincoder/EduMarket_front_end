@@ -23,7 +23,7 @@ export function TaskFeedList({
   isFetchingNextPage
 }) {
   return (
-    <div className="px-4 pb-nav relative min-h-[60vh]">
+    <div className="px-4 pt-3 pb-nav relative min-h-[60vh]">
       {/* Recent Searches Overlay */}
       {isFocused && !localQuery && recentSearches.length > 0 && (
         <div className="absolute inset-0 z-40 bg-edu-bg/80 backdrop-blur-md animate-fade-in px-4 py-4">
