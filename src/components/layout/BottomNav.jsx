@@ -65,17 +65,20 @@ export function BottomNav() {
 
   return (
     <motion.nav
+      initial={{ y: 100, opacity: 0 }}
       animate={{
+        y: 0,
         width: hidden ? '88%' : '100%',
         bottom: hidden ? '12px' : '0px',
         borderRadius: hidden ? '28px' : '0px',
         opacity: hidden ? 0.92 : 1,
       }}
+      exit={{ y: 100, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       className={cn(
         'fixed left-1/2 -translate-x-1/2 max-w-[768px]',
         'bg-edu-surface/90 backdrop-blur-2xl border-t border-edu-border/60',
-        'pb-safe z-40 overflow-visible'   // overflow-visible so + button pops above
+        'pb-[max(0px,env(safe-area-inset-bottom))] z-40 overflow-visible'
       )}
       style={{ borderTopWidth: hidden ? '0px' : '1px' }}
     >

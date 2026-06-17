@@ -41,15 +41,15 @@ export function Step0Category() {
           whileHover={{ scale: 0.98 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => { hapticLight(); setIsAiModalOpen(true); }}
-          className="w-full mb-4 relative overflow-hidden rounded-xl p-[2px] bg-gradient-to-r from-edu-primary via-purple-500 to-blue-500 shadow-[0_4px_20px_rgba(10,132,255,0.2)] group"
+          className="w-full mb-4 relative rounded-[14px] p-[1.5px] bg-gradient-to-r from-edu-primary via-purple-500 to-blue-500 shadow-sm group"
         >
           {/* Hologram glitch layer */}
           <motion.div 
             animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent bg-[length:200%_auto] z-0 pointer-events-none"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent bg-[length:200%_auto] rounded-[14px] z-0 pointer-events-none"
           />
-          <div className="bg-edu-surface w-full rounded-[10px] px-4 py-3.5 flex items-center justify-between group-hover:bg-opacity-90 transition-all relative z-10">
+          <div className="bg-edu-surface rounded-[12.5px] px-4 py-3.5 flex items-center justify-between group-hover:bg-black/5 dark:group-hover:bg-white/5 transition-all relative z-10 overflow-hidden">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-edu-primary/10 flex items-center justify-center shrink-0">
                 <Sparkles size={20} className="text-edu-primary" />

@@ -382,6 +382,7 @@ export default function ChatScreen() {
                 <MessageBubble 
                   message={msg} 
                   isMe={msg.senderId === user?.id} 
+                  participants={roomInfoData?.participants || []}
                   onReply={(m) => { setReplyingTo(m); setEditingMessage(null); }}
                   onEdit={(m) => { setEditingMessage(m); setReplyingTo(null); }}
                   onDelete={(id) => { 
