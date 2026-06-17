@@ -231,16 +231,15 @@ export const useChatStore = create((set, get) => ({
     });
 
     // ─── read_receipt ────────────────────────────────────────────────
-    socket.on('read_receipt', ({ chatRoomId, _userId }) => {
+    socket.on('read_receipt', ({ chatRoomId, userId }) => {
       set((s) => {
         const roomMessages = s.messages[chatRoomId];
         if (!roomMessages) return s;
 
-        // FIX: Mark messages as read only for messages sent BY current user
-        // that were read BY the other user (userId is the reader)
-        const currentUser = useAuthStore.getState().user;
+        // userId is the person who marked the room as read.
+        // Therefore, any message NOT sent by userId should be marked as read.
         const updatedMessages = roomMessages.map(msg =>
-          (!msg.isRead && msg.senderId === currentUser?.id)
+          (!msg.isRead && msg.senderId !== userId)
             ? { ...msg, isRead: true }
             : msg
         );

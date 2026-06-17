@@ -274,7 +274,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
       <motion.div
         animate={isSending ? { y: 3, scale: 0.982 } : { y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 700, damping: 18 }}
-        className="flex items-end gap-2 px-2 py-2"
+        className="flex items-end gap-2.5 px-3 py-2.5"
       >
         {/* Attach button */}
         <motion.button
@@ -298,7 +298,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
 
         {/* Textarea pill */}
         <div className={cn(
-          'flex-1 flex items-end rounded-[22px] px-4 py-[9px] min-h-[42px]',
+          'flex-1 flex items-end rounded-[24px] px-4 py-[10px] min-h-[44px]',
           'bg-edu-surface/90 border border-edu-border/60',
           'transition-all duration-200',
           'focus-within:border-edu-primary/50 focus-within:shadow-[0_0_0_3px_rgba(var(--color-primary-rgb,99,102,241),0.1)]',

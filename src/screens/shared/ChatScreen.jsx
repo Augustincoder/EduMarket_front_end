@@ -432,21 +432,22 @@ export default function ChatScreen() {
         <motion.div
           animate={{
             width: isAtBottom ? '100%' : '90%',
-            marginBottom: isAtBottom ? '0px' : '14px',
+            marginBottom: isAtBottom ? '0px' : '12px',
             borderRadius: isAtBottom ? '0px' : '28px',
             boxShadow: isAtBottom
-              ? '0 -1px 0 rgba(0,0,0,0.06)'
-              : '0 12px 40px -8px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.08)',
+              ? '0 -1px 0 rgba(0,0,0,0.04)'
+              : '0 12px 40px -8px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.1)',
           }}
           transition={{ type: 'spring', stiffness: 300, damping: 28 }}
           className={cn(
             'pointer-events-auto relative overflow-hidden',
-            'bg-edu-bg/96 backdrop-blur-2xl',
-            'border-t border-edu-border/40',
-            !isAtBottom && 'border border-white/20 dark:border-white/10 border-t-white/20'
+            // True iOS glass effect requires ~75-80% opacity
+            'bg-edu-surface/80 dark:bg-edu-surface/75 backdrop-blur-[24px]',
+            'border-t border-edu-border/50',
+            !isAtBottom && 'border border-white/30 dark:border-white/10'
           )}
           style={{
-            paddingBottom: isAtBottom ? 'calc(env(safe-area-inset-bottom) + 4px)' : '4px',
+            paddingBottom: isAtBottom ? 'env(safe-area-inset-bottom)' : '0px',
             borderTopWidth: isAtBottom ? '1px' : '0px',
           }}
         >
