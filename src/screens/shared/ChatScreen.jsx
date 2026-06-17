@@ -381,9 +381,8 @@ export default function ChatScreen() {
               // 🪄 Design Spell: new message floats up with spring
               <motion.div
                 key={msg.id}
-                layout="position"
                 className="mb-1.5 px-2"
-                initial={isNewest ? { opacity: 0, y: 20, scale: 0.94 } : false}
+                initial={isNewest ? { opacity: 0, y: 10, scale: 0.96 } : false}
                 animate={isNewest ? { opacity: 1, y: 0, scale: 1 } : {}}
                 transition={{ type: 'spring', stiffness: 380, damping: 26 }}
               >
