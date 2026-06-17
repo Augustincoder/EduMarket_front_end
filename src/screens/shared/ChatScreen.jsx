@@ -347,7 +347,7 @@ export default function ChatScreen() {
               </div>
             ),
             Footer: () => (
-              <div className="mt-1 flex flex-col gap-1 px-2 pb-3">
+              <div className="mt-1 flex flex-col gap-1 px-2 pb-4">
                 <AnimatePresence>
                   {typingUsers?.[chatRoomId]?.length > 0 && (
                     <motion.div
@@ -371,21 +371,22 @@ export default function ChatScreen() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <div className="h-2" />
+                {/* Space so last message isn't hidden behind input */}
+                <div className="h-4" />
               </div>
             )
           }}
           itemContent={(index, msg) => {
             const isNewest = msg.id === lastMsgId && msg.senderId !== user?.id;
             return (
-              // 🪄 Design Spell: new message floats up with spring
+              // 🪄 Design Spell: new message floats up gracefully WITHOUT layout="position"
+              // which was breaking the DOM flow and causing the message to overlap the input
               <motion.div
                 key={msg.id}
-                layout="position"
                 className="mb-1.5 px-2"
-                initial={isNewest ? { opacity: 0, y: 20, scale: 0.94 } : false}
+                initial={isNewest ? { opacity: 0, y: 10, scale: 0.96 } : false}
                 animate={isNewest ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
               >
                 <MessageBubble 
                   message={msg} 
@@ -424,8 +425,7 @@ export default function ChatScreen() {
       </div>
 
       {/* ── Input Bar — iOS glass island ─────────────────────────────────────── */}
-      {/* 🪄 Design Spell: morphs between docked & floating island based on scroll position */}
-      <div className="relative z-30 w-full shrink-0 border-t border-edu-border/50 bg-edu-bg/86 backdrop-blur-xl">
+      <div className="relative z-30 w-full shrink-0 border-t border-edu-border/50 bg-edu-surface/80 dark:bg-edu-surface/75 backdrop-blur-[24px]">
         <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/20" />
         <div className="pb-[env(safe-area-inset-bottom)]">
           <ChatInput 
