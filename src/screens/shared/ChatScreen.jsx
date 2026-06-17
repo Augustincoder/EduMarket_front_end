@@ -347,7 +347,7 @@ export default function ChatScreen() {
               </div>
             ),
             Footer: () => (
-              <div className="mt-1 flex flex-col gap-1 px-2 pb-2">
+              <div className="mt-1 flex flex-col gap-1 px-2 pb-3">
                 <AnimatePresence>
                   {typingUsers?.[chatRoomId]?.length > 0 && (
                     <motion.div
@@ -371,22 +371,21 @@ export default function ChatScreen() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {/* Space so last message isn't hidden behind input */}
-                <div className="h-1" />
+                <div className="h-2" />
               </div>
             )
           }}
           itemContent={(index, msg) => {
             const isNewest = msg.id === lastMsgId && msg.senderId !== user?.id;
             return (
-              // 🪄 Design Spell: new message floats up gracefully WITHOUT layout="position"
-              // which was breaking the DOM flow and causing the message to overlap the input
+              // 🪄 Design Spell: new message floats up with spring
               <motion.div
                 key={msg.id}
+                layout="position"
                 className="mb-1.5 px-2"
-                initial={isNewest ? { opacity: 0, y: 10, scale: 0.96 } : false}
+                initial={isNewest ? { opacity: 0, y: 20, scale: 0.94 } : false}
                 animate={isNewest ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 26 }}
               >
                 <MessageBubble 
                   message={msg} 
@@ -424,10 +423,11 @@ export default function ChatScreen() {
         </AnimatePresence>
       </div>
 
-      {/* ── Input Bar — iOS floating glass island ─────────────────────────────────────── */}
-      <div className="relative z-30 w-full shrink-0 px-2 pb-[calc(env(safe-area-inset-bottom)+8px)]">
-        <div className="relative w-full rounded-[28px] border border-edu-border/60 bg-edu-surface/80 dark:bg-edu-surface/75 backdrop-blur-[24px] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.15)] overflow-hidden">
-          <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/20" />
+      {/* ── Input Bar — iOS glass island ─────────────────────────────────────── */}
+      {/* 🪄 Design Spell: morphs between docked & floating island based on scroll position */}
+      <div className="relative z-30 w-full shrink-0 border-t border-edu-border/50 bg-edu-bg/86 backdrop-blur-xl">
+        <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/20" />
+        <div className="pb-[env(safe-area-inset-bottom)]">
           <ChatInput 
             onSend={handleSend} 
             onTyping={() => emitTyping(chatRoomId)} 
