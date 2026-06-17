@@ -189,7 +189,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
         <motion.div
           layout
           transition={{ layout: { type: 'spring', stiffness: 420, damping: 34 } }}
-          className="flex flex-col gap-1 w-full relative"
+          className="flex flex-col gap-1 w-fit relative"
           ref={bubbleRef}
         >
           <motion.div
