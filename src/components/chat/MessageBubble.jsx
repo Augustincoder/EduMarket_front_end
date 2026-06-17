@@ -160,7 +160,16 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
 
   return (
     <>
-      {/* We moved the backdrop to the bottom sheet overlay */}
+      {/* Backdrop — closes menu on outside click */}
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] cursor-default bg-black/10 dark:bg-black/40 backdrop-blur-[3px]" 
+            onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
+          />
+        )}
+      </AnimatePresence>
 
       <motion.div 
         drag="x"
@@ -168,10 +177,6 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
         dragElastic={{ left: 0.15, right: 0 }}
         onDragEnd={handleDragEnd}
         style={{ x: dragX, touchAction: 'pan-y' }}
-        // FIX: Subtler entrance animation — no large scale jump
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.18, ease: 'easeOut' }}
         className={cn(
           'group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-1.5 relative overflow-x-clip',
           isMe ? 'flex-row-reverse ml-auto' : 'mr-auto',
@@ -204,7 +209,54 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
             }}
             onContextMenu={(e) => { e.preventDefault(); openMenu(); }}
           >
-            {/* Menu has been moved to a fixed bottom sheet at the end of the file */}
+            {/* ─── Actions Menu ──────────────────────────────────────────── */}
+            <AnimatePresence>
+              {showMenu && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.92, y: menuAbove ? 6 : -6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92, y: menuAbove ? 6 : -6 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className={cn(
+                    // FIX: Use fixed vertical position (above or below) based on measured space
+                    // so the menu never clips into the chat list header
+                    "absolute z-[80] bg-edu-surface/95 backdrop-blur-xl border border-edu-border",
+                    "rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.14)] py-1 flex flex-col",
+                    "min-w-[180px] max-w-[240px] overflow-hidden",
+                    menuPositionClass,
+                    isMe ? "right-0" : "left-0"
+                  )} 
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Reactions Row */}
+                  <div className="flex items-center gap-0.5 px-2 py-2 border-b border-edu-border/50 overflow-x-auto scrollbar-hide">
+                    {Object.entries(REACTION_ICONS).map(([name, Icon]) => (
+                      <button 
+                        key={name}
+                        onClick={() => handleReact(name)}
+                        className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:scale-90 transition-transform shrink-0"
+                      >
+                        <Icon size={18} className="text-edu-text" />
+                      </button>
+                    ))}
+                  </div>
+
+                  <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
+                    <CornerDownRight size={15} /> Javob berish
+                  </button>
+                  {isMe && !hasFile && (
+                    <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-edu-text hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
+                      <Edit2 size={15} /> Tahrirlash
+                    </button>
+                  )}
+                  {isMe && (
+                    <button className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
+                      <Trash2 size={15} /> O'chirish
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Reply Preview */}
             {message.replyTo && !message.replyTo.isDeleted && (
@@ -374,64 +426,6 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
                     </div>
                   );
                 })}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-      {/* Actions Bottom Sheet / Centered Modal */}
-      <AnimatePresence>
-        {showMenu && (
-          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm cursor-pointer"
-              onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
-            />
-            <motion.div 
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-sm bg-edu-surface dark:bg-slate-900 rounded-t-[28px] sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col mt-auto sm:mt-0 pb-[max(1rem,env(safe-area-inset-bottom))]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-12 h-1.5 bg-black/10 dark:bg-white/20 rounded-full mx-auto my-3 sm:hidden" />
-              <div className="p-4 pt-1 sm:pt-4">
-                {/* Reactions Row */}
-                <div className="flex items-center gap-1.5 pb-4 mb-2 border-b border-edu-border/50 overflow-x-auto scrollbar-hide px-1">
-                  {Object.entries(REACTION_ICONS).map(([name, Icon]) => {
-                     const hasReacted = groupedReactions[name]?.some(r => r.userId === user?.id);
-                     return (
-                       <button 
-                         key={name}
-                         onClick={() => handleReact(name)}
-                         className={cn(
-                           "p-2.5 rounded-full active:scale-90 transition-transform shrink-0",
-                           hasReacted ? "bg-edu-primary/10 text-edu-primary" : "bg-black/5 dark:bg-white/5 text-edu-text"
-                         )}
-                       >
-                         <Icon size={24} className={hasReacted ? "fill-edu-primary/20" : ""} />
-                       </button>
-                     );
-                  })}
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold text-[15px] text-edu-text transition-colors" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onReply?.(message); }}>
-                    <CornerDownRight size={18} className="text-edu-muted" /> Javob berish
-                  </button>
-                  {isMe && !hasFile && (
-                    <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left font-semibold text-[15px] text-edu-text transition-colors" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit?.(message); }}>
-                      <Edit2 size={18} className="text-edu-muted" /> Tahrirlash
-                    </button>
-                  )}
-                  {isMe && (
-                    <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 text-left font-semibold text-[15px] text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); setShowMenu(false); onDelete?.(message.id); }}>
-                      <Trash2 size={18} /> O'chirish
-                    </button>
-                  )}
-                </div>
               </div>
             </motion.div>
           </div>
