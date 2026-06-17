@@ -378,7 +378,7 @@ export default function ChatScreen() {
           itemContent={(index, msg) => {
             const isNewest = msg.id === lastMsgId && msg.senderId !== user?.id;
             return (
-              <div key={msg.id} className="mb-1.5 px-2">
+              <div key={msg.id} className="mb-1.5 px-2.5">
                 <MessageBubble 
                   message={msg} 
                   isMe={msg.senderId === user?.id} 

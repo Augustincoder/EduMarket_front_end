@@ -76,7 +76,7 @@ export function BottomNav() {
       exit={{ y: 100, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       className={cn(
-        'fixed left-1/2 -translate-x-1/2 max-w-[768px]',
+        'fixed left-1/2 -translate-x-1/2 bottom-0 w-full max-w-[768px]',
         'bg-edu-surface/90 backdrop-blur-2xl border-t border-edu-border/60',
         'pb-[max(0px,env(safe-area-inset-bottom))] z-40 overflow-visible'
       )}

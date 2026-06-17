@@ -157,183 +157,185 @@ export function ChatInfoDrawer({ isOpen, onClose, chatRoomId, conversation, curr
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden"
-            onClick={onClose}
-          />
-          <motion.div 
-            initial={{ x: '100%' }} 
-            animate={{ x: 0 }} 
-            exit={{ x: '100%' }} 
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 z-50 w-full md:w-[400px] bg-edu-bg border-l border-edu-border shadow-2xl flex flex-col"
-          >
-            {/* Header */}
-            <div className="flex items-center px-4 py-3 border-b border-edu-border bg-edu-surface">
-              <button onClick={onClose} className="p-2 -ml-2 text-edu-muted hover:text-edu-text rounded-full hover:bg-black/5 transition-colors">
-                <ChevronLeft size={24} />
-              </button>
-              <h2 className="ml-2 font-bold text-lg text-edu-text">Ma'lumot</h2>
-            </div>
+        <motion.div 
+          key="drawer-backdrop"
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      {isOpen && (
+        <motion.div 
+          key="drawer-panel"
+          initial={{ x: '100%' }} 
+          animate={{ x: 0 }} 
+          exit={{ x: '100%' }} 
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="fixed inset-y-0 right-0 z-50 w-full md:w-[400px] bg-edu-bg border-l border-edu-border shadow-2xl flex flex-col"
+        >
+          {/* Header */}
+          <div className="flex items-center px-4 py-3 border-b border-edu-border bg-edu-surface">
+            <button onClick={onClose} className="p-2 -ml-2 text-edu-muted hover:text-edu-text rounded-full hover:bg-black/5 transition-colors">
+              <ChevronLeft size={24} />
+            </button>
+            <h2 className="ml-2 font-bold text-lg text-edu-text">Ma'lumot</h2>
+          </div>
 
-            {/* Profile Info */}
-            <div className="flex flex-col items-center py-6 border-b border-edu-border bg-edu-surface">
-              {isGroup ? (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white mb-3 shadow-lg">
-                  <Users size={40} />
-                </div>
-              ) : (
-                <Avatar name={conversation?.displayTitle || conversation?.title} avatarUrl={conversation?.otherUser?.avatarUrl} size="xl" className="mb-3 shadow-lg w-24 h-24 text-3xl" />
-              )}
-              <h1 className="text-xl font-bold text-edu-text tracking-tight">{conversation?.displayTitle || conversation?.title}</h1>
-              {isGroup && (
-                <p className="text-sm text-edu-muted mt-1">{participants.length} a'zo</p>
-              )}
-            </div>
+          {/* Profile Info */}
+          <div className="flex flex-col items-center py-6 border-b border-edu-border bg-edu-surface">
+            {isGroup ? (
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white mb-3 shadow-lg">
+                <Users size={40} />
+              </div>
+            ) : (
+              <Avatar name={conversation?.displayTitle || conversation?.title} avatarUrl={conversation?.otherUser?.avatarUrl} size="xl" className="mb-3 shadow-lg w-24 h-24 text-3xl" />
+            )}
+            <h1 className="text-xl font-bold text-edu-text tracking-tight">{conversation?.displayTitle || conversation?.title}</h1>
+            {isGroup && (
+              <p className="text-sm text-edu-muted mt-1">{participants.length} a'zo</p>
+            )}
+          </div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-edu-border bg-edu-surface sticky top-0 z-10">
-              {isGroup && (
-                <button 
-                  onClick={() => setActiveTab('members')}
-                  className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'members' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
-                >
-                  A'zolar
-                </button>
-              )}
+          {/* Tabs */}
+          <div className="flex border-b border-edu-border bg-edu-surface sticky top-0 z-10">
+            {isGroup && (
               <button 
-                onClick={() => setActiveTab('media')}
-                className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'media' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
+                onClick={() => setActiveTab('members')}
+                className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'members' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
               >
-                Media
+                A'zolar
               </button>
-              {canManage && (
-                <button 
-                  onClick={() => setActiveTab('invite')}
-                  className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'invite' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
-                >
-                  Taklif
-                </button>
-              )}
-            </div>
+            )}
+            <button 
+              onClick={() => setActiveTab('media')}
+              className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'media' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
+            >
+              Media
+            </button>
+            {canManage && (
+              <button 
+                onClick={() => setActiveTab('invite')}
+                className={cn("flex-1 py-3 text-sm font-bold transition-all", activeTab === 'invite' ? "text-edu-primary border-b-2 border-edu-primary" : "text-edu-muted hover:bg-black/5")}
+              >
+                Taklif
+              </button>
+            )}
+          </div>
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto bg-edu-bg p-4 space-y-4">
-              
-              {activeTab === 'members' && isGroup && (
-                <div className="space-y-3">
-                  {participants.map(p => (
-                    <div key={p.id} className="flex items-center justify-between p-3 bg-edu-surface rounded-xl border border-edu-border/50 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
-                      <div 
-                        className="flex items-center gap-3 flex-1 cursor-pointer"
-                        onClick={() => handleOpenDirectChat(p.userId)}
-                      >
-                        <Avatar name={p.user.fullname} avatarUrl={p.user.avatarUrl} size="md" />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-bold text-sm text-edu-text leading-tight group-hover:text-edu-primary transition-colors">{p.user.fullname}</p>
-                            {p.role === 'OWNER' && <span className="text-[10px] bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded font-bold uppercase">Asoschi</span>}
-                            {p.role === 'ADMIN' && <span className="text-[10px] bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded font-bold uppercase">Admin</span>}
-                          </div>
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto bg-edu-bg p-4 space-y-4">
+            
+            {activeTab === 'members' && isGroup && (
+              <div className="space-y-3">
+                {participants.map(p => (
+                  <div key={p.id} className="flex items-center justify-between p-3 bg-edu-surface rounded-xl border border-edu-border/50 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group">
+                    <div 
+                      className="flex items-center gap-3 flex-1 cursor-pointer"
+                      onClick={() => handleOpenDirectChat(p.userId)}
+                    >
+                      <Avatar name={p.user.fullname} avatarUrl={p.user.avatarUrl} size="md" />
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-sm text-edu-text leading-tight group-hover:text-edu-primary transition-colors">{p.user.fullname}</p>
+                          {p.role === 'OWNER' && <span className="text-[10px] bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded font-bold uppercase">Asoschi</span>}
+                          {p.role === 'ADMIN' && <span className="text-[10px] bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded font-bold uppercase">Admin</span>}
                         </div>
                       </div>
-                      
-                      {canManage && p.userId !== currentUser?.id && p.role !== 'OWNER' && (
-                        <button 
-                          onClick={() => handleKick(p.userId)}
-                          className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Guruhdan o'chirish"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
+                    </div>
+                    
+                    {canManage && p.userId !== currentUser?.id && p.role !== 'OWNER' && (
+                      <button 
+                        onClick={() => handleKick(p.userId)}
+                        className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Guruhdan o'chirish"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                <button 
+                  onClick={handleLeave}
+                  className="w-full flex items-center justify-center gap-2 py-3 mt-4 text-red-500 bg-red-50 rounded-xl font-bold active:scale-[0.98] transition-transform"
+                >
+                  <LogOut size={18} /> Guruhni tark etish
+                </button>
+              </div>
+            )}
+
+            {activeTab === 'media' && (
+              mediaFiles.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 opacity-50">
+                  <ImageIcon size={48} className="mb-3" />
+                  <p className="text-sm font-medium">Hali hech qanday media yo'q</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {mediaFiles.map(media => (
+                    <div 
+                      key={media.id} 
+                      className="cursor-pointer active:scale-95 transition-transform"
+                      onClick={() => {
+                        const ext = media.fileName?.split('.').pop().toLowerCase();
+                        const isImg = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
+                        onViewFile?.(media.fileId, media.fileName, false, isImg ? 'image/jpeg' : '');
+                      }}
+                    >
+                      <MediaItem media={media} />
                     </div>
                   ))}
-                  
-                  <button 
-                    onClick={handleLeave}
-                    className="w-full flex items-center justify-center gap-2 py-3 mt-4 text-red-500 bg-red-50 rounded-xl font-bold active:scale-[0.98] transition-transform"
-                  >
-                    <LogOut size={18} /> Guruhni tark etish
-                  </button>
                 </div>
-              )}
+              )
+            )}
 
-              {activeTab === 'media' && (
-                mediaFiles.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-10 opacity-50">
-                    <ImageIcon size={48} className="mb-3" />
-                    <p className="text-sm font-medium">Hali hech qanday media yo'q</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {mediaFiles.map(media => (
-                      <div 
-                        key={media.id} 
-                        className="cursor-pointer active:scale-95 transition-transform"
-                        onClick={() => {
-                          const ext = media.fileName?.split('.').pop().toLowerCase();
-                          const isImg = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
-                          onViewFile?.(media.fileId, media.fileName, false, isImg ? 'image/jpeg' : '');
-                        }}
-                      >
-                        <MediaItem media={media} />
+            {activeTab === 'invite' && isGroup && canManage && (
+              <div className="space-y-4">
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Username bo'yicha qidiring..." 
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full bg-edu-surface border border-edu-border rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all"
+                  />
+                </div>
+
+                {loadingSearch ? (
+                  <div className="text-center py-6"><div className="w-6 h-6 border-2 border-edu-primary border-t-transparent rounded-full animate-spin mx-auto" /></div>
+                ) : searchResults.length > 0 ? (
+                  <div className="space-y-2">
+                    {searchResults.map(u => (
+                      <div key={u.id} className="flex items-center justify-between bg-edu-surface p-3 rounded-xl border border-edu-border/50">
+                        <div className="flex items-center gap-3">
+                          <Avatar name={u.fullname} avatarUrl={u.avatarUrl} size="sm" />
+                          <div>
+                            <p className="text-sm font-bold text-edu-text leading-tight">{u.fullname}</p>
+                            <p className="text-[11px] text-edu-muted">@{u.username}</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => handleInvite(u.id)}
+                          disabled={invitingId === u.id}
+                          className="p-1.5 bg-edu-primary/10 text-edu-primary rounded-lg hover:bg-edu-primary/20 transition-colors disabled:opacity-50"
+                        >
+                          <UserPlus size={16} />
+                        </button>
                       </div>
                     ))}
                   </div>
-                )
-              )}
+                ) : searchQuery.length > 2 ? (
+                  <p className="text-center text-sm text-edu-muted py-6">Foydalanuvchi topilmadi</p>
+                ) : (
+                  <p className="text-center text-xs text-edu-muted py-6">Qidirish uchun kamida 3ta belgi kiriting</p>
+                )}
+              </div>
+            )}
 
-              {activeTab === 'invite' && isGroup && canManage && (
-                <div className="space-y-4">
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      placeholder="Username bo'yicha qidiring..." 
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full bg-edu-surface border border-edu-border rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-edu-primary/30 transition-all"
-                    />
-                  </div>
-
-                  {loadingSearch ? (
-                    <div className="text-center py-6"><div className="w-6 h-6 border-2 border-edu-primary border-t-transparent rounded-full animate-spin mx-auto" /></div>
-                  ) : searchResults.length > 0 ? (
-                    <div className="space-y-2">
-                      {searchResults.map(u => (
-                        <div key={u.id} className="flex items-center justify-between bg-edu-surface p-3 rounded-xl border border-edu-border/50">
-                          <div className="flex items-center gap-3">
-                            <Avatar name={u.fullname} avatarUrl={u.avatarUrl} size="sm" />
-                            <div>
-                              <p className="text-sm font-bold text-edu-text leading-tight">{u.fullname}</p>
-                              <p className="text-[11px] text-edu-muted">@{u.username}</p>
-                            </div>
-                          </div>
-                          <button 
-                            onClick={() => handleInvite(u.id)}
-                            disabled={invitingId === u.id}
-                            className="p-1.5 bg-edu-primary/10 text-edu-primary rounded-lg hover:bg-edu-primary/20 transition-colors disabled:opacity-50"
-                          >
-                            <UserPlus size={16} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : searchQuery.length > 2 ? (
-                    <p className="text-center text-sm text-edu-muted py-6">Foydalanuvchi topilmadi</p>
-                  ) : (
-                    <p className="text-center text-xs text-edu-muted py-6">Qidirish uchun kamida 3ta belgi kiriting</p>
-                  )}
-                </div>
-              )}
-
-            </div>
-          </motion.div>
-        </>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

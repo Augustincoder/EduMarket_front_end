@@ -162,11 +162,11 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
     <>
       {/* Backdrop — closes menu on outside click */}
       <AnimatePresence>
-        {showMenu && (
+        {(showMenu || reactionListIcon) && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] cursor-default bg-black/10 dark:bg-black/40 backdrop-blur-[3px]" 
-            onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
+            className="fixed inset-0 z-[60] cursor-default bg-white/30 dark:bg-black/50 backdrop-blur-md" 
+            onClick={(e) => { e.stopPropagation(); setShowMenu(false); setReactionListIcon(null); }}
           />
         )}
       </AnimatePresence>
@@ -178,9 +178,9 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
         onDragEnd={handleDragEnd}
         style={{ x: dragX, touchAction: 'pan-y' }}
         className={cn(
-          'group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-1.5 relative overflow-x-clip',
+          'group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-1.5 relative overflow-visible',
           isMe ? 'flex-row-reverse ml-auto' : 'mr-auto',
-          showMenu && 'z-[70]'
+          (showMenu || reactionListIcon) && 'z-[70]'
         )}
       >
         <motion.div
@@ -254,6 +254,58 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
                       <Trash2 size={15} /> O'chirish
                     </button>
                   )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ─── Reaction List Inline Menu ──────────────────────────────────────────── */}
+            <AnimatePresence>
+              {reactionListIcon && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.92, y: menuAbove ? 6 : -6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92, y: menuAbove ? 6 : -6 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className={cn(
+                    "absolute z-[80] bg-edu-surface/95 backdrop-blur-xl border border-edu-border",
+                    "rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.14)] py-1 flex flex-col",
+                    "min-w-[180px] max-w-[240px] overflow-hidden",
+                    menuPositionClass,
+                    isMe ? "right-0" : "left-0"
+                  )} 
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-edu-border/50">
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                         const Icon = REACTION_ICONS[reactionListIcon];
+                         return Icon ? <Icon size={16} className="text-edu-primary fill-edu-primary/20" /> : null;
+                      })()}
+                      <span className="font-bold text-[13px] text-edu-text">Reaksiyalar</span>
+                    </div>
+                    <div className="text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-edu-primary/10 text-edu-primary">
+                      {groupedReactions[reactionListIcon]?.length || 0}
+                    </div>
+                  </div>
+                  <div className="max-h-[250px] overflow-y-auto p-1 scrollbar-hide">
+                    {groupedReactions[reactionListIcon]?.map((r, i) => {
+                      const rUser = r.user || participants.find(p => p.user?.id === r.userId)?.user;
+                      return (
+                        <div key={r.userId || i} className="flex items-center gap-2 p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                          <Avatar name={rUser?.fullname || '?'} avatarUrl={rUser?.avatarUrl} size="xs" />
+                          <div className="flex flex-col flex-1 overflow-hidden">
+                            <span className="text-[12px] font-bold text-edu-text leading-none truncate">{rUser?.fullname || 'Foydalanuvchi'}</span>
+                            <div className="flex items-center justify-between w-full mt-1">
+                              <span className="text-[9px] font-medium text-edu-muted">
+                                {formatDatetime(r.createdAt || message.createdAt)}
+                              </span>
+                              {r.userId === user?.id && <span className="text-[9px] font-bold bg-edu-primary/10 text-edu-primary px-1.5 py-0.5 rounded-md">Siz</span>}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -381,56 +433,6 @@ export function MessageBubble({ message, isMe, participants = [], onReply, onEdi
 
         {/* External action trigger — visible on hover/focus */}
       </motion.div>
-      {/* Reaction List Modal */}
-      <AnimatePresence>
-        {reactionListIcon && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm cursor-pointer"
-              onClick={() => setReactionListIcon(null)}
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-xs bg-edu-surface dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col"
-            >
-              <div className="flex items-center justify-between p-3 border-b border-edu-border/50 bg-black/5 dark:bg-white/5">
-                <div className="flex items-center gap-2">
-                  {(() => {
-                     const Icon = REACTION_ICONS[reactionListIcon];
-                     return Icon ? <Icon size={18} className="text-edu-primary fill-edu-primary/20" /> : null;
-                  })()}
-                  <span className="font-bold text-sm text-edu-text">Reaksiyalar</span>
-                </div>
-                <div className="text-xs font-semibold px-2 py-0.5 rounded-full bg-edu-primary/10 text-edu-primary">
-                  {groupedReactions[reactionListIcon]?.length || 0}
-                </div>
-              </div>
-              <div className="max-h-[60vh] overflow-y-auto p-2">
-                {groupedReactions[reactionListIcon]?.map((r, i) => {
-                  const rUser = r.user || participants.find(p => p.user?.id === r.userId)?.user;
-                  return (
-                    <div key={r.userId || i} className="flex items-center gap-3 p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                      <Avatar name={rUser?.fullname || '?'} avatarUrl={rUser?.avatarUrl} size="sm" />
-                      <div className="flex flex-col flex-1">
-                        <span className="text-[13px] font-bold text-edu-text leading-none">{rUser?.fullname || 'Foydalanuvchi'}</span>
-                        <div className="flex items-center justify-between w-full mt-1">
-                          <span className="text-[10px] font-medium text-edu-muted">
-                            {formatDatetime(r.createdAt || message.createdAt)}
-                          </span>
-                          {r.userId === user?.id && <span className="text-[10px] font-bold bg-edu-primary/10 text-edu-primary px-1.5 py-0.5 rounded-md">Siz</span>}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </>
   );
 }
