@@ -539,7 +539,7 @@ export const useChatStore = create((set, get) => ({
                 reactions[existingIndex] = { ...reactions[existingIndex], icon };
               }
             } else {
-              reactions.push({ icon, userId: user.id, user: { id: user.id, fullname: user.fullname } });
+              reactions.push({ icon, userId: user.id, user: { id: user.id, fullname: user.fullname, avatarUrl: user.avatarUrl } });
             }
             
             return { ...m, reactions };

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { filesApi } from '../../services/other.service';
 import { Spinner } from '../ui/Spinner';
+import { Avatar } from '../ui/Avatar';
 import DOMPurify from 'dompurify';
 import { VoicePlayer } from './VoicePlayer';
 import { useAuthStore } from '../../store/authStore';
@@ -64,6 +65,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   const isImage = message.fileType === 'photo' || (message.fileName && /\.(jpg|jpeg|png|gif|webp)$/i.test(message.fileName));
 
   const [showMenu, setShowMenu] = useState(false);
+  const [reactionListIcon, setReactionListIcon] = useState(null);
   // Track menu position — above or below bubble
   const [menuAbove, setMenuAbove] = useState(true);
   const bubbleRef = useRef(null);
@@ -111,7 +113,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
   const rawReactions = message.reactions || [];
   const groupedReactions = rawReactions.reduce((acc, r) => {
     if (!acc[r.icon]) acc[r.icon] = [];
-    acc[r.icon].push(r.userId);
+    acc[r.icon].push(r);
     return acc;
   }, {});
 
@@ -163,7 +165,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
         {showMenu && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] cursor-default" 
+            className="fixed inset-0 z-[60] cursor-default bg-black/10 dark:bg-black/40 backdrop-blur-[3px]" 
             onClick={(e) => { e.stopPropagation(); setShowMenu(false); }}
           />
         )}
@@ -337,12 +339,12 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.15 }}
-              className={cn("flex flex-wrap gap-1 mt-1 z-10 relative px-1", isMe ? "justify-end" : "justify-start")}
+              className={cn("flex flex-wrap gap-1 -mt-3.5 relative z-10", isMe ? "justify-end mr-1" : "justify-start ml-1")}
             >
-              {Object.entries(groupedReactions).map(([iconName, users]) => {
+              {Object.entries(groupedReactions).map(([iconName, reactionItems]) => {
                 const Icon = REACTION_ICONS[iconName];
                 if (!Icon) return null;
-                const hasReacted = users.includes(user?.id);
+                const hasReacted = reactionItems.some(r => r.userId === user?.id);
                 return (
                   <motion.button
                     key={iconName}
@@ -351,15 +353,29 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                     transition={{ duration: 0.15 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleReact(iconName)}
+                    onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setReactionListIcon(iconName); hapticLight(); }}
                     className={cn(
-                      "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold shadow-sm border",
+                      "flex items-center gap-1 pl-1.5 pr-2 py-[3px] rounded-full text-[11px] font-bold shadow-sm border backdrop-blur-md",
                       hasReacted 
-                        ? "bg-edu-primary/10 border-edu-primary/30 text-edu-primary dark:bg-edu-primary/20" 
-                        : "bg-edu-surface dark:bg-slate-800 border-edu-border/60 text-edu-muted hover:text-edu-text"
+                        ? "bg-edu-primary/15 border-edu-primary/30 text-edu-primary dark:bg-edu-primary/25" 
+                        : "bg-edu-surface/95 dark:bg-slate-800/95 border-edu-border/60 text-edu-text hover:bg-black/5 dark:hover:bg-white/5"
                     )}
                   >
-                    <Icon size={14} className={cn(hasReacted ? "text-edu-primary fill-edu-primary/20" : "")} />
-                    <span className={hasReacted ? "text-edu-primary font-extrabold" : "font-medium"}>{users.length}</span>
+                    <Icon size={14} className={cn(hasReacted ? "text-edu-primary fill-edu-primary/30" : "text-edu-muted")} />
+                    <span className={hasReacted ? "text-edu-primary font-extrabold" : "font-medium"}>{reactionItems.length}</span>
+                    
+                    {/* Avatars Stack */}
+                    <div className="flex -space-x-1.5 ml-0.5 pointer-events-none">
+                      {reactionItems.slice(0, 3).map((r, i) => (
+                        <Avatar 
+                          key={r.userId || i} 
+                          name={r.user?.fullname || '?'} 
+                          avatarUrl={r.user?.avatarUrl} 
+                          size="xs" 
+                          className={cn("w-[16px] h-[16px] text-[8px] border-[1.5px]", hasReacted ? "border-edu-surface dark:border-edu-surface" : "border-edu-surface dark:border-edu-surface")}
+                        />
+                      ))}
+                    </div>
                   </motion.button>
                 );
               })}
@@ -369,6 +385,48 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
         {/* External action trigger — visible on hover/focus */}
       </motion.div>
+      {/* Reaction List Modal */}
+      <AnimatePresence>
+        {reactionListIcon && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm cursor-pointer"
+              onClick={() => setReactionListIcon(null)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-xs bg-edu-surface dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col"
+            >
+              <div className="flex items-center justify-between p-3 border-b border-edu-border/50 bg-black/5 dark:bg-white/5">
+                <div className="flex items-center gap-2">
+                  {(() => {
+                     const Icon = REACTION_ICONS[reactionListIcon];
+                     return Icon ? <Icon size={18} className="text-edu-primary fill-edu-primary/20" /> : null;
+                  })()}
+                  <span className="font-bold text-sm text-edu-text">Reaksiyalar</span>
+                </div>
+                <div className="text-xs font-semibold px-2 py-0.5 rounded-full bg-edu-primary/10 text-edu-primary">
+                  {groupedReactions[reactionListIcon]?.length || 0}
+                </div>
+              </div>
+              <div className="max-h-[60vh] overflow-y-auto p-2">
+                {groupedReactions[reactionListIcon]?.map((r, i) => (
+                  <div key={r.userId || i} className="flex items-center gap-3 p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <Avatar name={r.user?.fullname || '?'} avatarUrl={r.user?.avatarUrl} size="sm" />
+                    <div className="flex flex-col">
+                      <span className="text-[13px] font-bold text-edu-text leading-none">{r.user?.fullname || 'Foydalanuvchi'}</span>
+                      {r.user?.userId === user?.id && <span className="text-[10px] font-medium text-edu-muted mt-1">Siz</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
