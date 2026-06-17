@@ -79,7 +79,6 @@ export default function ChatScreen() {
   const [isGroupSettingsOpen, setIsGroupSettingsOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   // 🪄 track last message id to animate new arrivals
-  const [lastMsgId, setLastMsgId] = useState(null);
 
   const lastReadCall = useRef(0);
   const virtuosoRef = useRef(null);
@@ -104,10 +103,7 @@ export default function ChatScreen() {
   const roomMessages = useMemo(() => messages[chatRoomId] || [], [messages, chatRoomId]);
 
   // 🪄 Detect new incoming message for entrance animation
-  useEffect(() => {
-    const last = roomMessages[roomMessages.length - 1];
-    if (last && last.id !== lastMsgId) setLastMsgId(last?.id);
-  }, [roomMessages]);
+  const lastMsgId = roomMessages[roomMessages.length - 1]?.id ?? null;
 
   const handleJumpToMessage = useCallback((messageId) => {
     const index = roomMessages.findIndex(m => m.id === messageId);
@@ -428,31 +424,22 @@ export default function ChatScreen() {
 
       {/* ── Input Bar — iOS glass island ─────────────────────────────────────── */}
       {/* 🪄 Design Spell: morphs between docked & floating island based on scroll position */}
-      <div className="shrink-0 relative z-30 w-full flex justify-center pointer-events-none">
+      <div className="pointer-events-none relative z-30 flex w-full shrink-0 justify-center px-2 pb-2">
         <motion.div
-          animate={{
-            width: isAtBottom ? '100%' : '90%',
-            marginBottom: isAtBottom ? '0px' : '12px',
-            borderRadius: isAtBottom ? '0px' : '28px',
-            boxShadow: isAtBottom
-              ? '0 -1px 0 rgba(0,0,0,0.04)'
-              : '0 12px 40px -8px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.1)',
-          }}
-          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+          initial={{ opacity: 0, y: 14, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 30 }}
           className={cn(
-            'pointer-events-auto relative overflow-hidden',
-            // True iOS glass effect requires ~75-80% opacity
-            'bg-edu-surface/80 dark:bg-edu-surface/75 backdrop-blur-[24px]',
-            'border-t border-edu-border/50',
-            !isAtBottom && 'border border-white/30 dark:border-white/10'
+            'pointer-events-auto relative w-full overflow-visible rounded-[28px]',
+            'border border-white/45 bg-edu-surface/72 shadow-lg backdrop-blur-[28px]',
+            'dark:border-white/10 dark:bg-edu-surface/70'
           )}
           style={{
-            paddingBottom: isAtBottom ? 'env(safe-area-inset-bottom)' : '0px',
-            borderTopWidth: isAtBottom ? '1px' : '0px',
+            marginBottom: 'env(safe-area-inset-bottom)',
           }}
         >
           {/* glass shimmer top line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 dark:via-white/20 to-transparent pointer-events-none" />
+          <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/20" />
 
           <ChatInput 
             onSend={handleSend} 

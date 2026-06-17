@@ -1,26 +1,23 @@
-// src/components/chat/ChatInput.jsx
-// iOS Telegram-style minimalist glass input — Design Spells ✨
 import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Paperclip, Send, X, Image as ImageIcon, FileText,
   Check, Mic, Lock, File, CornerDownRight, Edit2
 } from 'lucide-react';
-import { filesApi } from '../../services/other.service';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { filesApi } from '../../services/other.service';
 import { cn } from '../../lib/utils';
 import { hapticLight, hapticSuccess } from '../../lib/telegram';
 import { VoiceRecorder } from './VoiceRecorder';
-import { motion, AnimatePresence } from 'framer-motion';
 
-// ─── Attach Menu Item ──────────────────────────────────────────────────────────
 function AttachItem({ icon: Icon, label, color, bg, onClick }) {
   return (
     <motion.button
-      whileTap={{ scale: 0.93 }}
+      whileTap={{ scale: 0.94 }}
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-4 py-3 text-left active:bg-black/5 dark:active:bg-white/5 transition-colors"
+      className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors active:bg-black/5 dark:active:bg-white/5"
     >
-      <span className={cn('w-9 h-9 rounded-2xl flex items-center justify-center shrink-0', bg)}>
+      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-full', bg)}>
         <Icon size={18} className={color} />
       </span>
       <span className="text-[15px] font-semibold text-edu-text">{label}</span>
@@ -28,46 +25,50 @@ function AttachItem({ icon: Icon, label, color, bg, onClick }) {
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
 export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessage, onCancelAction }) {
-  const [text, setText]             = useState('');
-  const [showMenu, setShowMenu]     = useState(false);
-  const [uploading, setUploading]   = useState(false);
+  const [text, setText] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [isSending, setIsSending]   = useState(false);
-  const [pendingFile, setPendingFile]           = useState(null);
+  const [isSending, setIsSending] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
   const [pendingFilePreview, setPendingFilePreview] = useState(null);
   const [isSelectingSecureFile, setIsSelectingSecureFile] = useState(false);
 
-  const fileRef     = useRef(null);
+  const fileRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // ── Sync with edit mode ───────────────────────────────────────────────────
-  useEffect(() => {
-    if (editingMessage) {
-      setText(editingMessage.content || '');
-      setTimeout(() => textareaRef.current?.focus(), 50);
-    } else if (!replyingTo) {
-      // don't clear if we're just replying
-    }
-  }, [editingMessage]);
-
-  // Auto-grow textarea
   const adjustHeight = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    el.style.height = `${Math.min(el.scrollHeight, 118)}px`;
   }, []);
 
-  // ── Send ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!editingMessage) return undefined;
+
+    const timer = window.setTimeout(() => {
+      setText(editingMessage.content || '');
+      textareaRef.current?.focus();
+      adjustHeight();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [adjustHeight, editingMessage]);
+
+  const resetComposer = () => {
+    if (editingMessage) return;
+    setText('');
+    if (textareaRef.current) textareaRef.current.style.height = '24px';
+  };
+
   const handleSend = async () => {
     const trimmed = text?.trim() || '';
     if (!trimmed && !pendingFile) return;
 
-    // 🪄 Design Spell: recoil spring on send
     setIsSending(true);
-    setTimeout(() => setIsSending(false), 200);
+    window.setTimeout(() => setIsSending(false), 180);
     hapticSuccess();
 
     if (pendingFile) {
@@ -78,7 +79,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         const res = await filesApi.upload(fd);
         const fileId = res.data.data.fileIds[0];
         let fileType = 'document';
-        if (pendingFile.type.startsWith('image/'))  fileType = 'photo';
+        if (pendingFile.type.startsWith('image/')) fileType = 'photo';
         else if (pendingFile.type.startsWith('video/')) fileType = 'video';
         else if (pendingFile.type.startsWith('audio/')) fileType = 'voice';
         onSend?.(trimmed, fileId, fileType, pendingFile.name, isSelectingSecureFile);
@@ -90,12 +91,13 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         if (pendingFilePreview) URL.revokeObjectURL(pendingFilePreview);
         setPendingFilePreview(null);
         setIsSelectingSecureFile(false);
-        if (!editingMessage) { setText(''); if (textareaRef.current) textareaRef.current.style.height = 'auto'; }
+        resetComposer();
       }
-    } else {
-      onSend?.(trimmed, null);
-      if (!editingMessage) { setText(''); if (textareaRef.current) textareaRef.current.style.height = 'auto'; }
+      return;
     }
+
+    onSend?.(trimmed, null);
+    resetComposer();
   };
 
   const handleVoiceSend = async (blob) => {
@@ -116,13 +118,16 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   const handleChange = (val) => {
     setText(val);
     onTyping?.();
-    adjustHeight();
+    window.requestAnimationFrame(adjustHeight);
   };
 
   const handleFileSelect = (e) => {
@@ -132,7 +137,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     setPendingFile(file);
     setPendingFilePreview(file.type.startsWith('image/') ? URL.createObjectURL(file) : null);
     e.target.value = '';
-    setTimeout(() => textareaRef.current?.focus(), 100);
+    window.setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
   const handleCancelFile = () => {
@@ -142,24 +147,29 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
     setIsSelectingSecureFile(false);
   };
 
+  const openPicker = (accept, secure = false) => {
+    setIsSelectingSecureFile(secure);
+    if (fileRef.current) {
+      fileRef.current.accept = accept;
+      fileRef.current.click();
+    }
+  };
+
   const hasContent = !!(text.trim() || editingMessage || pendingFile);
 
-  // ── VoiceRecorder mode ────────────────────────────────────────────────────
   if (isVoiceMode) {
     return (
-      <div className="px-2 pb-1">
+      <div className="px-3 pb-2 pt-2">
         <VoiceRecorder onSend={handleVoiceSend} onCancel={() => setIsVoiceMode(false)} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full">
-      {/* ── Attach Menu (popup above input) ────────────────────── */}
+    <div className="flex w-full flex-col">
       <AnimatePresence>
         {showMenu && (
           <>
-            {/* backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -168,37 +178,41 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
               onClick={() => setShowMenu(false)}
             />
             <motion.div
-              initial={{ opacity: 0, y: 12, scale: 0.94 }}
+              initial={{ opacity: 0, y: 10, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 12, scale: 0.94 }}
-              transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-              className="absolute bottom-[calc(100%+8px)] left-2 z-[100] w-[220px] rounded-2xl overflow-hidden bg-edu-surface/90 backdrop-blur-2xl border border-edu-border/60 shadow-[0_16px_48px_rgba(0,0,0,0.18)]"
+              exit={{ opacity: 0, y: 10, scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+              className="absolute bottom-[calc(100%+10px)] left-3 z-[100] w-[224px] overflow-hidden rounded-[22px] border border-white/45 bg-edu-surface/82 shadow-lg backdrop-blur-2xl dark:border-white/10 dark:bg-edu-surface/78"
             >
-              {/* glass shimmer */}
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/20" />
               <AttachItem
-                icon={ImageIcon} label="Foto / Video"
-                color="text-blue-500" bg="bg-blue-500/10"
-                onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept = 'image/*,video/*'; fileRef.current.click(); }}
+                icon={ImageIcon}
+                label="Foto / Video"
+                color="text-edu-info"
+                bg="bg-edu-info-l"
+                onClick={() => openPicker('image/*,video/*')}
               />
-              <div className="h-px bg-edu-border/50 mx-4" />
+              <div className="mx-4 h-px bg-edu-border/50" />
               <AttachItem
-                icon={FileText} label="Fayl (Hujjat)"
-                color="text-indigo-500" bg="bg-indigo-500/10"
-                onClick={() => { setIsSelectingSecureFile(false); fileRef.current.accept = '*'; fileRef.current.click(); }}
+                icon={FileText}
+                label="Fayl (Hujjat)"
+                color="text-edu-accent"
+                bg="bg-edu-accent-l"
+                onClick={() => openPicker('*')}
               />
-              <div className="h-px bg-edu-border/50 mx-4" />
+              <div className="mx-4 h-px bg-edu-border/50" />
               <AttachItem
-                icon={Lock} label="Himoyalangan fayl"
-                color="text-red-500" bg="bg-red-500/10"
-                onClick={() => { setIsSelectingSecureFile(true); fileRef.current.accept = '*'; fileRef.current.click(); }}
+                icon={Lock}
+                label="Himoyalangan fayl"
+                color="text-edu-urgent"
+                bg="bg-edu-urgent-l"
+                onClick={() => openPicker('*', true)}
               />
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* ── Reply / Edit banner ─────────────────────────────────── */}
       <AnimatePresence>
         {(replyingTo || editingMessage) && !pendingFile && (
           <motion.div
@@ -208,20 +222,20 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             transition={{ type: 'spring', stiffness: 420, damping: 28 }}
             className="overflow-hidden"
           >
-            <div className="flex items-center gap-2.5 px-4 py-2 border-b border-edu-border/30">
-              {/* accent stripe */}
-              <div className={cn('w-1 h-9 rounded-full shrink-0', replyingTo ? 'bg-edu-primary' : 'bg-blue-500')} />
-              <div className="flex-1 min-w-0">
-                <div className={cn('text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5', replyingTo ? 'text-edu-primary' : 'text-blue-500')}>
+            <div className="mx-3 mt-2 flex items-center gap-2.5 rounded-[18px] border border-white/35 bg-white/28 px-3 py-2 shadow-sm dark:border-white/10 dark:bg-white/6">
+              <div className={cn('h-9 w-1 shrink-0 rounded-full', replyingTo ? 'bg-edu-primary' : 'bg-edu-info')} />
+              <div className="min-w-0 flex-1">
+                <div className={cn('flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-label', replyingTo ? 'text-edu-primary' : 'text-edu-info')}>
                   {replyingTo ? <><CornerDownRight size={11} />{replyingTo.sender?.fullname || 'Javob'}</> : <><Edit2 size={11} />Tahrirlash</>}
                 </div>
-                <div className="text-[13px] text-edu-text/70 truncate font-medium">
+                <div className="truncate text-[13px] font-medium text-edu-text/70">
                   {replyingTo ? (replyingTo.content || 'Biriktirma') : editingMessage?.content}
                 </div>
               </div>
               <button
+                type="button"
                 onClick={onCancelAction}
-                className="w-7 h-7 rounded-full bg-edu-muted/10 flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all shrink-0"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-edu-muted/10 text-edu-muted transition-all active:scale-90 hover:text-edu-text"
               >
                 <X size={14} />
               </button>
@@ -230,7 +244,6 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         )}
       </AnimatePresence>
 
-      {/* ── File Preview banner ──────────────────────────────────── */}
       <AnimatePresence>
         {pendingFile && (
           <motion.div
@@ -240,27 +253,28 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             transition={{ type: 'spring', stiffness: 420, damping: 28 }}
             className="overflow-hidden"
           >
-            <div className="flex items-center gap-3 px-4 py-2.5 border-b border-edu-border/30">
+            <div className="mx-3 mt-2 flex items-center gap-3 rounded-[18px] border border-white/35 bg-white/28 px-3 py-2.5 shadow-sm dark:border-white/10 dark:bg-white/6">
               {pendingFilePreview ? (
-                <img src={pendingFilePreview} alt="preview" className="w-10 h-10 rounded-xl object-cover border border-black/10 shrink-0" />
+                <img src={pendingFilePreview} alt="preview" className="h-10 w-10 shrink-0 rounded-[14px] border border-black/10 object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-                  <File size={20} className="text-blue-500" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-edu-info-l">
+                  <File size={20} className="text-edu-info" />
                 </div>
               )}
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-bold text-edu-text truncate flex items-center gap-1.5">
-                  {isSelectingSecureFile && <Lock size={11} className="text-red-500 shrink-0" />}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 truncate text-[13px] font-bold text-edu-text">
+                  {isSelectingSecureFile && <Lock size={11} className="shrink-0 text-edu-urgent" />}
                   {pendingFile.name}
                 </div>
-                <div className="text-[11px] text-edu-muted font-medium">
+                <div className="text-[11px] font-medium text-edu-muted">
                   {(pendingFile.size / 1024 / 1024).toFixed(2)} MB{isSelectingSecureFile ? ' · Himoyalangan' : ''}
                 </div>
               </div>
               <button
+                type="button"
                 onClick={handleCancelFile}
                 disabled={uploading}
-                className="w-7 h-7 rounded-full bg-edu-muted/10 flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all"
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-edu-muted/10 text-edu-muted transition-all active:scale-90 hover:text-edu-text disabled:opacity-50"
               >
                 <X size={14} />
               </button>
@@ -269,40 +283,38 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
         )}
       </AnimatePresence>
 
-      {/* ── Main Input Row ───────────────────────────────────────── */}
-      {/* 🪄 Design Spell: spring recoil on send */}
       <motion.div
-        animate={isSending ? { y: 3, scale: 0.982 } : { y: 0, scale: 1 }}
-        transition={{ type: 'spring', stiffness: 700, damping: 18 }}
-        className="flex items-end gap-2.5 px-3 py-2.5"
+        animate={isSending ? { y: 2, scale: 0.99 } : { y: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 700, damping: 20 }}
+        className="flex items-end gap-2 px-3 pb-2.5 pt-2"
       >
-        {/* Attach button */}
         <motion.button
-          whileTap={{ scale: 0.88, rotate: showMenu ? 0 : 45 }}
+          type="button"
+          whileTap={{ scale: 0.9 }}
           transition={{ type: 'spring', stiffness: 400, damping: 20 }}
           aria-label="Biriktirish"
-          onClick={() => { hapticLight(); setShowMenu(s => !s); }}
+          onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
           disabled={!!editingMessage || uploading}
           className={cn(
-            'w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200',
-            showMenu
-              ? 'bg-edu-primary text-white shadow-[0_4px_12px_rgba(var(--color-primary-rgb,99,102,241),0.4)]'
-              : 'text-edu-muted hover:text-edu-text'
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-200 disabled:opacity-40',
+            showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-white/30 text-edu-muted hover:text-edu-text dark:bg-white/5'
           )}
         >
-          {uploading
-            ? <div className="w-4 h-4 border-2 border-edu-primary border-t-transparent rounded-full animate-spin" />
-            : <Paperclip size={19} strokeWidth={2.2} className={cn('transition-transform duration-200', showMenu && 'rotate-45')} />
-          }
+          {uploading ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-edu-primary border-t-transparent" />
+          ) : (
+            <Paperclip size={19} strokeWidth={2.2} className={cn('transition-transform duration-200', showMenu && 'rotate-45')} />
+          )}
         </motion.button>
 
-        {/* Textarea pill */}
-        <div className={cn(
-          'flex-1 flex items-end rounded-[24px] px-4 py-[10px] min-h-[44px]',
-          'bg-edu-surface/90 border border-edu-border/60',
-          'transition-all duration-200',
-          'focus-within:border-edu-primary/50 focus-within:shadow-[0_0_0_3px_rgba(var(--color-primary-rgb,99,102,241),0.1)]',
-        )}>
+        <div
+          className={cn(
+            'flex min-h-[44px] flex-1 items-end rounded-[22px] px-4 py-[10px]',
+            'border border-white/55 bg-white/68 shadow-sm backdrop-blur-xl',
+            'transition-all duration-200 dark:border-white/10 dark:bg-white/8',
+            'focus-within:border-edu-primary/45 focus-within:bg-white/82 dark:focus-within:bg-white/12'
+          )}
+        >
           <textarea
             ref={textareaRef}
             value={text}
@@ -311,42 +323,44 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
             placeholder={pendingFile ? 'Izoh yozing...' : 'Xabar...'}
             disabled={disabled || uploading}
             rows={1}
-            className="flex-1 bg-transparent border-none text-[15px] font-medium text-edu-text placeholder:text-edu-muted/60 focus:outline-none focus:ring-0 resize-none overflow-hidden leading-[1.45] max-h-[120px] py-0"
+            className="max-h-[118px] flex-1 resize-none overflow-hidden border-none bg-transparent py-0 text-[15px] font-medium leading-[1.45] text-edu-text placeholder:text-edu-muted/60 focus:outline-none focus:ring-0"
             style={{ height: '24px' }}
           />
         </div>
 
-        {/* Send / Mic button */}
-        <div className="relative w-9 h-9 shrink-0 flex items-center justify-center">
+        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center">
           <AnimatePresence mode="popLayout">
             {hasContent ? (
               <motion.button
                 key="send"
-                initial={{ opacity: 0, scale: 0.5, rotate: -30 }}
+                type="button"
+                initial={{ opacity: 0, scale: 0.6, rotate: -20 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.4, rotate: 30 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                exit={{ opacity: 0, scale: 0.6, rotate: 20 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 24 }}
                 aria-label={editingMessage ? 'Saqlash' : 'Yuborish'}
                 disabled={uploading}
                 onClick={handleSend}
-                className="w-9 h-9 rounded-full bg-edu-primary text-white flex items-center justify-center shadow-[0_4px_14px_rgba(var(--color-primary-rgb,99,102,241),0.45)] active:scale-90 transition-transform"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-edu-primary text-white shadow-btn transition-transform active:scale-90 disabled:opacity-50"
               >
-                {editingMessage
-                  ? <Check size={17} strokeWidth={2.5} />
-                  : <Send size={16} strokeWidth={2.2} className="translate-x-[1px]" />
-                }
+                {editingMessage ? (
+                  <Check size={17} strokeWidth={2.5} />
+                ) : (
+                  <Send size={16} strokeWidth={2.2} className="translate-x-[1px]" />
+                )}
               </motion.button>
             ) : (
               <motion.button
                 key="mic"
-                initial={{ opacity: 0, scale: 0.5, rotate: 30 }}
+                type="button"
+                initial={{ opacity: 0, scale: 0.6, rotate: 20 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, scale: 0.4, rotate: -30 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+                exit={{ opacity: 0, scale: 0.6, rotate: -20 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 24 }}
                 aria-label="Ovozli xabar"
                 disabled={uploading}
                 onClick={() => { hapticLight(); setIsVoiceMode(true); }}
-                className="w-9 h-9 rounded-full flex items-center justify-center text-edu-muted hover:text-edu-text active:scale-90 transition-all"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/30 text-edu-muted transition-all active:scale-90 hover:text-edu-text disabled:opacity-50 dark:bg-white/5"
               >
                 <Mic size={19} strokeWidth={2} />
               </motion.button>
