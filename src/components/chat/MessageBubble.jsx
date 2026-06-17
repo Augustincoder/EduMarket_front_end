@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn, formatDatetime } from '../../lib/utils';
 import { 
-  Check, CheckCheck, FileText, Image as ImageIcon, MoreVertical, CornerDownRight, 
+  Check, CheckCheck, FileText, Image as ImageIcon, CornerDownRight, 
   Edit2, Trash2, Clock, AlertCircle, FileType, Lock,
   ThumbsUp, ThumbsDown, Heart, Flame, Star, Zap, Smile, Coffee, Gift, Trophy
 } from 'lucide-react';
@@ -170,30 +170,37 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
       </AnimatePresence>
 
       <motion.div 
+        layout="position"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={{ left: 0.15, right: 0 }}
         onDragEnd={handleDragEnd}
-        style={{ x: dragX }}
+        style={{ x: dragX, touchAction: 'pan-y' }}
         // FIX: Subtler entrance animation — no large scale jump
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
         className={cn(
-          'group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-1.5 relative',
+          'group flex items-end gap-2 max-w-[85%] sm:max-w-[75%] my-1.5 relative overflow-x-clip',
           isMe ? 'flex-row-reverse ml-auto' : 'mr-auto',
           showMenu && 'z-[70]'
         )}
       >
-        <div className="flex flex-col gap-1 w-full relative" ref={bubbleRef}>
+        <motion.div
+          layout
+          transition={{ layout: { type: 'spring', stiffness: 420, damping: 34 } }}
+          className="flex flex-col gap-1 w-full relative"
+          ref={bubbleRef}
+        >
           <motion.div
+            layout
             whileTap={{ scale: 0.98 }}
             // FIX: Don't animate scale on showMenu — causes layout shift
             className={cn(
               'px-3.5 py-2 text-[14.5px] leading-relaxed break-words relative shadow-sm cursor-pointer',
               isMe
-                ? 'bg-gradient-to-br from-edu-primary/95 to-edu-primary/85 text-white rounded-[18px] rounded-br-[4px]'
-                : 'bg-edu-surface dark:bg-edu-surface text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40',
+                ? 'bg-edu-primary text-white rounded-[18px] rounded-br-[4px]'
+                : 'bg-edu-surface/96 dark:bg-edu-surface text-edu-text rounded-[18px] rounded-bl-[4px] border border-edu-border/40 backdrop-blur-sm',
               hasFile && message.fileType !== 'voice' && (!isImage || message.isSecureFile) && 'hover:opacity-90 active:scale-[0.98]',
               showMenu && 'ring-2 ring-edu-primary/20'
             )}
@@ -322,7 +329,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
           {/* Swipe-to-reply icon */}
           <motion.div 
-            className="absolute top-1/2 -translate-y-1/2 -right-10 flex items-center justify-center w-7 h-7 rounded-full bg-edu-surface/80 backdrop-blur-md shadow-sm border border-edu-border pointer-events-none"
+            className="pointer-events-none absolute right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-edu-border bg-edu-surface/80 shadow-sm backdrop-blur-md"
             style={{ opacity: replyIconOpacity, scale: replyIconScale }}
           >
             <CornerDownRight size={13} className="text-edu-primary" />
@@ -330,7 +337,11 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
 
           {/* Reactions */}
           {Object.keys(groupedReactions).length > 0 && (
-            <div className={cn("flex flex-wrap gap-1 mt-1 z-10 relative px-1", isMe ? "justify-end" : "justify-start")}>
+            <motion.div
+              layout
+              transition={{ layout: { type: 'spring', stiffness: 420, damping: 34 } }}
+              className={cn("flex flex-wrap gap-1 mt-1 z-10 relative px-1", isMe ? "justify-end" : "justify-start")}
+            >
               {Object.entries(groupedReactions).map(([iconName, users]) => {
                 const Icon = REACTION_ICONS[iconName];
                 if (!Icon) return null;
@@ -338,6 +349,7 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                 return (
                   <motion.button
                     key={iconName}
+                    layout
                     initial={{ scale: 0.7, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.15 }}
@@ -355,20 +367,11 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                   </motion.button>
                 );
               })}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* External action trigger — visible on hover/focus */}
-        <button 
-          onClick={(e) => { e.stopPropagation(); showMenu ? setShowMenu(false) : openMenu(); }}
-          className={cn(
-            "p-1 rounded-full text-edu-muted opacity-0 group-hover:opacity-70 focus:opacity-100 transition-opacity self-end mb-2 hover:bg-black/5 dark:hover:bg-white/5",
-            showMenu && "opacity-100 bg-black/5"
-          )}
-        >
-          <MoreVertical size={16} />
-        </button>
       </motion.div>
     </>
   );

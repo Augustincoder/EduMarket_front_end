@@ -262,7 +262,7 @@ export default function ChatScreen() {
       </div>
 
       {/* ── Message List ─────────────────────────────────────────────────────── */}
-      <div className="flex-1 min-h-0 bg-mesh-aurora relative w-full">
+      <div className="flex-1 min-h-0 bg-mesh-aurora relative w-full overflow-x-hidden">
         <Virtuoso
           ref={virtuosoRef}
           data={roomMessages}
@@ -271,7 +271,7 @@ export default function ChatScreen() {
           followOutput="smooth"
           alignToBottom
           atBottomStateChange={setIsAtBottom}
-          className="h-full scrollbar-hide"
+          className="h-full overflow-x-hidden scrollbar-hide"
           components={{
             Header: () => (
               <div className="flex flex-col gap-4 mb-4 pt-6 px-3">
@@ -347,7 +347,7 @@ export default function ChatScreen() {
               </div>
             ),
             Footer: () => (
-              <div className="flex flex-col gap-1 mt-1 px-2 pb-2">
+              <div className="mt-1 flex flex-col gap-1 px-2 pb-3">
                 <AnimatePresence>
                   {typingUsers?.[chatRoomId]?.length > 0 && (
                     <motion.div
@@ -371,7 +371,6 @@ export default function ChatScreen() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {/* Space so last message isn't hidden behind input */}
                 <div className="h-2" />
               </div>
             )
@@ -382,6 +381,7 @@ export default function ChatScreen() {
               // 🪄 Design Spell: new message floats up with spring
               <motion.div
                 key={msg.id}
+                layout="position"
                 className="mb-1.5 px-2"
                 initial={isNewest ? { opacity: 0, y: 20, scale: 0.94 } : false}
                 animate={isNewest ? { opacity: 1, y: 0, scale: 1 } : {}}
@@ -414,7 +414,8 @@ export default function ChatScreen() {
               exit={{ opacity: 0, scale: 0.7, y: 10 }}
               transition={{ type: 'spring', stiffness: 400, damping: 22 }}
               onClick={scrollToBottom}
-              className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-edu-surface/90 backdrop-blur-md border border-edu-border shadow-[0_4px_16px_rgba(0,0,0,0.12)] flex items-center justify-center text-edu-text active:scale-90 transition-transform z-10"
+              className="absolute right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-edu-border bg-edu-surface/90 text-edu-text shadow-[0_4px_16px_rgba(0,0,0,0.12)] backdrop-blur-md transition-transform active:scale-90"
+              style={{ bottom: '14px' }}
             >
               <ChevronDown size={18} />
             </motion.button>
@@ -424,23 +425,9 @@ export default function ChatScreen() {
 
       {/* ── Input Bar — iOS glass island ─────────────────────────────────────── */}
       {/* 🪄 Design Spell: morphs between docked & floating island based on scroll position */}
-      <div className="pointer-events-none relative z-30 flex w-full shrink-0 justify-center px-2 pb-2">
-        <motion.div
-          initial={{ opacity: 0, y: 14, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-          className={cn(
-            'pointer-events-auto relative w-full overflow-visible rounded-[28px]',
-            'border border-white/45 bg-edu-surface/72 shadow-lg backdrop-blur-[28px]',
-            'dark:border-white/10 dark:bg-edu-surface/70'
-          )}
-          style={{
-            marginBottom: 'env(safe-area-inset-bottom)',
-          }}
-        >
-          {/* glass shimmer top line */}
-          <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/20" />
-
+      <div className="relative z-30 w-full shrink-0 border-t border-edu-border/50 bg-edu-bg/86 backdrop-blur-xl">
+        <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent dark:via-white/20" />
+        <div className="pb-[env(safe-area-inset-bottom)]">
           <ChatInput 
             onSend={handleSend} 
             onTyping={() => emitTyping(chatRoomId)} 
@@ -448,7 +435,7 @@ export default function ChatScreen() {
             editingMessage={editingMessage}
             onCancelAction={handleCancelAction}
           />
-        </motion.div>
+        </div>
       </div>
 
       {/* ── Modals ─────────────────────────────────────────────────────────── */}

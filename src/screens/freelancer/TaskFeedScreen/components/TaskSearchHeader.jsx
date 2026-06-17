@@ -1,6 +1,6 @@
 // TaskSearchHeader.jsx — iOS Telegram Folders style sticky category island
 // 🪄 Design Spells: spring-physics pill transition + floating island morph
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useCategoryStore } from '../../../../store/categoryStore';
 import { hapticLight } from '../../../../lib/telegram';
