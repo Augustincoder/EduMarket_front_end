@@ -296,7 +296,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           onClick={() => { hapticLight(); setShowMenu((s) => !s); }}
           disabled={!!editingMessage || uploading}
           className={cn(
-            'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-200 disabled:opacity-40',
+            'flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full transition-colors duration-200 disabled:opacity-40',
             showMenu ? 'bg-edu-primary text-white shadow-btn' : 'bg-white/30 text-edu-muted hover:text-edu-text dark:bg-white/5'
           )}
         >
@@ -309,7 +309,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
 
         <div
           className={cn(
-            'flex min-h-[44px] flex-1 items-end rounded-[22px] px-4 py-[10px]',
+            'flex min-h-[38px] flex-1 items-end rounded-[20px] px-4 py-[8px]',
             'border border-white/55 bg-white/68 shadow-sm backdrop-blur-xl',
             'transition-all duration-200 dark:border-white/10 dark:bg-white/8',
             'focus-within:border-edu-primary/45 focus-within:bg-white/82 dark:focus-within:bg-white/12'
@@ -328,7 +328,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
           />
         </div>
 
-        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center">
+        <div className="relative flex h-[38px] w-[38px] shrink-0 items-center justify-center">
           <AnimatePresence mode="popLayout">
             {hasContent ? (
               <motion.button
@@ -341,7 +341,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                 aria-label={editingMessage ? 'Saqlash' : 'Yuborish'}
                 disabled={uploading}
                 onClick={handleSend}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-edu-primary text-white shadow-btn transition-transform active:scale-90 disabled:opacity-50"
+                className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-edu-primary text-white shadow-btn transition-transform active:scale-90 disabled:opacity-50"
               >
                 {editingMessage ? (
                   <Check size={17} strokeWidth={2.5} />
@@ -360,7 +360,7 @@ export function ChatInput({ onSend, onTyping, disabled, replyingTo, editingMessa
                 aria-label="Ovozli xabar"
                 disabled={uploading}
                 onClick={() => { hapticLight(); setIsVoiceMode(true); }}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/30 text-edu-muted transition-all active:scale-90 hover:text-edu-text disabled:opacity-50 dark:bg-white/5"
+                className="flex h-[38px] w-[38px] items-center justify-center rounded-full bg-white/30 text-edu-muted transition-all active:scale-90 hover:text-edu-text disabled:opacity-50 dark:bg-white/5"
               >
                 <Mic size={19} strokeWidth={2} />
               </motion.button>

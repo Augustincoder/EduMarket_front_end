@@ -170,7 +170,6 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
       </AnimatePresence>
 
       <motion.div 
-        layout="position"
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={{ left: 0.15, right: 0 }}
@@ -187,13 +186,10 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
         )}
       >
         <motion.div
-          layout
-          transition={{ layout: { type: 'spring', stiffness: 420, damping: 34 } }}
           className="flex flex-col gap-1 w-fit relative"
           ref={bubbleRef}
         >
           <motion.div
-            layout
             whileTap={{ scale: 0.98 }}
             // FIX: Don't animate scale on showMenu — causes layout shift
             className={cn(
@@ -338,8 +334,9 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
           {/* Reactions */}
           {Object.keys(groupedReactions).length > 0 && (
             <motion.div
-              layout
-              transition={{ layout: { type: 'spring', stiffness: 420, damping: 34 } }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.15 }}
               className={cn("flex flex-wrap gap-1 mt-1 z-10 relative px-1", isMe ? "justify-end" : "justify-start")}
             >
               {Object.entries(groupedReactions).map(([iconName, users]) => {
@@ -349,7 +346,6 @@ export function MessageBubble({ message, isMe, onReply, onEdit, onDelete, onView
                 return (
                   <motion.button
                     key={iconName}
-                    layout
                     initial={{ scale: 0.7, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.15 }}
